@@ -1,0 +1,19 @@
+body {
+  codex 1
+  genome {
+    cell:12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7 as scale
+  }
+  grants {
+    stdin: scale
+  }
+  wires { }
+  budget { steps 100000 }
+  lineage none
+}
+---
+regulatory {
+  prompts { scale "factor: " }
+  present { scale "{0} ft = {2} in" }
+  names   { scale "Scale" }
+  labels  { scale "Feet to inches" }
+}

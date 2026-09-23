@@ -1,0 +1,17 @@
+# Build
+joinn/target/
+target/
+target-p2/
+
+# Editor
+.idea/
+.vscode/
+*.rs.bk
+*.pdb
+
+# Local gate logs
+/gate_all_*.txt
+
+# Testimony (Phase 12)
+joinn/corpus/testimony/*.log
+!joinn/corpus/testimony/.gitkeep

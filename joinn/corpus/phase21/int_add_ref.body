@@ -1,0 +1,42 @@
+budget
+steps 100000
+codex 1
+genome
+cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as rec, self
+prim:build as mkpred, mksucc, mktwo
+prim:case as cb, cone
+prim:choose as fwda, fwdb, picks, pickz
+prim:eq as eqaa, eqs, eqz
+grants
+lineage none
+wires
+cb@0 -> eqs@0
+cb@0 -> eqz@0
+cb@1 -> fwdb@2
+cone@1 -> eqz@1
+eqaa@0 -> cone@0
+eqaa@0 -> eqs@1
+eqaa@0 -> mksucc@1
+eqaa@0 -> mktwo@1
+eqaa@0 -> mktwo@2
+eqz@0 -> fwda@0
+eqz@0 -> fwdb@0
+eqz@0 -> pickz@0
+eqs@0 -> picks@0
+fwda@0 -> rec@0
+fwdb@0 -> rec@1
+mkpred@0 -> picks@2
+mksucc@0 -> picks@1
+mktwo@0 -> mkpred@1
+pickz@0 -> self@2
+picks@0 -> fwda@2
+rec@2 -> pickz@2
+self@0 -> eqaa@0
+self@0 -> eqaa@1
+self@0 -> mkpred@0
+self@0 -> mkpred@2
+self@0 -> mksucc@0
+self@0 -> mksucc@2
+self@0 -> mktwo@0
+self@0 -> pickz@1
+self@1 -> cb@0

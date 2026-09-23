@@ -1,0 +1,9 @@
+budget
+steps 100000
+codex 1
+genome
+cell:fc5403ff7ee2fbe0c843d40998a74411caef19479a17d5d9376cd9ea8c2c8b73 as self
+grants
+lineage none
+wires
+self@0 -> self@2

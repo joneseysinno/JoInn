@@ -1,0 +1,12 @@
+[package]
+name = "joinn-assay"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-frame = { path = "../joinn-frame" }
+
+[lints]
+workspace = true

@@ -1,0 +1,27 @@
+step 1
+fired cli_a
+direction 0
+delivered cli_a@0 Text 1 "2"
+check require cli_a@0 ok
+check ensure cli_a@1 ok
+step 2
+fired none
+direction none
+delivered sum@0 ℤ 1 2
+check require sum@0 ok
+step 3
+fired cli_b
+direction 0
+delivered cli_b@0 Text 1 "3"
+check require cli_b@0 ok
+check ensure cli_b@1 ok
+step 4
+fired sum
+direction 0
+delivered sum@1 ℤ 1 3
+check require sum@1 ok
+check ensure sum@2 ok
+step 5
+fired none
+direction none
+check quiescent

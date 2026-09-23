@@ -1,0 +1,41 @@
+//! Auto-split leaf.
+#![allow(unused_imports)]
+
+use joinn_dna::{
+    AlleleBody, NativeId, hash, parse_body, parse_cell, print_body, print_coding, sum_cell,
+};
+use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, TextFrame, Value, Verdict};
+use joinn_gate::{Budget, Gate, GateItem, demos, run_opposed};
+use joinn_live::{BodyState, LiveDna};
+use joinn_prim::{BodyRef, DnaFire, Drive, Seal};
+use std::collections::{BTreeMap, BTreeSet};
+use std::env;
+use std::fs;
+use std::io::{self, Write};
+use std::num::NonZeroU32;
+use std::path::{Path, PathBuf};
+use std::process::{Command, ExitCode, Stdio};
+use std::time::Instant;
+
+use super::*;
+
+pub(crate) fn walk_rs(dir: &Path, f: &mut impl FnMut(&Path, &str)) -> Result<(), String> {
+    if !dir.exists() {
+        return Ok(());
+    }
+    let entries = fs::read_dir(dir).map_err(|e| e.to_string())?;
+    for entry in entries {
+        let entry = entry.map_err(|e| e.to_string())?;
+        let path = entry.path();
+        if path.is_dir() {
+            if path.file_name().is_some_and(|n| n == "target") {
+                continue;
+            }
+            walk_rs(&path, f)?;
+        } else if path.extension().is_some_and(|e| e == "rs") {
+            let text = fs::read_to_string(&path).map_err(|e| e.to_string())?;
+            f(&path, &text);
+        }
+    }
+    Ok(())
+}

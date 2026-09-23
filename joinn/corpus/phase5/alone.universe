@@ -1,0 +1,15 @@
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+  }
+  links {
+  }
+  lenses {
+    lens alone {
+      galaxy app {
+        system only { calc }
+      }
+    }
+  }
+}

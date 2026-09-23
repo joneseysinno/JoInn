@@ -1,0 +1,10 @@
+body {
+  codex 1
+  genome {
+    prim:eq as columns
+  }
+  grants { }
+  wires { }
+  budget { steps 1 }
+  lineage none
+}

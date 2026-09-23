@@ -1,0 +1,25 @@
+---
+description: JoInn module capsule layout — one named operation per leaf file
+globs: "**/*.rs"
+alwaysApply: true
+---
+
+# Module capsules
+
+A **module is a capsule** (privacy / trust boundary). A **leaf file is one named
+operation**. Layout is `foo.rs` + `foo/`, never `foo/mod.rs`.
+
+## Rules
+
+1. Capsule root (`foo.rs`): types, `mod` lines, one-line getters. Children are
+   `foo/*.rs`.
+2. Leaf (`foo/deliver.rs`): exactly one named production function or method.
+   Tests for that function live in the same file under `#[cfg(test)]`.
+3. Never introduce `mod.rs`. Never widen fields to `pub(crate)` so a sibling
+   can compile — nest under the capsule instead.
+4. `lib.rs` / `main.rs` are facades (`mod` + `pub use` / dispatch only).
+5. Shared test fixtures go in a `#[cfg(test)]` helper leaf (e.g.
+   `state/fixtures.rs`), not a crate-wide `src/tests.rs`.
+6. Trait-impl exception: a file whose only job is `impl SomeTrait for T` may
+   hold that trait's required methods; extra helpers still get their own files.
+7. `cargo xtask modules` must stay green. Silencer: `allow(modules): reason`.

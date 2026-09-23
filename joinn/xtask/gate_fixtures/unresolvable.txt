@@ -1,0 +1,3 @@
+# Fixture table for rule 24. The artifact path does not exist.
+# Item 8 requires resolve to refuse this row and to name the item.
+planted xtask/gate_fixtures/no-such-artifact.txt

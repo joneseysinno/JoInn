@@ -1,0 +1,8 @@
+description {
+  cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e
+  instance cli_a
+  label "refused at membrane: \"two\" is not in ℤ"
+  role refusal
+  port 0 in Text 1 "line" label "line" role input value "two"
+  port 1 out ℤ 1 "value" label "value" role output
+}

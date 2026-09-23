@@ -1,0 +1,114 @@
+budget
+steps 100000
+codex 1
+genome
+cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11 as self
+cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as a10, a16, a2, a3, a32, a4, a48, a8, addo, addt
+cell:6fcb1e7397454543fad3b22d4b1c310932985e44d1ed64ae94142ab82339e9cf as d45, dneg, dt1, dt2, dt3
+prim:build as chrd, chrm, chrt, consd, conss, mktwo
+prim:case as cn, cone, ct1, ct2, ct3
+prim:choose as fin, fpos, gsign, pos, q0, q1, q2, r0, r1, r2
+prim:eq as ep1, ep2, ep3, eqaa, eqpred, eqz
+prim:pair as sel
+grants
+lineage none
+wires
+a10@2 -> dt1@1
+a10@2 -> dt2@1
+a10@2 -> dt3@1
+a16@2 -> a32@0
+a16@2 -> a32@1
+a16@2 -> a48@1
+a2@2 -> a10@1
+a2@2 -> a3@0
+a2@2 -> a4@0
+a2@2 -> a4@1
+a2@2 -> q2@1
+a3@2 -> d45@1
+a3@2 -> q2@2
+a32@2 -> a48@0
+a4@2 -> a8@0
+a4@2 -> a8@1
+a48@2 -> addo@0
+a48@2 -> addt@0
+a48@2 -> d45@2
+a8@2 -> a10@0
+a8@2 -> a16@0
+a8@2 -> a16@1
+addo@2 -> chrd@2
+addt@2 -> chrt@2
+chrd@0 -> consd@3
+chrd@0 -> fpos@1
+chrm@0 -> gsign@1
+chrt@0 -> consd@2
+cn@0 -> eqpred@0
+cone@1 -> dneg@2
+cone@1 -> eqz@1
+cone@1 -> q0@1
+cone@1 -> sel@1
+consd@0 -> fpos@2
+conss@0 -> fin@1
+ct1@0 -> ep1@0
+ct2@0 -> ep2@0
+ct3@0 -> ep3@0
+d45@0 -> chrm@2
+dneg@0 -> pos@1
+dt1@0 -> ct1@0
+dt1@0 -> dt2@2
+dt1@0 -> r1@1
+dt2@0 -> ct2@0
+dt2@0 -> dt3@2
+dt2@0 -> r2@1
+dt3@0 -> ct3@0
+dt3@0 -> r2@2
+ep1@0 -> q0@0
+ep1@0 -> r0@0
+ep2@0 -> q1@0
+ep2@0 -> r1@0
+ep3@0 -> q2@0
+ep3@0 -> r2@0
+eqaa@0 -> a2@0
+eqaa@0 -> a2@1
+eqaa@0 -> a3@1
+eqaa@0 -> cone@0
+eqaa@0 -> consd@1
+eqaa@0 -> conss@1
+eqaa@0 -> mktwo@0
+eqaa@0 -> mktwo@1
+eqaa@0 -> mktwo@2
+eqaa@0 -> q1@1
+eqaa@0 -> sel@0
+eqpred@0 -> fin@0
+eqpred@0 -> gsign@0
+eqpred@0 -> pos@0
+eqz@0 -> fpos@0
+fin@0 -> self@1
+fpos@0 -> conss@3
+fpos@0 -> fin@2
+gsign@0 -> conss@2
+mktwo@0 -> chrd@1
+mktwo@0 -> chrm@1
+mktwo@0 -> chrt@1
+mktwo@0 -> ep1@1
+mktwo@0 -> ep2@1
+mktwo@0 -> ep3@1
+mktwo@0 -> eqpred@1
+pos@0 -> dt1@2
+pos@0 -> r0@1
+q0@0 -> addt@1
+q0@0 -> eqz@0
+q1@0 -> q0@2
+q2@0 -> q1@2
+r0@0 -> addo@1
+r1@0 -> r0@2
+r2@0 -> r1@2
+sel@0 -> chrd@0
+sel@0 -> chrm@0
+sel@0 -> chrt@0
+sel@0 -> consd@0
+sel@0 -> conss@0
+self@0 -> cn@0
+self@0 -> dneg@1
+self@0 -> eqaa@0
+self@0 -> eqaa@1
+self@0 -> pos@2

@@ -1,0 +1,30 @@
+coding {
+  codex 1
+  frame ℚ 1
+  contract {
+    join refuse
+    port 0 in ℚ 1 required
+    port 1 in ℚ 1 required
+    port 2 out ℚ 1 required
+  }
+  laws {
+    identity: forall a:ℚ 1. self@2(0: a, 1: ℚ 1.zero) = a
+  }
+  founding {
+    witness {
+      in 0: ℚ 1 1/1
+      in 1: ℚ 1 0/1
+      out 2: ℚ 1 1/1
+    }
+  }
+  lineage none
+}
+
+---
+
+regulatory {
+  names { 0 a  1 b  2 sum }
+}
+alleles {
+  allele { frame ℚ 1 native add@ℚ witnesses { } }
+}

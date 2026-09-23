@@ -1,0 +1,14 @@
+budget
+steps 100000
+codex 1
+genome
+cell:c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e as self
+prim:case as c
+prim:eq as e
+grants
+lineage none
+wires
+c@1 -> self@1
+e@0 -> c@0
+self@0 -> e@0
+self@0 -> e@1

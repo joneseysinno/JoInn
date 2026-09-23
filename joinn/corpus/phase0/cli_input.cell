@@ -1,0 +1,30 @@
+coding {
+  codex 1
+  frame Text 1
+  contract {
+    join refuse
+    port 0 in Text 1 required
+    port 1 out ℤ 1 required
+  }
+  laws {
+    roundtrip: forall n:ℤ 1. self@1(0: cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11@1(0: n)) = n
+    canonical: forall n:ℤ 1 s:Text 1. (self@1(0: s) = n) → (cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11@1(0: n) = s)
+  }
+  founding {
+    witness {
+      in 0: Text 1 "2"
+      out 1: ℤ 1 2
+    }
+  }
+  lineage none
+}
+
+---
+
+regulatory {
+  names { 0 line  1 value }
+  literals { prompt "a: " }
+}
+alleles {
+  allele { frame Text 1 native parse@Text witnesses { } }
+}

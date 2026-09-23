@@ -1,0 +1,9 @@
+disallowed-types = [
+    { path = "std::collections::HashMap", reason = "iteration order is process-seeded; use BTreeMap (§2.9)" },
+    { path = "std::collections::HashSet", reason = "iteration order is process-seeded; use BTreeSet (§2.9)" },
+]
+disallowed-methods = [
+    { path = "std::time::SystemTime::now", reason = "no wall clock in the truth core" },
+    { path = "std::time::Instant::now", reason = "no wall clock in the truth core" },
+    { path = "rand::thread_rng", reason = "sampling takes an explicit seed" },
+]

@@ -1,0 +1,9 @@
+description {
+  cell 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39
+  instance sum
+  label "Sum"
+  role cell
+  port 0 in ℤ 1 "a" label "first addend" role input value 2
+  port 1 in ℤ 1 "b" label "second addend" role input value 3
+  port 2 out ℤ 1 "result" label "sum" role output value 4
+}

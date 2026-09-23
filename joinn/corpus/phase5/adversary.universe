@@ -1,0 +1,24 @@
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:556e785914ff720d908e14f10daa81ac797e0e0259b63a9647c68651a7703f57 as units
+    body:fa812abd9ab0b1b6a3aef72b3c8ca1e2641c6f307350a8cc86ebea56187b8123 as bus
+  }
+  links {
+    link bus order none {
+      calc.sum@2 tail
+      units.scale@1 head
+      bus.listen@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system calculation { calc }
+        system measurement { units }
+        system listen { bus }
+      }
+    }
+  }
+}

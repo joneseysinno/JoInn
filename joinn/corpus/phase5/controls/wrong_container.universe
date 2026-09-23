@@ -1,0 +1,22 @@
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+  }
+  links {
+    link inside order none {
+      calc.sum@2 tail
+      calc.cli_a@0 head
+    }
+    wire calc.sum@2 -> units.scale@0
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system calculation { calc }
+        system measurement { units }
+      }
+    }
+  }
+}

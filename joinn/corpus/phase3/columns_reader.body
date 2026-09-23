@@ -1,0 +1,11 @@
+body {
+  codex 1
+  genome {
+    prim:eq as reader
+  }
+  grants { }
+  wires { }
+  budget { steps 1 }
+  lineage none
+  read { columns }
+}

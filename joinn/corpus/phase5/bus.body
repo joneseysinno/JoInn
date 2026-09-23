@@ -1,0 +1,21 @@
+body {
+  codex 1
+  genome {
+    cell:c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e as listen
+  }
+  grants {
+    stdin: listen
+  }
+  wires { }
+  budget { steps 100000 }
+  lineage none
+}
+
+---
+
+regulatory {
+  prompts { listen "in: " }
+  present { listen "{1}" }
+  names { listen "Listen" }
+  labels { listen "Listen" }
+}

@@ -1,0 +1,1 @@
+body { codex 1 genome { cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as sum cell:c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e as cli_a, cli_b } grants { stdin cli_a cli_b } wires { cli_a@1 -> sum@0 cli_b@1 -> sum@1 } budget { steps 100000 } lineage none }

@@ -1,0 +1,33 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/joinn-frame",
+    "crates/joinn-dna",
+    "crates/joinn-gate",
+    "crates/joinn-prim",
+    "crates/joinn-live",
+    "crates/joinn-assay",
+    "crates/joinn-link",
+    "crates/joinn-host",
+    "crates/joinn-test-host",
+    "crates/joinn-cli",
+    "xtask",
+]
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+float_arithmetic = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+todo = "deny"
+dbg_macro = "deny"
+collapsible_if = "allow"
+too_many_arguments = "allow"

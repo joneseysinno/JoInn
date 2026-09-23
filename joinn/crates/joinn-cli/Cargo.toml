@@ -1,0 +1,21 @@
+[package]
+name = "joinn-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "joinn"
+path = "src/main.rs"
+
+[dependencies]
+joinn-dna = { path = "../joinn-dna" }
+joinn-frame = { path = "../joinn-frame" }
+joinn-host = { path = "../joinn-host" }
+joinn-live = { path = "../joinn-live" }
+joinn-prim = { path = "../joinn-prim" }
+joinn-link = { path = "../joinn-link" }
+
+[lints]
+workspace = true

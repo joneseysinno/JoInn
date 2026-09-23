@@ -1,0 +1,13 @@
+# Crates (or "xtask") where the leaf-file rule is enforced.
+# Empty until a crate is converted; then add one name per line.
+joinn-live
+xtask
+joinn-dna
+joinn-frame
+joinn-gate
+joinn-prim
+joinn-host
+joinn-test-host
+joinn-cli
+joinn-assay
+joinn-link

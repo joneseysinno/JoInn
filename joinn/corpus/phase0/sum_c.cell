@@ -1,0 +1,5 @@
+coding{codex 1 frame ℤ 1 contract{join refuse port 0 in ℤ 1 required port 1 in ℤ 1 required port 2 out ℤ 1 required}laws{identity: forall a:ℤ 1. self@2(0: a, 1: ℤ 1.zero) = a commutative: forall a:ℤ 1 b:ℤ 1. self@2(0: a, 1: b) = self@2(0: b, 1: a) associative: forall a:ℤ 1 b:ℤ 1 c:ℤ 1. self@2(0: self@2(0: a, 1: b), 1: c) = self@2(0: a, 1: self@2(0: b, 1: c))}founding{witness{in 0: ℤ 1 2 in 1: ℤ 1 3 out 2: ℤ 1 5}}lineage none}
+
+---
+
+regulatory { names { 0 x 1 y 2 z } }

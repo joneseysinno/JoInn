@@ -1,0 +1,9 @@
+error[E0451]: fields `frame` and `term` of struct `joinn_frame::Value` are private
+ --> tests/fail/value_fields.rs:3:9
+  |
+2 |     let _ = joinn_frame::Value {
+  |             ------------------ in this type
+3 |         frame: joinn_frame::FrameRef::int(),
+  |         ^^^^^ private field
+4 |         term: joinn_frame::Term::int(0),
+  |         ^^^^ private field

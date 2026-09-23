@@ -1,0 +1,29 @@
+# comments and CRLF-looking extras stripped
+coding {
+  contract {
+    join refuse
+    retired
+    port 0 in ℤ 1 required
+    port 1 in ℤ 1 required
+    port 2 out ℤ 1 required
+  }
+  frame ℤ 1
+  codex 1
+  founding {
+    witness {
+      in 1: ℤ 1 3
+      in 0: ℤ 1 2
+      out 2: ℤ 1 5
+    }
+  }
+  laws {
+    identity: forall a:ℤ 1. self@2(0: a, 1: ℤ 1.zero) = a
+    commutative: forall a:ℤ 1 b:ℤ 1. self@2(0: a, 1: b) = self@2(0: b, 1: a)
+    associative: forall a:ℤ 1 b:ℤ 1 c:ℤ 1. self@2(0: self@2(0: a, 1: b), 1: c) = self@2(0: a, 1: self@2(0: b, 1: c))
+  }
+  lineage none
+}
+
+---
+
+regulatory { names { 0 alpha 1 beta 2 gamma } literals { prompt "unused" } }

@@ -1,0 +1,45 @@
+# JoInn corpus goldens. Never edit to make a test pass.
+# Computed from P0-03: BLAKE3-256(len_le(tag) ‖ joinn.cell.v1 ‖ len_le(bytes) ‖ canonical_text).
+# Four spellings of Sum share one hash; four of CliInput share one hash.
+cli_input c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e
+cli_input_b c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e
+cli_input_c c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e
+cli_input_d c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e
+format 3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11
+sum 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39
+sum_b 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39
+sum_c 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39
+sum_d 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39
+# Phase 2. calculator.body ×4 share one hash. sum_turn is an evolution of sum.
+calculator b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde
+calculator_b b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde
+calculator_c b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde
+calculator_d b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde
+sum_turn 6fcb1e7397454543fad3b22d4b1c310932985e44d1ed64ae94142ab82339e9cf
+# Phase 2.1. Reference bodies and the mul cell. Hashes computed from canonical coding text.
+int_add_ref 50ce5a875106e2731cddf6c09a3373b126498335740fe677a56dd9dc3add7a89
+int_mul_ref 2327f43c84175eee18aeb3125dcfd72a21396c3f6e77f3003c4f8ada308ee0bc
+int_format_ref 67c1caa7b976a89f515d94c9eff68cb07f883001a0da918a8de8fce791da9032
+text_parse_ref b7dd6f306c220c94b8b812ae900ee89ee666b0c3b13b44fee2cd390a34dc5120
+rat_add_ref 6385aba04808778623f5ef2bb08f92817247fd1539537191cc1b3b225f60e136
+mul 12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7
+rat_sum fc5403ff7ee2fbe0c843d40998a74411caef19479a17d5d9376cd9ea8c2c8b73
+# Phase 3. Descriptions hashed with joinn.description.v1.
+calculator.desc 5252d61ba2ac9c1c17a1f1af1453ffc9f36cfe248df27547035213603a20d3a5
+calculator_refusal.desc a6bdbad9ec73790c81353fdac8115e30fa5aadeb09bd09568b92a82e3001eacd
+# Phase 3 environment bodies.
+environment e8bfcaa309c8154268e24fce689bc9687669d94585c104f3766cc5f4532a8ab3
+columns_reader ffc2ee27f3c91928409eeb0a43e8d5dbb3bfa74033e490634f0f65831ab5452d
+# Phase 5.1. echo.body — the Phase 5 units body, moved byte for byte. Hash unchanged.
+echo 556e785914ff720d908e14f10daa81ac797e0e0259b63a9647c68651a7703f57
+# Phase 5.1. units.body — mul, feet to inches. Hash of the coding, not a rebless.
+units 2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda
+# Phase 5. two_in_ports.body — V72 artifact; one genome cell, two in-ports, empty wires.
+two_in_ports 8c9f1cb62fe42e1502f58279692dec0cf909089487a6663233c81ef9d8d62900
+# Phase 5. bus.body — Law 4 adversary third body; one in-port listen@0.
+bus fa812abd9ab0b1b6a3aef72b3c8ca1e2641c6f307350a8cc86ebea56187b8123
+# Phase 5. Universes hashed with joinn.universe.v1 over canonical coding text.
+universe.universe 2ccbb067db0b150ca607d1e7469fd28ea46892142d6b7729f1075cb899c9d1ad
+alone.universe 3c9936c98b862a44f7486380662182363a5483397c9ba323d7354cd9c7518453
+ordered.universe 2814282ad8711d6414a0d1004b0546cdc97400484de0ea30ac9fa790cd873cd7
+adversary.universe 00115de41ebed3250f1ca5dde861b4bcf0e33a2075c988fbeb1057495ea48fa9

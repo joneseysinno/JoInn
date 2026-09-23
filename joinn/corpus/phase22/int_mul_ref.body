@@ -1,0 +1,45 @@
+budget
+steps 100000
+codex 1
+genome
+cell:12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7 as rec, self
+cell:6fcb1e7397454543fad3b22d4b1c310932985e44d1ed64ae94142ab82339e9cf as adder, differ
+prim:case as cb, cone
+prim:choose as fwda, fwdb, gadd0, gadd1, gdif1, gdif2, picks, pickz
+prim:eq as eqaa, eqs, eqz
+grants
+lineage none
+wires
+adder@2 -> picks@1
+cb@0 -> eqs@0
+cb@0 -> eqz@0
+cb@1 -> fwdb@2
+cone@1 -> eqz@1
+cone@1 -> pickz@1
+differ@0 -> picks@2
+eqaa@0 -> cone@0
+eqaa@0 -> eqs@1
+eqs@0 -> gadd0@0
+eqs@0 -> gadd1@0
+eqs@0 -> gdif1@0
+eqs@0 -> gdif2@0
+eqs@0 -> picks@0
+eqz@0 -> fwda@0
+eqz@0 -> fwdb@0
+eqz@0 -> pickz@0
+fwda@0 -> rec@0
+fwdb@0 -> rec@1
+gadd0@0 -> adder@0
+gadd1@0 -> adder@1
+gdif1@0 -> differ@1
+gdif2@0 -> differ@2
+picks@0 -> pickz@2
+pickz@0 -> self@2
+rec@2 -> gadd1@1
+rec@2 -> gdif2@2
+self@0 -> eqaa@0
+self@0 -> eqaa@1
+self@0 -> fwda@2
+self@0 -> gadd0@1
+self@0 -> gdif1@2
+self@1 -> cb@0

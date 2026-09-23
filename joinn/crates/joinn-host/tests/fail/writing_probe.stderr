@@ -1,0 +1,10 @@
+error[E0596]: cannot borrow `*state` as mutable, as it is behind a `&` reference
+  --> tests/fail/writing_probe.rs:10:17
+   |
+10 |         let _ = state.inject("sum", 0, value, 0);
+   |                 ^^^^^ `state` is a `&` reference, so it cannot be borrowed as mutable
+   |
+help: consider changing this to be a mutable reference
+   |
+ 4 |     fn writing_probe(state: &mut joinn_live::BodyState) {
+   |                              +++

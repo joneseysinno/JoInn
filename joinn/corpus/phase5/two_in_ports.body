@@ -1,0 +1,16 @@
+body {
+  codex 1
+  genome {
+    cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as pair
+  }
+  grants {
+    stdin: pair
+  }
+  wires { }
+  budget { steps 1 }
+  lineage none
+}
+---
+regulatory {
+  names { pair "Pair" }
+}

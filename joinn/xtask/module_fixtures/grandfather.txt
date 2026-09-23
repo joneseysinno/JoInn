@@ -1,0 +1,3 @@
+# Paths (repo-relative, forward slashes) allowed to violate the one-fn leaf rule
+# while their crate is on the enforced list. Remove an entry when that file is split.
+# Stale entries (file already obeys) fail the build.

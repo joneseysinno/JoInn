@@ -1,0 +1,42 @@
+budget
+steps 100000
+codex 1
+genome
+cell:12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7 as mulad, mulan, mulbd
+cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as addn
+cell:fc5403ff7ee2fbe0c843d40998a74411caef19479a17d5d9376cd9ea8c2c8b73 as self
+prim:build as mk
+prim:case as ca, cb, cone
+prim:choose as pick, pickb
+prim:eq as eqaa, eqza, eqzb
+grants
+lineage none
+wires
+addn@2 -> mk@2
+ca@0 -> eqza@0
+ca@1 -> mulan@0
+ca@2 -> mulad@0
+ca@2 -> mulbd@1
+cb@0 -> eqzb@0
+cb@1 -> mulbd@0
+cb@2 -> mulad@1
+cb@2 -> mulan@1
+cone@1 -> eqza@1
+cone@1 -> eqzb@1
+eqaa@0 -> cone@0
+eqaa@0 -> mk@1
+eqza@0 -> pick@0
+eqzb@0 -> pickb@0
+mk@0 -> pickb@2
+mulad@2 -> mk@3
+mulan@2 -> addn@0
+mulbd@2 -> addn@1
+pick@0 -> self@2
+pickb@0 -> pick@2
+self@0 -> ca@0
+self@0 -> eqaa@0
+self@0 -> eqaa@1
+self@0 -> mk@0
+self@0 -> pickb@1
+self@1 -> cb@0
+self@1 -> pick@1

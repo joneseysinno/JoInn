@@ -1,0 +1,21 @@
+[package]
+name = "joinn-link"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-dna = { path = "../joinn-dna" }
+joinn-frame = { path = "../joinn-frame" }
+joinn-assay = { path = "../joinn-assay" }
+joinn-prim = { path = "../joinn-prim" }
+joinn-live = { path = "../joinn-live" }
+joinn-gate = { path = "../joinn-gate" }
+
+[dev-dependencies]
+joinn-host = { path = "../joinn-host" }
+trybuild = "1.0"
+
+[lints]
+workspace = true

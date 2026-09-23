@@ -1,0 +1,7 @@
+# Artifact control for gate 2.2 item 3. A bound that admits one value is not a bound.
+reference_file: int_add_ref
+counterfeit_file: int_add
+sealed: add@ℤ
+drive_port: 1
+drive_bound: 0
+one_way: false

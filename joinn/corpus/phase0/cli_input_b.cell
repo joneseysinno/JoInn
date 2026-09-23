@@ -1,0 +1,22 @@
+coding {
+  # different law order, different display names, +2 literal elsewhere unused
+  frame Text 1
+  codex 1
+  contract {
+    join refuse
+    port 1 out ℤ 1 required
+    port 0 in Text 1 required
+  }
+  laws {
+    canonical: forall s:Text 1 n:ℤ 1. (self@1(0: s) = n) → (cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11@1(0: n) = s)
+    roundtrip: forall n:ℤ 1. self@1(0: cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11@1(0: n)) = n
+  }
+  founding {
+    witness { in 0: Text 1 "2" out 1: ℤ 1 +2 }
+  }
+  lineage none
+}
+
+---
+
+regulatory { names { 0 typed  1 parsed } literals { prompt "n: " } styles { ink "red" } }

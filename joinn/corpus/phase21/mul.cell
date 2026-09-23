@@ -1,0 +1,30 @@
+coding {
+  codex 1
+  frame ℤ 1
+  contract {
+    join refuse
+    port 0 in ℤ 1 required
+    port 1 in ℤ 1 required
+    port 2 out ℤ 1 required
+  }
+  laws {
+    annihilator: forall a:ℤ 1. self@2(0: a, 1: ℤ 1.zero) = ℤ 1.zero
+  }
+  founding {
+    witness {
+      in 0: ℤ 1 2
+      in 1: ℤ 1 3
+      out 2: ℤ 1 6
+    }
+  }
+  lineage none
+}
+
+---
+
+regulatory {
+  names { 0 a  1 b  2 product }
+}
+alleles {
+  allele { frame ℤ 1 native mul@ℤ witnesses { } }
+}

@@ -1,0 +1,32 @@
+budget
+steps 100000
+codex 1
+genome
+cell:3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11 as self
+cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as a16, a2, a4, a48, a8
+prim:build as mkchr, s2
+prim:eq as eqaa
+prim:hash as hx
+grants
+lineage none
+wires
+a16@2 -> a48@0
+a2@2 -> a4@0
+a2@2 -> a4@1
+a4@2 -> a8@0
+a4@2 -> a8@1
+a48@2 -> mkchr@2
+a8@2 -> a16@0
+a8@2 -> a16@1
+a8@2 -> a48@1
+eqaa@0 -> s2@1
+eqaa@0 -> s2@2
+hx@0 -> mkchr@0
+mkchr@0 -> self@1
+s2@0 -> a2@0
+s2@0 -> a2@1
+s2@0 -> mkchr@1
+self@0 -> eqaa@0
+self@0 -> eqaa@1
+self@0 -> hx@0
+self@0 -> s2@0

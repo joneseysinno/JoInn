@@ -1,0 +1,16 @@
+[package]
+name = "joinn-gate"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-dna = { path = "../joinn-dna" }
+joinn-frame = { path = "../joinn-frame" }
+
+[dev-dependencies]
+proptest = "1.5"
+
+[lints]
+workspace = true

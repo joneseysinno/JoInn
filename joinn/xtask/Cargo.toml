@@ -1,0 +1,21 @@
+[package]
+name = "xtask"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-dna = { path = "../crates/joinn-dna" }
+joinn-frame = { path = "../crates/joinn-frame" }
+joinn-gate = { path = "../crates/joinn-gate" }
+joinn-prim = { path = "../crates/joinn-prim", features = ["mutants"] }
+joinn-live = { path = "../crates/joinn-live" }
+joinn-host = { path = "../crates/joinn-host" }
+joinn-link = { path = "../crates/joinn-link" }
+joinn-assay = { path = "../crates/joinn-assay" }
+joinn-test-host = { path = "../crates/joinn-test-host" }
+
+[lints]
+workspace = true
+
