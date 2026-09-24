@@ -4,7 +4,7 @@
 
 *Phase 5.1's correction: controls see parsed values and must flip on a mutant that still parses, binding is a type, a body refusal is a report, hosts carry the far side, and AJ's witness becomes a checkpoint the next commit depends on*
 
-Author: AJ · Draft 0.1 · September 23, 2026
+Author: AJ · Draft 0.2 · September 24, 2026 (§0.1, §2.9, P52-02a and rules 46–47 amended after Checkpoint A)
 
 > Status tags follow Parts I–IV: **DECIDED**, **PROPOSED**, **OPEN**. **PROPOSED · yours** marks a recommendation made while writing this plan. You can overrule it; Cursor implements whatever you settle on, not what is written here.
 
@@ -14,7 +14,7 @@ Author: AJ · Draft 0.1 · September 23, 2026
 
 > **The corollary that pays for it.** Most hand-written control files in `corpus/phase5/controls/` are one edit away from `universe.universe`. Once there is a mutation catalogue, those files *are* mutants. So the catalogue makes them, and a file that the catalogue reproduces byte for byte is deleted. A control file then exists only where no catalogue mutation can reach it. That is exactly where a reviewer should look hardest.
 
-> **The second corollary.** Rules that are only text get skipped: F47 is a scan evaded, and F53 is a rule-38 finding simply left missing. So this plan does not add a rule telling the builder to stop. It splits the phase into **four sittings**. Each sitting ends with a checkpoint file typed by AJ, and the first commit of the next sitting has a done-when that `cargo xtask witness` refuses while the checkpoint is older than the code. The builder can't create a checkpoint (rule 38), and can't pass the witness check without one.
+> **The second corollary.** Rules that are only text get skipped: F47 is a scan evaded, and F53 is a rule-38 finding simply left missing. So this plan does not add a rule telling the builder to stop. It splits the phase into **four sittings**. Each sitting ends with a checkpoint: Cursor writes the evidence (what the commands printed), AJ writes the acceptance (his decisions and one sign-off line), and the first commit of the next sitting has a done-when that `cargo xtask witness` refuses while the checkpoint is older than the code or has no sign-off. *(Amended 24 Sep after Checkpoint A: AJ does not retype output a builder can read.)*
 
 ---
 
@@ -25,9 +25,10 @@ Author: AJ · Draft 0.1 · September 23, 2026
 | **Where this file lives** | `D:\JoInn\docs\Plans\JoInn Phase 5.2 Implementation Plan.md` |
 | **Where the code lives** | `D:\JoInn\joinn\`, no new crates |
 | **What it closes** | F44–F54 of `docs/Findings/phase-5.1-review.md`, plus Phase 5.1's unfinished P51-00, P51-16 (AJ half), P51-17 (AJ half) and P51-18 |
-| **Standing rules** | `AGENTS.md` as of Phase 5.1, **amended by Appendix A**. Rule 24 is rewritten, and rules 41–46 are added |
+| **Standing rules** | `AGENTS.md` as of Phase 5.1, **amended by Appendix A**. Rule 24 is rewritten, and rules 41–47 are added |
 | **Unit of work** | one numbered commit from §4, one Cursor session per commit. **Stop at the done-when. Do not start the next commit in the same session** |
-| **Sittings** | four (A–D). A sitting ends at a checkpoint that AJ types. The next sitting's first done-when requires `cargo xtask witness <checkpoint>` to print `current` |
+| **Sittings** | four (A–D). A sitting ends at a checkpoint: Cursor writes the evidence, AJ writes the acceptance (§2.9). The next sitting's first done-when requires `cargo xtask witness <checkpoint>` to print `current` |
+| **How a session reports** | every Cursor session ends with the report block in §0.1, and nothing else counts as done |
 | **How a commit ends** | its done-when command reports a refusal, a disagreement, a compile error, or a byte-identical replay, never a number the same command chose |
 | **What Cursor may decide** | module layout (rule 25), function bodies, error strings, how the mutation catalogue is represented, whether `GateItem` is generic or xtask-local (§2.1) |
 | **What Cursor may not decide** | anything in §2; which mutation an item opposes (§2.2's table is AJ's); which duplicate gate row is deleted (§2.4, AJ approves the list); the adversary (P52-14); any file marked *typed by AJ* |
@@ -35,6 +36,21 @@ Author: AJ · Draft 0.1 · September 23, 2026
 The prompt stays short:
 
 > Implement commit **P52-09** from `docs/Plans/JoInn Phase 5.2 Implementation Plan.md`. Follow `AGENTS.md`. If the commit names a checkpoint, run `cargo xtask witness` on it first and stop if it prints `stale`. Stop when the done-when command passes and report what it printed. Never change code to avoid a scan; if a scan blocks a correct change, stop and report.
+
+### 0.1 The session report · **DECIDED** (24 Sep, after Checkpoint A)
+
+Every Cursor session ends with this block, filled in from what the commands actually printed. AJ reads it and answers only the **Needs AJ** lines.
+
+```
+Commit:     P52-NN <git short hash>   (the id must match the work; if the work is not P52-NN, say so)
+Done-when:  <the command> → <what it printed>          MET | NOT MET
+Suite:      cargo test --workspace --no-fail-fast → <N passed, M failed>
+Scans:      vocab → <line> · modules → <line>
+Unexpected: none | <each thing that differs from the plan's prediction, with the printed line>
+Needs AJ:   none | <each decision, with 2–3 options and a recommendation>
+```
+
+Rules for the block: every value is quoted from output, never summarised; `vocab` and `modules` run on **every** commit, not only where a done-when names them (a scan broken by one commit is reported by that commit); a `NOT MET` or a non-empty **Needs AJ** ends the session there.
 
 **The failure mode this phase must not have.** Phase 5.1's newest construct was the runtime, and it came out mostly honest. The hollow parts were in the **harness** and in the **scans**. This phase's newest construct is the **mutation catalogue**. A catalogue can easily be tested against itself: "the mutant differs from the original." That is true of any edit, so it proves nothing. Every catalogue test in this plan is therefore stated as **what a check or control does on the mutant**: the canonical hash moved, a named refusal appeared, a body stopped firing. None is stated as "the mutant is different."
 
@@ -166,11 +182,19 @@ This is what lets `"two"` enter the universe: `calc` refuses, `UniverseReport::R
 
 **The host knows no ids.** Gate 5.2 item 3's check runs the CLI on the catalogue mutant `RenameLink(e0, e1)` **and** on `RenameAlias(units, meters)` (with the transcript's names mapped), and requires the same output as on the original. A host that hardcodes `e0` fails this check. A host that doesn't has nothing to change.
 
-### 2.9 AJ's witness is a checkpoint that later commits depend on · **PROPOSED · yours · closes F44, F53**
+### 2.9 AJ's acceptance is a checkpoint that later commits depend on · **DECIDED · amended 24 Sep** · closes F44, F53
 
-> **`cargo xtask witness <path>` reads a finding and prints `current` when the file's mtime is later than every file under `crates/`, `xtask/` and `corpus/`. Otherwise it prints `stale: <newest path> <its mtime>` and exits non-zero. It writes nothing (rule 17). The phase has four sittings, and each ends with a checkpoint that AJ types (`docs/Findings/phase-5.2-checkpoint-{a,b,c}.md`, then `phase-5.2-run.md`). Each checkpoint quotes the last line of `cargo test --workspace`, the gate rows of `cargo xtask gate all`, and anything that printed `fail`. The first commit of the next sitting has `witness <checkpoint>` → `current` in its done-when. Cursor may not write a checkpoint (rule 38).**
+> **`cargo xtask witness <path>` prints `current` when the finding's last commit is later than the last commit touching `crates/`, `xtask/` or `corpus/` (mtimes when there is no repository, §2.12). Otherwise it prints `stale: <newest path> <when>` and exits non-zero. It writes nothing (rule 17). The phase has four sittings, and each ends with a checkpoint (`docs/Findings/phase-5.2-checkpoint-{a,b,c}.md`, then `phase-5.2-run.md`) in two parts:**
+>
+> **1. Evidence, written by Cursor.** The session report blocks of the sitting's commits, then one run of `cargo test --workspace --no-fail-fast`, `gate all`, `vocab` and `modules` with each command's last line and every `fail` row quoted, each marked *expected* (with the plan section that predicts it) or *unexpected*.
+>
+> **2. Acceptance, written by AJ.** His answer to every *unexpected* item and every **Needs AJ** line, and one line: `Accepted: AJ, <date>`. Nothing else.
+>
+> **The first commit of the next sitting has `witness <checkpoint>` → `current` in its done-when. Cursor may write the evidence and may not write the acceptance (rule 38).**
 
-This turns *"AJ watches it run"* from a sentence in the plan into something the build depends on. The builder can still skip it, but only by writing a file that rule 38 makes a red commit, and the mtimes will show that it was skipped.
+*Why the change:* the Draft 0.1 version had AJ retype every command's output. That cost AJ most of a sitting at Checkpoint A and added nothing a builder can't read. What only AJ can supply is judgment: accepting a changed expectation (rule 7), choosing between options, and saying the sitting is closed. The checkpoint now asks him for exactly that.
+
+*What still stops a builder from closing a sitting alone:* the acceptance line is AJ's (rule 38), and a checkpoint without it is not accepted. P52-02a makes `witness` check for it, so this is not only a sentence in the plan.
 
 ### 2.10 The inner reason is what a probe printed · **DECIDED** (P51-16, unfinished)
 
@@ -242,19 +266,20 @@ Seventeen commits in four sittings. **Done-when** is a command, and the command 
 | **P52-00** | **The tree as Phase 5.1 left it — typed by AJ** | AJ runs `cargo test --workspace --no-fail-fast` (without the flag, cargo stops at the first failing test binary and most of the suite never runs), `gate all` (which writes the lock; that is expected), `corpus verify`, `vocab`, `modules`, `perf`. **The witness session changes no file outside `target/`.** Any file it does change is listed in the run file and types `docs/Findings/phase-5.1-run.md`, quoting each command's last line and every `fail` row. If the 20:31 UTC scrollback from 23 September still exists, AJ also types `phase-5-run.md` from it; if not, AJ writes one line saying it can't be recovered. **Cursor does not write either file** | The file exists and quotes what was printed. F52's three predicted failures and F49's predicted 7/8 and 8/9 are confirmed or refuted there, and the review's predictions are graded against it |
 | **P52-01** | **The suite, honest** | `tests/capability.rs` grants `e0` (its link was removed on purpose by P51-12). `tests/adversary.rs` binds through `bind_bodies` with the mul cell supplied and **asserts the refusal** naming `units.scale@1` as an out-port marked head. `tests/fail/string_reason.stderr` is accepted after it is read, and it must name the missing field `reason` (it was already written during the P52-00 session; this commit confirms its content and records when it appeared). `xtask` usage and help strings list `5.1`. **The three `vocab` hits (`saturating_sub` in `universe_state/run.rs:27,36` and `g51_lock.rs:9`) are resolved the way AJ decides in §2.11, never by renaming around the scan (rule 42)** | `cargo test --workspace --no-fail-fast` passes, and `cargo xtask vocab` reports no hits. The commit message lists every assertion that changed, with old and new text. None was removed |
 | **P52-02** | **`cargo xtask witness`** (§2.9) | The command; a unit test that ages a temp file below a temp tree | `witness docs/Findings/phase-3-run.md` prints `stale:` naming a file newer than it, and exits non-zero |
-| — | **Checkpoint A — typed by AJ** | `phase-5.2-checkpoint-a.md`: the last line of `cargo test --workspace` and the gate rows | — |
+| — | **Checkpoint A** | `phase-5.2-checkpoint-a.md`. Closed 24 Sep under the Draft 0.1 rule (AJ transcribed). Last Draft 0.1 checkpoint | — |
+| **P52-02a** | **`witness` requires an acceptance** (§2.9 amended) | `witness` refuses a checkpoint with no line matching `^Accepted: AJ, ` and prints `unaccepted: <path>` | A copy of checkpoint A with the line removed, committed on a scratch branch, prints `unaccepted:` and exits non-zero; the real checkpoint A prints `current` |
 
 ### Sitting B — controls that can be wrong about the thing
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
-| **P52-03** | **Parsed subjects (§2.1)** | `Subject`; the harness parses by kind; every control ported mechanically to take `&Subject`; `artifact_loads` deleted | `witness phase-5.2-checkpoint-a.md` prints `current`. A fixture artifact that does not parse refuses the run naming the item and the parser's reason. No file under `xtask/src` defines or calls `artifact_loads` |
+| **P52-03** | **Parsed subjects (§2.1)** | `Subject`; the harness parses by kind; every control ported mechanically to take `&Subject`; `artifact_loads` deleted | `witness phase-5.2-checkpoint-a.md` prints `current` (after P52-02a). A fixture artifact that does not parse refuses the run naming the item and the parser's reason. No file under `xtask/src` defines or calls `artifact_loads` |
 | **P52-04** | **The catalogue (§2.2)** | `mutate` and `neutral` for every kind and every row of the catalogue table | One test per mutation, applied to a real corpus file: the mutant re-parses, its canonical hash differs (bodies, universes), and a named target that doesn't exist is refused naming it. **Each test also asserts one downstream effect**, for example `DropLink(e0)` → `units` does not fire, and `FlipMark` → `check_link_types` refuses. None asserts only that the mutant differs |
 | **P52-05** | **Opposition is declared and enforced (§2.2)** | `opposes` on every item, from §2.2's table; truncation damage deleted | `gate all` is **refused**, listing every item that fails the mutant or neutral condition. The prediction is at least 5·2, 5·8, 5.1's hash item and 5.1's total item. The list goes in the commit message. **Nothing is fixed in this commit.** AJ settles any table row the list shows to be wrong |
 | **P52-06** | **The harness tests itself (§2.3)** | four fixtures, lock round-trip, `write_lock(path)`; gate 5.1 items 8 and 9 and gate 3 item 9 retired; files in §3.2 deleted | Breaking fixture 1 (making the harness admit a control that ignores its subject) makes `gate all` stop **before any gate prints a row**, naming the fixture, shown then reverted. The harness validates every table's controls (mutant, neutral, uniqueness) before running any check. Gate 3 prints eight rows |
 | **P52-07** | **Distinct opposition (§2.4)** | the uniqueness check; wrappers and duplicate rows deleted after AJ approves the list; phase labels from one `const` in `gate_all.rs`; `format!("phase {}", …)` gone | Giving 5.1's typed item the same `(artifact, opposes)` as 5·3 refuses naming both, shown then reverted. No gate function's body is a single call to another gate function (listed by hand in the commit, not scanned) |
 | **P52-08** | **Every control made honest** | each control from P52-05's list rewritten to decide from its subject; `missing_cell.body` per §3.3; §3.4's deletions | `gate all` passes the harness. **Items may still fail as checks**, and 5·8 is expected to until P52-13; each failing check is listed. `cmp` of each deleted control file against its catalogue mutant is quoted in the commit |
-| — | **Checkpoint B — typed by AJ** | `phase-5.2-checkpoint-b.md` | — |
+| — | **Checkpoint B** | `phase-5.2-checkpoint-b.md`: evidence by Cursor, acceptance by AJ (§2.9) | — |
 
 ### Sitting C — binding, runtime, hosts
 
@@ -265,7 +290,7 @@ Seventeen commits in four sittings. **Done-when** is a command, and the command 
 | **P52-11** | **Declared grants (§2.7)** | parser, printer, hash; `grants { e0: units }` in `universe.universe` and `grants { path: units }` in `ordered.universe`; hosts stop calling `grant`; parse-time refusals | `DropGrant(e0)` → `units` does not fire. A grant on an unordered link is refused at parse time naming the link. No file under `crates/joinn-cli` or `crates/joinn-test-host` calls `grant`. Universe hashes move and are listed in the commit |
 | **P52-12** | **Hosts carry the far side (§2.8)** | the CLI injects every line into the universe; side `BodyState` deleted; presenter `fn(&LinkRefusal) -> String`; `Capture.far_side` and a derived `intent_set` | `echo "two\n2\n3\n12" \| joinn run universe` prints `universe.txt` byte-identically, and `joinn run calculator` prints `calculator.txt`. On the mutants `RenameLink(e0, e1)` and `RenameAlias(units, meters)`, the CLI's output is unchanged apart from the renamed names. The test host's `intent_set` for `units` is `{scale@1}` |
 | **P52-13** | **G6 at the hosts (§2.10)** | `cargo xtask probe-refusal`; **AJ rewrites `inner_reason.txt` from its output**, and this commit waits for that; 5·8 rewritten to read the test host's `far_side`, the CLI presenter's lines for those values, and the probe | The probe label contains `inner_reason.txt`. No far-side line does. The control's `Replace("e0")` makes the far-side check fire. `crossing.rs::second_sum_stays_home` and gate 5·8 both pass, and they now read the same sentence |
-| — | **Checkpoint C — typed by AJ** | `phase-5.2-checkpoint-c.md` | — |
+| — | **Checkpoint C** | `phase-5.2-checkpoint-c.md`: evidence by Cursor, acceptance by AJ (§2.9) | — |
 
 ### Sitting D — AJ's findings and the freeze
 
@@ -274,7 +299,7 @@ Seventeen commits in four sittings. **Done-when** is a command, and the command 
 | **P52-14** | **The adversary, specified by AJ** | Before this commit starts, AJ writes a one-paragraph spec in `docs/Findings/law-4-adversary-spec.md`. **PROPOSED:** *a `lookup` body that asks `units` "what factor did you last use?" and must pair each answer with the question that caused it.* Cursor attempts it with the existing wire, hyperedge and declared grants, in `corpus/phase52/adversary/`, and reports. AJ writes `law-4-adversary.md` | `witness phase-5.2-checkpoint-c.md` prints `current`. The finding uses **fired** only if the body cannot be expressed. The Phase 5 entry is corrected to *"held — the attempt did not test Law 4"* (F41). If correlation needs an order across two links, R58 is updated with the example |
 | **P52-15** | **The rest of AJ's findings** | AJ types `boundary-depth.md` (from 5.1 §2.6) and the `r50-membrane-cost.md` update (from `perf`'s split numbers), and writes R55 and R56 into `docs/Theory/JoInn Research Backlog.md` with their motivating examples | `witness` prints `current` for all three files |
 | **P52-16** | **Re-freeze, docs, gate 5.2, lock** | new goldens; `phase-5.2-hashes.md`; gates 5 and 5.1 per §2.2's table; **gate 5.2** (§6); README, `Guides/03`, `decisions.md` rows for V98–V110 and R59–R62 | `cargo xtask gate all` from a clean checkout, offline, runs the fixtures first and then prints phases 0, 1, 2, 2.1, 2.2, 3, 5, 5.1 and 5.2, with every item passing the mutant and neutral conditions. `corpus verify` matches. `phase-5.2-hashes.md` confirms **no Phase 0–3 coding hash moved**. The lock postcondition holds |
-| — | **The run — typed by AJ** | `phase-5.2-run.md` | `witness phase-5.2-run.md` prints `current` |
+| — | **The run** | `phase-5.2-run.md`: evidence by Cursor, acceptance by AJ (§2.9) | `witness phase-5.2-run.md` prints `current` |
 
 **Ordering notes.**
 
@@ -352,7 +377,8 @@ Phase 4 opens when all of the following hold. Its plan's P4-00 cites this list a
 | **The catalogue is tested against itself** | §5.2; each mutation test names a downstream effect | Rewrite the test to observe a check, a refusal or a body. If no effect can be named, the mutation is dropped from the catalogue |
 | **Controls get written to the mutation rather than the fact** (a control that checks "is link `e0` present") | review; the §2.2 table makes each control's claim readable | Choose a second mutation for that item from the same kind and require it to flip too. Only if this shows up. Don't build it in advance |
 | **A scan is evaded again** | rule 42; types instead of scans (§2.4, §2.5) | Stop. Report the scan and the change it blocked. Don't write around it |
-| **A checkpoint is written by the builder** | rule 38; `witness` compares mtimes | Delete the file and leave the sitting open |
+| **A builder writes the acceptance line** | rule 38; `witness` checks for the line (P52-02a) and compares commit times | Delete the line and leave the sitting open |
+| **A session report summarises instead of quoting** | §0.1 | Re-run the command and quote the line. A report that says "passes" without the printed line is not a report |
 | **`grants` moves a hash that shouldn't move** | `corpus verify`; `phase-5.2-hashes.md` | Only universe hashes may move. If a body hash moves, the grants section leaked into body coding. Stop |
 | **The interactive CLI still produces the calculator refusal with a side channel** | P52-12 deletes the side `BodyState`; V106 | If the transcript can't be produced with `"two"` inside the universe, record it. Don't re-add the side channel |
 | **Pace** | sittings; `witness` | If two sittings land in one day without a checkpoint between them, the review starts from that fact |
@@ -373,7 +399,8 @@ Phase 4 opens when all of the following hold. Its plan's P4-00 cites this list a
 | Let a host name a link or an alias | §2.7, §2.8 |
 | Fake a refusal in a host, or fake a refusal scenario the host can't produce | §2.8, R59 |
 | Write code to avoid a scan | rule 42 |
-| Let Cursor write a checkpoint, `inner_reason.txt`, or a finding marked *typed by AJ* | rule 38, §2.9, §2.10 |
+| Let Cursor write a checkpoint's acceptance, `inner_reason.txt`, or a finding marked *typed by AJ* | rule 38, §2.9, §2.10 |
+| Make AJ retype output a builder can read | §0.1, §2.9 |
 | Weaken the catalogue or the neutral rule to get `gate all` green after P52-05 | §4's ordering note |
 | Rebless a golden, add a primitive, add a line to `grandfather.txt` | unchanged |
 
@@ -397,7 +424,7 @@ Continuing from R58. R63 was added after P52-00.
 
 ## Appendix A · Amendments to `AGENTS.md`
 
-Rewrite rule 24 as below, and append rules 41–46. Leave everything else as Phase 5.1 left it. Update the header paragraph to name Phase 5.2 and its one idea: *damage must keep the form.*
+Rewrite rule 24 as below, and append rules 41–47. Leave everything else as Phase 5.1 left it. Update the header paragraph to name Phase 5.2 and its one idea: *damage must keep the form.*
 
 ```markdown
 24. A CONTROL IS AN ARTIFACT, PARSED, AND OPPOSED BY A MUTATION THAT KEEPS ITS
@@ -422,9 +449,15 @@ Rewrite rule 24 as below, and append rules 41–46. Leave everything else as Pha
 45. A HOST KNOWS NO LINK IDS OR ALIASES. Grants are declared in the universe's
     coding region; hosts never call `grant`. The far side is presented from a
     `LinkRefusal` alone.
-46. A SITTING ENDS AT A CHECKPOINT TYPED BY AJ. A commit whose done-when names a
+46. A SITTING ENDS AT A CHECKPOINT ACCEPTED BY AJ. The agent writes the
+    evidence (commands run, output quoted, each item marked expected or
+    unexpected); AJ writes the decisions and the line `Accepted: AJ, <date>`.
+    The agent never writes that line. A commit whose done-when names a
     checkpoint starts with `cargo xtask witness <checkpoint>` and stops if it
-    prints `stale`. The agent never writes a checkpoint.
+    does not print `current`.
+47. EVERY SESSION ENDS WITH THE REPORT BLOCK (plan §0.1). Values are quoted
+    from output. `vocab` and `modules` run on every commit. A commit message's
+    id names the work the commit did, or the commit is refused.
 ```
 
 ## Appendix B · Directory changes
