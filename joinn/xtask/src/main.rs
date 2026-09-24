@@ -36,10 +36,14 @@ fn main() -> ExitCode {
         "perf" => fns::perf(),
         "floor" => fns::floor(),
         "decisions" => fns::decisions(),
+        "witness" => match args.next() {
+            Some(path) => fns::witness(path),
+            None => Err("usage: cargo xtask witness <path>".into()),
+        },
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | power | agree | perf | floor | decisions"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | power | agree | perf | floor | decisions | witness"
             );
             Ok(())
         }
