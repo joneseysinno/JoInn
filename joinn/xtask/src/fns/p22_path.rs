@@ -26,6 +26,7 @@ pub(crate) fn p22_path() -> bool {
             check: || true,
             control: |_: &()| false,
             control_artifact: "gates.lock",
+            opposes: (),
         }],
         &[()],
     ) {

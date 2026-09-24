@@ -94,7 +94,8 @@ impl Gate {
 ///
 /// `S` is the subject type. Legacy tables use `()` (controls are not graded).
 /// Non-legacy tables use a parsed subject defined in `xtask`.
-pub struct GateItem<S = ()> {
+/// `O` is the declared mutation (non-legacy) or `()` (legacy).
+pub struct GateItem<S = (), O = ()> {
     /// Printed name.
     pub name: &'static str,
     /// The witness this item must accept.
@@ -103,4 +104,6 @@ pub struct GateItem<S = ()> {
     pub control: fn(&S) -> bool,
     /// Repo-relative path of the control artifact. Not opened in this crate.
     pub control_artifact: &'static str,
+    /// Catalogue mutation this control must catch. Legacy items use `()`.
+    pub opposes: O,
 }

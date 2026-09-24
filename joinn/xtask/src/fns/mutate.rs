@@ -1,5 +1,4 @@
 //! Closed mutation catalogue: damage that keeps the form.
-#![allow(dead_code, unused_imports)] // consumed by tests now; harness in P52-05
 
 mod apply;
 mod coding_hash;
@@ -33,6 +32,7 @@ pub(crate) use mutate_fn::mutate;
 pub(crate) use neutral::neutral;
 
 /// One catalogue mutation. Closed; every non-legacy control opposes one.
+#[allow(dead_code)] // closed catalogue; not every variant is declared by a gate row yet
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) enum Mutation {
     DropLink(&'static str),

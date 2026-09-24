@@ -1,5 +1,6 @@
 //! Gate 5.1: an unparseable subject refuses the run by name.
 
+use super::mutate::Mutation;
 use super::run_gate_table;
 use super::subject::Subject;
 use joinn_gate::GateItem;
@@ -13,6 +14,7 @@ pub(crate) fn g51_reads() -> bool {
             check: || true,
             control: |_: &Subject| false,
             control_artifact: "xtask/gate_fixtures/not_a_universe.universe",
+            opposes: Mutation::DropLink("e0"),
         }],
     ) {
         Err(msg) => msg.contains("bad universe"),

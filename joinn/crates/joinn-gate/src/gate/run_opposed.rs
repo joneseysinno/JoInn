@@ -3,8 +3,8 @@
 use super::GateItem;
 
 /// Run an opposed table. Fails naming the item if a control passes on the real subject.
-pub fn run_opposed<S>(
-    items: &[GateItem<S>],
+pub fn run_opposed<S, O>(
+    items: &[GateItem<S, O>],
     subjects: &[S],
 ) -> Result<Vec<(usize, &'static str, bool)>, String> {
     if items.len() != subjects.len() {

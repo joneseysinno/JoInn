@@ -124,7 +124,6 @@ mod units_after;
 mod mask_std_calls;
 mod membrane_field;
 mod load_seals;
-#[allow(dead_code)] // catalogue is consumed by P52-05 harness
 mod mutate;
 mod run_body_bin;
 mod nz;
