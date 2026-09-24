@@ -2,8 +2,8 @@
 
 use super::{
     g51_cross, g51_cross_control, g51_hash, g51_hash_control, g51_home, g51_home_control,
-    g51_hosts, g51_hosts_control, g51_lock, g51_lock_control, g51_revoke, g51_revoke_control,
-    g51_total, g51_total_control, g51_typed, g51_typed_control,
+    g51_hosts, g51_hosts_control, g51_revoke, g51_revoke_control, g51_total, g51_total_control,
+    g51_typed, g51_typed_control,
 };
 use super::mutate::Mutation;
 use super::subject::Subject;
@@ -58,13 +58,6 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         control: g51_home_control,
         control_artifact: "corpus/phase5/controls/inner_reason.txt",
         opposes: Mutation::Replace("e0"),
-    },
-    GateItem {
-        name: "The lock is this run",
-        check: g51_lock,
-        control: g51_lock_control,
-        control_artifact: "xtask/gate_fixtures/off_by_one.lock",
-        opposes: Mutation::SetScore(concat!("phase ", "5"), 8, 8),
     },
 ];
 

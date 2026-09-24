@@ -23,6 +23,7 @@ use super::*;
 #[allow(clippy::disallowed_methods)]
 pub(crate) fn gate_all() -> Result<(), String> {
     let t0 = Instant::now();
+    harness_fixtures()?;
     let p0 = corpus_verify().is_ok();
     if !p0 {
         corpus_verify()?;
@@ -59,8 +60,8 @@ pub(crate) fn gate_all() -> Result<(), String> {
         ("phase 5", p5_ok, p5_n, p5_t, false),
         (phase_51.as_str(), p51_ok, p51_n, p51_t, false),
     ];
-    write_lock(&outcomes)?;
     let lock = workspace_root()?.join("gates.lock");
+    write_lock(&lock, &outcomes)?;
     let text = fs::read_to_string(&lock).map_err(|e| e.to_string())?;
     let rows = parse_lock_scores(&text)?;
     scores_match(&outcomes, &rows)?;

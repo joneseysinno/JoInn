@@ -1,11 +1,12 @@
-//! Write gates.lock from the scores each gate returned.
+//! Write a lock file from the scores each gate returned.
 
 use std::fs;
+use std::path::Path;
 
-use super::workspace_root;
-
-pub(crate) fn write_lock(outcomes: &[(&str, bool, u32, u32, bool)]) -> Result<(), String> {
-    let lock = workspace_root()?.join("gates.lock");
+pub(crate) fn write_lock(
+    path: &Path,
+    outcomes: &[(&str, bool, u32, u32, bool)],
+) -> Result<(), String> {
     let mut body = String::from(
         "# JoInn gates.lock — recorded passed gates. Never edit to make a check pass.\n",
     );
@@ -20,5 +21,5 @@ pub(crate) fn write_lock(outcomes: &[(&str, bool, u32, u32, bool)]) -> Result<()
             body.push_str(&format!("{name}: {n}/{total}\n"));
         }
     }
-    fs::write(lock, body).map_err(|e| e.to_string())
+    fs::write(path, body).map_err(|e| e.to_string())
 }

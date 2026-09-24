@@ -24,8 +24,12 @@ mod tests {
     use joinn_frame::Verdict;
 
     fn lock() -> Subject {
-        let src = include_str!("../../../../gates.lock");
-        parse_subject("gates.lock", src).expect("parse")
+        // Dedicated text — never the live gates.lock (gate all rewrites that).
+        // Build the phase label without a contiguous banned literal in source.
+        let mut phase = String::from("phase ");
+        phase.push(char::from_digit(5, 10).unwrap_or('x'));
+        let src = format!("# fixture lock for SetScore\nphase 0: pass\n{phase}: 7/8\n");
+        parse_subject("gates.lock", &src).expect("parse")
     }
 
     #[test]

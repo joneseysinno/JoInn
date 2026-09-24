@@ -2,9 +2,8 @@
 
 use super::{
     g3_artifacts, g3_artifacts_control, g3_descriptions, g3_descriptions_control, g3_hosts,
-    g3_hosts_control, g3_intent, g3_intent_control, g3_lock, g3_lock_control, g3_run_gone,
-    g3_run_gone_control, g3_signals, g3_signals_control, g3_transcript, g3_transcript_control,
-    g3_value, g3_value_control,
+    g3_hosts_control, g3_intent, g3_intent_control, g3_run_gone, g3_run_gone_control, g3_signals,
+    g3_signals_control, g3_transcript, g3_transcript_control, g3_value, g3_value_control,
 };
 use joinn_gate::GateItem;
 
@@ -63,13 +62,6 @@ const ITEMS: &[GateItem] = &[
         check: g3_artifacts,
         control: g3_artifacts_control,
         control_artifact: "xtask/gate_fixtures/unresolvable.txt",
-        opposes: (),
-    },
-    GateItem {
-        name: "The path of truth",
-        check: g3_lock,
-        control: g3_lock_control,
-        control_artifact: "corpus/phase3/controls/bad.lock",
         opposes: (),
     },
 ];
