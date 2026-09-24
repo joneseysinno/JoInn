@@ -82,13 +82,20 @@ reason text before this checkpoint. Fixed in commit `56b36a4`.
 
 - The six extra failing tests `phase-5.1-run.md` found (assemble ×2, law4,
   universe ×3, test-host `units`): how each was resolved, and whether any
-  expectation changed (rule 7): ___
-- Gates 2, 2.1, 2.2 at `0/0`: expected to stay until P52-03 to P52-08. Still `0/0`? ___
-- Gate 5·8 / 5.1·7 *A refusal stays home*: expected to fail until P52-13. Still failing? ___
+  expectation changed (rule 7): P52-01 (`734933d`) supplied `phase21/mul.cell`
+  in assemble/law4/units maps; adversary asserts typing refusal naming
+  `units.scale@1`; universe expects hash `2ccbb067…`, ordered member/alias
+  order, and `e0` order `ordered`; units host expects `scale@2 "84"`. Decision 2
+  above accepts those expectation changes. Suite green after P52-01.
+- Gates 2, 2.1, 2.2 at `0/0`: expected to stay until P52-03 to P52-08. Still `0/0`? yes (`gates.lock`)
+- Gate 5·8 / 5.1·7 *A refusal stays home*: expected to fail until P52-13. Still failing? yes (`gates.lock`: phase 5 7/8, phase 5.1 8/9)
 
 ## After committing this file
 
 `cargo xtask witness docs/Findings/phase-5.2-checkpoint-a.md` → `current`
 (must print `current` before P52-03 starts)
+
+P52-02a (`24c3f03`): `witness` requires `Accepted: AJ, `; a copy without that
+line prints `unaccepted:` and exits non-zero.
 
 Accepted: AJ, 24 Sep 2026
