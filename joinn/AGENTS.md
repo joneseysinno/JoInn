@@ -128,6 +128,15 @@ to answer its own decoration check.
     dimension ≤ 1 until fillings exist; touch-only is enforced by C₀ being
     derived. No check, doc comment or finding may attribute a universe refusal
     to ∂∂ ≠ 0 before Phase 4.
+46. A SITTING ENDS AT A CHECKPOINT ACCEPTED BY AJ. The agent writes the
+    evidence (commands run, output quoted, each item marked expected or
+    unexpected); AJ writes the decisions and the line `Accepted: AJ, <date>`.
+    The agent never writes that line. A commit whose done-when names a
+    checkpoint starts with `cargo xtask witness <checkpoint>` and stops if it
+    does not print `current`.
+47. EVERY SESSION ENDS WITH THE REPORT BLOCK (plan §0.1). Values are quoted
+    from output. `vocab` and `modules` run on every commit. A commit message's
+    id names the work the commit did, or the commit is refused.
 
 ## Definition of done
 

@@ -60,7 +60,7 @@ If none, write *none*.
 Option chosen: **(b)**, the reasoned `allow(vocab)`. R63 recorded in `decisions.md`: yes.
 The silencer on `xtask/src/fns/g51_lock.rs:9` gave a false reason ("budget
 arithmetic on u64"; it is the off-by-one lock fixture). AJ decided: fix the
-reason text before this checkpoint. Fixed in commit `___`.
+reason text before this checkpoint. Fixed in commit `56b36a4`.
 
 ## Decisions AJ made at this checkpoint (24 Sep)
 
@@ -68,7 +68,7 @@ reason text before this checkpoint. Fixed in commit `___`.
    witness functionality"*, but its only change is this file as a blank
    skeleton. That made `witness` print `current` for an empty checkpoint, and it
    put a P52-03 label on work P52-03 never did. AJ decided: `git revert`, not
-   rewrite (it was already pushed). Revert commit: `ok___`. **P52-03 has not started.**
+   rewrite (it was already pushed). Revert commit: `73b4210`. **P52-03 has not started.**
 2. **Rule 7: P52-01's six changed expectations are accepted.** Each follows the
    file P51-12 wrote, and none is a rebless: the universe hash `8008307…` →
    `2ccbb067…` (recorded in `phase-5.1-hashes.md`); ordered-path member order
