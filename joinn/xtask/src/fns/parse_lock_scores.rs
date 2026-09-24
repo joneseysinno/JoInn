@@ -5,6 +5,7 @@ pub(crate) struct LockRow {
     pub phase: String,
     pub n: u32,
     pub total: u32,
+    pub legacy: bool,
 }
 
 pub(crate) fn parse_lock_scores(text: &str) -> Result<Vec<LockRow>, String> {
@@ -24,6 +25,7 @@ pub(crate) fn parse_lock_scores(text: &str) -> Result<Vec<LockRow>, String> {
                 phase,
                 n: 1,
                 total: 1,
+                legacy: false,
             });
             continue;
         }
@@ -32,9 +34,14 @@ pub(crate) fn parse_lock_scores(text: &str) -> Result<Vec<LockRow>, String> {
                 phase,
                 n: 0,
                 total: 1,
+                legacy: false,
             });
             continue;
         }
+        let (score, legacy) = match score.strip_suffix(" legacy") {
+            Some(rest) => (rest.trim(), true),
+            None => (score, false),
+        };
         let Some((num, den)) = score.split_once('/') else {
             return Err(format!("{phase}: score is not n/total: {score}"));
         };
@@ -44,7 +51,12 @@ pub(crate) fn parse_lock_scores(text: &str) -> Result<Vec<LockRow>, String> {
         let total: u32 = den
             .parse()
             .map_err(|_| format!("{phase}: score denominator is not a count: {den}"))?;
-        rows.push(LockRow { phase, n, total });
+        rows.push(LockRow {
+            phase,
+            n,
+            total,
+            legacy,
+        });
     }
     if rows.is_empty() {
         return Err("lock has no scores".into());
@@ -69,5 +81,16 @@ mod tests {
             }
             Err(msg) => panic!("{msg}"),
         }
+    }
+
+    #[test]
+    fn legacy_suffix_is_parsed() {
+        let n = 8u32;
+        let src = format!("phase 2: {n}/{n} legacy\n");
+        let rows = parse_lock_scores(&src).expect("parse");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].n, n);
+        assert_eq!(rows[0].total, n);
+        assert!(rows[0].legacy);
     }
 }

@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p21_transcript_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p21_transcript_control(_art: &()) -> bool {
     match run_calculator_bin() {
         Ok(got) => got.contains("SURVIVED"),
         Err(_) => true,

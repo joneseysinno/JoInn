@@ -1,12 +1,9 @@
 //! Phase 2 turn control: a result of 5 would mean the turn was not applied.
 
-use super::{artifact_loads, int_val};
+use super::{int_val};
 use joinn_frame::Verdict;
 
-pub(crate) fn g2_turn_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g2_turn_control(_art: &()) -> bool {
     let Ok(five) = int_val(5) else {
         return true;
     };

@@ -5,9 +5,10 @@ use super::{
     g5_law4_control, g5_lenses, g5_lenses_control, g5_linked, g5_linked_control, g5_locality,
     g5_locality_control, g5_membrane, g5_membrane_control, g5_revoke, g5_revoke_control,
 };
+use super::subject::Subject;
 use joinn_gate::GateItem;
 
-const ITEMS: &[GateItem] = &[
+const ITEMS: &[GateItem<Subject>] = &[
     GateItem {
         name: "Something crosses",
         check: g5_linked,
@@ -58,6 +59,6 @@ const ITEMS: &[GateItem] = &[
     },
 ];
 
-pub(crate) fn gate_five_items() -> &'static [GateItem] {
+pub(crate) fn gate_five_items() -> &'static [GateItem<Subject>] {
     ITEMS
 }

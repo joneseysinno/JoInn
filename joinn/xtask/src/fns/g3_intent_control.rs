@@ -1,11 +1,8 @@
 //! Gate 3 item 5 control: calculator.body must still name both inputs.
 
-use super::{artifact_loads, workspace_root};
+use super::{workspace_root};
 
-pub(crate) fn g3_intent_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g3_intent_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {
         return true;
     };

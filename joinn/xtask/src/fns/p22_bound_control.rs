@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_bound_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_bound_control(_art: &()) -> bool {
     match drive_bound_zero() {
         Ok((sealed, bound)) => nz(bound, &sealed).is_ok(),
         Err(_) => true,

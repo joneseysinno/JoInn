@@ -1,17 +1,12 @@
 //! Gate 5 item 1: 2 and 3 cross e0 and units holds 60.
 
-use super::{units_after, workspace_root};
-use std::fs;
+use super::{load_universe_file, units_after};
 
 pub(crate) fn g5_linked() -> bool {
-    let Ok(root) = workspace_root() else {
+    let Ok(u) = load_universe_file("phase5/universe.universe") else {
         return false;
     };
-    let Ok(src) = fs::read_to_string(root.join("corpus").join("phase5").join("universe.universe"))
-    else {
-        return false;
-    };
-    match units_after(&src, true) {
+    match units_after(&u, true) {
         Ok((1, Some(value))) => value == "60",
         _ => false,
     }

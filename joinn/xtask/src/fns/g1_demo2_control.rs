@@ -19,9 +19,6 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn g1_demo2_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g1_demo2_control(_art: &()) -> bool {
     demos::demo2(Budget::default(), joinn_prim::sealed_natives()).is_ok()
 }

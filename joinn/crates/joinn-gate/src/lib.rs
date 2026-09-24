@@ -13,7 +13,7 @@ pub mod testimony;
 
 pub use budget::Budget;
 pub use eval::{CellOracles, eval_predicate};
-pub use gate::{Accepted, Artifact, Gate, GateItem, run_opposed};
+pub use gate::{Accepted, Gate, GateItem, run_opposed};
 pub use natives::NativeRegistry;
 pub use oracle::Oracle;
 pub use testimony::TestimonyStore;

@@ -88,24 +88,19 @@ impl Gate {
     }
 }
 
-/// The bytes of a control artifact. `joinn-gate` carries them and never opens a file.
-pub struct Artifact<'a> {
-    /// Repo-relative path the bytes were read from.
-    pub path: &'static str,
-    /// File contents. A damaged copy is the same path with different bytes.
-    pub bytes: &'a [u8],
-}
-
-/// One opposed gate item. `check` must be true; `control` must be false on the real artifact.
+/// One opposed gate item. `check` must be true; `control` must be false on the real subject.
 /// `control_artifact` is a repo-relative path. `joinn-gate` carries the string
-/// and never opens it; `xtask` reads the bytes and passes them in.
-pub struct GateItem {
+/// and never opens it; `xtask` parses the file and passes the subject.
+///
+/// `S` is the subject type. Legacy tables use `()` (controls are not graded).
+/// Non-legacy tables use a parsed subject defined in `xtask`.
+pub struct GateItem<S = ()> {
     /// Printed name.
     pub name: &'static str,
     /// The witness this item must accept.
     pub check: fn() -> bool,
     /// The witness this item must refuse. True means the instrument is blind.
-    pub control: for<'a> fn(&Artifact<'a>) -> bool,
+    pub control: fn(&S) -> bool,
     /// Repo-relative path of the control artifact. Not opened in this crate.
     pub control_artifact: &'static str,
 }

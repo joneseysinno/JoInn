@@ -1,16 +1,10 @@
 //! Gate 5.1 item 9 control: the artifact lock is not a full pass.
 
-use super::{artifact_loads, parse_lock_scores};
+use super::subject::Subject;
 
-pub(crate) fn g51_lock_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
-    let Ok(text) = std::str::from_utf8(art.bytes) else {
+pub(crate) fn g51_lock_control(subject: &Subject) -> bool {
+    let Subject::Lock(rows) = subject else {
         return true;
     };
-    match parse_lock_scores(text) {
-        Ok(rows) => !rows.iter().any(|row| row.n != row.total),
-        Err(_) => true,
-    }
+    !rows.iter().any(|row| row.n != row.total)
 }

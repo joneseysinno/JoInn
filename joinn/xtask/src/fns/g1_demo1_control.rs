@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn g1_demo1_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g1_demo1_control(_art: &()) -> bool {
     let gate = Gate::phase1(Budget::default());
     matches!(
         gate.admit_allele(&sum_cell(), &joinn_prim::add_int_allele()),

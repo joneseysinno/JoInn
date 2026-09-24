@@ -1,12 +1,12 @@
 //! Gate 5 item 8 control: the artifact's text does not appear on the far side.
 
+use super::subject::Subject;
 use joinn_link::{format_link_refusal, Address, LinkRefusal, LinkRefusalKind};
 
-pub(crate) fn g5_locality_control(art: &joinn_gate::Artifact) -> bool {
-    let Ok(text) = std::str::from_utf8(art.bytes) else {
+pub(crate) fn g5_locality_control(subject: &Subject) -> bool {
+    let Subject::Text(secret) = subject else {
         return true;
     };
-    let secret = text.trim();
     if secret.is_empty() {
         return true;
     }

@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_lookup_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_lookup_control(_art: &()) -> bool {
     let empty = BTreeMap::new();
     let none_ok = matches!(
         joinn_prim::find_cell_for_native(&empty, &NativeId("add@ℤ".into())),

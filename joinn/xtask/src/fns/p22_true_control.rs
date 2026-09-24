@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_true_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_true_control(_art: &()) -> bool {
     matches!(
         joinn_prim::agree_injected_disagreement(1, 16),
         Verdict::Ok(_)

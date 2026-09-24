@@ -1,11 +1,8 @@
 //! Gate 3 item 2 control: planted_desc differs from the golden in the value field.
 
-use super::{artifact_loads, first_desc_diff, workspace_root};
+use super::{first_desc_diff, workspace_root};
 
-pub(crate) fn g3_descriptions_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g3_descriptions_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {
         return true;
     };

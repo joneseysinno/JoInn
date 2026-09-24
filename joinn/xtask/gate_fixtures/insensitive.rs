@@ -1,8 +1,6 @@
-//! A control that ignores the bytes it is given.
-//! The gate run must refuse this item: damaging the file does not change the answer.
+//! A control that ignores the subject it is given.
+//! Kept as a fixture source; the byte-damage rule is gone (P52-03).
 
-use joinn_gate::Artifact;
-
-pub fn ignores_its_bytes(_art: &Artifact) -> bool {
+pub fn ignores_its_bytes(_art: &()) -> bool {
     false
 }

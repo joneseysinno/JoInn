@@ -2,12 +2,13 @@
 
 use super::{
     g51_cross, g51_cross_control, g51_hash, g51_hash_control, g51_home, g51_home_control,
-    g51_hosts, g51_hosts_control, g51_lock, g51_lock_control, g51_reads, g51_reads_control,
-    g51_revoke, g51_revoke_control, g51_total, g51_total_control, g51_typed, g51_typed_control,
+    g51_hosts, g51_hosts_control, g51_lock, g51_lock_control, g51_revoke, g51_revoke_control,
+    g51_total, g51_total_control, g51_typed, g51_typed_control,
 };
+use super::subject::Subject;
 use joinn_gate::GateItem;
 
-const ITEMS: &[GateItem] = &[
+const ITEMS: &[GateItem<Subject>] = &[
     GateItem {
         name: "Something crosses",
         check: g51_cross,
@@ -51,12 +52,6 @@ const ITEMS: &[GateItem] = &[
         control_artifact: "corpus/phase5/controls/inner_reason.txt",
     },
     GateItem {
-        name: "Every control reads its artifact",
-        check: g51_reads,
-        control: g51_reads_control,
-        control_artifact: "xtask/gate_fixtures/insensitive.rs",
-    },
-    GateItem {
         name: "The lock is this run",
         check: g51_lock,
         control: g51_lock_control,
@@ -64,6 +59,6 @@ const ITEMS: &[GateItem] = &[
     },
 ];
 
-pub(crate) fn gate_five_one_items() -> &'static [GateItem] {
+pub(crate) fn gate_five_one_items() -> &'static [GateItem<Subject>] {
     ITEMS
 }

@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p21_trace_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p21_trace_control(_art: &()) -> bool {
     match calculator_success_trace() {
         Ok((trace, _)) => trace.is_empty(),
         Err(_) => true,

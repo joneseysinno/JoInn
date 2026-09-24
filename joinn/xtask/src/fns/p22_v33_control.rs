@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_v33_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_v33_control(_art: &()) -> bool {
     let Ok((bodies, cells, seals)) = load_seals() else {
         return true;
     };

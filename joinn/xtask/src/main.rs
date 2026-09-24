@@ -122,12 +122,8 @@ mod tests {
             super::fns::p22_bound(),
             "zero-bound SealSpec must be refused naming the seal"
         );
-        let art = joinn_gate::Artifact {
-            path: "corpus/phase21/int_add_ref.body",
-            bytes: include_str!("../../corpus/phase21/int_add_ref.body").as_bytes(),
-        };
         assert!(
-            !super::fns::p22_bound_control(&art),
+            !super::fns::p22_bound_control(&()),
             "control must stay refused while the loading path refuses bound 0"
         );
     }
@@ -170,18 +166,26 @@ mod tests {
 
     #[test]
     fn no_two_gate_items_share_a_check_or_control() {
-        let tables = [
+        let legacy = [
             super::fns::gate_one_items(),
             super::fns::gate_two_items(),
             super::fns::gate_two_one_items(),
             super::fns::gate_two_two_items(),
             super::fns::gate_three_items(),
+        ];
+        let non_legacy = [
             super::fns::gate_five_items(),
             super::fns::gate_five_one_items(),
         ];
         let mut checks = Vec::new();
         let mut controls = Vec::new();
-        for table in tables {
+        for table in legacy {
+            for item in table {
+                checks.push((item.name, item.check as usize));
+                controls.push((item.name, item.control as usize));
+            }
+        }
+        for table in non_legacy {
             for item in table {
                 checks.push((item.name, item.check as usize));
                 controls.push((item.name, item.control as usize));

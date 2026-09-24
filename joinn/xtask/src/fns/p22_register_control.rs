@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_register_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_register_control(_art: &()) -> bool {
     let src = "body { codex 1 genome { prim:case as c } grants { } wires { } budget { steps 1 } lineage none }\n";
     let Ok(body) = parse_body_ok(src) else {
         return true;

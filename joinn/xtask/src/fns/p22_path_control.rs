@@ -19,18 +19,15 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p22_path_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p22_path_control(_art: &()) -> bool {
     run_opposed(
         &[GateItem {
             name: "probe",
             check: || true,
-            control: |_| true,
+            control: |_: &()| true,
             control_artifact: "gates.lock",
         }],
-        &[b""],
+        &[()],
     )
     .is_ok()
 }

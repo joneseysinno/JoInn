@@ -8,11 +8,12 @@ pub(crate) fn g51_lock() -> bool {
     let total = n;
     let wrong = n.saturating_sub(1);
     let phase = format!("phase {}", 5);
-    let returned = [(phase.as_str(), true, n, total)];
+    let returned = [(phase.as_str(), true, n, total, false)];
     let rows = [LockRow {
         phase: phase.clone(),
         n: wrong,
         total,
+        legacy: false,
     }];
     match scores_match(&returned, &rows) {
         Err(msg) => msg.contains(&phase),

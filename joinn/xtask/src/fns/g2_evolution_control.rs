@@ -1,12 +1,9 @@
 //! Phase 2 evolution control: a wrong lineage must not be admitted.
 
-use super::{artifact_loads, workspace_root};
+use super::{workspace_root};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 
-pub(crate) fn g2_evolution_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g2_evolution_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {
         return true;
     };

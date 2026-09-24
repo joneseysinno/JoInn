@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn p21_turn_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn p21_turn_control(_art: &()) -> bool {
     let mut cell = {
         let Ok(root) = workspace_root() else {
             return true;

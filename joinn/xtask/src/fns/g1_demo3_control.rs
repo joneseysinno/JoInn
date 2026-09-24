@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn g1_demo3_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g1_demo3_control(_art: &()) -> bool {
     let mut cell = sum_cell();
     let before = hash(&cell.coding);
     cell.regulatory

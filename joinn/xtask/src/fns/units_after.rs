@@ -3,24 +3,23 @@
 use super::{int_val, load_phase5_bodies, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{bind_bodies, grant, parse_universe, Address, UniverseReport, UniverseState};
+use joinn_link::{bind_bodies, grant, Address, Universe, UniverseReport, UniverseState};
 
-pub(crate) fn units_after(src: &str, grant_e0: bool) -> Result<(usize, Option<String>), String> {
-    let universe = match parse_universe(src) {
-        Verdict::Ok(u) => u,
-        Verdict::Refused(r) => return Err(r.reason),
-    };
+pub(crate) fn units_after(
+    universe: &Universe,
+    grant_e0: bool,
+) -> Result<(usize, Option<String>), String> {
     let supplied = load_phase5_bodies()?;
-    let bound = match bind_bodies(&universe, &supplied) {
+    let bound = match bind_bodies(universe, &supplied) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    let mut state = match UniverseState::new(&universe, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(universe, bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };
     if grant_e0 {
-        match grant(state.link_runtime(), &universe, "e0", "units") {
+        match grant(state.link_runtime(), universe, "e0", "units") {
             Verdict::Ok(()) => {}
             Verdict::Refused(r) => return Err(r.reason),
         }

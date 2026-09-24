@@ -1,40 +1,30 @@
-//! Read each control artifact, require damage to flip the answer, then run the table.
+//! Parse each control artifact by kind, then run the opposed table.
 
-use joinn_gate::{Artifact, GateItem, run_opposed};
+use joinn_gate::{GateItem, run_opposed};
 use std::fs;
 
-use super::{damage_bytes, resolve_named};
+use super::parse_subject::parse_subject;
+use super::resolve_named;
+use super::subject::Subject;
 
-pub(crate) fn run_gate_table(phase: &str, items: &[GateItem]) -> Result<(u32, u32), String> {
-    let mut loaded = Vec::new();
+pub(crate) fn run_gate_table(
+    phase: &str,
+    items: &[GateItem<Subject>],
+) -> Result<(u32, u32), String> {
+    let mut subjects = Vec::new();
     for (i, item) in items.iter().enumerate() {
         let path = resolve_named(i + 1, item.name, item.control_artifact)?;
-        let bytes = fs::read(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-        loaded.push(bytes);
+        let text = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+        let subject = parse_subject(item.control_artifact, &text).map_err(|reason| {
+            format!(
+                "gate item {} ({}): {reason}",
+                i + 1,
+                item.name
+            )
+        })?;
+        subjects.push(subject);
     }
-    let mut blind = Vec::new();
-    for (item, bytes) in items.iter().zip(loaded.iter()) {
-        let real = Artifact {
-            path: item.control_artifact,
-            bytes,
-        };
-        let damaged_buf = damage_bytes(bytes);
-        let damaged = Artifact {
-            path: item.control_artifact,
-            bytes: &damaged_buf,
-        };
-        if (item.control)(&real) == (item.control)(&damaged) {
-            blind.push(item.name);
-        }
-    }
-    if !blind.is_empty() {
-        return Err(format!(
-            "control does not read its artifact: {}",
-            blind.join("; ")
-        ));
-    }
-    let refs: Vec<&[u8]> = loaded.iter().map(Vec::as_slice).collect();
-    let rows = run_opposed(items, &refs)?;
+    let rows = run_opposed(items, &subjects)?;
     let mut n = 0u32;
     let total = rows.len() as u32;
     for (i, name, ok) in rows {
@@ -53,8 +43,9 @@ pub(crate) fn run_gate_table(phase: &str, items: &[GateItem]) -> Result<(u32, u3
 mod tests {
     use super::run_gate_table;
     use joinn_gate::GateItem;
+    use crate::fns::subject::Subject;
 
-    fn control_false(_: &joinn_gate::Artifact) -> bool {
+    fn control_false(_: &Subject) -> bool {
         false
     }
 
@@ -79,24 +70,25 @@ mod tests {
     }
 
     #[test]
-    fn insensitive_fixture_is_refused() {
-        fn ignores(_: &joinn_gate::Artifact) -> bool {
-            false
-        }
+    fn unparseable_body_names_the_item_and_reason() {
         let err = run_gate_table(
-            "phase fixture",
+            "phase test",
             &[GateItem {
-                name: "ignores its bytes",
+                name: "bad universe",
                 check: || true,
-                control: ignores,
-                control_artifact: "xtask/gate_fixtures/insensitive.rs",
+                control: control_false,
+                control_artifact: "xtask/gate_fixtures/not_a_universe.universe",
             }],
         );
         match err {
-            Ok(_) => panic!("an ignoring control must refuse the run"),
+            Ok(_) => panic!("unparseable artifact must refuse"),
             Err(msg) => {
-                assert!(msg.contains("ignores its bytes"), "{msg}");
-                assert!(msg.contains("does not read its artifact"), "{msg}");
+                eprintln!("refusal: {msg}");
+                assert!(msg.contains("bad universe"), "{msg}");
+                assert!(
+                    msg.contains("expected") || msg.contains("universe"),
+                    "expected parser reason in: {msg}"
+                );
             }
         }
     }

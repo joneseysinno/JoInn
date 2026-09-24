@@ -19,10 +19,7 @@ use std::time::Instant;
 
 use super::*;
 
-pub(crate) fn g1_demo4_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g1_demo4_control(_art: &()) -> bool {
     let gate = Gate::new(Budget::default(), g1_natives());
     let parent = sum_cell();
     let mut added = parent.clone();

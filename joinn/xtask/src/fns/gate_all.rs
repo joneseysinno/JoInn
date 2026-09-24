@@ -50,14 +50,14 @@ pub(crate) fn gate_all() -> Result<(), String> {
     let phase_51 = format!("phase {}.{}", 5, 1);
     let (p51_ok, p51_n, p51_t) = score(&phase_51, p51);
     let outcomes = [
-        ("phase 0", p0, 1, 1),
-        ("phase 1", p1_ok, p1_n, p1_t),
-        ("phase 2", p2_ok, p2_n, p2_t),
-        ("phase 2.1", p21_ok, p21_n, p21_t),
-        ("phase 2.2", p22_ok, p22_n, p22_t),
-        ("phase 3", p3_ok, p3_n, p3_t),
-        ("phase 5", p5_ok, p5_n, p5_t),
-        (phase_51.as_str(), p51_ok, p51_n, p51_t),
+        ("phase 0", p0, 1, 1, false),
+        ("phase 1", p1_ok, p1_n, p1_t, true),
+        ("phase 2", p2_ok, p2_n, p2_t, true),
+        ("phase 2.1", p21_ok, p21_n, p21_t, true),
+        ("phase 2.2", p22_ok, p22_n, p22_t, true),
+        ("phase 3", p3_ok, p3_n, p3_t, true),
+        ("phase 5", p5_ok, p5_n, p5_t, false),
+        (phase_51.as_str(), p51_ok, p51_n, p51_t, false),
     ];
     write_lock(&outcomes)?;
     let lock = workspace_root()?.join("gates.lock");

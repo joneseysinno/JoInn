@@ -1,14 +1,11 @@
 //! Gate 3 item 1 control: a sum of 4 must not be what both hosts produced.
 
-use super::{artifact_loads, load_calculator};
+use super::{load_calculator};
 use joinn_frame::{Term, Verdict};
 use joinn_host::Address;
 use joinn_test_host::RawEvent;
 
-pub(crate) fn g3_hosts_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g3_hosts_control(_art: &()) -> bool {
     let Ok((body, cells)) = load_calculator() else {
         return true;
     };

@@ -1,13 +1,10 @@
 //! Phase 2 bodies control: calculator and calculator_b must not diverge.
 
-use super::{artifact_loads, workspace_root};
+use super::{workspace_root};
 use joinn_dna::{parse_body, print_body};
 use joinn_frame::{FrameRegistry, Verdict};
 
-pub(crate) fn g2_bodies_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g2_bodies_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {
         return true;
     };

@@ -1,11 +1,8 @@
 //! Gate 3 item 4 control: the no-indent transcript is not the golden.
 
-use super::{artifact_loads, workspace_root};
+use super::{workspace_root};
 
-pub(crate) fn g3_transcript_control(art: &joinn_gate::Artifact) -> bool {
-    if !artifact_loads(art) {
-        return true;
-    }
+pub(crate) fn g3_transcript_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {
         return true;
     };

@@ -24,10 +24,10 @@ pub(crate) fn p22_path() -> bool {
         &[GateItem {
             name: "probe",
             check: || true,
-            control: |_| false,
+            control: |_: &()| false,
             control_artifact: "gates.lock",
         }],
-        &[b""],
+        &[()],
     ) {
         Ok(rows) => rows.len() == 1 && rows[0].2,
         Err(_) => false,
