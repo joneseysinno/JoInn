@@ -7,7 +7,7 @@ use joinn_link::{bind_bodies, grant, Address, Universe, UniverseReport, Universe
 
 pub(crate) fn units_after(
     universe: &Universe,
-    grant_e0: bool,
+    grant_link: Option<&str>,
 ) -> Result<(usize, Option<String>), String> {
     let supplied = load_phase5_bodies()?;
     let bound = match bind_bodies(universe, &supplied) {
@@ -18,8 +18,8 @@ pub(crate) fn units_after(
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    if grant_e0 {
-        match grant(state.link_runtime(), universe, "e0", "units") {
+    if let Some(link_id) = grant_link {
+        match grant(state.link_runtime(), universe, link_id, "units") {
             Verdict::Ok(()) => {}
             Verdict::Refused(r) => return Err(r.reason),
         }

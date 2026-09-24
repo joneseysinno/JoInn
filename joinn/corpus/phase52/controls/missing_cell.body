@@ -2,6 +2,7 @@ body {
   codex 1
   genome {
     cell:12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7 as scale
+    cell:4a37b2e1de0b92976ec08e16a4cd3476d731997a415d387a260f6b5812ccce63 as orphan
   }
   grants {
     stdin: scale

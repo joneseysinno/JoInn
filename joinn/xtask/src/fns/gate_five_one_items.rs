@@ -44,7 +44,7 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         name: "The boundary is total",
         check: g51_total,
         control: g51_total_control,
-        control_artifact: "corpus/phase51/controls/missing_cell.body",
+        control_artifact: "corpus/phase52/controls/missing_cell.body",
         opposes: Mutation::DropGenome("orphan"),
     },
 ];

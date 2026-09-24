@@ -64,7 +64,7 @@ mod tests {
         assert!(u.coding.links.iter().all(|l| l.id != "e0"));
         assert!(u.coding.links.iter().any(|l| l.id == "e1"));
         // Grant still names e0 at runtime, so the renamed link is not granted.
-        match units_after(u, true) {
+        match units_after(u, Some("e0")) {
             Ok((0, _)) => {}
             Err(reason) => assert!(
                 reason.contains("e0") || reason.contains("link"),

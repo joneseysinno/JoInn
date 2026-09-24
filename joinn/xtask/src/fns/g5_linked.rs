@@ -6,7 +6,7 @@ pub(crate) fn g5_linked() -> bool {
     let Ok(u) = load_universe_file("phase5/universe.universe") else {
         return false;
     };
-    match units_after(&u, true) {
+    match units_after(&u, Some("e0")) {
         Ok((1, Some(value))) => value == "60",
         _ => false,
     }

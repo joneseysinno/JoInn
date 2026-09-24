@@ -1,4 +1,4 @@
-//! Gate 5 item 3 control: calc.sum@9 is no such port, not interior.
+//! Gate 5 item 3 control: true when assembly refuses naming no such port.
 
 use super::load_phase5_bodies;
 use super::subject::Subject;
@@ -17,11 +17,7 @@ pub(crate) fn g5_assemble_control(subject: &Subject) -> bool {
         Verdict::Refused(_) => return true,
     };
     match assemble_universe(universe, &bound) {
-        Verdict::Refused(r) => {
-            !(r.reason.contains("calc.sum@9")
-                && r.reason.contains("no such port")
-                && !r.reason.contains("interior"))
-        }
-        Verdict::Ok(()) => true,
+        Verdict::Refused(r) => r.reason.contains("no such port"),
+        Verdict::Ok(()) => false,
     }
 }

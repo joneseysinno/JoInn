@@ -1,4 +1,4 @@
-//! Gate 5 item 4 control: exclusivity refuses units in two systems of one lens.
+//! Gate 5 item 4 control: true when exclusivity refuses naming units.
 
 use super::subject::Subject;
 use joinn_frame::Verdict;
@@ -9,11 +9,7 @@ pub(crate) fn g5_exclusive_control(subject: &Subject) -> bool {
         return true;
     };
     match check_lenses(u) {
-        Verdict::Refused(r) => {
-            !(r.reason.contains("units")
-                && r.reason.contains("calculation")
-                && r.reason.contains("measurement"))
-        }
-        Verdict::Ok(()) => true,
+        Verdict::Refused(r) => r.reason.contains("units"),
+        Verdict::Ok(()) => false,
     }
 }

@@ -45,7 +45,7 @@ mod tests {
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
         assert!(u.coding.links.iter().all(|l| l.id != "e0"));
-        match units_after(u, true) {
+        match units_after(u, Some("e0")) {
             Ok((0, _)) => {}
             Err(reason) => assert!(
                 reason.contains("e0") || reason.contains("link"),

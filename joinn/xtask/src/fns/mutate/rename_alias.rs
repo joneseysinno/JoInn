@@ -87,7 +87,7 @@ mod tests {
         assert!(u.coding.bodies.iter().all(|b| b.alias != "units"));
         assert!(u.coding.bodies.iter().any(|b| b.alias == "meters"));
         // Runtime still injects under "units", so the renamed body never fires.
-        match units_after(u, true) {
+        match units_after(u, Some("e0")) {
             Ok((0, _)) => {}
             Err(_) => {}
             Ok((n, _)) => panic!("units must not fire after RenameAlias, got {n}"),

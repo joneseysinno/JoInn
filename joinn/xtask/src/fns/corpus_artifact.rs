@@ -33,7 +33,7 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
     for dir in [
         "phase5",
         "phase5/controls",
-        "phase51/controls",
+        "phase52/controls",
         "phase3",
         "phase22",
         "phase21",

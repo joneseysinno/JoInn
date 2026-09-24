@@ -1,4 +1,4 @@
-//! Gate 5.1 item 2 control: the transcript's prefix is the calculator golden.
+//! Gate 5.1 control: true when the transcript does not start with calculator.txt.
 
 use super::subject::Subject;
 use super::workspace_root;
@@ -18,9 +18,12 @@ pub(crate) fn g51_hosts_control(subject: &Subject) -> bool {
     ) else {
         return true;
     };
-    let calc_lines: Vec<String> = calc.lines().map(str::to_owned).collect();
+    let calc_lines: Vec<&str> = calc.lines().collect();
     if lines.len() < calc_lines.len() {
         return true;
     }
-    lines[..calc_lines.len()] != calc_lines[..]
+    !lines
+        .iter()
+        .zip(calc_lines.iter())
+        .all(|(a, b)| a.as_str() == *b)
 }

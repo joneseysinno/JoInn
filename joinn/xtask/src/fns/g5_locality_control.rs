@@ -1,4 +1,4 @@
-//! Gate 5 item 8 control: the artifact's text does not appear on the far side.
+//! Gate 5 item 8 control: true when the hosts' far-side output contains the text.
 
 use super::subject::Subject;
 use joinn_link::{format_link_refusal, Address, LinkRefusal, LinkRefusalKind};
@@ -10,6 +10,7 @@ pub(crate) fn g5_locality_control(subject: &Subject) -> bool {
     if secret.is_empty() {
         return true;
     }
+    // Far-side of a link refusal names the link id and never the body's reason.
     let far = format_link_refusal(&LinkRefusal {
         link: "e0".into(),
         body: "units".into(),
@@ -19,5 +20,5 @@ pub(crate) fn g5_locality_control(subject: &Subject) -> bool {
         },
         kind: LinkRefusalKind::Refused,
     });
-    far.contains(secret)
+    far.contains(secret.as_str())
 }

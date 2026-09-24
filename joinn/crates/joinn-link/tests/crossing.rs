@@ -172,7 +172,8 @@ fn sixty_crosses_and_unlinked_does_not_fire() {
     assert_eq!(units_fires(&reports), 1, "{reports:?}");
     assert_eq!(scale_out(&state).as_deref(), Some("60"));
 
-    let bare = universe("phase51/controls/unlinked.universe");
+    let mut bare = universe("phase5/universe.universe");
+    bare.coding.links.retain(|l| l.id != "e0");
     let mut quiet = open(&bare, false);
     feed_calc(&mut quiet, "2", "3");
     match quiet.inject("units", &addr("scale", 1), int(12), 2) {

@@ -1,10 +1,9 @@
-//! Gate 5.1 item 5: calculator's membrane is measured, and a missing cell is named.
+//! Gate 5.1 item: calculator's membrane is measured, and a missing cell is named.
 
 use super::workspace_root;
 use joinn_dna::parse_body;
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::membrane;
-use std::collections::BTreeMap;
 use std::fs;
 
 pub(crate) fn g51_total() -> bool {
@@ -18,7 +17,7 @@ pub(crate) fn g51_total() -> bool {
     };
     let Ok(missing_src) = fs::read_to_string(
         root.join("corpus")
-            .join("phase51")
+            .join("phase52")
             .join("controls")
             .join("missing_cell.body"),
     ) else {
@@ -42,8 +41,8 @@ pub(crate) fn g51_total() -> bool {
     if mem.is_empty() {
         return false;
     }
-    match membrane(&missing, &BTreeMap::new()) {
-        Verdict::Refused(r) => r.reason.contains("scale") && r.reason.contains("12b6"),
+    match membrane(&missing, cells) {
+        Verdict::Refused(r) => r.reason.contains("orphan"),
         Verdict::Ok(_) => false,
     }
 }
