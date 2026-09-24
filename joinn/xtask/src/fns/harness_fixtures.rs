@@ -1,6 +1,7 @@
 //! Harness fixtures: opposition and lock round-trip, before any gate table.
 
 mod check_ok;
+mod distinct_opposition;
 mod honest_crossing;
 mod ignores_subject;
 mod lock_round_trip;

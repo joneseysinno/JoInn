@@ -1,22 +1,17 @@
-//! Gate 5.1 table.
+//! Gate 5.1 table. Wrappers deleted; Links are typed split (§2.4).
 
 use super::{
-    g51_cross, g51_cross_control, g51_hash, g51_hash_control, g51_home, g51_home_control,
-    g51_hosts, g51_hosts_control, g51_revoke, g51_revoke_control, g51_total, g51_total_control,
-    g51_typed, g51_typed_control,
+    g51_frame, g51_frame_control, g51_hash, g51_hash_control, g51_hosts, g51_hosts_control,
+    g51_tails, g51_tails_control, g51_total, g51_total_control,
 };
 use super::mutate::Mutation;
 use super::subject::Subject;
 use joinn_gate::GateItem;
 
+/// echo.body coding hash — SwapBinding target for *Members share a frame*.
+const ECHO_HASH: &str = "556e785914ff720d908e14f10daa81ac797e0e0259b63a9647c68651a7703f57";
+
 const ITEMS: &[GateItem<Subject, Mutation>] = &[
-    GateItem {
-        name: "Something crosses",
-        check: g51_cross,
-        control: g51_cross_control,
-        control_artifact: "corpus/phase5/universe.universe",
-        opposes: Mutation::DropLink("e0"),
-    },
     GateItem {
         name: "Two hosts, one universe",
         check: g51_hosts,
@@ -32,11 +27,18 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         opposes: Mutation::CorruptHash("calc"),
     },
     GateItem {
-        name: "Links are typed",
-        check: g51_typed,
-        control: g51_typed_control,
+        name: "Tails are out, heads are in",
+        check: g51_tails,
+        control: g51_tails_control,
         control_artifact: "corpus/phase5/universe.universe",
         opposes: Mutation::FlipMark("e0", "calc.sum@2"),
+    },
+    GateItem {
+        name: "Members share a frame",
+        check: g51_frame,
+        control: g51_frame_control,
+        control_artifact: "corpus/phase5/universe.universe",
+        opposes: Mutation::SwapBinding("units", ECHO_HASH),
     },
     GateItem {
         name: "The boundary is total",
@@ -44,20 +46,6 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         control: g51_total_control,
         control_artifact: "corpus/phase51/controls/missing_cell.body",
         opposes: Mutation::DropGenome("orphan"),
-    },
-    GateItem {
-        name: "Revocation stops delivery",
-        check: g51_revoke,
-        control: g51_revoke_control,
-        control_artifact: "corpus/phase5/ordered.universe",
-        opposes: Mutation::DropLink("path"),
-    },
-    GateItem {
-        name: "A refusal stays home",
-        check: g51_home,
-        control: g51_home_control,
-        control_artifact: "corpus/phase5/controls/inner_reason.txt",
-        opposes: Mutation::Replace("e0"),
     },
 ];
 

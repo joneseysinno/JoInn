@@ -19,6 +19,18 @@ use std::time::Instant;
 
 use super::*;
 
+/// Every phase label the lock and gate tables print. One place only.
+pub(crate) const PHASE_LABELS: &[&str] = &[
+    "phase 0",
+    "phase 1",
+    "phase 2",
+    "phase 2.1",
+    "phase 2.2",
+    "phase 3",
+    "phase 5",
+    "phase 5.1",
+];
+
 // Rule 4: xtask MAY measure wall time.
 #[allow(clippy::disallowed_methods)]
 pub(crate) fn gate_all() -> Result<(), String> {
@@ -28,13 +40,13 @@ pub(crate) fn gate_all() -> Result<(), String> {
     if !p0 {
         corpus_verify()?;
     }
-    let p1 = gate_one();
-    let p2 = gate_two();
-    let p21 = gate_two_one();
-    let p22 = gate_two_two();
-    let p3 = gate_three();
-    let p5 = gate_five();
-    let p51 = gate_five_one();
+    let p1 = gate_one(PHASE_LABELS[1]);
+    let p2 = gate_two(PHASE_LABELS[2]);
+    let p21 = gate_two_one(PHASE_LABELS[3]);
+    let p22 = gate_two_two(PHASE_LABELS[4]);
+    let p3 = gate_three(PHASE_LABELS[5]);
+    let p5 = gate_five(PHASE_LABELS[6]);
+    let p51 = gate_five_one(PHASE_LABELS[7]);
     let score = |label: &str, result: Result<(u32, u32), String>| match result {
         Ok((n, total)) => (n == total, n, total),
         Err(e) => {
@@ -42,23 +54,22 @@ pub(crate) fn gate_all() -> Result<(), String> {
             (false, 0, 0)
         }
     };
-    let (p1_ok, p1_n, p1_t) = score("phase 1", p1);
-    let (p2_ok, p2_n, p2_t) = score("phase 2", p2);
-    let (p21_ok, p21_n, p21_t) = score("phase 2.1", p21);
-    let (p22_ok, p22_n, p22_t) = score("phase 2.2", p22);
-    let (p3_ok, p3_n, p3_t) = score("phase 3", p3);
-    let (p5_ok, p5_n, p5_t) = score("phase 5", p5);
-    let phase_51 = format!("phase {}.{}", 5, 1);
-    let (p51_ok, p51_n, p51_t) = score(&phase_51, p51);
+    let (p1_ok, p1_n, p1_t) = score(PHASE_LABELS[1], p1);
+    let (p2_ok, p2_n, p2_t) = score(PHASE_LABELS[2], p2);
+    let (p21_ok, p21_n, p21_t) = score(PHASE_LABELS[3], p21);
+    let (p22_ok, p22_n, p22_t) = score(PHASE_LABELS[4], p22);
+    let (p3_ok, p3_n, p3_t) = score(PHASE_LABELS[5], p3);
+    let (p5_ok, p5_n, p5_t) = score(PHASE_LABELS[6], p5);
+    let (p51_ok, p51_n, p51_t) = score(PHASE_LABELS[7], p51);
     let outcomes = [
-        ("phase 0", p0, 1, 1, false),
-        ("phase 1", p1_ok, p1_n, p1_t, true),
-        ("phase 2", p2_ok, p2_n, p2_t, true),
-        ("phase 2.1", p21_ok, p21_n, p21_t, true),
-        ("phase 2.2", p22_ok, p22_n, p22_t, true),
-        ("phase 3", p3_ok, p3_n, p3_t, true),
-        ("phase 5", p5_ok, p5_n, p5_t, false),
-        (phase_51.as_str(), p51_ok, p51_n, p51_t, false),
+        (PHASE_LABELS[0], p0, 1, 1, false),
+        (PHASE_LABELS[1], p1_ok, p1_n, p1_t, true),
+        (PHASE_LABELS[2], p2_ok, p2_n, p2_t, true),
+        (PHASE_LABELS[3], p21_ok, p21_n, p21_t, true),
+        (PHASE_LABELS[4], p22_ok, p22_n, p22_t, true),
+        (PHASE_LABELS[5], p3_ok, p3_n, p3_t, true),
+        (PHASE_LABELS[6], p5_ok, p5_n, p5_t, false),
+        (PHASE_LABELS[7], p51_ok, p51_n, p51_t, false),
     ];
     let lock = workspace_root()?.join("gates.lock");
     write_lock(&lock, &outcomes)?;
