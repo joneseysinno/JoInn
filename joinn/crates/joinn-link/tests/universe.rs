@@ -51,7 +51,7 @@ fn three_universes_round_trip() {
         Some(i) => i,
         None => panic!("calc second in ordered path"),
     };
-    assert!(idx_units < idx_calc);
+    assert!(idx_calc < idx_units);
 }
 
 #[test]
@@ -77,10 +77,10 @@ fn hand_computed_universe_hash_matches() {
     let h = hash_universe(&u.coding);
     assert_eq!(h, keyed_hash(TAG_UNIVERSE, text.as_bytes()));
     // Hand-computed: BLAKE3-256(len_le(tag) ‖ joinn.universe.v1 ‖ len_le(bytes) ‖ canonical_text)
-    // of print_universe(universe.universe), 610 payload bytes, verified outside the crate.
+    // of print_universe(universe.universe) after P51-12. Recorded in phase-5.1-hashes.md.
     assert_eq!(
         h.to_hex(),
-        "8008307276be08865c2c8fc991a01ddc6286c2416402caec08f902ef52ef9d9e"
+        "2ccbb067db0b150ca607d1e7469fd28ea46892142d6b7729f1075cb899c9d1ad"
     );
 }
 
@@ -106,18 +106,18 @@ fn ordered_member_order_survives_csr_and_unordered_sorts() {
     let csr = csr_from_universe(&ordered.coding);
     assert_eq!(csr.link_orders, vec![Order::Ordered]);
     assert_eq!(csr.members.len(), 2);
-    assert_eq!(csr.instances[csr.members[0].instance as usize], "scale");
-    assert_eq!(csr.instances[csr.members[1].instance as usize], "sum");
+    assert_eq!(csr.instances[csr.members[0].instance as usize], "sum");
+    assert_eq!(csr.instances[csr.members[1].instance as usize], "scale");
     let back = coding_from_csr(&csr);
-    assert_eq!(back.links[0].members[0].instance, "scale");
-    assert_eq!(back.links[0].members[1].instance, "sum");
+    assert_eq!(back.links[0].members[0].instance, "sum");
+    assert_eq!(back.links[0].members[1].instance, "scale");
 
     let mixed = match parse_universe(&load("phase5/universe.universe")) {
         Verdict::Ok(u) => u,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
     let text = print_universe(&coding_from_csr(&csr_from_universe(&mixed.coding)));
-    let e0 = match text.find("link e0 order none") {
+    let e0 = match text.find("link e0 order ordered") {
         Some(i) => &text[i..],
         None => panic!("e0"),
     };

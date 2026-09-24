@@ -252,3 +252,15 @@ Build the calculator's complex by hand (~15 blocks). Delete the law `parse(forma
 - Forth dictionary; APL/J derived verbs
 - Coq extraction, CakeML, proof-carrying code (an allele with a certificate)
 - Sussman & Radul, propagator networks (for *turn*)
+
+## R63 — A vocabulary ban against a host language  ·  status: open
+
+Rule 13 keeps *subtract* out of JoInn's floor, but its identifier check also
+catches `u64::saturating_sub`. Should vocabulary rules apply to JoInn's own
+language (coding regions, grammars, primitive names) only, and leave the Rust
+that implements the engine alone? The answer decides how every later vocabulary
+rule is scoped.
+
+Phase 5.2 §2.11 chose option (b) for now: keep the rule, silence the three
+budget-arithmetic hits with `allow(vocab): budget arithmetic on u64, not the
+subtract concept`, and refuse renaming around the scan (rule 42).

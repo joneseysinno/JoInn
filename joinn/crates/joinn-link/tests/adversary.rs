@@ -1,8 +1,10 @@
-//! Law 4 adversary: a third body expressible with a wire and a hyperedge.
+//! Law 4 adversary: a third body under a wire and a hyperedge.
+//! The Phase 5 bus still satisfies Law 4, but typed links refuse:
+//! `units` is echo (cli_input), so scale@1 is Out and may not be marked head.
 
 use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
-use joinn_link::{assemble_universe, check_law4, parse_universe};
+use joinn_link::{bind_bodies, check_law4, check_link_types, parse_universe};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -26,20 +28,29 @@ fn load_body(rel: &str) -> Body {
     }
 }
 
-fn load_cells(names: &[&str]) -> BTreeMap<Hash, Cell> {
-    let frames = FrameRegistry::phase1();
+fn load_cell(rel: &str) -> (Hash, Cell) {
+    let path = corpus().join(rel);
+    let src = match fs::read_to_string(&path) {
+        Ok(s) => s,
+        Err(e) => panic!("{}: {e}", path.display()),
+    };
+    let cell = match parse_cell(&src, &FrameRegistry::phase1()) {
+        Verdict::Ok(c) => c,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    (hash(&cell.coding), cell)
+}
+
+fn cells_with_mul() -> BTreeMap<Hash, Cell> {
     let mut cells = BTreeMap::new();
-    for name in names {
-        let path = corpus().join("phase0").join(format!("{name}.cell"));
-        let src = match fs::read_to_string(&path) {
-            Ok(s) => s,
-            Err(e) => panic!("{}: {e}", path.display()),
-        };
-        let cell = match parse_cell(&src, &frames) {
-            Verdict::Ok(c) => c,
-            Verdict::Refused(r) => panic!("{}", r.reason),
-        };
-        cells.insert(hash(&cell.coding), cell);
+    for rel in [
+        "phase0/sum.cell",
+        "phase0/format.cell",
+        "phase0/cli_input.cell",
+        "phase21/mul.cell",
+    ] {
+        let (id, cell) = load_cell(rel);
+        cells.insert(id, cell);
     }
     cells
 }
@@ -58,19 +69,27 @@ fn three_body_bus_is_expressible_under_law4() {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("Law 4 must hold for the bus: {}", r.reason),
     }
-    let cells = load_cells(&["sum", "format", "cli_input"]);
-    let mut bodies = BTreeMap::new();
-    bodies.insert(
-        "calc".into(),
-        (load_body("phase2/calculator.body"), cells.clone()),
-    );
-    bodies.insert(
-        "units".into(),
-        (load_body("phase5/units.body"), cells.clone()),
-    );
-    bodies.insert("bus".into(), (load_body("phase5/bus.body"), cells));
-    match assemble_universe(&u, &bodies) {
-        Verdict::Ok(()) => {}
+    let cells = cells_with_mul();
+    let mut supplied = BTreeMap::new();
+    for rel in [
+        "phase2/calculator.body",
+        "phase5/controls/echo.body",
+        "phase5/bus.body",
+    ] {
+        let body = load_body(rel);
+        supplied.insert(hash(&body.coding), (body, cells.clone()));
+    }
+    let bound = match bind_bodies(&u, &supplied) {
+        Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    match check_link_types(&u, &bound) {
+        Verdict::Refused(r) => {
+            assert!(r.reason.contains("units.scale@1"), "{}", r.reason);
+            assert!(r.reason.contains("head"), "{}", r.reason);
+            assert!(r.reason.contains("Out"), "{}", r.reason);
+            assert!(r.reason.contains("acceptance is In"), "{}", r.reason);
+        }
+        Verdict::Ok(()) => panic!("out-port marked head must refuse"),
     }
 }

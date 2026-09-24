@@ -28,20 +28,24 @@ fn load_body(rel: &str) -> Body {
     }
 }
 
-fn load_cells(names: &[&str]) -> BTreeMap<Hash, Cell> {
-    let frames = FrameRegistry::phase1();
+fn load_cell(rel: &str) -> (Hash, Cell) {
+    let path = corpus().join(rel);
+    let src = match fs::read_to_string(&path) {
+        Ok(s) => s,
+        Err(e) => panic!("{}: {e}", path.display()),
+    };
+    let cell = match parse_cell(&src, &FrameRegistry::phase1()) {
+        Verdict::Ok(c) => c,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    (hash(&cell.coding), cell)
+}
+
+fn load_cells(rels: &[&str]) -> BTreeMap<Hash, Cell> {
     let mut cells = BTreeMap::new();
-    for name in names {
-        let path = corpus().join("phase0").join(format!("{name}.cell"));
-        let src = match fs::read_to_string(&path) {
-            Ok(s) => s,
-            Err(e) => panic!("{}: {e}", path.display()),
-        };
-        let cell = match parse_cell(&src, &frames) {
-            Verdict::Ok(c) => c,
-            Verdict::Refused(r) => panic!("{}", r.reason),
-        };
-        cells.insert(hash(&cell.coding), cell);
+    for rel in rels {
+        let (id, cell) = load_cell(rel);
+        cells.insert(id, cell);
     }
     cells
 }
@@ -105,12 +109,19 @@ fn well_formed_universe_still_assembles() {
         "calc".into(),
         (
             load_body("phase2/calculator.body"),
-            load_cells(&["sum", "format", "cli_input"]),
+            load_cells(&[
+                "phase0/sum.cell",
+                "phase0/format.cell",
+                "phase0/cli_input.cell",
+            ]),
         ),
     );
     bodies.insert(
         "units".into(),
-        (load_body("phase5/units.body"), load_cells(&["format", "cli_input"])),
+        (
+            load_body("phase5/units.body"),
+            load_cells(&["phase21/mul.cell"]),
+        ),
     );
     match assemble_universe(&u, &bodies) {
         Verdict::Ok(()) => {}

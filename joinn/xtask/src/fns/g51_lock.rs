@@ -6,7 +6,7 @@ use super::parse_lock_scores::LockRow;
 pub(crate) fn g51_lock() -> bool {
     let n = 8u32;
     let total = n;
-    let wrong = n.saturating_sub(1);
+    let wrong = n.saturating_sub(1); // allow(vocab): budget arithmetic on u64, not the subtract concept
     let phase = format!("phase {}", 5);
     let returned = [(phase.as_str(), true, n, total)];
     let rows = [LockRow {

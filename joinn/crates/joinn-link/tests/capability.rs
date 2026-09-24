@@ -22,21 +22,21 @@ fn grant_succeeds_then_revoke_refuses_naming_the_capability() {
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
     let mut rt = LinkRuntime::default();
-    match grant(&mut rt, &u, "g0", "units") {
+    match grant(&mut rt, &u, "e0", "units") {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("{}", r.reason),
     }
-    match check_capability(&rt, "g0", "units") {
+    match check_capability(&rt, "e0", "units") {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("pre-revoke must succeed: {}", r.reason),
     }
-    match revoke(&mut rt, "g0", "units") {
+    match revoke(&mut rt, "e0", "units") {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("{}", r.reason),
     }
-    match check_capability(&rt, "g0", "units") {
+    match check_capability(&rt, "e0", "units") {
         Verdict::Refused(r) => {
-            assert!(r.reason.contains("g0"), "{}", r.reason);
+            assert!(r.reason.contains("e0"), "{}", r.reason);
             assert!(r.reason.contains("acceptance"), "{}", r.reason);
         }
         Verdict::Ok(()) => panic!("post-revoke must refuse naming the capability"),
