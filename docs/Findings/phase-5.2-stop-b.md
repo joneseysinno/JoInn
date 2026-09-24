@@ -3,17 +3,13 @@
 Recorded by Cursor on 24 Sep 2026 from `D:\JoInn\joinn` on Windows (PowerShell).
 Values below are copied from the terminal, not summarised.
 
-`git rev-parse HEAD` (this stop-report commit):
-
-```
-aa11c483385864de6bca8ffb8c4c05037ad31d2e
-```
-
-Last work commit (P52-08):
+`git rev-parse HEAD` after P52-08 (last work commit of Chunk B):
 
 ```
 0dcad2659784a6da22e996cebaea96b03112374a
 ```
+
+The stop-report commit that adds this file is `P52-stop-b` on `main` immediately after that.
 
 ## Commit reports (in order)
 
