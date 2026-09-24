@@ -49,6 +49,28 @@ pub fn print_universe(coding: &UniverseCoding) -> String {
         }
         let _ = writeln!(out, "    }}");
     }
+    let mut wires = coding.cross_wires.clone();
+    wires.sort_by(|a, b| {
+        a.src_body
+            .cmp(&b.src_body)
+            .then(a.src_instance.cmp(&b.src_instance))
+            .then(a.src_port.cmp(&b.src_port))
+            .then(a.dst_body.cmp(&b.dst_body))
+            .then(a.dst_instance.cmp(&b.dst_instance))
+            .then(a.dst_port.cmp(&b.dst_port))
+    });
+    for wire in &wires {
+        let _ = writeln!(
+            out,
+            "    wire {}.{}@{} -> {}.{}@{}",
+            wire.src_body,
+            wire.src_instance,
+            wire.src_port,
+            wire.dst_body,
+            wire.dst_instance,
+            wire.dst_port
+        );
+    }
     let _ = writeln!(out, "  }}");
     let _ = writeln!(out, "  lenses {{");
     let mut lenses = coding.lenses.clone();

@@ -6,6 +6,7 @@ use joinn_link::Universe;
 use super::parse_lock_scores::LockRow;
 
 /// A control artifact, parsed by file kind.
+#[derive(Clone, Debug)]
 pub(crate) enum Subject {
     Body(Body),
     Universe(Universe),
