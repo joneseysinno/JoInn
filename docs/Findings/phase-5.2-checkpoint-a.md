@@ -90,3 +90,5 @@ reason text before this checkpoint. Fixed in commit `___`.
 
 `cargo xtask witness docs/Findings/phase-5.2-checkpoint-a.md` → `current`
 (must print `current` before P52-03 starts)
+
+Accepted: AJ, 24 Sep 2026
