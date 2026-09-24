@@ -38,6 +38,7 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
         "phase22",
         "phase21",
         "phase2",
+        "phase2/variants",
         "phase0",
     ] {
         for ext in ["cell", "body"] {

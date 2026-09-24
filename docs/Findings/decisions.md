@@ -34,5 +34,5 @@ line must name a file under `docs/Findings/`.
 | R56 | embeddings across a link | 5.1 | open | |
 | R57 | a universe that waits half-fed | 5.1 | open | |
 | R58 | correlation of a reply with its question | 5.1 | open | |
-| R63 | vocabulary ban against a host language | 5.2 | open | Theory/JoInn Research Backlog.md |
+| R63 | vocabulary ban against a host language | 5.2 | holds | JoInn's language only (§2.14) |
 

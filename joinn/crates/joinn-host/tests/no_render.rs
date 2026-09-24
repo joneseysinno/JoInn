@@ -7,7 +7,9 @@ fn walk_rs(dir: &Path, hits: &mut Vec<String>) {
     let Ok(entries) = fs::read_dir(dir) else {
         return;
     };
-    for entry in entries.flatten() {
+    let mut ents: Vec<_> = entries.flatten().collect();
+    ents.sort_by_key(|e| e.file_name());
+    for entry in ents {
         let path = entry.path();
         if path.is_dir() {
             walk_rs(&path, hits);

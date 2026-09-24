@@ -13,7 +13,7 @@ impl BodyState {
         outs: BTreeMap<u32, Value>,
         direction: Option<u32>,
     ) -> Verdict<StepReport> {
-        let depth = self.stack.len().saturating_sub(1); // allow(vocab): rust usize saturating_sub, not a turn identifier
+        let depth = self.stack.len().saturating_sub(1);
         self.consume_and_emit(depth, name, &[], &outs);
         if let Some(prev) = self.last_ports.get_mut(name) {
             for (k, v) in &outs {

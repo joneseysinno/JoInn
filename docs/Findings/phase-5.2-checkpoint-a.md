@@ -1,9 +1,9 @@
 # Phase 5.2 Checkpoint A — end of Sitting A (P52-00 to P52-02)
 
-> **SKELETON — not yet a checkpoint.** Every `___` below is typed by AJ from
-> his own terminal (plan §2.9, rules 38 and 46). Delete this box once every
-> blank is filled. Until this file is **committed**, `cargo xtask witness`
-> refuses it: `witness: … is not in git; acceptance is a committed finding`.
+> **Closed 24 Sep 2026 under plan Draft 0.3.** The evidence blanks below were
+> never filled. Checkpoints were replaced by stop reports (plan §0.2, §2.9). The
+> tree at `7093897` was re-run by Claude from a fresh clone on Linux; see
+> `phase-5.2-stop-a.md`.
 
 Date: ___ September 2026. Windows, PowerShell. Commands run from `D:\JoInn\joinn`
 on the tree as P52-02 left it. AJ ran the commands and typed or pasted what they

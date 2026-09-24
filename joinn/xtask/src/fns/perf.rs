@@ -99,8 +99,11 @@ fn two_body_universe_ports() -> Result<usize, String> {
     let mut dirs = vec![root.join("corpus")];
     while let Some(dir) = dirs.pop() {
         let rd = fs::read_dir(&dir).map_err(|e| e.to_string())?;
-        for ent in rd {
-            let ent = ent.map_err(|e| e.to_string())?;
+        let mut ents: Vec<_> = rd
+            .map(|e| e.map_err(|err| err.to_string()))
+            .collect::<Result<Vec<_>, _>>()?;
+        ents.sort_by_key(|e| e.file_name());
+        for ent in ents {
             let path = ent.path();
             if path.is_dir() {
                 dirs.push(path);
@@ -149,7 +152,9 @@ fn membrane_over_corpus() -> Result<(u128, u128, usize, usize, usize), String> {
             Ok(rd) => rd,
             Err(_) => continue,
         };
-        for ent in rd.flatten() {
+        let mut ents: Vec<_> = rd.flatten().collect();
+        ents.sort_by_key(|e| e.file_name());
+        for ent in ents {
             let path = ent.path();
             if path.is_dir() {
                 continue;

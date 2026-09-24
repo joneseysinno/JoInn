@@ -16,7 +16,9 @@ pub(crate) fn g5_assemble() -> bool {
     let Ok(entries) = fs::read_dir(&dir) else {
         return false;
     };
-    for ent in entries.flatten() {
+    let mut ents: Vec<_> = entries.flatten().collect();
+    ents.sort_by_key(|e| e.file_name());
+    for ent in ents {
         let path = ent.path();
         if path.extension().and_then(|e| e.to_str()) != Some("universe") {
             continue;

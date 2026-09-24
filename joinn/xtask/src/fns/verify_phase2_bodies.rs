@@ -21,6 +21,7 @@ use super::*;
 
 pub(crate) fn verify_phase2_bodies() -> Result<(), String> {
     let dir = workspace_root()?.join("corpus").join("phase2");
+    let variants = dir.join("variants");
     let frames = FrameRegistry::phase1();
     let mut printed = None;
     for name in [
@@ -29,7 +30,12 @@ pub(crate) fn verify_phase2_bodies() -> Result<(), String> {
         "calculator_c.body",
         "calculator_d.body",
     ] {
-        let src = fs::read_to_string(dir.join(name)).map_err(|e| e.to_string())?;
+        let path = if name == "calculator.body" {
+            dir.join(name)
+        } else {
+            variants.join(name)
+        };
+        let src = fs::read_to_string(&path).map_err(|e| e.to_string())?;
         let body = match parse_body(&src, &frames) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => return Err(format!("{name}: {}", r.reason)),

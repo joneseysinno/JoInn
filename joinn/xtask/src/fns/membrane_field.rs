@@ -18,11 +18,11 @@ mod tests {
                 Ok(rd) => rd,
                 Err(e) => panic!("{}: {e}", dir.display()),
             };
-            for ent in rd {
-                let ent = match ent {
-                    Ok(e) => e,
-                    Err(e) => panic!("{e}"),
-                };
+            let mut ents: Vec<_> = rd
+                .map(|e| e.unwrap_or_else(|err| panic!("{err}")))
+                .collect();
+            ents.sort_by_key(|e| e.file_name());
+            for ent in ents {
                 let path = ent.path();
                 if path.is_dir() {
                     dirs.push(path);

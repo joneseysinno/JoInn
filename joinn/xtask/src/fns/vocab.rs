@@ -20,21 +20,38 @@ use std::time::Instant;
 use super::*;
 
 pub(crate) fn vocab() -> Result<(), String> {
+    check_vocab_fixtures()?;
     let root = workspace_root()?;
-    let banned = [
-        r"\bschema\b",
-        r"\bmetadata\b",
-        r"\bbackend\b",
+    let engineering = [
         r"\bHashMap\b",
         r"\bHashSet\b",
         r"\bf32\b",
         r"\bf64\b",
-        r"\bgenotype\b",
         r"\bthread_rng\b",
     ];
+    let concept = [
+        r"\bschema\b",
+        r"\bmetadata\b",
+        r"\bbackend\b",
+        r"\bgenotype\b",
+    ];
+    const BANNED_TURN: &str = "sub subtract minus"; // allow(vocab): turn-ident list
+    const FLOOR_WORDS: &[&str] = &[
+        "minimal set",           // allow(vocab): banned floor-wording list
+        "minimal primitive set", // allow(vocab): banned floor-wording list
+        "the eleven",            // allow(vocab): banned floor-wording list
+        "the twelve",            // allow(vocab): banned floor-wording list
+        "the sixteen",           // allow(vocab): banned floor-wording list
+    ];
     let mut hits = Vec::new();
+
+    // Engineering bans: all Rust, unmasked.
     for dir in ["crates", "xtask"] {
         walk_rs(&root.join(dir), &mut |path, text| {
+            let p = path.to_string_lossy().replace('\\', "/");
+            if p.contains("/vocab_fixtures/") || p.contains("/module_fixtures/") {
+                return;
+            }
             for (i, line) in text.lines().enumerate() {
                 if let Some(reason) = allow_vocab_reason(line) {
                     if reason.is_empty() {
@@ -46,7 +63,7 @@ pub(crate) fn vocab() -> Result<(), String> {
                     }
                     continue;
                 }
-                for pat in banned {
+                for pat in engineering {
                     if line_has(line, pat) {
                         hits.push(format!("{}:{}: {pat}", path.display(), i + 1));
                     }
@@ -54,6 +71,86 @@ pub(crate) fn vocab() -> Result<(), String> {
             }
         })?;
     }
+
+    // Concept-word bans on Rust after masking std calls.
+    for dir in ["crates", "xtask"] {
+        walk_rs(&root.join(dir), &mut |path, text| {
+            let p = path.to_string_lossy().replace('\\', "/");
+            if p.contains("/vocab_fixtures/") || p.contains("/module_fixtures/") {
+                return;
+            }
+            for (i, line) in text.lines().enumerate() {
+                if allow_vocab_reason(line).is_some() {
+                    continue;
+                }
+                let masked = mask_std_calls(line);
+                for pat in concept {
+                    if line_has(&masked, pat) {
+                        hits.push(format!("{}:{}: {pat}", path.display(), i + 1));
+                    }
+                }
+                for word in BANNED_TURN.split(' ') {
+                    if line_has(&masked, word) {
+                        hits.push(format!("{}:{}: turn-ident {word}", path.display(), i + 1));
+                    }
+                }
+                let lower = masked.to_ascii_lowercase();
+                for w in FLOOR_WORDS {
+                    if lower.contains(w) {
+                        hits.push(format!("{}:{}: floor-vocab {w}", path.display(), i + 1));
+                    }
+                }
+            }
+        })?;
+    }
+
+    // Concept-word bans on corpus language files.
+    {
+        let corpus = root.join("corpus");
+        let mut dirs = vec![corpus];
+        while let Some(dir) = dirs.pop() {
+            let rd = match fs::read_dir(&dir) {
+                Ok(rd) => rd,
+                Err(_) => continue,
+            };
+            let mut ents: Vec<_> = rd.flatten().collect();
+            ents.sort_by_key(|e| e.file_name());
+            for ent in ents {
+                let path = ent.path();
+                if path.is_dir() {
+                    dirs.push(path);
+                    continue;
+                }
+                let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
+                if !matches!(ext, "cell" | "body" | "universe" | "desc") {
+                    continue;
+                }
+                let text = match fs::read_to_string(&path) {
+                    Ok(t) => t,
+                    Err(_) => continue,
+                };
+                for (i, line) in text.lines().enumerate() {
+                    for pat in concept {
+                        if line_has(line, pat) {
+                            hits.push(format!("{}:{}: {pat}", path.display(), i + 1));
+                        }
+                    }
+                    for word in BANNED_TURN.split(' ') {
+                        if line_has(line, word) {
+                            hits.push(format!("{}:{}: turn-ident {word}", path.display(), i + 1));
+                        }
+                    }
+                    let lower = line.to_ascii_lowercase();
+                    for w in FLOOR_WORDS {
+                        if lower.contains(w) {
+                            hits.push(format!("{}:{}: floor-vocab {w}", path.display(), i + 1));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     walk_rs(&root.join("crates"), &mut |path, text| {
         for (i, line) in text.lines().enumerate() {
             if allow_vocab_reason(line).is_some() {
@@ -99,31 +196,6 @@ pub(crate) fn vocab() -> Result<(), String> {
             }
         })?;
     }
-    const BANNED_TURN: &str = "sub subtract minus"; // allow(vocab): turn-ident list
-    walk_rs(&root.join("crates"), &mut |path, text| {
-        for (i, line) in text.lines().enumerate() {
-            if allow_vocab_reason(line).is_some() {
-                continue;
-            }
-            for word in BANNED_TURN.split(' ') {
-                if line_has(line, word) {
-                    hits.push(format!("{}:{}: turn-ident {word}", path.display(), i + 1));
-                }
-            }
-        }
-    })?;
-    walk_rs(&root.join("xtask"), &mut |path, text| {
-        for (i, line) in text.lines().enumerate() {
-            if allow_vocab_reason(line).is_some() {
-                continue;
-            }
-            for word in BANNED_TURN.split(' ') {
-                if line_has(line, word) {
-                    hits.push(format!("{}:{}: turn-ident {word}", path.display(), i + 1));
-                }
-            }
-        }
-    })?;
     walk_rs(&root.join("crates"), &mut |path, text| {
         let p = path.to_string_lossy();
         if p.contains("xtask") || p.contains("tests") || p.contains("mutants.rs") {
@@ -142,28 +214,6 @@ pub(crate) fn vocab() -> Result<(), String> {
             }
         }
     })?;
-    const FLOOR_WORDS: &[&str] = &[
-        "minimal set",           // allow(vocab): banned floor-wording list
-        "minimal primitive set", // allow(vocab): banned floor-wording list
-        "the eleven",            // allow(vocab): banned floor-wording list
-        "the twelve",            // allow(vocab): banned floor-wording list
-        "the sixteen",           // allow(vocab): banned floor-wording list
-    ];
-    for dir in ["crates", "xtask"] {
-        walk_rs(&root.join(dir), &mut |path, text| {
-            for (i, line) in text.lines().enumerate() {
-                if allow_vocab_reason(line).is_some() {
-                    continue;
-                }
-                let lower = line.to_ascii_lowercase();
-                for w in FLOOR_WORDS {
-                    if lower.contains(w) {
-                        hits.push(format!("{}:{}: floor-vocab {w}", path.display(), i + 1));
-                    }
-                }
-            }
-        })?;
-    }
     walk_rs(&root.join("crates"), &mut |path, text| {
         let p = path.to_string_lossy().replace('\\', "/");
         if p.contains("/tests/") {

@@ -1,15 +1,14 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phases 2–3 built a universe that is true, and gave it a face
-proved by there being two hosts. Phase 5.1 corrects the second body. Its one
-idea is that A CONTROL IS ONLY AN ARTIFACT IF DAMAGING THE ARTIFACT CHANGES THE
-CONTROL'S ANSWER. The build plan is
-docs/Plans/JoInn Phase 5.1 Implementation Plan.md. Work one numbered commit at a
-time. Do not start the next one.
+This repo is JoInn. Phase 5.2 is a correction phase. Its one idea is DAMAGE MUST
+KEEP THE FORM: a control sees a parsed value and must flip on a mutant that still
+parses. The build plan is docs/Plans/JoInn Phase 5.2 Implementation Plan.md.
+Work one CHUNK at a time (B, C or D), one git commit per numbered step, and stop
+at the chunk's stop report. Every decision is in the plan. Never stop to ask;
+follow the plan's Snags section instead.
 
-There is no renderer, no homology, no third body and no compiler in this phase.
-Phase 4 (the assay layer) runs AFTER this phase, against a universe deep enough
-to answer its own decoration check.
+There is no renderer, no homology, no third linked body and no compiler in this
+phase. Phase 4 runs after it.
 
 ## Hard rules
 
@@ -43,7 +42,10 @@ to answer its own decoration check.
     derived by `cargo xtask floor`.
     `zero`, `succ` and `pred` are NOT floor primitives. They are ℤ's first three
     constructors and live in ℤ's signature as frame vocabulary.
-13. `sub`, `subtract` and `minus` are not identifiers in this project.
+13. `sub`, `subtract` and `minus` are not names in JoInn's language: corpus files
+    and names this project declares in Rust. Calls into Rust's standard library
+    (`x.saturating_sub(1)`, `fs::metadata`) are not JoInn's language and are not
+    scanned by the concept-word bans.
 15. `std::io` AND `std::fs` APPEAR ONLY IN HOST CRATES AND xtask. joinn-host is
     protocol and does none. joinn-test-host, joinn-assay and joinn-link do none.
     joinn-frame, joinn-dna, joinn-gate, joinn-prim and joinn-live do none.
@@ -66,11 +68,13 @@ to answer its own decoration check.
     corpus/phase22/counterfeit/ is refused ON PURPOSE and is never a golden.
 23. AN ALLELE MAY NAME ONLY MATTER. `hash` and `resolve` are physics and are not
     in the allele-visible native set.
-24. A CONTROL IS AN ARTIFACT, NOT A PREDICATE — IT IS A PATH, AND IT IS READ.
-    `GateItem` carries `control_artifact`; `run_gate_table` resolves it, reads
-    its bytes, and passes them to `control(&Artifact)`. The control is run on the
-    real bytes and on a damaged copy and must answer differently, or the run is
-    refused naming the item. joinn-gate carries the bytes and never opens a file.
+24. A CONTROL IS AN ARTIFACT, PARSED, AND OPPOSED BY A MUTATION THAT KEEPS ITS
+    FORM (gates 5 and later). The harness parses the artifact by kind and passes
+    the parsed subject; a control never sees bytes. The control must answer
+    false on the subject, true on the declared catalogue mutant, and false on the
+    kind's neutral edit, or the run is refused naming the item. The catalogue is
+    closed. Gates 1–3 are LEGACY: their checks must pass, their controls are not
+    graded, and the lock says `legacy`. joinn-gate names no DNA, link or lock type.
 25. MODULE.RS BESIDE MODULE/, NEVER MOD.RS. A leaf file holds at most one named
     production function. A capsule root (`foo.rs` with `foo/` beside it) holds
     types, `mod` declarations, `pub use` and getters. `lib.rs` is a facade with
@@ -117,10 +121,10 @@ to answer its own decoration check.
     coding hash, never by alias.
 37. A RUNTIME IS TESTED BY WHAT A BODY DID. Assert on descriptions, fire counts,
     port values and host output, never on the runtime's own bookkeeping.
-38. SOME FINDINGS ARE TYPED BY AJ. A commit that marks a file "typed by AJ"
-    (witness runs, the adversary's spec and verdict, perf conclusions) is not
-    written by the agent. If such a file appears in the agent's commit, the
-    commit is red.
+38. NOTHING IS TYPED BY AJ. AJ decides in conversation with Claude; the plan
+    carries every decision. Findings are written by the agent from command
+    output or from text given verbatim in the plan. Claude verifies each chunk
+    from a fresh clone.
 39. NOTHING TEXTUAL CROSSES A MEMBRANE ON REFUSAL. The far side of a link
     receives a `LinkRefusal` — link, body, member, kind — and no reason string.
     The refusing body's reason is reachable by `probe` on that body only.
@@ -128,15 +132,28 @@ to answer its own decoration check.
     dimension ≤ 1 until fillings exist; touch-only is enforced by C₀ being
     derived. No check, doc comment or finding may attribute a universe refusal
     to ∂∂ ≠ 0 before Phase 4.
-46. A SITTING ENDS AT A CHECKPOINT ACCEPTED BY AJ. The agent writes the
-    evidence (commands run, output quoted, each item marked expected or
-    unexpected); AJ writes the decisions and the line `Accepted: AJ, <date>`.
-    The agent never writes that line. A commit whose done-when names a
-    checkpoint starts with `cargo xtask witness <checkpoint>` and stops if it
-    does not print `current`.
-47. EVERY SESSION ENDS WITH THE REPORT BLOCK (plan §0.1). Values are quoted
-    from output. `vocab` and `modules` run on every commit. A commit message's
-    id names the work the commit did, or the commit is refused.
+41. A GATE ROW OPPOSES ITS OWN MUTATION. No two non-legacy items share
+    (control_artifact, opposes). A row that restates another gate's fact is
+    deleted, not wrapped.
+42. NEVER WRITE CODE TO AVOID A SCAN. If a scan blocks a correct change, write it
+    as a snag and continue with the next step.
+43. BINDING IS A TYPE. A `Bound` comes only from `bind(&Universe, &BodyStore)`,
+    and a `BodyStore` computes every key it holds. One coding hash has one
+    regulatory region in a store; a second, different one is refused naming both
+    files.
+44. A BODY REFUSAL IS A REPORT. The universe records `Refused { body, instance }`
+    and keeps running. A link refusal is reported only for a delivery made in the
+    same pass. `run` never returns a body's reason.
+45. A HOST KNOWS NO LINK IDS OR ALIASES. Grants are declared in the universe's
+    coding region; hosts never call `grant`. The far side is presented from a
+    `LinkRefusal` alone.
+47. EVERY COMMIT ENDS WITH THE REPORT BLOCK (plan §0.1), and every chunk ends
+    with the stop report (plan §0.2), a commit and a push. Values are quoted from
+    output. `vocab` and `modules` run on every commit. A commit message's id
+    names the work the commit did.
+48. NOTHING DEPENDS ON FOLDER ORDER OR EMPTY FOLDERS. Every directory walk sorts
+    its entries by name. A capsule root needs a folder that contains `.rs` files.
+    Results must be the same on Windows and Linux, and CI runs both.
 
 ## Definition of done
 

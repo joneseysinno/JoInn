@@ -16,7 +16,7 @@ pub(crate) fn g2_bodies_control(art: &joinn_gate::Artifact) -> bool {
     let Ok(a) = std::fs::read_to_string(dir.join("calculator.body")) else {
         return true;
     };
-    let Ok(b) = std::fs::read_to_string(dir.join("calculator_b.body")) else {
+    let Ok(b) = std::fs::read_to_string(dir.join("variants").join("calculator_b.body")) else {
         return true;
     };
     let Verdict::Ok(ba) = parse_body(&a, &frames) else {

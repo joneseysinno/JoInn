@@ -17,7 +17,9 @@ pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, (Body, BTreeMap<Hash
             Ok(rd) => rd,
             Err(_) => continue,
         };
-        for ent in rd.flatten() {
+        let mut ents: Vec<_> = rd.flatten().collect();
+        ents.sort_by_key(|e| e.file_name());
+        for ent in ents {
             let file = ent.path();
             if file.extension().and_then(|e| e.to_str()) != Some("cell") {
                 continue;

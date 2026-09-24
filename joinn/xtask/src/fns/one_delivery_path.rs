@@ -30,5 +30,5 @@ pub(crate) fn one_delivery_path() -> Result<bool, String> {
     let _ = state.run();
     let deliveries = state.delivery_count();
     let steps = state.steps();
-    Ok(deliveries >= 1 && deliveries == steps.saturating_sub(1)) // allow(vocab): rust usize saturating_sub, not a turn identifier
+    Ok(deliveries >= 1 && deliveries == steps.saturating_sub(1))
 }

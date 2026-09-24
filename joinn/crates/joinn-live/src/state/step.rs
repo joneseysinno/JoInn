@@ -10,7 +10,7 @@ impl BodyState {
         if self.step >= self.budget {
             return self.budget_refusal();
         }
-        let top = self.stack.len().saturating_sub(1); // allow(vocab): rust usize saturating_sub, not a turn identifier
+        let top = self.stack.len().saturating_sub(1);
         let empty = self
             .stack
             .get(top)

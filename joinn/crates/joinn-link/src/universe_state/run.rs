@@ -24,7 +24,7 @@ impl UniverseState {
             let aliases: Vec<String> = self.bodies.keys().cloned().collect();
             for alias in &aliases {
                 let used = self.bodies.get(alias).map(|b| b.steps()).unwrap_or(0);
-                let remaining = self.budget.saturating_sub(self.spent); // allow(vocab): budget arithmetic on u64, not the subtract concept
+                let remaining = self.budget.saturating_sub(self.spent);
                 if let Some(body) = self.bodies.get_mut(alias) {
                     body.set_budget(used.saturating_add(remaining));
                 }
@@ -33,7 +33,7 @@ impl UniverseState {
                     None => continue,
                 };
                 let now = self.bodies.get(alias).map(|b| b.steps()).unwrap_or(used);
-                self.spent = self.spent.saturating_add(now.saturating_sub(used)); // allow(vocab): budget arithmetic on u64, not the subtract concept
+                self.spent = self.spent.saturating_add(now.saturating_sub(used));
                 match ran {
                     Verdict::Ok(steps) => {
                         for step in steps {

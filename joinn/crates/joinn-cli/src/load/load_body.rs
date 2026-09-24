@@ -15,8 +15,11 @@ pub(crate) fn load_body(corpus: &Path, name: &str) -> Result<joinn_dna::Body, St
     let mut dirs = vec![corpus.to_path_buf()];
     while let Some(dir) = dirs.pop() {
         let rd = fs::read_dir(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
-        for ent in rd {
-            let ent = ent.map_err(|e| e.to_string())?;
+        let mut entries: Vec<_> = rd
+            .map(|e| e.map_err(|err| err.to_string()))
+            .collect::<Result<Vec<_>, _>>()?;
+        entries.sort_by_key(|e| e.file_name());
+        for ent in entries {
             let path = ent.path();
             if path.is_dir() {
                 dirs.push(path);
@@ -25,6 +28,7 @@ pub(crate) fn load_body(corpus: &Path, name: &str) -> Result<joinn_dna::Body, St
             }
         }
     }
+    hits.sort_by(|a, b| a.as_os_str().cmp(b.as_os_str()));
     let path = match hits.len() {
         1 => hits.remove(0),
         0 => return Err(format!("no body file named {want}")),

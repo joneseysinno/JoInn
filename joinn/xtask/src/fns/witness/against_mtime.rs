@@ -16,7 +16,7 @@ pub(crate) enum Status {
 
 /// Finding must be strictly newer (by mtime) than every file under `roots`.
 pub(crate) fn against_mtime(finding: &Path, roots: &[PathBuf]) -> Result<Status, String> {
-    let finding_meta = fs::metadata(finding).map_err(|e| format!("{}: {e}", finding.display()))?; // allow(vocab): std::fs file metadata for the mtime fallback, not the metadata concept
+    let finding_meta = fs::metadata(finding).map_err(|e| format!("{}: {e}", finding.display()))?;
     let finding_mtime = finding_meta
         .modified()
         .map_err(|e| format!("{}: {e}", finding.display()))?;
@@ -47,10 +47,13 @@ pub(crate) fn against_mtime(finding: &Path, roots: &[PathBuf]) -> Result<Status,
 
 fn walk_files(dir: &Path, f: &mut impl FnMut(&Path, SystemTime)) -> Result<(), String> {
     let rd = fs::read_dir(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
-    for ent in rd {
-        let ent = ent.map_err(|e| format!("{}: {e}", dir.display()))?;
+    let mut ents: Vec<_> = rd
+        .map(|e| e.map_err(|err| format!("{}: {err}", dir.display())))
+        .collect::<Result<Vec<_>, _>>()?;
+    ents.sort_by_key(|e| e.file_name());
+    for ent in ents {
         let path = ent.path();
-        let meta = fs::metadata(&path).map_err(|e| format!("{}: {e}", path.display()))?; // allow(vocab): std::fs file metadata for the mtime fallback, not the metadata concept
+        let meta = fs::metadata(&path).map_err(|e| format!("{}: {e}", path.display()))?;
         if meta.is_dir() {
             walk_files(&path, f)?;
             continue;

@@ -24,9 +24,11 @@ pub(crate) fn walk_rs(dir: &Path, f: &mut impl FnMut(&Path, &str)) -> Result<(),
         return Ok(());
     }
     let entries = fs::read_dir(dir).map_err(|e| e.to_string())?;
-    for entry in entries {
-        let entry = entry.map_err(|e| e.to_string())?;
-        let path = entry.path();
+    let mut paths: Vec<_> = entries
+        .map(|e| e.map_err(|err| err.to_string()).map(|ent| ent.path()))
+        .collect::<Result<Vec<_>, _>>()?;
+    paths.sort_by(|a, b| a.file_name().cmp(&b.file_name()));
+    for path in paths {
         if path.is_dir() {
             if path.file_name().is_some_and(|n| n == "target") {
                 continue;

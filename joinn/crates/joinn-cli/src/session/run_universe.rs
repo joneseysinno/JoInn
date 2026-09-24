@@ -1,9 +1,9 @@
 //! Run the phase 5 universe: calculator, then the unlinked factor.
 
-use crate::load::{find_corpus, load_cells, value_in_frame};
+use crate::load::{find_corpus, gather_bodies, load_cells, value_in_frame};
 use crate::present::{fill_present, prompt};
-use joinn_dna::{hash, parse_body, Body, Cell};
-use joinn_frame::{FrameRegistry, Hash, Verdict};
+use joinn_dna::Body;
+use joinn_frame::Verdict;
 use joinn_host::{describe, describe_refusal};
 use joinn_link::{
     bind_bodies, grant, parse_universe, Address, Mark, UniverseReport, UniverseState,
@@ -22,39 +22,7 @@ pub(in crate::session) fn run_universe(
 ) -> Result<(String, Vec<u8>), String> {
     let corpus = find_corpus()?;
     let cells = load_cells(&corpus)?;
-    let frames = FrameRegistry::phase1();
-    let mut by_hash: BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)> = BTreeMap::new();
-    let mut dirs = vec![corpus.clone()];
-    while let Some(dir) = dirs.pop() {
-        let rd = fs::read_dir(&dir).map_err(|e| format!("{}: {e}", dir.display()))?;
-        for ent in rd {
-            let ent = ent.map_err(|e| e.to_string())?;
-            let path = ent.path();
-            if path.is_dir() {
-                dirs.push(path);
-                continue;
-            }
-            if path.extension().and_then(|e| e.to_str()) != Some("body") {
-                continue;
-            }
-            let src = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
-            if let Verdict::Ok(body) = parse_body(&src, &frames) {
-                let id = hash(&body.coding);
-                let replace = match by_hash.get(&id) {
-                    None => true,
-                    Some((prev, _)) => {
-                        prev.regulatory.prompts.is_empty()
-                            && prev.regulatory.present.is_empty()
-                            && (!body.regulatory.prompts.is_empty()
-                                || !body.regulatory.present.is_empty())
-                    }
-                };
-                if replace {
-                    by_hash.insert(id, (body, cells.clone()));
-                }
-            }
-        }
-    }
+    let by_hash = gather_bodies(&corpus, &cells)?;
     let src = fs::read_to_string(corpus.join("phase5").join("universe.universe"))
         .map_err(|e| e.to_string())?;
     let universe = match parse_universe(&src) {
