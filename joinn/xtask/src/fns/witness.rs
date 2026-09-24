@@ -2,6 +2,7 @@
 
 mod against_git;
 mod against_mtime;
+mod requires_acceptance;
 mod resolve_path;
 mod run;
 
