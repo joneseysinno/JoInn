@@ -5,7 +5,7 @@ use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdic
 use joinn_host::{Address, describe, describe_refusal, probe};
 use joinn_link::{
     BodyStore, LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind,
-    check_link_types, format_link_refusal, parse_universe, revoke,
+    check_law4, check_link_types, format_link_refusal, parse_universe, revoke,
 };
 use std::collections::BTreeMap;
 use std::fs;
@@ -508,4 +508,42 @@ fn again_refusal_is_reported_once() {
         })
         .count();
     assert_eq!(refused, 1, "{reports:?}");
+}
+
+#[test]
+fn law4_adversary_attempt() {
+    let lookup = body_at("phase52/adversary/lookup.body");
+    let id = hash(&lookup.coding).to_hex();
+    println!("lookup coding hash {id}");
+    let all = cells();
+    let mut bodies = store();
+    match bodies.insert(lookup, all, "phase52/adversary/lookup.body") {
+        Verdict::Ok(_) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    let u = universe("phase52/adversary/lookup.universe");
+    match check_law4(&u) {
+        Verdict::Ok(()) => println!("Law 4: admitted"),
+        Verdict::Refused(r) => println!("Law 4: {}", r.reason),
+    }
+    let bound = match bind(&u, &bodies) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    match check_link_types(&u, &bound) {
+        Verdict::Ok(()) => println!("typing: admitted"),
+        Verdict::Refused(r) => println!("typing: {}", r.reason),
+    }
+    match assemble_universe(&u, &bound) {
+        Verdict::Ok(()) => println!("assembly: admitted"),
+        Verdict::Refused(r) => println!("assembly: {}", r.reason),
+    }
+    match check_link_types(&u, &bound) {
+        Verdict::Refused(r) => {
+            assert!(r.reason.contains("units.scale@1"), "{}", r.reason);
+            assert!(r.reason.contains("tail"), "{}", r.reason);
+            assert!(r.reason.contains("In"), "{}", r.reason);
+        }
+        Verdict::Ok(()) => panic!("reading the factor out of an in-port must be refused"),
+    }
 }

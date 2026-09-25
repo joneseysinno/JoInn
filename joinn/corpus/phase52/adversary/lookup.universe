@@ -1,0 +1,24 @@
+universe {
+  codex 1
+  bodies {
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+    body:d999c0b83dfb9d1eee6b3cb4e8b461d38dd7dd585976b1aecf05ecdbece3acf3 as lookup
+  }
+  links {
+    link q0 order none {
+      units.scale@1 tail
+      lookup.answer@0 head
+    }
+    link q1 order none {
+      units.scale@1 tail
+      lookup.question@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system s { units lookup }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+body {
+  codex 1
+  genome {
+    cell:12b6e5458891b14aa74e43cee34b1184be04547fe58e035b1882125467120fa7 as question, answer
+  }
+  grants {
+    stdin: question
+  }
+  wires { }
+  budget { steps 100000 }
+  lineage none
+}
+
+---
+
+regulatory {
+  prompts { question "what factor did you last use? " answer "factor: " }
+  present { question "{0}" answer "{0}" }
+  names { question "Question" answer "Answer" }
+  labels { question "Ask the last factor" answer "The factor" }
+}
