@@ -259,3 +259,31 @@ Build the calculator's complex by hand (~15 blocks). Delete the law `parse(forma
 bans scan corpus files and names this project declares in Rust; calls into
 Rust's standard library (`x.saturating_sub(1)`, `fs::metadata`) are exempt.
 Engineering bans (`HashMap`, `f32`, …) still scan all Rust unmasked.
+
+## R55 — An augmented complex on a link  ·  status: open
+
+When one tail fans out to several heads, is the value conserved (one delivery split, like a sum over heads) or copied (each head gets it all)? Example: `calc.sum@2` feeding both `units.scale@1` and a logger body. If augmentation ε counts deliveries, copying breaks ε∘∂ = 0.
+
+## R56 — Embeddings across a link  ·  status: open
+
+May a link carry a value from one frame into another by an embedding (ℤ into ℚ)? Example: two bodies whose laws each hold on their own frame, joined by an embedding whose round-trip holds on one side and not the other. This is the most likely place for Phase 4's first H¹ candidate.
+
+## R59 — Interactive hosts and races  ·  status: open
+
+In canonical prompt order, the CLI can't deliver two values into one port before its partner arrives. Is that a property or a limitation?
+
+## R60 — Every file kind ships its mutants  ·  status: open
+
+Should a new file kind be required to come with its mutation catalogue before any control may point at it?
+
+## R61 — Whose budget is it  ·  status: open
+
+Is a body's budget its own (declared) or borrowed from its container?
+
+## R62 — One host, both sides  ·  status: open
+
+When a host presents several bodies, does it show a link-caused refusal's reason (near side) or only its kind (far side)?
+
+## R64 — Legacy gates  ·  status: open
+
+Upgrade gates 1–3 to parsed subjects and a catalogue that covers `.cell`, `.desc`, `.trace` and `.rs`. That will be a short cleanup phase.
