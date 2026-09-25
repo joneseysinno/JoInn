@@ -5,7 +5,7 @@ use joinn_frame::Verdict;
 
 use super::refuse::refuse;
 
-pub(super) fn set_score(rows: &mut Vec<LockRow>, phase: &str, n: u32, total: u32) -> Verdict<()> {
+pub(super) fn set_score(rows: &mut [LockRow], phase: &str, n: u32, total: u32) -> Verdict<()> {
     let Some(row) = rows.iter_mut().find(|r| r.phase == phase) else {
         return Verdict::Refused(refuse(format!(
             "no such phase {phase}; acceptance is a recorded lock phase"
@@ -29,7 +29,7 @@ mod tests {
         let mut phase = String::from("phase ");
         phase.push(char::from_digit(5, 10).unwrap_or('x'));
         let src = format!("# fixture lock for SetScore\nphase 0: pass\n{phase}: 7/8\n");
-        parse_subject("gates.lock", &src).expect("parse")
+        parse_subject("gates.lock", &src).unwrap_or_else(|e| panic!("parse gates.lock: {e}"))
     }
 
     #[test]

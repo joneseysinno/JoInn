@@ -7,13 +7,15 @@ use std::collections::BTreeMap;
 
 use crate::universe::{Mark, Universe};
 
+type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
+type PortIndex = BTreeMap<(String, u32), (Direction, FrameRef)>;
+
 /// Tails are out-ports, heads are in-ports, and every member's frame is equal.
 pub fn check_link_types(
     universe: &Universe,
-    bound: &BTreeMap<String, (Body, BTreeMap<Hash, Cell>)>,
+    bound: &BTreeMap<String, BodyWithCells>,
 ) -> Verdict<()> {
-    let mut ports: BTreeMap<String, BTreeMap<(String, u32), (Direction, FrameRef)>> =
-        BTreeMap::new();
+    let mut ports: BTreeMap<String, PortIndex> = BTreeMap::new();
     for (alias, (body, cells)) in bound {
         let mut index = BTreeMap::new();
         for entry in &body.coding.genome {

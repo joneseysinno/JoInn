@@ -87,7 +87,7 @@ mod tests {
     fn legacy_suffix_is_parsed() {
         let n = 8u32;
         let src = format!("phase 2: {n}/{n} legacy\n");
-        let rows = parse_lock_scores(&src).expect("parse");
+        let rows = parse_lock_scores(&src).unwrap_or_else(|e| panic!("parse lock scores: {e}"));
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].n, n);
         assert_eq!(rows[0].total, n);

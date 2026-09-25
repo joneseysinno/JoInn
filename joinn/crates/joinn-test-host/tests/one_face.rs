@@ -22,8 +22,9 @@ fn duplicate_face_refuses_naming_both_paths() {
         .join("phase2")
         .join("variants")
         .join("calculator_c.body");
-    let src_a = fs::read_to_string(&calc).expect("calculator.body");
-    let src_c = fs::read_to_string(&variant).expect("calculator_c.body");
+    let src_a = fs::read_to_string(&calc).unwrap_or_else(|e| panic!("read calculator.body: {e}"));
+    let src_c =
+        fs::read_to_string(&variant).unwrap_or_else(|e| panic!("read calculator_c.body: {e}"));
     let body_a = match parse_body(&src_a, &frames) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -35,8 +36,10 @@ fn duplicate_face_refuses_naming_both_paths() {
     assert_eq!(hash(&body_a.coding), hash(&body_c.coding));
     assert_ne!(body_a.regulatory, body_c.regulatory);
 
-    let err = load_body_set(vec![(calc.clone(), body_a), (variant.clone(), body_c)])
-        .expect_err("must refuse");
+    let err = match load_body_set(vec![(calc.clone(), body_a), (variant.clone(), body_c)]) {
+        Err(e) => e,
+        Ok(v) => panic!("load_body_set must refuse duplicate face, got {v:?}"),
+    };
     let a = calc.display().to_string();
     let c = variant.display().to_string();
     assert!(

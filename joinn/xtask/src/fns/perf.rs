@@ -68,7 +68,12 @@ pub(crate) fn perf() -> Result<(), String> {
     let uni_ms = t5.elapsed().as_millis();
     println!("two-body universe membrane ports: {uni_ports} milliseconds: {uni_ms}");
 
-    let (load_ms, mem_ms, bodies, ports, refused) = membrane_over_corpus()?;
+    let t_load = Instant::now();
+    let (parsed, cells) = membrane_load_corpus()?;
+    let load_ms = t_load.elapsed().as_millis();
+    let t_mem = Instant::now();
+    let (bodies, ports, refused) = membrane_compute(&parsed, &cells);
+    let mem_ms = t_mem.elapsed().as_millis();
     println!(
         "membrane load+parse milliseconds: {load_ms} compute milliseconds: {mem_ms} bodies: {bodies} ports: {ports} refused: {refused}"
     );
@@ -140,10 +145,10 @@ fn two_body_universe_ports() -> Result<usize, String> {
     Ok(total)
 }
 
-fn membrane_over_corpus() -> Result<(u128, u128, usize, usize, usize), String> {
+fn membrane_load_corpus() -> Result<(Vec<joinn_dna::Body>, BTreeMap<Hash, joinn_dna::Cell>), String>
+{
     let root = workspace_root()?;
     let frames = FrameRegistry::phase1();
-    let t_load = Instant::now();
     let mut cells: BTreeMap<Hash, joinn_dna::Cell> = BTreeMap::new();
     let mut parsed = Vec::new();
     for dir_name in ["phase0", "phase2", "phase21", "phase22", "phase3", "phase5"] {
@@ -179,13 +184,18 @@ fn membrane_over_corpus() -> Result<(u128, u128, usize, usize, usize), String> {
             }
         }
     }
-    let load_ms = t_load.elapsed().as_millis();
-    let t_mem = Instant::now();
+    Ok((parsed, cells))
+}
+
+fn membrane_compute(
+    parsed: &[joinn_dna::Body],
+    cells: &BTreeMap<Hash, joinn_dna::Cell>,
+) -> (usize, usize, usize) {
     let mut bodies = 0usize;
     let mut ports = 0usize;
     let mut refused = 0usize;
-    for body in &parsed {
-        match joinn_link::membrane(body, &cells) {
+    for body in parsed {
+        match joinn_link::membrane(body, cells) {
             Verdict::Ok(m) => {
                 bodies += 1;
                 ports += m.len();
@@ -193,6 +203,5 @@ fn membrane_over_corpus() -> Result<(u128, u128, usize, usize, usize), String> {
             Verdict::Refused(_) => refused += 1,
         }
     }
-    let mem_ms = t_mem.elapsed().as_millis();
-    Ok((load_ms, mem_ms, bodies, ports, refused))
+    (bodies, ports, refused)
 }

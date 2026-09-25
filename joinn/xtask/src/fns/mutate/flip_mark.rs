@@ -44,7 +44,8 @@ mod tests {
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
-        parse_subject("phase5/universe.universe", src).expect("parse")
+        parse_subject("phase5/universe.universe", src)
+            .unwrap_or_else(|e| panic!("parse universe: {e}"))
     }
 
     #[test]
@@ -61,7 +62,7 @@ mod tests {
             panic!("universe mutant");
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
-        let supplied = load_phase5_bodies().expect("bodies");
+        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
         let bound = match bind_bodies(u, &supplied) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => panic!("{}", r.reason),

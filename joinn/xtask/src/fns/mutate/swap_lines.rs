@@ -4,7 +4,7 @@ use joinn_frame::Verdict;
 
 use super::refuse::refuse;
 
-pub(super) fn swap_lines(lines: &mut Vec<String>, i: usize, j: usize) -> Verdict<()> {
+pub(super) fn swap_lines(lines: &mut [String], i: usize, j: usize) -> Verdict<()> {
     if i >= lines.len() {
         return Verdict::Refused(refuse(format!(
             "no such line {i}; acceptance is an index in 0..{}",
@@ -32,7 +32,8 @@ mod tests {
 
     fn transcript() -> Subject {
         let src = include_str!("../../../../corpus/transcripts/universe.txt");
-        parse_subject("corpus/transcripts/universe.txt", src).expect("parse")
+        parse_subject("corpus/transcripts/universe.txt", src)
+            .unwrap_or_else(|e| panic!("parse transcript: {e}"))
     }
 
     #[test]
@@ -43,10 +44,10 @@ mod tests {
         };
         let calc = fs::read_to_string(
             workspace_root()
-                .expect("root")
+                .unwrap_or_else(|e| panic!("workspace root: {e}"))
                 .join("corpus/transcripts/calculator.txt"),
         )
-        .expect("calculator.txt");
+        .unwrap_or_else(|e| panic!("read calculator.txt: {e}"));
         let calc_lines: Vec<&str> = calc.lines().collect();
         assert!(
             orig.len() >= calc_lines.len()

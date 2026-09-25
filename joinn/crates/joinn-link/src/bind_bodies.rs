@@ -6,11 +6,14 @@ use std::collections::BTreeMap;
 
 use crate::universe::Universe;
 
+/// One body and the cells it names, keyed for binding.
+type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
+
 /// Alias → body, looked up by the binding's declared coding hash.
 pub fn bind_bodies(
     universe: &Universe,
-    supplied: &BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)>,
-) -> Verdict<BTreeMap<String, (Body, BTreeMap<Hash, Cell>)>> {
+    supplied: &BTreeMap<Hash, BodyWithCells>,
+) -> Verdict<BTreeMap<String, BodyWithCells>> {
     let mut bound = BTreeMap::new();
     for binding in &universe.coding.bodies {
         let Some((body, cells)) = supplied.get(&binding.hash) else {

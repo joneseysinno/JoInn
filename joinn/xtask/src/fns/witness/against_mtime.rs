@@ -85,13 +85,14 @@ mod tests {
         let root =
             std::env::temp_dir().join(format!("joinn-witness-{}-{}", std::process::id(), "aged"));
         let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(root.join("crates")).expect("mkdir");
+        fs::create_dir_all(root.join("crates")).unwrap_or_else(|e| panic!("mkdir crates: {e}"));
         let finding = root.join("finding.md");
-        fs::write(&finding, "old").expect("write finding");
+        fs::write(&finding, "old").unwrap_or_else(|e| panic!("write finding: {e}"));
         thread::sleep(Duration::from_millis(1100));
         let newer = root.join("crates").join("newer.rs");
-        fs::write(&newer, "new").expect("write newer");
-        let status = against_mtime(&finding, &[root.join("crates")]).expect("check");
+        fs::write(&newer, "new").unwrap_or_else(|e| panic!("write newer: {e}"));
+        let status = against_mtime(&finding, &[root.join("crates")])
+            .unwrap_or_else(|e| panic!("against_mtime check: {e}"));
         match status {
             Status::Stale { path, when } => {
                 assert_eq!(path, newer);
@@ -107,13 +108,14 @@ mod tests {
         let root =
             std::env::temp_dir().join(format!("joinn-witness-{}-{}", std::process::id(), "fresh"));
         let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(root.join("crates")).expect("mkdir");
+        fs::create_dir_all(root.join("crates")).unwrap_or_else(|e| panic!("mkdir crates: {e}"));
         let older = root.join("crates").join("older.rs");
-        fs::write(&older, "old").expect("write older");
+        fs::write(&older, "old").unwrap_or_else(|e| panic!("write older: {e}"));
         thread::sleep(Duration::from_millis(1100));
         let finding = root.join("finding.md");
-        fs::write(&finding, "new").expect("write finding");
-        let status = against_mtime(&finding, &[root.join("crates")]).expect("check");
+        fs::write(&finding, "new").unwrap_or_else(|e| panic!("write finding: {e}"));
+        let status = against_mtime(&finding, &[root.join("crates")])
+            .unwrap_or_else(|e| panic!("against_mtime check: {e}"));
         assert_eq!(status, Status::Current);
         let _ = fs::remove_dir_all(&root);
     }

@@ -27,10 +27,12 @@ pub fn law4_refusals(universe: &Universe) -> Vec<Refusal> {
         out.push(Refusal::structural(
             CheckId::Other,
             format!(
-                "wire {}@{} -> {}@{} spans bodies {} and {}; acceptance is a hyperedge between those bodies",
-                format!("{}.{}", wire.src_body, wire.src_instance),
+                "wire {}.{}@{} -> {}.{}@{} spans bodies {} and {}; acceptance is a hyperedge between those bodies",
+                wire.src_body,
+                wire.src_instance,
                 wire.src_port,
-                format!("{}.{}", wire.dst_body, wire.dst_instance),
+                wire.dst_body,
+                wire.dst_instance,
                 wire.dst_port,
                 wire.src_body,
                 wire.dst_body

@@ -198,8 +198,8 @@ mod tests {
             .join("..")
             .join("corpus")
             .join("transcripts");
-        let want = std::fs::read(&root.join("universe.txt")).unwrap_or_else(|e| panic!("{e}"));
-        let calc = std::fs::read(&root.join("calculator.txt")).unwrap_or_else(|e| panic!("{e}"));
+        let want = std::fs::read(root.join("universe.txt")).unwrap_or_else(|e| panic!("{e}"));
+        let calc = std::fs::read(root.join("calculator.txt")).unwrap_or_else(|e| panic!("{e}"));
         let got = out.into_bytes();
         assert_eq!(got, want, "{}", String::from_utf8_lossy(&got));
         assert_eq!(&got[..calc.len()], calc.as_slice());

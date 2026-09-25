@@ -68,8 +68,8 @@ mod tests {
             "phase5/universe.universe",
             include_str!("../../../../corpus/phase5/universe.universe"),
         )
-        .expect("universe");
-        let nu = neutral(&u).expect("universe neutral");
+        .unwrap_or_else(|e| panic!("parse universe: {e}"));
+        let nu = neutral(&u).unwrap_or_else(|| panic!("universe neutral edit missing"));
         let Subject::Universe(orig) = &u else {
             panic!("universe");
         };
@@ -82,7 +82,7 @@ mod tests {
             "corpus/transcripts/universe.txt",
             include_str!("../../../../corpus/transcripts/universe.txt"),
         )
-        .expect("transcript");
+        .unwrap_or_else(|e| panic!("parse transcript: {e}"));
         assert!(neutral(&t).is_none());
     }
 }

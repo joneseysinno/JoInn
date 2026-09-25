@@ -6,12 +6,14 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
+
 /// Load every `.body` under `corpus`, skipping `variants` and `controls` folders.
 /// Refuses another body with the same coding hash and a different regulatory region.
 pub(crate) fn gather_bodies(
     corpus: &Path,
     cells: &BTreeMap<Hash, Cell>,
-) -> Result<BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)>, String> {
+) -> Result<BTreeMap<Hash, BodyWithCells>, String> {
     let frames = FrameRegistry::phase1();
     let mut files: Vec<PathBuf> = Vec::new();
     let mut dirs = vec![corpus.to_path_buf()];

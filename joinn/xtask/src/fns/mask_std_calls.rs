@@ -15,8 +15,8 @@ pub(crate) fn mask_std_calls(line: &str) -> String {
             while end < b.len() && is_cont(b[end]) {
                 end += 1;
             }
-            for j in start..end {
-                mask[j] = true;
+            for slot in &mut mask[start..end] {
+                *slot = true;
             }
             i = end;
             continue;
@@ -35,8 +35,8 @@ pub(crate) fn mask_std_calls(line: &str) -> String {
                 while end < b.len() && is_cont(b[end]) {
                     end += 1;
                 }
-                for j in at..end {
-                    mask[j] = true;
+                for slot in &mut mask[at..end] {
+                    *slot = true;
                 }
             }
             search += rel + 1;

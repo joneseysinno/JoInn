@@ -34,12 +34,14 @@ mod tests {
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
-        parse_subject("phase5/universe.universe", src).expect("parse")
+        parse_subject("phase5/universe.universe", src)
+            .unwrap_or_else(|e| panic!("parse universe: {e}"))
     }
 
     fn echo_hash_hex() -> String {
-        let root = workspace_root().expect("root");
-        let src = fs::read_to_string(root.join("corpus/phase5/controls/echo.body")).expect("echo");
+        let root = workspace_root().unwrap_or_else(|e| panic!("workspace root: {e}"));
+        let src = fs::read_to_string(root.join("corpus/phase5/controls/echo.body"))
+            .unwrap_or_else(|e| panic!("read echo.body: {e}"));
         let body = match parse_body(&src, &FrameRegistry::phase1()) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => panic!("{}", r.reason),
@@ -63,7 +65,7 @@ mod tests {
             panic!("universe mutant");
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
-        let supplied = load_phase5_bodies().expect("bodies");
+        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
         let bound = match bind_bodies(u, &supplied) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => panic!("{}", r.reason),

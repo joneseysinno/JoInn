@@ -24,7 +24,8 @@ mod tests {
 
     fn transcript() -> Subject {
         let src = include_str!("../../../../corpus/transcripts/universe.txt");
-        parse_subject("corpus/transcripts/universe.txt", src).expect("parse")
+        parse_subject("corpus/transcripts/universe.txt", src)
+            .unwrap_or_else(|e| panic!("parse transcript: {e}"))
     }
 
     #[test]

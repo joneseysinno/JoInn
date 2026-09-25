@@ -16,7 +16,8 @@ mod tests {
 
     fn inner_reason() -> Subject {
         let src = include_str!("../../../../corpus/phase5/controls/inner_reason.txt");
-        parse_subject("phase5/controls/inner_reason.txt", src).expect("parse")
+        parse_subject("phase5/controls/inner_reason.txt", src)
+            .unwrap_or_else(|e| panic!("parse inner_reason: {e}"))
     }
 
     #[test]

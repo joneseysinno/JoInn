@@ -67,7 +67,8 @@ mod tests {
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
-        parse_subject("phase5/universe.universe", src).expect("parse")
+        parse_subject("phase5/universe.universe", src)
+            .unwrap_or_else(|e| panic!("parse universe: {e}"))
     }
 
     #[test]

@@ -44,7 +44,8 @@ mod tests {
 
     fn calculator() -> Subject {
         let src = include_str!("../../../../corpus/phase2/calculator.body");
-        parse_subject("phase2/calculator.body", src).expect("parse")
+        parse_subject("phase2/calculator.body", src)
+            .unwrap_or_else(|e| panic!("parse calculator.body: {e}"))
     }
 
     #[test]
@@ -55,7 +56,7 @@ mod tests {
         };
         let orig_hash = hash(&orig.coding);
         // Use the format cell hash (not sum) so sum's contract disappears.
-        let (_, cells) = load_calculator().expect("cells");
+        let (_, cells) = load_calculator().unwrap_or_else(|e| panic!("load calculator cells: {e}"));
         let format_hex = cells
             .keys()
             .find(|h| {
@@ -66,7 +67,7 @@ mod tests {
                 })
             })
             .map(|h| h.to_hex())
-            .expect("another cell");
+            .unwrap_or_else(|| panic!("another cell hash for swap_cell test"));
         let format_static: &'static str = Box::leak(format_hex.into_boxed_str());
         let Verdict::Ok(mutant) = mutate(&s, &Mutation::SwapCell("sum", format_static)) else {
             panic!("mutate");

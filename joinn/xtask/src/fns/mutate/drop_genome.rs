@@ -45,7 +45,8 @@ mod tests {
 
     fn calculator() -> Subject {
         let src = include_str!("../../../../corpus/phase2/calculator.body");
-        parse_subject("phase2/calculator.body", src).expect("parse")
+        parse_subject("phase2/calculator.body", src)
+            .unwrap_or_else(|e| panic!("parse calculator.body: {e}"))
     }
 
     #[test]
@@ -68,7 +69,7 @@ mod tests {
                 .iter()
                 .all(|e| !e.instances.iter().any(|i| i == "cli_b"))
         );
-        let (_, cells) = load_calculator().expect("cells");
+        let (_, cells) = load_calculator().unwrap_or_else(|e| panic!("load calculator cells: {e}"));
         let set = match membrane(body, &cells) {
             Verdict::Ok(set) => set,
             Verdict::Refused(r) => panic!("{}", r.reason),

@@ -145,7 +145,9 @@ fn units_fires(reports: &[UniverseReport]) -> usize {
 }
 
 fn scale_out(state: &UniverseState) -> Option<String> {
-    let body = state.body("units").expect("units");
+    let body = state
+        .body("units")
+        .unwrap_or_else(|| panic!("units body missing"));
     let d = match describe(body, "scale") {
         Verdict::Ok(d) => d,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -193,7 +195,10 @@ fn wrong_hash_names_both_shorts() {
     let mut map = supplied();
     let calc = body_at("phase2/calculator.body");
     let calc_hash = hash(&calc.coding);
-    let cells = map.get(&calc_hash).map(|(_, c)| c.clone()).expect("calc");
+    let cells = map
+        .get(&calc_hash)
+        .map(|(_, c)| c.clone())
+        .unwrap_or_else(|| panic!("calc not in supplied map"));
     let declared = u.coding.bodies[0].hash;
     map.insert(declared, (calc, cells));
     match bind_bodies(&u, &map) {
@@ -344,9 +349,11 @@ fn second_sum_stays_home() {
         UniverseReport::Link(refusal) => Some(format!("{refusal:?}")),
         UniverseReport::Fired { .. } => None,
     });
-    let far = far.expect("a link refusal");
+    let far = far.unwrap_or_else(|| panic!("expected a link refusal in reports"));
     assert!(!far.contains("join refuse"), "{far}");
-    let body = state.body("units").expect("units");
+    let body = state
+        .body("units")
+        .unwrap_or_else(|| panic!("units body missing"));
     let seen = match probe(
         body,
         Address {

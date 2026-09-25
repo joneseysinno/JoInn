@@ -6,7 +6,9 @@ use joinn_frame::{FrameRegistry, Hash, Verdict};
 use std::collections::BTreeMap;
 use std::fs;
 
-pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)>, String> {
+type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
+
+pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, BodyWithCells>, String> {
     let root = workspace_root()?;
     let frames = FrameRegistry::phase1();
     let mut cells: BTreeMap<Hash, Cell> = BTreeMap::new();
