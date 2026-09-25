@@ -1,14 +1,13 @@
-//! Load phase-5 bodies indexed by coding hash.
+//! Load phase-5 bodies into a store.
 
 use super::workspace_root;
 use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
+use joinn_link::BodyStore;
 use std::collections::BTreeMap;
 use std::fs;
 
-type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
-
-pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, BodyWithCells>, String> {
+pub(crate) fn load_phase5_bodies() -> Result<BodyStore, String> {
     let root = workspace_root()?;
     let frames = FrameRegistry::phase1();
     let mut cells: BTreeMap<Hash, Cell> = BTreeMap::new();
@@ -46,7 +45,7 @@ pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, BodyWithCells>, Stri
             Verdict::Refused(r) => Err(r.reason),
         }
     };
-    let mut bodies = BTreeMap::new();
+    let mut store = BodyStore::new();
     for rel in [
         "phase2/calculator.body",
         "phase5/units.body",
@@ -54,7 +53,12 @@ pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, BodyWithCells>, Stri
         "phase5/bus.body",
     ] {
         let body = load(rel)?;
-        bodies.insert(hash(&body.coding), (body, cells.clone()));
+        let path = root.join("corpus").join(rel);
+        let source = path.display().to_string();
+        match store.insert(body, cells.clone(), &source) {
+            Verdict::Ok(_) => {}
+            Verdict::Refused(r) => return Err(r.reason),
+        }
     }
-    Ok(bodies)
+    Ok(store)
 }

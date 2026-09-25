@@ -29,7 +29,8 @@ fn main() -> ExitCode {
             Some("3") => fns::gate_three(fns::PHASE_LABELS[5]).and_then(fns::require_full),
             Some("5") => fns::gate_five(fns::PHASE_LABELS[6]).and_then(fns::require_full),
             Some("5.1") => fns::gate_five_one(fns::PHASE_LABELS[7]).and_then(fns::require_full),
-            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|5|5.1".into()),
+            Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[8]).and_then(fns::require_full),
+            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|5|5.1|5.2".into()),
         },
         "power" => fns::power(),
         "agree" => fns::agree(),
@@ -43,7 +44,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | power | agree | perf | floor | decisions | witness"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | perf | floor | decisions | witness"
             );
             Ok(())
         }
@@ -183,6 +184,7 @@ mod tests {
         let non_legacy = [
             super::fns::gate_five_items(),
             super::fns::gate_five_one_items(),
+            super::fns::gate_five_two_items(),
         ];
         let mut checks = Vec::new();
         let mut controls = Vec::new();

@@ -1,11 +1,9 @@
 //! Drive a universe under the test host. Capture what each body presented.
 
-use joinn_dna::{Body, Cell};
-use joinn_frame::{Hash, Verdict};
+use joinn_frame::Verdict;
 use joinn_gate::NativeRegistry;
 use joinn_host::describe;
-use joinn_link::{Universe, UniverseReport, UniverseState, grant};
-use std::collections::BTreeMap;
+use joinn_link::{Bound, Universe, UniverseReport, UniverseState, grant};
 
 use crate::capture::Capture;
 use crate::raw_event::RawEvent;
@@ -14,12 +12,12 @@ use crate::value_of::value_of;
 /// Inject scripted events, grant one ordered link, run, capture fire descriptions.
 pub fn run_universe(
     universe: &Universe,
-    bound: BTreeMap<String, (Body, BTreeMap<Hash, Cell>)>,
+    bound: Bound,
     natives: NativeRegistry,
     grant_to: Option<(&str, &str)>,
     events: Vec<(String, RawEvent)>,
 ) -> Verdict<Capture> {
-    let mut state = match UniverseState::new(universe, bound, natives) {
+    let mut state = match UniverseState::new(universe, &bound, natives) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Verdict::Refused(r),
     };

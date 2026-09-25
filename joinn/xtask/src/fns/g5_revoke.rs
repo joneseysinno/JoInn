@@ -3,21 +3,19 @@
 use super::{int_val, load_phase5_bodies, load_universe_file, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{
-    Address, LinkRefusalKind, UniverseReport, UniverseState, bind_bodies, grant, revoke,
-};
+use joinn_link::{Address, LinkRefusalKind, UniverseReport, UniverseState, bind, grant, revoke};
 
 pub(crate) fn g5_revoke() -> bool {
     let Ok(u) = load_universe_file("phase5/universe.universe") else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let Verdict::Ok(bound) = bind_bodies(&u, &supplied) else {
+    let Verdict::Ok(bound) = bind(&u, &store) else {
         return false;
     };
-    let mut state = match UniverseState::new(&u, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(&u, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };

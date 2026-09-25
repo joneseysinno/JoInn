@@ -2,7 +2,7 @@
 
 use super::{load_phase5_bodies, load_universe_file};
 use joinn_frame::Verdict;
-use joinn_link::{assemble_universe, bind_bodies, check_law4};
+use joinn_link::{assemble_universe, bind, check_law4};
 
 pub(crate) fn g5_law4() -> bool {
     let Ok(u) = load_universe_file("phase5/universe.universe") else {
@@ -12,10 +12,10 @@ pub(crate) fn g5_law4() -> bool {
         Verdict::Ok(()) => {}
         Verdict::Refused(_) => return false,
     }
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let bound = match bind_bodies(&u, &supplied) {
+    let bound = match bind(&u, &store) {
         Verdict::Ok(b) => b,
         Verdict::Refused(_) => return false,
     };

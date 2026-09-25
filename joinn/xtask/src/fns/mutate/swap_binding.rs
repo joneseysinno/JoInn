@@ -29,7 +29,7 @@ mod tests {
     use crate::fns::workspace_root::workspace_root;
     use joinn_dna::{hash, parse_body};
     use joinn_frame::{FrameRegistry, Verdict};
-    use joinn_link::{bind_bodies, check_link_types, hash_universe};
+    use joinn_link::{bind, check_link_types, hash_universe};
     use std::fs;
 
     fn universe() -> Subject {
@@ -65,8 +65,8 @@ mod tests {
             panic!("universe mutant");
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
-        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
-        let bound = match bind_bodies(u, &supplied) {
+        let store = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
+        let bound = match bind(u, &store) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => panic!("{}", r.reason),
         };

@@ -4,7 +4,7 @@
 
 use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
-use joinn_link::{bind_bodies, check_law4, check_link_types, parse_universe};
+use joinn_link::{BodyStore, bind, check_law4, check_link_types, parse_universe};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -70,16 +70,19 @@ fn three_body_bus_is_expressible_under_law4() {
         Verdict::Refused(r) => panic!("Law 4 must hold for the bus: {}", r.reason),
     }
     let cells = cells_with_mul();
-    let mut supplied = BTreeMap::new();
+    let mut store = BodyStore::new();
     for rel in [
         "phase2/calculator.body",
         "phase5/controls/echo.body",
         "phase5/bus.body",
     ] {
         let body = load_body(rel);
-        supplied.insert(hash(&body.coding), (body, cells.clone()));
+        match store.insert(body, cells.clone(), rel) {
+            Verdict::Ok(_) => {}
+            Verdict::Refused(r) => panic!("{rel}: {}", r.reason),
+        }
     }
-    let bound = match bind_bodies(&u, &supplied) {
+    let bound = match bind(&u, &store) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };

@@ -1,22 +1,19 @@
 //! A link is admitted when its members agree: direction and frame.
 
-use joinn_dna::{Body, Cell, Direction, GenomeTarget};
-use joinn_frame::{FrameRef, Hash, Verdict};
+use joinn_dna::{Direction, GenomeTarget};
+use joinn_frame::{FrameRef, Verdict};
 use joinn_prim::prim_ports;
 use std::collections::BTreeMap;
 
+use crate::bind::Bound;
 use crate::universe::{Mark, Universe};
 
-type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
 type PortIndex = BTreeMap<(String, u32), (Direction, FrameRef)>;
 
 /// Tails are out-ports, heads are in-ports, and every member's frame is equal.
-pub fn check_link_types(
-    universe: &Universe,
-    bound: &BTreeMap<String, BodyWithCells>,
-) -> Verdict<()> {
+pub fn check_link_types(universe: &Universe, bound: &Bound) -> Verdict<()> {
     let mut ports: BTreeMap<String, PortIndex> = BTreeMap::new();
-    for (alias, (body, cells)) in bound {
+    for (alias, (body, cells)) in bound.iter() {
         let mut index = BTreeMap::new();
         for entry in &body.coding.genome {
             let decls = match &entry.target {
@@ -46,7 +43,7 @@ pub fn check_link_types(
                 }
             }
         }
-        ports.insert(alias.clone(), index);
+        ports.insert(alias.to_owned(), index);
     }
 
     for link in &universe.coding.links {

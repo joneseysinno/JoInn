@@ -63,7 +63,7 @@ mod tests {
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;
-    use joinn_link::{assemble_universe, bind_bodies, hash_universe};
+    use joinn_link::{assemble_universe, bind, hash_universe};
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
@@ -87,8 +87,8 @@ mod tests {
         assert_ne!(hash_universe(&u.coding), orig_hash);
         assert!(u.coding.bodies.iter().all(|b| b.alias != "units"));
         assert!(u.coding.bodies.iter().any(|b| b.alias == "meters"));
-        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
-        let bound = match bind_bodies(u, &supplied) {
+        let store = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
+        let bound = match bind(u, &store) {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => panic!("renamed universe must bind: {}", r.reason),
         };

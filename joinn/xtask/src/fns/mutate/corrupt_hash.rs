@@ -38,7 +38,7 @@ mod tests {
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;
-    use joinn_link::{bind_bodies, hash_universe};
+    use joinn_link::{bind, hash_universe};
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
@@ -60,10 +60,16 @@ mod tests {
             panic!("universe mutant");
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
-        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
-        match bind_bodies(u, &supplied) {
+        let Some(calc) = u.coding.bodies.iter().find(|b| b.alias == "calc") else {
+            panic!("calc binding");
+        };
+        let declared = calc.hash.to_hex();
+        assert_eq!(declared.len(), 64, "{declared}");
+        let store = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
+        match bind(u, &store) {
             Verdict::Refused(r) => {
                 assert!(r.reason.contains("calc"), "{}", r.reason);
+                assert!(r.reason.contains(&declared), "{}", r.reason);
             }
             Verdict::Ok(_) => panic!("binding must refuse corrupted hash"),
         }

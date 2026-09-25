@@ -5,9 +5,7 @@ use crate::present::{fill_present, prompt};
 use joinn_dna::Body;
 use joinn_frame::Verdict;
 use joinn_host::{describe, describe_refusal};
-use joinn_link::{
-    Address, Mark, UniverseReport, UniverseState, bind_bodies, grant, parse_universe,
-};
+use joinn_link::{Address, Mark, UniverseReport, UniverseState, bind, grant, parse_universe};
 use joinn_live::BodyState;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -22,22 +20,22 @@ pub(in crate::session) fn run_universe(
 ) -> Result<(String, Vec<u8>), String> {
     let corpus = find_corpus()?;
     let cells = load_cells(&corpus)?;
-    let by_hash = gather_bodies(&corpus, &cells)?;
+    let store = gather_bodies(&corpus, &cells)?;
     let src = fs::read_to_string(corpus.join("phase5").join("universe.universe"))
         .map_err(|e| e.to_string())?;
     let universe = match parse_universe(&src) {
         Verdict::Ok(u) => u,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    let bound = match bind_bodies(&universe, &by_hash) {
+    let bound = match bind(&universe, &store) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => return Err(r.reason),
     };
     let faces: BTreeMap<String, Body> = bound
         .iter()
-        .map(|(alias, (body, _))| (alias.clone(), body.clone()))
+        .map(|(alias, (body, _))| (alias.to_owned(), body.clone()))
         .collect();
-    let mut state = match UniverseState::new(&universe, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(&universe, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };

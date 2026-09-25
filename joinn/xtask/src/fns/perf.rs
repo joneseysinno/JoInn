@@ -95,11 +95,7 @@ fn two_body_universe_ports() -> Result<usize, String> {
     };
     let frames = FrameRegistry::phase1();
     let supplied = load_phase5_bodies()?;
-    let cells = supplied
-        .values()
-        .next()
-        .map(|(_, loaded)| loaded.clone())
-        .unwrap_or_default();
+    let cells = supplied.any_cells().cloned().unwrap_or_default();
     let mut by_hash: BTreeMap<Hash, PathBuf> = BTreeMap::new();
     let mut dirs = vec![root.join("corpus")];
     while let Some(dir) = dirs.pop() {

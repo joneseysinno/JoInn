@@ -2,14 +2,14 @@
 
 use super::{load_phase5_bodies, workspace_root};
 use joinn_frame::Verdict;
-use joinn_link::{bind_bodies, check_link_types, parse_universe};
+use joinn_link::{bind, check_link_types, parse_universe};
 use std::fs;
 
 pub(crate) fn g51_tails() -> bool {
     let Ok(root) = workspace_root() else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
     let direction = root
@@ -23,7 +23,7 @@ pub(crate) fn g51_tails() -> bool {
     let Verdict::Ok(bad_dir) = parse_universe(&direction_src) else {
         return false;
     };
-    let Verdict::Ok(dir_bound) = bind_bodies(&bad_dir, &supplied) else {
+    let Verdict::Ok(dir_bound) = bind(&bad_dir, &store) else {
         return false;
     };
     let Verdict::Refused(dir) = check_link_types(&bad_dir, &dir_bound) else {

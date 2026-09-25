@@ -3,7 +3,7 @@
 use super::{load_phase5_bodies, run_body_bin, workspace_root};
 use joinn_frame::{Term, Verdict};
 use joinn_host::Address;
-use joinn_link::{bind_bodies, parse_universe};
+use joinn_link::{bind, parse_universe};
 use joinn_test_host::RawEvent;
 use std::fs;
 
@@ -35,10 +35,10 @@ pub(crate) fn g51_hosts() -> bool {
     let Verdict::Ok(universe) = parse_universe(&src) else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let Verdict::Ok(bound) = bind_bodies(&universe, &supplied) else {
+    let Verdict::Ok(bound) = bind(&universe, &store) else {
         return false;
     };
     let events = vec![

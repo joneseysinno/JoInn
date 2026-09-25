@@ -3,18 +3,18 @@
 use super::{int_val, load_phase5_bodies, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{Address, Universe, UniverseReport, UniverseState, bind_bodies, grant};
+use joinn_link::{Address, Universe, UniverseReport, UniverseState, bind, grant};
 
 pub(crate) fn units_after(
     universe: &Universe,
     grant_link: Option<&str>,
 ) -> Result<(usize, Option<String>), String> {
-    let supplied = load_phase5_bodies()?;
-    let bound = match bind_bodies(universe, &supplied) {
+    let store = load_phase5_bodies()?;
+    let bound = match bind(universe, &store) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    let mut state = match UniverseState::new(universe, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(universe, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };

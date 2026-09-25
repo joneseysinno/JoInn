@@ -3,16 +3,16 @@
 use super::load_phase5_bodies;
 use super::subject::Subject;
 use joinn_frame::Verdict;
-use joinn_link::{bind_bodies, check_link_types};
+use joinn_link::{bind, check_link_types};
 
 pub(crate) fn g51_frame_control(subject: &Subject) -> bool {
     let Subject::Universe(universe) = subject else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let Verdict::Ok(bound) = bind_bodies(universe, &supplied) else {
+    let Verdict::Ok(bound) = bind(universe, &store) else {
         return false;
     };
     match check_link_types(universe, &bound) {

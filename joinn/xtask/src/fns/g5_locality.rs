@@ -3,7 +3,7 @@
 use super::{load_phase5_bodies, load_universe_file, text_val, workspace_root};
 use joinn_frame::Verdict;
 use joinn_host::probe;
-use joinn_link::{Address, UniverseState, bind_bodies, grant};
+use joinn_link::{Address, UniverseState, bind, grant};
 use std::fs;
 
 pub(crate) fn g5_locality() -> bool {
@@ -25,13 +25,13 @@ pub(crate) fn g5_locality() -> bool {
     let Ok(u) = load_universe_file("phase5/universe.universe") else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let Verdict::Ok(bound) = bind_bodies(&u, &supplied) else {
+    let Verdict::Ok(bound) = bind(&u, &store) else {
         return false;
     };
-    let mut state = match UniverseState::new(&u, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(&u, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };

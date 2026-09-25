@@ -3,16 +3,16 @@
 use super::load_phase5_bodies;
 use super::subject::Subject;
 use joinn_frame::Verdict;
-use joinn_link::{assemble_universe, bind_bodies};
+use joinn_link::{assemble_universe, bind};
 
 pub(crate) fn g5_assemble_control(subject: &Subject) -> bool {
     let Subject::Universe(universe) = subject else {
         return false;
     };
-    let Ok(supplied) = load_phase5_bodies() else {
+    let Ok(store) = load_phase5_bodies() else {
         return false;
     };
-    let bound = match bind_bodies(universe, &supplied) {
+    let bound = match bind(universe, &store) {
         Verdict::Ok(b) => b,
         Verdict::Refused(_) => return false,
     };

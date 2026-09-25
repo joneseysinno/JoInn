@@ -12,7 +12,7 @@ pub(crate) fn g51_total_control(subject: &Subject) -> bool {
     let Ok(supplied) = load_phase5_bodies() else {
         return true;
     };
-    let Some((_, cells)) = supplied.values().next() else {
+    let Some(cells) = supplied.any_cells() else {
         return true;
     };
     matches!(membrane(body, cells), Verdict::Ok(_))

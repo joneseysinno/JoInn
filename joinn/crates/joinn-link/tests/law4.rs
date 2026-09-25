@@ -4,7 +4,7 @@ use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::FrameRegistry;
 use joinn_frame::Hash;
 use joinn_frame::Verdict;
-use joinn_link::{assemble_universe, check_law4, law4_refusals, parse_universe};
+use joinn_link::{BodyStore, assemble_universe, bind, check_law4, law4_refusals, parse_universe};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -102,26 +102,34 @@ fn well_formed_universe_still_assembles() {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("{}", r.reason),
     }
-    let mut bodies = BTreeMap::new();
-    bodies.insert(
-        "calc".into(),
-        (
-            load_body("phase2/calculator.body"),
-            load_cells(&[
-                "phase0/sum.cell",
-                "phase0/format.cell",
-                "phase0/cli_input.cell",
-            ]),
-        ),
-    );
-    bodies.insert(
-        "units".into(),
-        (
-            load_body("phase5/units.body"),
-            load_cells(&["phase21/mul.cell"]),
-        ),
-    );
-    match assemble_universe(&u, &bodies) {
+    let calc_cells = load_cells(&[
+        "phase0/sum.cell",
+        "phase0/format.cell",
+        "phase0/cli_input.cell",
+    ]);
+    let units_cells = load_cells(&["phase21/mul.cell"]);
+    let mut store = BodyStore::new();
+    match store.insert(
+        load_body("phase2/calculator.body"),
+        calc_cells,
+        "phase2/calculator.body",
+    ) {
+        Verdict::Ok(_) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    match store.insert(
+        load_body("phase5/units.body"),
+        units_cells,
+        "phase5/units.body",
+    ) {
+        Verdict::Ok(_) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    let bound = match bind(&u, &store) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    match assemble_universe(&u, &bound) {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("{}", r.reason),
     }

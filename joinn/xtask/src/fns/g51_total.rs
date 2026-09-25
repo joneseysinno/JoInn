@@ -33,7 +33,7 @@ pub(crate) fn g51_total() -> bool {
     let Ok(supplied) = super::load_phase5_bodies() else {
         return false;
     };
-    let Some((_, cells)) = supplied.values().next() else {
+    let Some(cells) = supplied.any_cells() else {
         return false;
     };
     let Verdict::Ok(mem) = membrane(&calc, cells) else {

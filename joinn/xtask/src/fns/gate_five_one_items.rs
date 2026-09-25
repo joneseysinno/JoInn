@@ -3,8 +3,8 @@
 use super::mutate::Mutation;
 use super::subject::Subject;
 use super::{
-    g51_frame, g51_frame_control, g51_hash, g51_hash_control, g51_hosts, g51_hosts_control,
-    g51_tails, g51_tails_control, g51_total, g51_total_control,
+    g51_frame, g51_frame_control, g51_hosts, g51_hosts_control, g51_tails, g51_tails_control,
+    g51_total, g51_total_control,
 };
 use joinn_gate::GateItem;
 
@@ -18,13 +18,6 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         control: g51_hosts_control,
         control_artifact: "corpus/transcripts/universe.txt",
         opposes: Mutation::SwapLines(2, 3),
-    },
-    GateItem {
-        name: "Bodies are bound by hash",
-        check: g51_hash,
-        control: g51_hash_control,
-        control_artifact: "corpus/phase5/universe.universe",
-        opposes: Mutation::CorruptHash("calc"),
     },
     GateItem {
         name: "Tails are out, heads are in",

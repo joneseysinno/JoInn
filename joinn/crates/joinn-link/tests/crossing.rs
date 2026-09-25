@@ -1,10 +1,10 @@
 //! A value crosses e0. Observations are descriptions, fire counts, and refusals.
 
 use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
-use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, TextFrame, Value, Verdict};
+use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdict};
 use joinn_host::{Address, describe, probe};
 use joinn_link::{
-    LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind_bodies,
+    BodyStore, LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind,
     check_link_types, grant, parse_universe, revoke,
 };
 use std::collections::BTreeMap;
@@ -18,9 +18,9 @@ fn corpus() -> std::path::PathBuf {
         .join("corpus")
 }
 
-fn cells() -> BTreeMap<Hash, Cell> {
+fn cells() -> BTreeMap<joinn_frame::Hash, Cell> {
     let frames = FrameRegistry::phase1();
-    let mut out: BTreeMap<Hash, Cell> = BTreeMap::new();
+    let mut out: BTreeMap<joinn_frame::Hash, Cell> = BTreeMap::new();
     let mut dirs = vec![corpus()];
     while let Some(dir) = dirs.pop() {
         let rd = match fs::read_dir(&dir) {
@@ -64,9 +64,9 @@ fn body_at(rel: &str) -> Body {
     }
 }
 
-fn supplied() -> BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)> {
+fn store() -> BodyStore {
     let all = cells();
-    let mut map = BTreeMap::new();
+    let mut store = BodyStore::new();
     for rel in [
         "phase2/calculator.body",
         "phase5/units.body",
@@ -74,9 +74,12 @@ fn supplied() -> BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)> {
         "phase5/bus.body",
     ] {
         let body = body_at(rel);
-        map.insert(hash(&body.coding), (body, all.clone()));
+        match store.insert(body, all.clone(), rel) {
+            Verdict::Ok(_) => {}
+            Verdict::Refused(r) => panic!("{rel}: {}", r.reason),
+        }
     }
-    map
+    store
 }
 
 fn universe(rel: &str) -> Universe {
@@ -109,11 +112,11 @@ fn addr(instance: &str, port: u32) -> Address {
 }
 
 fn open(u: &Universe, grant_e0: bool) -> UniverseState {
-    let bound = match bind_bodies(u, &supplied()) {
+    let bound = match bind(u, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
-    let mut state = match UniverseState::new(u, bound, joinn_prim::sealed_natives()) {
+    let mut state = match UniverseState::new(u, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
@@ -190,31 +193,18 @@ fn sixty_crosses_and_unlinked_does_not_fire() {
 }
 
 #[test]
-fn wrong_hash_names_both_shorts() {
-    let u = universe("phase5/controls/wrong_hash.universe");
-    let mut map = supplied();
-    let calc = body_at("phase2/calculator.body");
-    let calc_hash = hash(&calc.coding);
-    let cells = map
-        .get(&calc_hash)
-        .map(|(_, c)| c.clone())
-        .unwrap_or_else(|| panic!("calc not in supplied map"));
-    let declared = u.coding.bodies[0].hash;
-    map.insert(declared, (calc, cells));
-    match bind_bodies(&u, &map) {
-        Verdict::Refused(r) => {
-            assert!(r.reason.contains("calc"), "{}", r.reason);
-            assert!(r.reason.contains(&declared.short_hex()), "{}", r.reason);
-            assert!(r.reason.contains(&calc_hash.short_hex()), "{}", r.reason);
-        }
-        Verdict::Ok(_) => panic!("wrong hash must be refused"),
+fn alias_is_local_binds() {
+    let u = universe("phase5/controls/alias_is_local.universe");
+    match bind(&u, &store()) {
+        Verdict::Ok(_) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
     }
 }
 
 #[test]
 fn direction_and_frame_name_the_member() {
     let bad = universe("phase5/controls/wrong_direction.universe");
-    let bound = match bind_bodies(&bad, &supplied()) {
+    let bound = match bind(&bad, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
@@ -229,7 +219,7 @@ fn direction_and_frame_name_the_member() {
     }
 
     let frames = universe("phase5/controls/frame_mismatch.universe");
-    let bound = match bind_bodies(&frames, &supplied()) {
+    let bound = match bind(&frames, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
@@ -250,7 +240,7 @@ fn direction_and_frame_name_the_member() {
             binding.hash = echo_hash;
         }
     }
-    let bound = match bind_bodies(&phase5, &supplied()) {
+    let bound = match bind(&phase5, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("bind echo by its hash: {}", r.reason),
     };
@@ -267,7 +257,7 @@ fn direction_and_frame_name_the_member() {
 #[test]
 fn no_such_port_is_not_interior() {
     let u = universe("phase5/controls/no_such_port.universe");
-    let bound = match bind_bodies(&u, &supplied()) {
+    let bound = match bind(&u, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
@@ -280,7 +270,7 @@ fn no_such_port_is_not_interior() {
         Verdict::Ok(()) => panic!("sum@9 must be refused"),
     }
     let transit = universe("phase5/controls/transits.universe");
-    let bound = match bind_bodies(&transit, &supplied()) {
+    let bound = match bind(&transit, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };

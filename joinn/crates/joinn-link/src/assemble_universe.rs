@@ -2,18 +2,16 @@
 //! allow(modules): maps assemble refusals back to port addresses and wires
 
 use joinn_assay::{BlockId, Chain, Complex};
-use joinn_dna::{Body, Cell};
-use joinn_frame::{CheckId, Hash, Refusal, Verdict};
+use joinn_dna::Body;
+use joinn_frame::{CheckId, Refusal, Verdict};
 use std::collections::BTreeMap;
 
+use crate::bind::Bound;
 use crate::membrane::membrane;
 use crate::universe::{Mark, Universe};
 
 /// Assemble a universe: every link member must lie on a membrane.
-pub fn assemble_universe(
-    universe: &Universe,
-    bodies: &BTreeMap<String, (Body, BTreeMap<Hash, Cell>)>,
-) -> Verdict<()> {
+pub fn assemble_universe(universe: &Universe, bound: &Bound) -> Verdict<()> {
     let mut dimension = BTreeMap::new();
     let mut boundaries = BTreeMap::new();
     let mut port_of: BTreeMap<BlockId, (String, String, u32)> = BTreeMap::new();
@@ -22,7 +20,7 @@ pub fn assemble_universe(
 
     for binding in &universe.coding.bodies {
         let alias = &binding.alias;
-        let Some((body, cells)) = bodies.get(alias) else {
+        let Some((body, cells)) = bound.get(alias) else {
             return Verdict::Refused(Refusal::structural(
                 CheckId::Other,
                 format!(
@@ -90,14 +88,14 @@ pub fn assemble_universe(
     let complex = Complex::from_parts(dimension, boundaries);
     match complex.assemble() {
         Verdict::Ok(()) => Verdict::Ok(()),
-        Verdict::Refused(r) => Verdict::Refused(translate_refusal(r, &port_of, bodies)),
+        Verdict::Refused(r) => Verdict::Refused(translate_refusal(r, &port_of, bound)),
     }
 }
 
 fn translate_refusal(
     refusal: Refusal,
     port_of: &BTreeMap<BlockId, (String, String, u32)>,
-    bodies: &BTreeMap<String, (Body, BTreeMap<Hash, Cell>)>,
+    bound: &Bound,
 ) -> Refusal {
     let reason = &refusal.reason;
     let Some(endpoint) = reason
@@ -112,7 +110,7 @@ fn translate_refusal(
         return refusal;
     };
     let printed = format!("{alias}.{instance}@{port}");
-    let wire = match bodies.get(alias) {
+    let wire = match bound.get(alias) {
         Some((body, _)) => consuming_wire(body, instance, *port),
         None => None,
     };

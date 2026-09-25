@@ -1,19 +1,17 @@
-//! Gather corpus bodies by coding hash; a single face per hash.
+//! Gather corpus bodies into a store; a single face per coding hash.
 
-use joinn_dna::{Body, Cell, hash, parse_body};
+use joinn_dna::{Cell, parse_body};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
+use joinn_link::BodyStore;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-type BodyWithCells = (Body, BTreeMap<Hash, Cell>);
-
 /// Load every `.body` under `corpus`, skipping `variants` and `controls` folders.
-/// Refuses another body with the same coding hash and a different regulatory region.
 pub(crate) fn gather_bodies(
     corpus: &Path,
     cells: &BTreeMap<Hash, Cell>,
-) -> Result<BTreeMap<Hash, BodyWithCells>, String> {
+) -> Result<BodyStore, String> {
     let frames = FrameRegistry::phase1();
     let mut files: Vec<PathBuf> = Vec::new();
     let mut dirs = vec![corpus.to_path_buf()];
@@ -44,27 +42,17 @@ pub(crate) fn gather_bodies(
             .then_with(|| a.as_os_str().cmp(b.as_os_str()))
     });
 
-    let mut by_hash: BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>, PathBuf)> = BTreeMap::new();
+    let mut store = BodyStore::new();
     for path in files {
         let src = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
         let Verdict::Ok(body) = parse_body(&src, &frames) else {
             continue;
         };
-        let id = hash(&body.coding);
-        if let Some((prev, _, prev_path)) = by_hash.get(&id) {
-            if prev.regulatory != body.regulatory {
-                return Err(format!(
-                    "coding hash has distinct faces: {} and {}",
-                    prev_path.display(),
-                    path.display()
-                ));
-            }
-            continue;
+        let source = path.display().to_string();
+        match store.insert(body, cells.clone(), &source) {
+            Verdict::Ok(_) => {}
+            Verdict::Refused(r) => return Err(r.reason),
         }
-        by_hash.insert(id, (body, cells.clone(), path));
     }
-    Ok(by_hash
-        .into_iter()
-        .map(|(h, (b, c, _))| (h, (b, c)))
-        .collect())
+    Ok(store)
 }

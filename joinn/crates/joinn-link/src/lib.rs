@@ -4,7 +4,8 @@
 
 mod address;
 mod assemble_universe;
-mod bind_bodies;
+mod bind;
+mod body_store;
 mod capability;
 mod check_law4;
 mod check_lenses;
@@ -19,7 +20,8 @@ mod universe_state;
 
 pub use address::Address;
 pub use assemble_universe::assemble_universe;
-pub use bind_bodies::bind_bodies;
+pub use bind::{Bound, bind};
+pub use body_store::BodyStore;
 pub use capability::{LinkRuntime, check_capability, grant, revoke};
 pub use check_law4::{check_law4, law4_refusals};
 pub use check_lenses::check_lenses;
@@ -40,5 +42,11 @@ mod tests {
     fn a_string_reason_does_not_compile() {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/fail/string_reason.rs");
+    }
+
+    #[test]
+    fn bound_from_map_does_not_compile() {
+        let t = trybuild::TestCases::new();
+        t.compile_fail("tests/fail/bound_from_map.rs");
     }
 }
