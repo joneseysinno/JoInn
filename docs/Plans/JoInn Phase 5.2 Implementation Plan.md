@@ -375,6 +375,54 @@ Claude re-ran the tree at `618d3d7` from a fresh clone on Linux. Every number in
 
 Dependencies: P52-08a, P52-08b and P52-08c come first, in that order. P52-09 needs P52-08b. P52-11 needs P52-09. P52-12 needs P52-10 and P52-11. P52-13 needs P52-12.
 
+### Amendment C (after Stop C, 25 Sep 2026): do these first in chunk D
+
+Claude re-ran the tree at `899397c` from a fresh clone on Linux (rustc 1.95.0). Every number in `phase-5.2-stop-c.md` reproduced: 178 passed, 0 failed; `gate all` exits 0 with phase 5 at 8/8, 5.1 at 4/4 and 5.2 at 3/3; `corpus verify` 33 hashes; `vocab: ok`; `modules: ok`; `joinn run universe` and `joinn run calculator` print their transcripts byte for byte; no body or cell hash moved. The findings below are fixed by four commits that come **before P52-14**. They are decided; nothing waits on AJ.
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P52-13a** | **One toolchain everywhere** | Add `joinn/rust-toolchain.toml` with `[toolchain]`, `channel = "1.95.0"`, `components = ["rustfmt", "clippy"]`. In `.github/workflows/ci.yml` replace `dtolnay/rust-toolchain@stable` with `dtolnay/rust-toolchain@1.95.0`. Fix the `collapsible_match` at `crates/joinn-live/src/slot/apply.rs:24` by moving the `if !q.is_empty()` into a match guard, exactly as clippy 1.95 suggests. Never `allow` a lint | In `joinn/`: `rustc --version` prints `rustc 1.95.0`. `cargo fmt --all -- --check` exits 0. `cargo clippy --workspace --all-targets -- -D warnings` exits 0. Paste the last line of each. If `gh` is installed and signed in, paste `gh run list --branch main --limit 1` after the push; otherwise write "CI status not readable here" as a snag |
+| **P52-13b** | **The runtime keeps second hops and reports a refusal once** | In `universe_state/run/`: values emitted by the sweep that follows a delivery are delivered in the next pass (today they are thrown away when the next pass makes a new `emitted` map). The sweep after a delivery runs only the bodies that received a delivery in that pass, so a body that refused in the first sweep is not run, and not reported, a second time. The per-pass delivery record (§2.6) is unchanged | Two new tests in `crates/joinn-link/tests/crossing.rs`, each built from the inline universe text below (not a corpus file). **Chain:** feed calc `2`, `3`; inject `12` into `units.scale@1` and `12` into `again.scale@1`; one `run()`; the reports contain `Fired { again, scale }`. **Once:** same universe; also inject two more `12`s into `again.scale@1` so `again` refuses; one `run()`; the reports contain exactly one `Refused { again, scale }`. Run both on the unfixed code first and paste the failing assertion line of each, then the passing run. `body_refusal_is_a_report_and_universe_keeps_running`, `universe_transcript_matches_golden` and `gate all` still pass |
+| **P52-13c** | **The test host knows no aliases, and carries a real far side** | `Capture.intent_set` becomes `BTreeMap<String, BTreeSet<Address>>`, one entry per bound alias, built with `host_intent_set`. Delete the `["units", "meters"]` list in `joinn-test-host/src/run_universe.rs`. The test host's `run_universe` takes events as rounds (`Vec<Vec<(String, RawEvent)>>`) and runs the universe after each round, collecting reports from every round | `units_host_intent_set_is_unlinked_factor` asserts `cap.intent_set["units"] == {scale@1}`, and the rename-alias test asserts `cap.intent_set["meters"] == {scale@1}`. A new test runs the double-delivery scenario in two rounds (calc `2`,`3`, then calc `2`,`3` again) and asserts `cap.far_side` is exactly one `LinkRefusal { link: "e0", body: "units", member: scale@0, kind: Refused }`. `git grep -n -e '"units"' -e '"meters"' -e '"e0"' -e '"path"' -- crates/joinn-cli/src crates/joinn-test-host/src` prints only lines inside `#[cfg(test)]` modules (paste the output and say which module each line is in) |
+| **P52-13d** | **Three controls do what §2.2 says** | **(1) `g52_ids_control`** stops using `units_after`. It runs `joinn_cli::present_universe` on the subject with inputs `two, 2, 3, 12`. It answers `false` on any error (binding, assembly or presenting). It answers `true` only when the output lacks the last line that the real `ordered.universe` prints with the same inputs. **(2) `g52_refusal_control`** does what §2.2 wrote: it runs the CLI on `two, 2, 3, 12` and answers `true` when the CLI prints a line the subject lacks; a subject that is not a transcript answers `false`. **(3) Gate 5·8:** one scenario function, `double_delivery()`, is used by `cargo xtask probe-refusal`, `g5_locality` and `g5_locality_control`; delete the copies. `g5_locality` reads the far side from the test host's `Capture.far_side` (P52-13c), presents it with `format_link_refusal`, and checks the probe as today. `g5_locality_control` answers `false` on a non-text or empty subject, and `true` only when a presented line from that real far side contains the text; delete its hand-built `LinkRefusal`. Also correct the comment in `mutate/drop_line.rs`: §2.2 and Amendment B both say `g51_hosts_control` answers **true** on `DropLine(1)`, so that was not a snag | A test `controls_cross_matrix` in xtask runs every gate 5, 5.1 and 5.2 control against each of these catalogue mutations of its own artifact kind: universes `DropLink(e0)`, `DropLink(path)`, `FlipMark(e0, calc.sum@2)`, `ShiftPort(e0, calc.sum@2, 9)`, `CorruptHash(calc)`, `CorruptHash(units)`, `CopyMember(function, units, calculation)`, `DropLens(deployment)`, `WireAcross(e0)`, `DropGrant(e0)`, `DropGrant(path)`, `RenameLink(e0, e1)`, `RenameAlias(units, meters)`; transcripts `DropLine(0..2)`, `SwapLines(0, 1)`, `SwapLines(2, 3)`; text `Replace("e0")`, `Replace("units")`, `Replace("link")`. It prints one line per control listing the mutations it answered `true` on, and it asserts that `g52_ids_control`, `g52_refusal_control`, `g5_assemble_control`, `g51_tails_control`, `g51_frame_control` and `g5_law4_control` answer `false` on `CorruptHash(calc)`, `CorruptHash(units)`, `RenameLink(e0, e1)` and `RenameAlias(units, meters)`. Paste the printed matrix in the stop-D report. `gate all` still exits 0 with 8/8, 4/4, 3/3 |
+
+**Inline universe for P52-13b** (copy exactly into the test as a string):
+
+```
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as again
+  }
+  links {
+    link e0 order none {
+      calc.sum@2 tail
+      units.scale@0 head
+    }
+    link e1 order none {
+      units.scale@2 tail
+      again.scale@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system s { calc units again }
+      }
+    }
+  }
+}
+```
+
+This is a test fixture, not a corpus file, so the §1 fence ("no third linked body in `universe.universe`") is not crossed. Claude ran the chain test on the tree before P52-10 (`4cbe66e`) and it passed. On `899397c` it fails, and the reports stop at `Fired { units, scale }`.
+
+**Changes to later commits:**
+
+- **P52-16:** removing `continue-on-error` needs a green CI run on both operating systems. The stop-D report pastes `gh run list --branch main --limit 3`, or writes the snag if `gh` can't be used.
+- **Stop reports:** a snag says what the plan actually says. P52-08c's snag said the plan predicted `false`; it predicted `true`.
+
 ### Chunk D: findings and the freeze
 
 | # | Commit | Delivers | Done when |
@@ -383,6 +431,8 @@ Dependencies: P52-08a, P52-08b and P52-08c come first, in that order. P52-09 nee
 | **P52-15** | **The other findings** | `boundary-depth.md` with the text in Appendix D; `r50-membrane-cost.md` gains the latest `cargo xtask perf` line, pasted; R55, R56, R59–R62 and R64 added to `docs/Theory/JoInn Research Backlog.md` from Appendix D; R63 marked decided | The perf line in the finding matches a fresh `cargo xtask perf` run except for the timing numbers |
 | **P52-16** | **Re-freeze, docs, gate 5.2, lock** | new goldens; `phase-5.2-hashes.md`; README, `Guides/03`, `decisions.md` rows V98–V111 and R59–R64; CI's `continue-on-error` removed | `cargo xtask gate all` from a fresh clone prints the fixtures first, then phases 0, 1, 2, 2.1, 2.2, 3 (legacy), 5, 5.1 and 5.2, with every non-legacy item passing all three conditions, and exits 0. `corpus verify` matches. `phase-5.2-hashes.md` confirms no Phase 0–3 coding hash moved |
 | — | **Stop D** | `phase-5.2-stop-d.md`, push, stop | — |
+
+Dependencies (chunk D): P52-13a, P52-13b, P52-13c and P52-13d come first, in that order. P52-13d needs P52-13c. P52-16 needs every earlier commit.
 
 If something has to be cut, cut P52-14 and carry the adversary forward with a line in `decisions.md`. Never cut P52-02b, P52-03 through P52-06, or P52-10.
 
@@ -574,4 +624,4 @@ with a universe refusal.
 
 ---
 
-*JoInn Phase 5.2 Implementation Plan, Draft 0.3 with Amendment B (25 Sep 2026). It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 5.2 Implementation Plan, Draft 0.3 with Amendments B and C (25 Sep 2026). It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
