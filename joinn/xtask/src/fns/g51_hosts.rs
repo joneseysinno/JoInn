@@ -74,7 +74,7 @@ pub(crate) fn g51_hosts() -> bool {
         ),
     ];
     let Verdict::Ok(cap) =
-        joinn_test_host::run_universe(&universe, bound, joinn_prim::sealed_natives(), events)
+        joinn_test_host::run_universe(&universe, bound, joinn_prim::sealed_natives(), vec![events])
     else {
         return false;
     };

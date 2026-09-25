@@ -113,7 +113,8 @@ fn calculator_end_to_end_captures_fires_and_refusal() {
         .filter_map(|p| p.value.as_deref())
         .collect();
     assert_eq!(vals, ["2", "3", "5"]);
-    assert_eq!(ok.intent_set.len(), 2);
+    let ports: usize = ok.intent_set.values().map(|set| set.len()).sum();
+    assert_eq!(ports, 2);
     let got = print_description(sum);
     let want = match fs::read_to_string(corpus().join("descriptions").join("calculator.desc")) {
         Ok(s) => s.replace("\r\n", "\n"),

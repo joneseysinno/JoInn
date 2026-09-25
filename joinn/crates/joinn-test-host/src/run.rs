@@ -24,7 +24,10 @@ pub fn run(
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => return Verdict::Refused(r),
     }
-    let intent_set = intent_set(&body, &cells);
+    let ports = intent_set(&body, &cells);
+    let mut intent_set = BTreeMap::new();
+    // A lone body has no universe alias. The set is that body's in-ports.
+    intent_set.insert(String::new(), ports);
     let mut state = match BodyState::new(body, cells, natives, 1) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Verdict::Refused(r),

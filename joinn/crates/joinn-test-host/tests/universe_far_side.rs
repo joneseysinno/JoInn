@@ -3,9 +3,9 @@
 use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Term, Verdict};
 use joinn_host::Address;
-use joinn_link::{BodyStore, bind, parse_universe};
+use joinn_link::{BodyStore, LinkRefusal, LinkRefusalKind, bind, parse_universe};
 use joinn_test_host::{RawEvent, run_universe};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -124,7 +124,7 @@ fn units_host_intent_set_is_unlinked_factor() {
         &universe,
         bound,
         joinn_prim::sealed_natives(),
-        crossing_events("units"),
+        vec![crossing_events("units")],
     ) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -134,7 +134,7 @@ fn units_host_intent_set_is_unlinked_factor() {
         instance: "scale".into(),
         port: 1,
     });
-    assert_eq!(cap.intent_set, want);
+    assert_eq!(cap.intent_set["units"], want);
     assert!(cap.far_side.is_empty(), "{:?}", cap.far_side);
 }
 
@@ -156,7 +156,7 @@ fn rename_link_leaves_descriptions() {
         &universe,
         bound,
         joinn_prim::sealed_natives(),
-        crossing_events("units"),
+        vec![crossing_events("units")],
     ) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -177,7 +177,7 @@ fn rename_link_leaves_descriptions() {
         &universe,
         bound,
         joinn_prim::sealed_natives(),
-        crossing_events("units"),
+        vec![crossing_events("units")],
     ) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -203,7 +203,7 @@ fn rename_alias_leaves_descriptions() {
         &universe,
         bound,
         joinn_prim::sealed_natives(),
-        crossing_events("units"),
+        vec![crossing_events("units")],
     ) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -245,10 +245,78 @@ fn rename_alias_leaves_descriptions() {
         &renamed,
         bound,
         joinn_prim::sealed_natives(),
-        crossing_events("meters"),
+        vec![crossing_events("meters")],
     ) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
     assert_eq!(before.descriptions, after.descriptions);
+    let mut want = BTreeSet::new();
+    want.insert(Address {
+        instance: "scale".into(),
+        port: 1,
+    });
+    assert_eq!(after.intent_set["meters"], want);
+}
+
+fn calc_round() -> Vec<(String, RawEvent)> {
+    vec![
+        (
+            "calc".into(),
+            RawEvent {
+                address: Address {
+                    instance: "cli_a".into(),
+                    port: 0,
+                },
+                term: Term::text("2"),
+            },
+        ),
+        (
+            "calc".into(),
+            RawEvent {
+                address: Address {
+                    instance: "cli_b".into(),
+                    port: 0,
+                },
+                term: Term::text("3"),
+            },
+        ),
+    ]
+}
+
+#[test]
+fn double_delivery_far_side_is_one_refusal() {
+    let root = corpus();
+    let src = fs::read_to_string(root.join("phase5").join("universe.universe"))
+        .unwrap_or_else(|e| panic!("{e}"));
+    let universe = match parse_universe(&src) {
+        Verdict::Ok(u) => u,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let store = load_store();
+    let bound = match bind(&universe, &store) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let cap = match run_universe(
+        &universe,
+        bound,
+        joinn_prim::sealed_natives(),
+        vec![calc_round(), calc_round()],
+    ) {
+        Verdict::Ok(c) => c,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    assert_eq!(
+        cap.far_side,
+        vec![LinkRefusal {
+            link: "e0".into(),
+            body: "units".into(),
+            member: Address {
+                instance: "scale".into(),
+                port: 0,
+            },
+            kind: LinkRefusalKind::Refused,
+        }]
+    );
 }
