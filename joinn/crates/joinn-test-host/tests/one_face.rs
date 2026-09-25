@@ -35,11 +35,8 @@ fn duplicate_face_refuses_naming_both_paths() {
     assert_eq!(hash(&body_a.coding), hash(&body_c.coding));
     assert_ne!(body_a.regulatory, body_c.regulatory);
 
-    let err = load_body_set(vec![
-        (calc.clone(), body_a),
-        (variant.clone(), body_c),
-    ])
-    .expect_err("must refuse");
+    let err = load_body_set(vec![(calc.clone(), body_a), (variant.clone(), body_c)])
+        .expect_err("must refuse");
     let a = calc.display().to_string();
     let c = variant.display().to_string();
     assert!(

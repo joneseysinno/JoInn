@@ -1,6 +1,6 @@
 //! Bind universe aliases to bodies by coding hash.
 
-use joinn_dna::{hash, Body, Cell};
+use joinn_dna::{Body, Cell, hash};
 use joinn_frame::{Hash, Verdict};
 use std::collections::BTreeMap;
 

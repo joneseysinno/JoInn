@@ -1,6 +1,6 @@
 //! Touch-only: assemble refuses an interior port by name.
 
-use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
+use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_link::{assemble_universe, parse_universe};
 use std::collections::BTreeMap;
@@ -60,7 +60,10 @@ fn loaded_bodies() -> BTreeMap<String, (Body, BTreeMap<Hash, Cell>)> {
         "calc".into(),
         (load_body("phase2/calculator.body"), calc_cells),
     );
-    bodies.insert("units".into(), (load_body("phase5/units.body"), units_cells));
+    bodies.insert(
+        "units".into(),
+        (load_body("phase5/units.body"), units_cells),
+    );
     bodies
 }
 
@@ -99,11 +102,7 @@ fn transits_refuses_naming_calc_sum_0_and_the_wire() {
         Verdict::Refused(r) => {
             assert!(r.reason.contains("calc.sum@0"), "{}", r.reason);
             assert!(r.reason.contains("interior"), "{}", r.reason);
-            assert!(
-                r.reason.contains("cli_a@1 -> sum@0"),
-                "{}",
-                r.reason
-            );
+            assert!(r.reason.contains("cli_a@1 -> sum@0"), "{}", r.reason);
         }
         Verdict::Ok(()) => panic!("transiting sum@0 must refuse"),
     }

@@ -73,13 +73,16 @@ pub fn membrane(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<BTreeSet<B
 
 #[cfg(test)]
 mod tests {
-    use joinn_dna::{format_cell, hash, parse_body, sum_cell, Wire};
+    use joinn_dna::{Wire, format_cell, hash, parse_body, sum_cell};
     use joinn_frame::{FrameRegistry, Verdict};
     use std::collections::{BTreeMap, BTreeSet};
 
     use super::membrane;
 
-    fn calculator() -> (joinn_dna::Body, BTreeMap<joinn_frame::Hash, joinn_dna::Cell>) {
+    fn calculator() -> (
+        joinn_dna::Body,
+        BTreeMap<joinn_frame::Hash, joinn_dna::Cell>,
+    ) {
         let format = format_cell();
         let fh = hash(&format.coding);
         let cli = joinn_dna::cli_input_cell(fh);

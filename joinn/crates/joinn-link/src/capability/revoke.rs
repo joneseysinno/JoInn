@@ -10,9 +10,7 @@ pub fn revoke(runtime: &mut LinkRuntime, capability: &str, from: &str) -> Verdic
     if !runtime.held.remove(&key) {
         return Verdict::Refused(Refusal::structural(
             CheckId::Grant,
-            format!(
-                "capability {capability} is not held by {from}; acceptance is a prior grant"
-            ),
+            format!("capability {capability} is not held by {from}; acceptance is a prior grant"),
         ));
     }
     Verdict::Ok(())

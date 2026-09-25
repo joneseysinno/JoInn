@@ -2,7 +2,7 @@
 //! The Phase 5 bus still satisfies Law 4, but typed links refuse:
 //! `units` is echo (cli_input), so scale@1 is Out and may not be marked head.
 
-use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
+use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_link::{bind_bodies, check_law4, check_link_types, parse_universe};
 use std::collections::BTreeMap;

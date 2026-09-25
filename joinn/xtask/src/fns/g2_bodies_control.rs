@@ -1,6 +1,6 @@
 //! Phase 2 bodies control: calculator and calculator_b must not diverge.
 
-use super::{workspace_root};
+use super::workspace_root;
 use joinn_dna::{parse_body, print_body};
 use joinn_frame::{FrameRegistry, Verdict};
 

@@ -18,7 +18,7 @@ pub(super) fn drop_link(u: &mut Universe, id: &str) -> Verdict<()> {
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::units_after::units_after;
@@ -47,10 +47,7 @@ mod tests {
         assert!(u.coding.links.iter().all(|l| l.id != "e0"));
         match units_after(u, Some("e0")) {
             Ok((0, _)) => {}
-            Err(reason) => assert!(
-                reason.contains("e0") || reason.contains("link"),
-                "{reason}"
-            ),
+            Err(reason) => assert!(reason.contains("e0") || reason.contains("link"), "{reason}"),
             Ok((n, _)) => panic!("units must not fire without e0, got {n}"),
         }
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropLink("missing_link")) else {

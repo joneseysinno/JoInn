@@ -11,11 +11,11 @@ mod tests {
             Ok(r) => r,
             Err(e) => panic!("{e}"),
         };
-        let toml = match fs::read_to_string(root.join("crates").join("joinn-assay").join("Cargo.toml"))
-        {
-            Ok(s) => s,
-            Err(e) => panic!("{e}"),
-        };
+        let toml =
+            match fs::read_to_string(root.join("crates").join("joinn-assay").join("Cargo.toml")) {
+                Ok(s) => s,
+                Err(e) => panic!("{e}"),
+            };
         let names = dependency_names(&toml);
         assert_eq!(names, vec!["joinn-frame".to_string()]);
     }

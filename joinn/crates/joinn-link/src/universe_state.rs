@@ -7,9 +7,9 @@ mod run;
 use joinn_live::BodyState;
 use std::collections::BTreeMap;
 
+use crate::Address;
 use crate::capability::LinkRuntime;
 use crate::universe::Universe;
-use crate::Address;
 
 /// What crossed, or why a delivery stopped. No reason string.
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -74,10 +74,6 @@ impl UniverseState {
 pub fn format_link_refusal(refusal: &LinkRefusal) -> String {
     format!(
         "link {} {} {}.{} {:?}",
-        refusal.link,
-        refusal.body,
-        refusal.member.instance,
-        refusal.member.port,
-        refusal.kind
+        refusal.link, refusal.body, refusal.member.instance, refusal.member.port, refusal.kind
     )
 }

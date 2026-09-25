@@ -90,7 +90,11 @@ fn git_commit_unix(repo: &Path, paths: &[&str]) -> Result<Option<u64>, String> {
     Ok(Some(secs))
 }
 
-fn git_newest_touch(repo: &Path, paths: &[&str], code_ct: u64) -> Result<(PathBuf, String), String> {
+fn git_newest_touch(
+    repo: &Path,
+    paths: &[&str],
+    code_ct: u64,
+) -> Result<(PathBuf, String), String> {
     let mut args = vec![
         "-C".to_string(),
         repo.display().to_string(),

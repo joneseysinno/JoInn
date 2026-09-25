@@ -152,7 +152,14 @@ mod tests {
     fn bodies_are_not_fetched_by_alias_before_binding() {
         let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let mut hits = Vec::new();
-        for dir in [manifest.join("src"), manifest.join("..").join("crates").join("joinn-link").join("src")] {
+        for dir in [
+            manifest.join("src"),
+            manifest
+                .join("..")
+                .join("crates")
+                .join("joinn-link")
+                .join("src"),
+        ] {
             let walk = super::fns::walk_rs(&dir, &mut |path, text| {
                 let needle = format!("bodies.get(&binding.{})", "alias");
                 if text.contains(&needle) {

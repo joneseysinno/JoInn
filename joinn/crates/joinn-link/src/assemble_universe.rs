@@ -66,11 +66,7 @@ pub fn assemble_universe(
         link_of.insert(link_id, link.id.clone());
         let mut coeffs = Vec::new();
         for member in &link.members {
-            let key = (
-                member.body.clone(),
-                member.instance.clone(),
-                member.port,
-            );
+            let key = (member.body.clone(), member.instance.clone(), member.port);
             let face = match block_of.get(&key) {
                 Some(id) => *id,
                 None => {
@@ -94,9 +90,7 @@ pub fn assemble_universe(
     let complex = Complex::from_parts(dimension, boundaries);
     match complex.assemble() {
         Verdict::Ok(()) => Verdict::Ok(()),
-        Verdict::Refused(r) => {
-            Verdict::Refused(translate_refusal(r, &port_of, bodies))
-        }
+        Verdict::Refused(r) => Verdict::Refused(translate_refusal(r, &port_of, bodies)),
     }
 }
 
@@ -124,9 +118,7 @@ fn translate_refusal(
     };
     let detail = match wire {
         Some(w) => format!("{printed} is interior: consumed by wire {w}"),
-        None => format!(
-            "no such port {printed}; acceptance is a declared port on ∂({alias})"
-        ),
+        None => format!("no such port {printed}; acceptance is a declared port on ∂({alias})"),
     };
     Refusal::structural(CheckId::Other, detail)
 }

@@ -1,8 +1,8 @@
 //! Phase 2 gate table. Four items after §2.4 deletions.
 
 use super::{
-    g2_alleles, g2_alleles_control, g2_bodies, g2_bodies_control, g2_evolution, g2_evolution_control,
-    g2_turn, g2_turn_control,
+    g2_alleles, g2_alleles_control, g2_bodies, g2_bodies_control, g2_evolution,
+    g2_evolution_control, g2_turn, g2_turn_control,
 };
 use joinn_gate::GateItem;
 

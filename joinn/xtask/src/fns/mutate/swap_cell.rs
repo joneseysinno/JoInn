@@ -35,10 +35,10 @@ pub(super) fn swap_cell(body: &mut Body, instance: &str, to_hash: &str) -> Verdi
 #[cfg(test)]
 mod tests {
     use crate::fns::load_calculator::load_calculator;
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
-    use joinn_dna::{hash, GenomeTarget};
+    use joinn_dna::{GenomeTarget, hash};
     use joinn_frame::Verdict;
     use joinn_link::membrane;
 
@@ -88,13 +88,16 @@ mod tests {
         // Downstream: membrane either refuses (wrong ports) or no longer has sum@2 alone as before.
         match membrane(body, &cells) {
             Verdict::Refused(r) => {
-                assert!(r.reason.contains("sum") || r.reason.contains("cell"), "{}", r.reason);
+                assert!(
+                    r.reason.contains("sum") || r.reason.contains("cell"),
+                    "{}",
+                    r.reason
+                );
             }
             Verdict::Ok(set) => {
                 let ports: Vec<_> = set.iter().map(|a| a.address.printed()).collect();
                 assert!(
-                    !ports.iter().any(|p| p == "sum@2")
-                        || ports != ["cli_a@0", "cli_b@0", "sum@2"],
+                    !ports.iter().any(|p| p == "sum@2") || ports != ["cli_a@0", "cli_b@0", "sum@2"],
                     "membrane must reflect the swapped cell: {ports:?}"
                 );
             }

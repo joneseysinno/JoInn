@@ -25,12 +25,10 @@ pub(crate) fn against_mtime(finding: &Path, roots: &[PathBuf]) -> Result<Status,
         if !root.exists() {
             continue;
         }
-        walk_files(root, &mut |path, mtime| {
-            match &newest {
-                None => newest = Some((path.to_path_buf(), mtime)),
-                Some((_, best)) if mtime >= *best => newest = Some((path.to_path_buf(), mtime)),
-                Some(_) => {}
-            }
+        walk_files(root, &mut |path, mtime| match &newest {
+            None => newest = Some((path.to_path_buf(), mtime)),
+            Some((_, best)) if mtime >= *best => newest = Some((path.to_path_buf(), mtime)),
+            Some(_) => {}
         })?;
     }
     let Some((path, mtime)) = newest else {
@@ -84,11 +82,8 @@ mod tests {
 
     #[test]
     fn aged_finding_below_temp_tree_is_stale() {
-        let root = std::env::temp_dir().join(format!(
-            "joinn-witness-{}-{}",
-            std::process::id(),
-            "aged"
-        ));
+        let root =
+            std::env::temp_dir().join(format!("joinn-witness-{}-{}", std::process::id(), "aged"));
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(root.join("crates")).expect("mkdir");
         let finding = root.join("finding.md");
@@ -109,11 +104,8 @@ mod tests {
 
     #[test]
     fn finding_newer_than_temp_tree_is_current() {
-        let root = std::env::temp_dir().join(format!(
-            "joinn-witness-{}-{}",
-            std::process::id(),
-            "fresh"
-        ));
+        let root =
+            std::env::temp_dir().join(format!("joinn-witness-{}-{}", std::process::id(), "fresh"));
         let _ = fs::remove_dir_all(&root);
         fs::create_dir_all(root.join("crates")).expect("mkdir");
         let older = root.join("crates").join("older.rs");

@@ -6,7 +6,7 @@ use joinn_dna::Body;
 use joinn_frame::Verdict;
 use joinn_host::{describe, describe_refusal};
 use joinn_link::{
-    bind_bodies, grant, parse_universe, Address, Mark, UniverseReport, UniverseState,
+    Address, Mark, UniverseReport, UniverseState, bind_bodies, grant, parse_universe,
 };
 use joinn_live::BodyState;
 use std::collections::{BTreeMap, BTreeSet};
@@ -60,7 +60,11 @@ pub(in crate::session) fn run_universe(
         let ports = in_ports(body, &cells)
             .into_iter()
             .filter(|port| {
-                !fed.contains(&(alias.clone(), port.address.instance.clone(), port.address.port))
+                !fed.contains(&(
+                    alias.clone(),
+                    port.address.instance.clone(),
+                    port.address.port,
+                ))
             })
             .collect::<Vec<_>>();
         if !ports.is_empty() {
@@ -149,7 +153,11 @@ pub(in crate::session) fn run_universe(
         };
         let mut seen = BTreeSet::new();
         for report in &reports {
-            let UniverseReport::Fired { body: fired, instance } = report else {
+            let UniverseReport::Fired {
+                body: fired,
+                instance,
+            } = report
+            else {
                 continue;
             };
             if !seen.insert((fired.clone(), instance.clone())) {

@@ -35,7 +35,7 @@ pub(super) fn rename_link(u: &mut Universe, from: &str, to: &str) -> Verdict<()>
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::units_after::units_after;
@@ -66,10 +66,7 @@ mod tests {
         // Grant still names e0 at runtime, so the renamed link is not granted.
         match units_after(u, Some("e0")) {
             Ok((0, _)) => {}
-            Err(reason) => assert!(
-                reason.contains("e0") || reason.contains("link"),
-                "{reason}"
-            ),
+            Err(reason) => assert!(reason.contains("e0") || reason.contains("link"), "{reason}"),
             Ok((n, _)) => panic!("units must not fire after RenameLink, got {n}"),
         }
         let Verdict::Refused(r) = mutate(&s, &Mutation::RenameLink("ghost", "e1")) else {

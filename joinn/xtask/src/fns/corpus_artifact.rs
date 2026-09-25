@@ -28,7 +28,11 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
         if phase5.exists() {
             return phase5;
         }
-        return root.join("corpus").join("phase5").join("controls").join(name);
+        return root
+            .join("corpus")
+            .join("phase5")
+            .join("controls")
+            .join(name);
     }
     for dir in [
         "phase5",

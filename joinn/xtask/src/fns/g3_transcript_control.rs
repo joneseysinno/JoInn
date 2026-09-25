@@ -1,6 +1,6 @@
 //! Gate 3 item 4 control: the no-indent transcript is not the golden.
 
-use super::{workspace_root};
+use super::workspace_root;
 
 pub(crate) fn g3_transcript_control(_art: &()) -> bool {
     let Ok(root) = workspace_root() else {

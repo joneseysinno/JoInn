@@ -7,11 +7,7 @@ use std::collections::BTreeMap;
 use super::{Intent, intent_set};
 
 /// A host may only emit an intent in `intent_set(body, cells)`.
-pub fn check_intent(
-    body: &Body,
-    cells: &BTreeMap<Hash, Cell>,
-    intent: &Intent,
-) -> Verdict<()> {
+pub fn check_intent(body: &Body, cells: &BTreeMap<Hash, Cell>, intent: &Intent) -> Verdict<()> {
     if intent_set(body, cells).contains(&intent.address) {
         Verdict::Ok(())
     } else {

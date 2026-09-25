@@ -2,8 +2,8 @@
 
 mod apply;
 mod coding_hash;
-mod corrupt_hash;
 mod copy_member;
+mod corrupt_hash;
 mod drop_genome;
 mod drop_grant;
 mod drop_lens;
@@ -18,9 +18,9 @@ mod parse_member_ref;
 mod refuse;
 mod rename_alias;
 mod rename_link;
+mod reparse;
 mod replace;
 mod reprint;
-mod reparse;
 mod set_score;
 mod shift_port;
 mod swap_binding;

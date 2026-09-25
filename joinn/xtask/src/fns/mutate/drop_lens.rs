@@ -18,7 +18,7 @@ pub(super) fn drop_lens(u: &mut Universe, name: &str) -> Verdict<()> {
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;

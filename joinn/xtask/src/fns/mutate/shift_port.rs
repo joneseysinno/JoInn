@@ -6,12 +6,7 @@ use joinn_link::Universe;
 use super::parse_member_ref::parse_member_ref;
 use super::refuse::refuse;
 
-pub(super) fn shift_port(
-    u: &mut Universe,
-    link_id: &str,
-    member_s: &str,
-    to: u32,
-) -> Verdict<()> {
+pub(super) fn shift_port(u: &mut Universe, link_id: &str, member_s: &str, to: u32) -> Verdict<()> {
     let want = match parse_member_ref(member_s) {
         Verdict::Ok(m) => m,
         Verdict::Refused(r) => return Verdict::Refused(r),
@@ -21,9 +16,11 @@ pub(super) fn shift_port(
             "no such link {link_id}; acceptance is a declared link id"
         )));
     };
-    let Some(member) = link.members.iter_mut().find(|m| {
-        m.body == want.body && m.instance == want.instance && m.port == want.port
-    }) else {
+    let Some(member) = link
+        .members
+        .iter_mut()
+        .find(|m| m.body == want.body && m.instance == want.instance && m.port == want.port)
+    else {
         return Verdict::Refused(refuse(format!(
             "no such member {member_s} on link {link_id}; acceptance is a declared member"
         )));
@@ -35,7 +32,7 @@ pub(super) fn shift_port(
 #[cfg(test)]
 mod tests {
     use crate::fns::load_phase5_bodies::load_phase5_bodies;
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;

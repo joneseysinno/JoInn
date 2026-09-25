@@ -12,9 +12,6 @@ pub(super) fn oversensitive(subject: &Subject) -> bool {
         .labels
         .values()
         .any(|l| l.contains("(neutral)"))
-        || u.regulatory
-            .names
-            .values()
-            .any(|n| n.contains("(neutral)"));
+        || u.regulatory.names.values().any(|n| n.contains("(neutral)"));
     missing_e0 || neutral_touched
 }

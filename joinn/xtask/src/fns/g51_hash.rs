@@ -27,7 +27,9 @@ pub(crate) fn g51_hash() -> bool {
     let Some(declared) = universe.coding.bodies.first().map(|b| b.hash) else {
         return false;
     };
-    let Some((calc, cells)) = supplied.values().find(|(body, _)| hash(&body.coding) != declared)
+    let Some((calc, cells)) = supplied
+        .values()
+        .find(|(body, _)| hash(&body.coding) != declared)
     else {
         return false;
     };

@@ -4,7 +4,7 @@ use super::{int_val, load_phase5_bodies, load_universe_file, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
 use joinn_link::{
-    bind_bodies, grant, revoke, Address, LinkRefusalKind, UniverseReport, UniverseState,
+    Address, LinkRefusalKind, UniverseReport, UniverseState, bind_bodies, grant, revoke,
 };
 
 pub(crate) fn g5_revoke() -> bool {
@@ -21,7 +21,10 @@ pub(crate) fn g5_revoke() -> bool {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };
-    if !matches!(grant(state.link_runtime(), &u, "e0", "units"), Verdict::Ok(())) {
+    if !matches!(
+        grant(state.link_runtime(), &u, "e0", "units"),
+        Verdict::Ok(())
+    ) {
         return false;
     }
     let Ok(two) = text_val("2") else {
@@ -67,14 +70,16 @@ pub(crate) fn g5_revoke() -> bool {
     if fired != 1 {
         return false;
     }
-    let before = state.body("units").and_then(|body| match describe(body, "scale") {
-        Verdict::Ok(d) => d
-            .ports
-            .iter()
-            .find(|p| p.position == 2)
-            .and_then(|p| p.value.clone()),
-        Verdict::Refused(_) => None,
-    });
+    let before = state
+        .body("units")
+        .and_then(|body| match describe(body, "scale") {
+            Verdict::Ok(d) => d
+                .ports
+                .iter()
+                .find(|p| p.position == 2)
+                .and_then(|p| p.value.clone()),
+            Verdict::Refused(_) => None,
+        });
     if !matches!(revoke(state.link_runtime(), "e0", "units"), Verdict::Ok(())) {
         return false;
     }
@@ -100,14 +105,16 @@ pub(crate) fn g5_revoke() -> bool {
         .iter()
         .filter(|r| matches!(r, UniverseReport::Fired { body, .. } if body == "units"))
         .count();
-    let after = state.body("units").and_then(|body| match describe(body, "scale") {
-        Verdict::Ok(d) => d
-            .ports
-            .iter()
-            .find(|p| p.position == 2)
-            .and_then(|p| p.value.clone()),
-        Verdict::Refused(_) => None,
-    });
+    let after = state
+        .body("units")
+        .and_then(|body| match describe(body, "scale") {
+            Verdict::Ok(d) => d
+                .ports
+                .iter()
+                .find(|p| p.position == 2)
+                .and_then(|p| p.value.clone()),
+            Verdict::Refused(_) => None,
+        });
     later == 0
         && after == before
         && second.iter().any(|r| {

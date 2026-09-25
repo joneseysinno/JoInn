@@ -14,12 +14,7 @@ pub fn print_universe(coding: &UniverseCoding) -> String {
     let mut bodies = coding.bodies.clone();
     bodies.sort_by(|a, b| a.alias.cmp(&b.alias));
     for body in &bodies {
-        let _ = writeln!(
-            out,
-            "    body:{} as {}",
-            body.hash.to_hex(),
-            body.alias
-        );
+        let _ = writeln!(out, "    body:{} as {}", body.hash.to_hex(), body.alias);
     }
     let _ = writeln!(out, "  }}");
     let _ = writeln!(out, "  links {{");

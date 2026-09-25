@@ -49,7 +49,8 @@ pub(crate) fn g3_descriptions() -> bool {
             term: Term::text("3"),
         },
     ];
-    let Verdict::Ok(cap) = joinn_test_host::run(body.clone(), cells.clone(), natives.clone(), events)
+    let Verdict::Ok(cap) =
+        joinn_test_host::run(body.clone(), cells.clone(), natives.clone(), events)
     else {
         return false;
     };

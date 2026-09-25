@@ -8,7 +8,9 @@ pub(crate) fn scores_match(
 ) -> Result<(), String> {
     for (phase, _ok, n, total, legacy) in returned {
         let Some(row) = rows.iter().find(|row| row.phase == *phase) else {
-            return Err(format!("{phase}: lock has no row for the score just returned"));
+            return Err(format!(
+                "{phase}: lock has no row for the score just returned"
+            ));
         };
         if row.n != *n || row.total != *total || row.legacy != *legacy {
             return Err(format!(

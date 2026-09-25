@@ -26,12 +26,12 @@ pub use check_lenses::check_lenses;
 pub use check_link_types::check_link_types;
 pub use csr::{Csr, CsrMember, coding_from_csr, csr_from_universe};
 pub use membrane::{BoundaryPort, membrane};
-pub use universe_state::{
-    LinkRefusal, LinkRefusalKind, UniverseReport, UniverseState, format_link_refusal,
-};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,
     UniverseCoding, UniverseRegulatory, hash_universe, parse_universe, print_universe,
+};
+pub use universe_state::{
+    LinkRefusal, LinkRefusalKind, UniverseReport, UniverseState, format_link_refusal,
 };
 
 #[cfg(test)]

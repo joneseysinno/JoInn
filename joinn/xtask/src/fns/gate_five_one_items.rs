@@ -1,11 +1,11 @@
 //! Gate 5.1 table. Wrappers deleted; Links are typed split (§2.4).
 
+use super::mutate::Mutation;
+use super::subject::Subject;
 use super::{
     g51_frame, g51_frame_control, g51_hash, g51_hash_control, g51_hosts, g51_hosts_control,
     g51_tails, g51_tails_control, g51_total, g51_total_control,
 };
-use super::mutate::Mutation;
-use super::subject::Subject;
 use joinn_gate::GateItem;
 
 /// echo.body coding hash — SwapBinding target for *Members share a frame*.

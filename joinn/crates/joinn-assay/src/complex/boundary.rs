@@ -2,8 +2,8 @@
 
 use joinn_frame::{CheckId, Refusal, Verdict};
 
-use crate::chain::Chain;
 use crate::BlockId;
+use crate::chain::Chain;
 
 use super::Complex;
 

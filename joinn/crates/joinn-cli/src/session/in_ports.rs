@@ -16,7 +16,8 @@ pub(in crate::session) fn in_ports(body: &Body, cells: &BTreeMap<Hash, Cell>) ->
             let mut here: Vec<BoundaryPort> = set
                 .iter()
                 .filter(|port| {
-                    port.direction == Direction::In && port.address.instance.as_str() == instance.as_str()
+                    port.direction == Direction::In
+                        && port.address.instance.as_str() == instance.as_str()
                 })
                 .cloned()
                 .collect();

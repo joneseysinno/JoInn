@@ -1,6 +1,6 @@
 //! Phase 2 turn control: a result of 5 would mean the turn was not applied.
 
-use super::{int_val};
+use super::int_val;
 use joinn_frame::Verdict;
 
 pub(crate) fn g2_turn_control(_art: &()) -> bool {

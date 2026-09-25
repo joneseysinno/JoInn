@@ -44,7 +44,7 @@ pub(super) fn copy_member(
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;
@@ -62,9 +62,10 @@ mod tests {
             panic!("universe");
         };
         let orig_hash = hash_universe(&orig.coding);
-        let Verdict::Ok(mutant) =
-            mutate(&s, &Mutation::CopyMember("function", "units", "calculation"))
-        else {
+        let Verdict::Ok(mutant) = mutate(
+            &s,
+            &Mutation::CopyMember("function", "units", "calculation"),
+        ) else {
             panic!("mutate");
         };
         let Subject::Universe(u) = &mutant else {
@@ -77,9 +78,10 @@ mod tests {
             }
             Verdict::Ok(()) => panic!("exclusivity must refuse copied member"),
         }
-        let Verdict::Refused(r) =
-            mutate(&s, &Mutation::CopyMember("function", "ghost", "calculation"))
-        else {
+        let Verdict::Refused(r) = mutate(
+            &s,
+            &Mutation::CopyMember("function", "ghost", "calculation"),
+        ) else {
             panic!("missing alias must refuse");
         };
         assert!(r.reason.contains("ghost"), "{}", r.reason);

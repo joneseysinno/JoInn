@@ -3,12 +3,12 @@
 use crate::fns::subject::Subject;
 use joinn_frame::Verdict;
 
+use super::Mutation;
 use super::apply::apply;
 use super::coding_hash::coding_hash;
 use super::refuse::refuse;
 use super::reparse::reparse;
 use super::reprint::reprint;
-use super::Mutation;
 
 /// Apply `m` to `s`, reprint with the kind's printer, and re-parse.
 pub(crate) fn mutate(s: &Subject, m: &Mutation) -> Verdict<Subject> {

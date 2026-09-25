@@ -1,6 +1,6 @@
 //! Gather corpus bodies by coding hash; a single face per hash.
 
-use joinn_dna::{hash, parse_body, Body, Cell};
+use joinn_dna::{Body, Cell, hash, parse_body};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use std::collections::BTreeMap;
 use std::fs;

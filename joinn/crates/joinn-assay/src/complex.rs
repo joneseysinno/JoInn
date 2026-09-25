@@ -6,8 +6,8 @@ mod from_parts;
 
 use std::collections::BTreeMap;
 
-use crate::chain::Chain;
 use crate::BlockId;
+use crate::chain::Chain;
 
 /// Blocks by dimension, each with the chain that is its boundary.
 pub struct Complex {

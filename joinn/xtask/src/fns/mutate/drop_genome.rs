@@ -16,9 +16,9 @@ pub(super) fn drop_genome(body: &mut Body, instance: &str) -> Verdict<()> {
     }
     body.coding.genome.retain(|e| !e.instances.is_empty());
     // Also drop wires that named the instance.
-    body.coding.wires.retain(|w| {
-        w.src_instance != instance && w.dst_instance != instance
-    });
+    body.coding
+        .wires
+        .retain(|w| w.src_instance != instance && w.dst_instance != instance);
     // Drop grant mentions.
     for insts in body.coding.grants.values_mut() {
         insts.retain(|i| i != instance);
@@ -35,7 +35,7 @@ pub(super) fn drop_genome(body: &mut Body, instance: &str) -> Verdict<()> {
 #[cfg(test)]
 mod tests {
     use crate::fns::load_calculator::load_calculator;
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_dna::hash;
@@ -62,11 +62,12 @@ mod tests {
             panic!("body mutant");
         };
         assert_ne!(hash(&body.coding), orig_hash);
-        assert!(body
-            .coding
-            .genome
-            .iter()
-            .all(|e| !e.instances.iter().any(|i| i == "cli_b")));
+        assert!(
+            body.coding
+                .genome
+                .iter()
+                .all(|e| !e.instances.iter().any(|i| i == "cli_b"))
+        );
         let (_, cells) = load_calculator().expect("cells");
         let set = match membrane(body, &cells) {
             Verdict::Ok(set) => set,

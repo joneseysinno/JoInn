@@ -11,7 +11,8 @@ pub(crate) fn g51_total() -> bool {
         return false;
     };
     let frames = FrameRegistry::phase1();
-    let Ok(calc_src) = fs::read_to_string(root.join("corpus").join("phase2").join("calculator.body"))
+    let Ok(calc_src) =
+        fs::read_to_string(root.join("corpus").join("phase2").join("calculator.body"))
     else {
         return false;
     };

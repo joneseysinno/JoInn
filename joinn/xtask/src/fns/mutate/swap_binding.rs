@@ -23,7 +23,7 @@ pub(super) fn swap_binding(u: &mut Universe, alias: &str, to_hash: &str) -> Verd
 #[cfg(test)]
 mod tests {
     use crate::fns::load_phase5_bodies::load_phase5_bodies;
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::workspace_root::workspace_root;

@@ -3,10 +3,10 @@
 use joinn_frame::{Value, Verdict};
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::Address;
 use crate::capability::check_capability;
 use crate::universe::{Mark, Order};
 use crate::universe_state::{LinkRefusal, LinkRefusalKind, UniverseReport, UniverseState};
-use crate::Address;
 
 impl UniverseState {
     /// Run bodies in alias order, then deliver in link-id order, until a quiet pass.
@@ -45,10 +45,8 @@ impl UniverseState {
                                 body: alias.clone(),
                                 instance: instance.clone(),
                             });
-                            if let Some(ports) = self
-                                .bodies
-                                .get(alias)
-                                .and_then(|b| b.last_ports(&instance))
+                            if let Some(ports) =
+                                self.bodies.get(alias).and_then(|b| b.last_ports(&instance))
                             {
                                 for (port, value) in ports {
                                     emitted.insert(

@@ -1,10 +1,10 @@
 //! Law 4: wires stay inside a body; hyperedges stay between bodies.
 
+use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
+use joinn_frame::FrameRegistry;
+use joinn_frame::Hash;
 use joinn_frame::Verdict;
 use joinn_link::{assemble_universe, check_law4, law4_refusals, parse_universe};
-use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
-use joinn_frame::Hash;
-use joinn_frame::FrameRegistry;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -69,9 +69,7 @@ fn wrong_container_fires_both_law4_refusals() {
     assert_eq!(refusals.len(), 2, "{refusals:?}");
     assert!(
         refusals.iter().any(|r| {
-            r.reason.contains("inside")
-                && r.reason.contains("calc")
-                && r.reason.contains("wire")
+            r.reason.contains("inside") && r.reason.contains("calc") && r.reason.contains("wire")
         }),
         "{refusals:?}"
     );

@@ -1,6 +1,6 @@
 //! Admit a child cell only when its lineage names the parent.
 
-use joinn_dna::{hash, Cell};
+use joinn_dna::{Cell, hash};
 use joinn_frame::Verdict;
 use joinn_gate::{Budget, Gate};
 

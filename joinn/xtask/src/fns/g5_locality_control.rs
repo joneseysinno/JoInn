@@ -1,7 +1,7 @@
 //! Gate 5 item 8 control: true when the hosts' far-side output contains the text.
 
 use super::subject::Subject;
-use joinn_link::{format_link_refusal, Address, LinkRefusal, LinkRefusalKind};
+use joinn_link::{Address, LinkRefusal, LinkRefusalKind, format_link_refusal};
 
 pub(crate) fn g5_locality_control(subject: &Subject) -> bool {
     let Subject::Text(secret) = subject else {

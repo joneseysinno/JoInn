@@ -4,7 +4,7 @@ use joinn_dna::{Body, Cell};
 use joinn_frame::{Hash, Verdict};
 use joinn_gate::NativeRegistry;
 use joinn_host::describe;
-use joinn_link::{grant, Universe, UniverseReport, UniverseState};
+use joinn_link::{Universe, UniverseReport, UniverseState, grant};
 use std::collections::BTreeMap;
 
 use crate::capture::Capture;

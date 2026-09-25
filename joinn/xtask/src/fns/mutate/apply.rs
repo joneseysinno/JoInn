@@ -3,8 +3,9 @@
 use crate::fns::subject::Subject;
 use joinn_frame::Verdict;
 
-use super::corrupt_hash::corrupt_hash;
+use super::Mutation;
 use super::copy_member::copy_member;
+use super::corrupt_hash::corrupt_hash;
 use super::drop_genome::drop_genome;
 use super::drop_grant::drop_grant;
 use super::drop_lens::drop_lens;
@@ -22,7 +23,6 @@ use super::swap_binding::swap_binding;
 use super::swap_cell::swap_cell;
 use super::swap_lines::swap_lines;
 use super::wire_across::wire_across;
-use super::Mutation;
 
 pub(super) fn apply(s: &mut Subject, m: &Mutation) -> Verdict<()> {
     match (m, s) {

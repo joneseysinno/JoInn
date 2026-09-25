@@ -1,9 +1,9 @@
 //! `cargo xtask witness <path>` — print current or refuse as stale.
 
+use super::super::workspace_root;
 use super::against_git::against_git;
 use super::against_mtime::{Status, against_mtime};
 use super::resolve_path::resolve_path;
-use super::super::workspace_root;
 
 /// Read a finding and refuse unless newer than crates, xtask, and corpus.
 pub(crate) fn witness(arg: String) -> Result<(), String> {
@@ -13,11 +13,7 @@ pub(crate) fn witness(arg: String) -> Result<(), String> {
         Some(s) => s,
         None => against_mtime(
             &finding,
-            &[
-                ws.join("crates"),
-                ws.join("xtask"),
-                ws.join("corpus"),
-            ],
+            &[ws.join("crates"), ws.join("xtask"), ws.join("corpus")],
         )?,
     };
     match status {

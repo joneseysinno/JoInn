@@ -1,11 +1,11 @@
 //! A value crosses e0. Observations are descriptions, fire counts, and refusals.
 
-use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
+use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, TextFrame, Value, Verdict};
-use joinn_host::{describe, probe, Address};
+use joinn_host::{Address, describe, probe};
 use joinn_link::{
-    assemble_universe, bind_bodies, check_link_types, grant, parse_universe, revoke, Universe,
-    UniverseReport, UniverseState, LinkRefusalKind,
+    LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind_bodies,
+    check_link_types, grant, parse_universe, revoke,
 };
 use std::collections::BTreeMap;
 use std::fs;
@@ -357,8 +357,5 @@ fn second_sum_stays_home() {
         Verdict::Ok(d) => d.label,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
-    assert!(
-        seen.contains("join refuse at scale port 0"),
-        "{seen}"
-    );
+    assert!(seen.contains("join refuse at scale port 0"), "{seen}");
 }

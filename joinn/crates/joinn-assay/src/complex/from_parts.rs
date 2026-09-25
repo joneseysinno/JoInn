@@ -2,8 +2,8 @@
 
 use std::collections::BTreeMap;
 
-use crate::chain::Chain;
 use crate::BlockId;
+use crate::chain::Chain;
 
 use super::Complex;
 

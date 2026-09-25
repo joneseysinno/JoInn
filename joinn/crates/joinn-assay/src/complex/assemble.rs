@@ -140,11 +140,7 @@ mod tests {
             (e01, 1, Chain::from_coeffs([(v1, 1), (v0, -1)])),
             (e12, 1, Chain::from_coeffs([(v2, 1), (v1, -1)])),
             (e20, 1, Chain::from_coeffs([(v0, 1), (v2, -1)])),
-            (
-                face,
-                2,
-                Chain::from_coeffs([(e01, 1), (e12, 1), (e20, 1)]),
-            ),
+            (face, 2, Chain::from_coeffs([(e01, 1), (e12, 1), (e20, 1)])),
         ]);
         match built.assemble() {
             Verdict::Ok(()) => {}
@@ -193,7 +189,11 @@ mod tests {
         match built.assemble() {
             Verdict::Refused(r) => {
                 assert!(r.reason.contains("block 3"), "{}", r.reason);
-                assert!(r.reason.contains("closed") || r.reason.contains("empty"), "{}", r.reason);
+                assert!(
+                    r.reason.contains("closed") || r.reason.contains("empty"),
+                    "{}",
+                    r.reason
+                );
             }
             Verdict::Ok(()) => panic!("an open face must refuse"),
         }

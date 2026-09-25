@@ -1,6 +1,6 @@
 //! Phase 2 evolution control: a wrong lineage must not be admitted.
 
-use super::{workspace_root};
+use super::workspace_root;
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 
 pub(crate) fn g2_evolution_control(_art: &()) -> bool {
@@ -8,7 +8,8 @@ pub(crate) fn g2_evolution_control(_art: &()) -> bool {
         return true;
     };
     let frames = FrameRegistry::phase1();
-    let Ok(parent_src) = std::fs::read_to_string(root.join("corpus").join("phase0").join("sum.cell"))
+    let Ok(parent_src) =
+        std::fs::read_to_string(root.join("corpus").join("phase0").join("sum.cell"))
     else {
         return true;
     };

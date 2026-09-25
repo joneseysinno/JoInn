@@ -3,7 +3,7 @@
 use super::{int_val, load_phase5_bodies, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{bind_bodies, grant, Address, Universe, UniverseReport, UniverseState};
+use joinn_link::{Address, Universe, UniverseReport, UniverseState, bind_bodies, grant};
 
 pub(crate) fn units_after(
     universe: &Universe,

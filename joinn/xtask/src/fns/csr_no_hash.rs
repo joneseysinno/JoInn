@@ -10,7 +10,11 @@ mod tests {
             Ok(r) => r,
             Err(e) => panic!("{e}"),
         };
-        let dir = root.join("crates").join("joinn-link").join("src").join("csr");
+        let dir = root
+            .join("crates")
+            .join("joinn-link")
+            .join("src")
+            .join("csr");
         let mut hits = Vec::new();
         let rd = match fs::read_dir(&dir) {
             Ok(rd) => rd,
@@ -35,7 +39,11 @@ mod tests {
                 }
             }
         }
-        let root_csr = root.join("crates").join("joinn-link").join("src").join("csr.rs");
+        let root_csr = root
+            .join("crates")
+            .join("joinn-link")
+            .join("src")
+            .join("csr.rs");
         let text = match fs::read_to_string(&root_csr) {
             Ok(s) => s,
             Err(e) => panic!("{}: {e}", root_csr.display()),

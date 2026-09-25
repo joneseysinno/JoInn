@@ -7,9 +7,9 @@ pub(crate) fn value_in_frame(frame: &FrameRef, line: &str) -> Result<Value, Stri
     let term = match frame.id {
         FrameId::Text => return super::text_value::text_value(line),
         FrameId::Int => {
-            let n = line.parse::<i64>().map_err(|_| {
-                format!("\"{line}\" is not in ℤ; acceptance is a decimal integer")
-            })?;
+            let n = line
+                .parse::<i64>()
+                .map_err(|_| format!("\"{line}\" is not in ℤ; acceptance is a decimal integer"))?;
             Term::int(n)
         }
         FrameId::Rat => {

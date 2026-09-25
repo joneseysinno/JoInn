@@ -58,7 +58,7 @@ pub(super) fn rename_alias(u: &mut Universe, from: &str, to: &str) -> Verdict<()
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::units_after::units_after;

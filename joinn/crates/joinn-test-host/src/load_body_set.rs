@@ -8,9 +8,7 @@ use std::path::PathBuf;
 
 /// Insert bodies keyed by coding hash. Refuses a second body with the same
 /// coding hash and a different regulatory region, naming both source paths.
-pub fn load_body_set(
-    bodies: Vec<(PathBuf, Body)>,
-) -> Result<BTreeMap<Hash, Body>, String> {
+pub fn load_body_set(bodies: Vec<(PathBuf, Body)>) -> Result<BTreeMap<Hash, Body>, String> {
     let mut by_hash: BTreeMap<Hash, (Body, PathBuf)> = BTreeMap::new();
     let mut ordered = bodies;
     ordered.sort_by(|a, b| {

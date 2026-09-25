@@ -1,13 +1,12 @@
 //! Load phase-5 bodies indexed by coding hash.
 
 use super::workspace_root;
-use joinn_dna::{hash, parse_body, parse_cell, Body, Cell};
+use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use std::collections::BTreeMap;
 use std::fs;
 
-pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)>, String>
-{
+pub(crate) fn load_phase5_bodies() -> Result<BTreeMap<Hash, (Body, BTreeMap<Hash, Cell>)>, String> {
     let root = workspace_root()?;
     let frames = FrameRegistry::phase1();
     let mut cells: BTreeMap<Hash, Cell> = BTreeMap::new();

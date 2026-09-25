@@ -23,7 +23,7 @@ pub(super) fn swap_lines(lines: &mut Vec<String>, i: usize, j: usize) -> Verdict
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::workspace_root::workspace_root;
@@ -50,10 +50,7 @@ mod tests {
         let calc_lines: Vec<&str> = calc.lines().collect();
         assert!(
             orig.len() >= calc_lines.len()
-                && orig
-                    .iter()
-                    .zip(calc_lines.iter())
-                    .all(|(a, b)| a == *b),
+                && orig.iter().zip(calc_lines.iter()).all(|(a, b)| a == *b),
             "subject must start as calculator.txt"
         );
         let Verdict::Ok(mutant) = mutate(&s, &Mutation::SwapLines(2, 3)) else {
@@ -63,11 +60,11 @@ mod tests {
             panic!("transcript mutant");
         };
         let still_prefix = lines.len() >= calc_lines.len()
-            && lines
-                .iter()
-                .zip(calc_lines.iter())
-                .all(|(a, b)| a == *b);
-        assert!(!still_prefix, "swapped transcript must not start as calculator.txt");
+            && lines.iter().zip(calc_lines.iter()).all(|(a, b)| a == *b);
+        assert!(
+            !still_prefix,
+            "swapped transcript must not start as calculator.txt"
+        );
         let Verdict::Refused(r) = mutate(&s, &Mutation::SwapLines(2, 999)) else {
             panic!("missing line must refuse");
         };

@@ -3,7 +3,7 @@
 use super::{load_phase5_bodies, load_universe_file, text_val, workspace_root};
 use joinn_frame::Verdict;
 use joinn_host::probe;
-use joinn_link::{bind_bodies, grant, Address, UniverseState};
+use joinn_link::{Address, UniverseState, bind_bodies, grant};
 use std::fs;
 
 pub(crate) fn g5_locality() -> bool {
@@ -35,7 +35,10 @@ pub(crate) fn g5_locality() -> bool {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };
-    if !matches!(grant(state.link_runtime(), &u, "e0", "units"), Verdict::Ok(())) {
+    if !matches!(
+        grant(state.link_runtime(), &u, "e0", "units"),
+        Verdict::Ok(())
+    ) {
         return false;
     }
     let Ok(two) = text_val("2") else {
@@ -55,7 +58,10 @@ pub(crate) fn g5_locality() -> bool {
             instance: instance.into(),
             port: 0,
         };
-        if !matches!(state.inject("calc", &addr, value, i as u64), Verdict::Ok(())) {
+        if !matches!(
+            state.inject("calc", &addr, value, i as u64),
+            Verdict::Ok(())
+        ) {
             return false;
         }
     }
@@ -70,7 +76,10 @@ pub(crate) fn g5_locality() -> bool {
             instance: instance.into(),
             port: 0,
         };
-        if !matches!(state.inject("calc", &addr, value, i as u64), Verdict::Ok(())) {
+        if !matches!(
+            state.inject("calc", &addr, value, i as u64),
+            Verdict::Ok(())
+        ) {
             return false;
         }
     }

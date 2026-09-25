@@ -33,7 +33,7 @@ pub(super) fn drop_wire(body: &mut Body, src_s: &str, dst_s: &str) -> Verdict<()
 #[cfg(test)]
 mod tests {
     use crate::fns::load_calculator::load_calculator;
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_dna::hash;

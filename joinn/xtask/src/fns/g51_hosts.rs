@@ -83,6 +83,9 @@ pub(crate) fn g51_hosts() -> bool {
         return false;
     };
     cap.descriptions.iter().any(|d| {
-        d.instance == "scale" && d.ports.iter().any(|p| p.position == 2 && p.value.as_deref() == Some("60"))
+        d.instance == "scale"
+            && d.ports
+                .iter()
+                .any(|p| p.position == 2 && p.value.as_deref() == Some("60"))
     })
 }

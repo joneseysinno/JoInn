@@ -18,7 +18,7 @@ pub(super) fn set_score(rows: &mut Vec<LockRow>, phase: &str, n: u32, total: u32
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::mutate::{mutate, Mutation};
+    use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use joinn_frame::Verdict;

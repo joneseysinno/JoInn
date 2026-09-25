@@ -46,7 +46,12 @@ pub(in crate::session) fn run_session(
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    match probe.inject(&ports[0].address.instance, ports[0].address.port, value_in_frame(&ports[0].frame, &first)?, 0) {
+    match probe.inject(
+        &ports[0].address.instance,
+        ports[0].address.port,
+        value_in_frame(&ports[0].frame, &first)?,
+        0,
+    ) {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => return Err(r.reason),
     }
@@ -99,7 +104,12 @@ pub(in crate::session) fn run_session(
             }
             Verdict::Refused(r) => return Err(r.reason),
         }
-        match state.inject(&port.address.instance, port.address.port, value_in_frame(&port.frame, line)?, i as u64) {
+        match state.inject(
+            &port.address.instance,
+            port.address.port,
+            value_in_frame(&port.frame, line)?,
+            i as u64,
+        ) {
             Verdict::Ok(()) => {}
             Verdict::Refused(r) => return Err(r.reason),
         }

@@ -55,7 +55,10 @@ mod tests {
                 }
             }
         }
-        assert!(names.contains("cli_a"), "the scan's domain must include cli_a");
+        assert!(
+            names.contains("cli_a"),
+            "the scan's domain must include cli_a"
+        );
 
         let src_root = root.join("src");
         let mut files = Vec::new();
