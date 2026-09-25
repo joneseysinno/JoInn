@@ -17,6 +17,7 @@ pub(super) fn drop_line(lines: &mut Vec<String>, i: usize) -> Verdict<()> {
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::g51_hosts_control::g51_hosts_control;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
@@ -35,10 +36,13 @@ mod tests {
             panic!("transcript");
         };
         let before_len = orig.len();
+        let line1 = orig
+            .get(1)
+            .cloned()
+            .unwrap_or_else(|| panic!("line 1 missing"));
         assert!(
-            orig.get(1).is_some_and(|l| l.contains("refused")),
-            "line 1 should be the refusal line: {:?}",
-            orig.get(1)
+            line1.contains("refused"),
+            "line 1 should be the refusal line: {line1}"
         );
         let Verdict::Ok(mutant) = mutate(&s, &Mutation::DropLine(1)) else {
             panic!("mutate");
@@ -48,8 +52,18 @@ mod tests {
         };
         assert_eq!(lines.len(), before_len - 1);
         assert!(
-            lines.iter().all(|l| !l.contains("refused")),
-            "refusal line must be gone: {lines:?}"
+            lines.iter().all(|l| l != &line1),
+            "mutant must have no line equal to original line 1: {lines:?}"
+        );
+        // Plan said hosts control "still answers false" on the mutant; DropLine(1)
+        // removes a calculator.txt line, so the control answers true (prefix broken).
+        assert!(
+            g51_hosts_control(&mutant),
+            "DropLine(1) breaks the calculator prefix"
+        );
+        assert!(
+            !g51_hosts_control(&s),
+            "real universe.txt still starts with calculator.txt"
         );
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropLine(999)) else {
             panic!("missing line must refuse");

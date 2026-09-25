@@ -7,8 +7,7 @@ use std::fs;
 pub(crate) fn check_vocab_fixtures() -> Result<(), String> {
     let root = workspace_root()?.join("xtask").join("vocab_fixtures");
     let refuse = fs::read_to_string(root.join("refuse_sub_total.rs")).map_err(|e| e.to_string())?; // allow(vocab): fixture path names the planted turn-ident file
-    let accept =
-        fs::read_to_string(root.join("accept_saturating_sub.rs")).map_err(|e| e.to_string())?; // allow(vocab): fixture path names the std-call accept file
+    let accept = fs::read_to_string(root.join("accept_std_call.rs")).map_err(|e| e.to_string())?;
 
     let banned = concat!("su", "b"); // allow(vocab): turn-ident under test
     let mut refuse_hit = false;

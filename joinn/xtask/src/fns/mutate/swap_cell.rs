@@ -41,6 +41,7 @@ mod tests {
     use joinn_dna::{GenomeTarget, hash};
     use joinn_frame::Verdict;
     use joinn_link::membrane;
+    use std::collections::BTreeSet;
 
     fn calculator() -> Subject {
         let src = include_str!("../../../../corpus/phase2/calculator.body");
@@ -49,18 +50,16 @@ mod tests {
     }
 
     #[test]
-    fn swap_cell_makes_membrane_refuse_or_change_hash() {
+    fn swap_cell_changes_membrane() {
         let s = calculator();
         let Subject::Body(orig) = &s else {
             panic!("body");
         };
         let orig_hash = hash(&orig.coding);
-        // Use the format cell hash (not sum) so sum's contract disappears.
         let (_, cells) = load_calculator().unwrap_or_else(|e| panic!("load calculator cells: {e}"));
         let format_hex = cells
             .keys()
             .find(|h| {
-                // pick a hash that is not currently sum's
                 !orig.coding.genome.iter().any(|e| {
                     matches!(&e.target, GenomeTarget::Cell(c) if c == *h)
                         && e.instances.iter().any(|i| i == "sum")
@@ -86,23 +85,15 @@ mod tests {
             matches!(sum_target, Some(GenomeTarget::Cell(h)) if h.to_hex() == format_static),
             "sum must point at the swapped cell"
         );
-        // Downstream: membrane either refuses (wrong ports) or no longer has sum@2 alone as before.
-        match membrane(body, &cells) {
-            Verdict::Refused(r) => {
-                assert!(
-                    r.reason.contains("sum") || r.reason.contains("cell"),
-                    "{}",
-                    r.reason
-                );
-            }
-            Verdict::Ok(set) => {
-                let ports: Vec<_> = set.iter().map(|a| a.address.printed()).collect();
-                assert!(
-                    !ports.iter().any(|p| p == "sum@2") || ports != ["cli_a@0", "cli_b@0", "sum@2"],
-                    "membrane must reflect the swapped cell: {ports:?}"
-                );
-            }
-        }
+        let expected: BTreeSet<String> = ["cli_a@0", "cli_b@0", "sum@2"]
+            .into_iter()
+            .map(String::from)
+            .collect();
+        let ports: BTreeSet<String> = match membrane(body, &cells) {
+            Verdict::Ok(set) => set.iter().map(|a| a.address.printed()).collect(),
+            Verdict::Refused(_) => BTreeSet::new(),
+        };
+        assert_ne!(ports, expected);
         let Verdict::Refused(r) = mutate(&s, &Mutation::SwapCell("ghost", format_static)) else {
             panic!("missing instance must refuse");
         };

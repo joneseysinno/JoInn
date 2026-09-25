@@ -9,6 +9,7 @@ pub(super) fn replace(text: &mut String, with: &str) -> Verdict<()> {
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::g5_locality_control::g5_locality_control;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
@@ -21,12 +22,16 @@ mod tests {
     }
 
     #[test]
-    fn replace_puts_e0_in_the_text() {
+    fn replace_e0_flips_locality_control() {
         let s = inner_reason();
         let Subject::Text(orig) = &s else {
             panic!("text");
         };
         assert!(!orig.contains("e0"), "subject must not already be e0");
+        assert!(
+            !g5_locality_control(&s),
+            "real inner_reason must not appear on the far side"
+        );
         let Verdict::Ok(mutant) = mutate(&s, &Mutation::Replace("e0")) else {
             panic!("mutate");
         };
@@ -34,9 +39,10 @@ mod tests {
             panic!("text mutant");
         };
         assert_eq!(text, "e0");
-        // Downstream: a host far-side check looking for this string would fire.
-        assert!(text.contains("e0"));
-        // Replace has no "missing target"; a second replace still succeeds.
+        assert!(
+            g5_locality_control(&mutant),
+            "Replace(e0) must make the far-side check fire"
+        );
         let Verdict::Ok(again) = mutate(&mutant, &Mutation::Replace("other")) else {
             panic!("replace again");
         };

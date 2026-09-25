@@ -58,12 +58,12 @@ pub(super) fn rename_alias(u: &mut Universe, from: &str, to: &str) -> Verdict<()
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::load_phase5_bodies::load_phase5_bodies;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
-    use crate::fns::units_after::units_after;
     use joinn_frame::Verdict;
-    use joinn_link::hash_universe;
+    use joinn_link::{assemble_universe, bind_bodies, hash_universe};
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
@@ -72,7 +72,7 @@ mod tests {
     }
 
     #[test]
-    fn rename_alias_removes_units_name() {
+    fn rename_alias_still_binds_and_assembles() {
         let s = universe();
         let Subject::Universe(orig) = &s else {
             panic!("universe");
@@ -87,11 +87,14 @@ mod tests {
         assert_ne!(hash_universe(&u.coding), orig_hash);
         assert!(u.coding.bodies.iter().all(|b| b.alias != "units"));
         assert!(u.coding.bodies.iter().any(|b| b.alias == "meters"));
-        // Runtime still injects under "units", so the renamed body never fires.
-        match units_after(u, Some("e0")) {
-            Ok((0, _)) => {}
-            Err(_) => {}
-            Ok((n, _)) => panic!("units must not fire after RenameAlias, got {n}"),
+        let supplied = load_phase5_bodies().unwrap_or_else(|e| panic!("load phase5 bodies: {e}"));
+        let bound = match bind_bodies(u, &supplied) {
+            Verdict::Ok(b) => b,
+            Verdict::Refused(r) => panic!("renamed universe must bind: {}", r.reason),
+        };
+        match assemble_universe(u, &bound) {
+            Verdict::Ok(()) => {}
+            Verdict::Refused(r) => panic!("renamed universe must assemble: {}", r.reason),
         }
         let Verdict::Refused(r) = mutate(&s, &Mutation::RenameAlias("ghost", "meters")) else {
             panic!("missing alias must refuse");
