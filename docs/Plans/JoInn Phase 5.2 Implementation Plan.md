@@ -345,6 +345,23 @@ Done-when is a command, and the command must be able to fail.
 
 Dependencies: P52-04 needs P52-03. P52-05 needs P52-04. P52-06 and P52-07 need P52-05. P52-08 needs P52-07.
 
+### Amendment B (after Stop B, 25 Sep 2026): do these first in chunk C
+
+Claude re-ran the tree at `618d3d7` from a fresh clone on Linux. Every number in `phase-5.2-stop-b.md` reproduced exactly (168 passed, `gate all` 7/8 on phase 5 with only 5·8 failing, `vocab: ok`, `modules: ok`, 33 hashes). The findings below are fixed by three commits that come **before P52-09**. They are decided; nothing waits on AJ.
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P52-08a** | **CI can go green** | `cargo fmt --all` (one mechanical commit, no other change in it). Fix every `cargo clippy --workspace --all-targets -- -D warnings` error, starting with `collapsible_match` at `crates/joinn-live/src/slot/apply.rs:25`. Fix the code, never `allow` a lint. No coding hash may move | `cargo fmt --all -- --check` exits 0. `cargo clippy --workspace --all-targets -- -D warnings` exits 0. `corpus verify` unchanged. Paste the last line of each |
+| **P52-08b** | **A control never fails open** | In `g5_assemble_control`, `g51_tails_control` and `g51_frame_control`, every early exit before the control's named refusal (wrong subject kind, loader error, **binding refused**) returns `false`, not `true`. The control returns `true` only when it sees its own named refusal. `g5_law4_control` returns `true` only when the Law 4 refusal names **both** bodies (`calc` and `units`) and contains `hyperedge`; this replaces §2.2's "naming the container", which does not match what Law 4 prints. Leave `g5_linked_control`, `g5_revoke_control` (their fact is "units does not fire", which a refusal also shows) and `g5_locality_control` (P52-13) as they are | A test runs each of those four controls on the `CorruptHash(calc)` mutant of `universe.universe` and asserts `false` for all four. `gate all` still passes the harness with phase 5 at 7/8 and phase 5.1 at 5/5 |
+| **P52-08c** | **Catalogue tests assert what the mutant does** | Rewrite these P52-04 tests so each asserts one effect outside the mutated value itself (§5): `Replace("e0")` on `inner_reason.txt` → `g5_locality_control` answers `true`; `SetScore` → `scores_match` against the real rows is refused naming the phase; `DropLine(1)` on `universe.txt` → `g51_hosts_control` still answers `false` and the mutant has no line equal to the original line 1; `SwapCell` → `membrane` is refused, or ∂ differs from `{cli_a@0, cli_b@0, sum@2}` (one plain assertion, no `\|\|` escape); `RenameAlias(units, meters)` → the renamed universe still binds and assembles (delete the assertion that `units` stops firing; it tests the helper's hard-coded alias, and §2.8 wants the opposite). No test may accept `Err(_)` as a pass. In `set_score.rs`, use `PHASE_LABELS` and delete the letter-by-letter phase string and its "banned literal" comments (rule 42: there is no such scan). Rename `xtask/vocab_fixtures/accept_saturating_sub.rs` to `accept_std_call.rs` and delete the `allow(vocab)` that its path needed | `git grep -n "allow(vocab)" -- crates xtask` shows no line containing `saturating_sub` or `fs::metadata` (paste the output). `git grep -n "banned literal" -- xtask` prints nothing. The suite passes |
+
+**Changes to later commits:**
+
+- **P52-09:** the binding refusal prints the alias and the **full 64-hex declared hash**, not a 4-character prefix. Today it prints `alias calc declared b55f and no body was supplied`, which is the same prefix for the real and the corrupted hash, because `CorruptHash` changes the last digit. The done-when's "naming `calc` and the short hash" becomes "naming `calc` and the full declared hash".
+- **Every commit message:** the `Commit:` line carries the hash the commit actually has in `git log` (P52-02b's message says `30ba982`; the commit is `8a7229a`). When the hash is only known after committing, write `Commit: P52-NN (hash in git log)` in the message and the real hash in the stop report.
+- **"Shown then reverted" done-whens:** paste both printed lines in full. Do not shorten them with `(...)`.
+- **P52-08's control-file comparison** carries forward into the stop-C report: for each of the five kept files, name the catalogue mutation that came closest and paste the first differing line.
+
 ### Chunk C: binding, runtime, hosts
 
 | # | Commit | Delivers | Done when |
@@ -356,7 +373,7 @@ Dependencies: P52-04 needs P52-03. P52-05 needs P52-04. P52-06 and P52-07 need P
 | **P52-13** | **G6 at the hosts (§2.15)** | `cargo xtask probe-refusal`; `inner_reason.txt` rewritten by redirect; 5·8 reads `far_side`, the presenter lines and the probe | The probe label contains `inner_reason.txt`. No far-side line does. `Replace("e0")` makes the far-side check fire. `crossing.rs::second_sum_stays_home` and gate 5·8 both pass |
 | — | **Stop C** | `phase-5.2-stop-c.md`, push, stop | — |
 
-Dependencies: P52-11 needs P52-09. P52-12 needs P52-10 and P52-11. P52-13 needs P52-12.
+Dependencies: P52-08a, P52-08b and P52-08c come first, in that order. P52-09 needs P52-08b. P52-11 needs P52-09. P52-12 needs P52-10 and P52-11. P52-13 needs P52-12.
 
 ### Chunk D: findings and the freeze
 
@@ -557,4 +574,4 @@ with a universe refusal.
 
 ---
 
-*JoInn Phase 5.2 Implementation Plan, Draft 0.3. It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 5.2 Implementation Plan, Draft 0.3 with Amendment B (25 Sep 2026). It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
