@@ -26,6 +26,7 @@ impl BodyState {
         };
         let dest = mail.dest.clone();
         let port = mail.port;
+        self.refusal_site = Some((dest.clone(), port));
         let value = mail.value.clone();
         let seed = self.seed;
         {
@@ -170,6 +171,14 @@ mod tests {
         }
         assert!(state.slot("sum", 0).is_none());
         assert!(state.slot("cli_a", 1).is_none());
+        let _ = state.inject("cli_a", 0, text("2"), 0);
+        let _ = state.inject("cli_b", 0, text("3"), 1);
+        match state.run() {
+            Verdict::Ok(_) => {
+                assert_eq!(state.slot("sum", 2), Some(&int(5)));
+            }
+            Verdict::Refused(r) => panic!("after recovery: {}", r.reason),
+        }
     }
 
     #[test]

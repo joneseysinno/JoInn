@@ -35,7 +35,7 @@ pub enum LinkRefusalKind {
     NotDelivered,
 }
 
-/// A body fired, or a link stopped.
+/// A body fired, refused, or a link stopped.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum UniverseReport {
     /// `instance` fired inside `body`.
@@ -43,6 +43,13 @@ pub enum UniverseReport {
         /// Body alias.
         body: String,
         /// Instance that fired.
+        instance: String,
+    },
+    /// `instance` refused inside `body`. No reason string.
+    Refused {
+        /// Body alias.
+        body: String,
+        /// Instance that refused.
         instance: String,
     },
     /// A delivery did not land.

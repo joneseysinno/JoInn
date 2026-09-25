@@ -47,6 +47,8 @@ pub struct BodyState {
     last_ports: BTreeMap<String, BTreeMap<u32, Value>>,
     budget: u64,
     last_refusal: Option<String>,
+    /// Instance and port for the delivery that led to the last refusal.
+    refusal_site: Option<(String, u32)>,
 }
 
 impl BodyState {
@@ -94,5 +96,12 @@ impl BodyState {
     /// The refusing body's own words, if the last `run` refused.
     pub fn last_refusal(&self) -> Option<&str> {
         self.last_refusal.as_deref()
+    }
+
+    /// Membrane site for the last refusal, if any.
+    pub fn refusal_site(&self) -> Option<(&str, u32)> {
+        self.refusal_site
+            .as_ref()
+            .map(|(inst, port)| (inst.as_str(), *port))
     }
 }

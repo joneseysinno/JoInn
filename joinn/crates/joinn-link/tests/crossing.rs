@@ -2,7 +2,7 @@
 
 use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
 use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdict};
-use joinn_host::{Address, describe, probe};
+use joinn_host::{Address, describe, describe_refusal, probe};
 use joinn_link::{
     BodyStore, LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind,
     check_link_types, grant, parse_universe, revoke,
@@ -159,6 +159,76 @@ fn scale_out(state: &UniverseState) -> Option<String> {
         .iter()
         .find(|p| p.position == 2)
         .and_then(|p| p.value.clone())
+}
+
+#[test]
+fn body_refusal_is_a_report_and_universe_keeps_running() {
+    let u = universe("phase5/universe.universe");
+    let mut state = open(&u, true);
+    match state.inject("calc", &addr("cli_a", 0), text("two"), 0) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    let first = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    assert!(
+        first.iter().any(|r| matches!(
+            r,
+            UniverseReport::Refused { body, instance }
+                if body == "calc" && instance == "cli_a"
+        )),
+        "{first:?}"
+    );
+    assert!(
+        !first.iter().any(|r| matches!(r, UniverseReport::Link(_))),
+        "{first:?}"
+    );
+    let calc = state
+        .body("calc")
+        .unwrap_or_else(|| panic!("calc body missing"));
+    let reason = calc
+        .last_refusal()
+        .unwrap_or_else(|| panic!("calc must retain refusal reason"));
+    let d = describe_refusal(calc, "cli_a", reason);
+    assert!(!d.label.is_empty());
+
+    feed_calc(&mut state, "2", "3");
+    match state.inject("units", &addr("scale", 1), int(12), 2) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    let second = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    assert_eq!(units_fires(&second), 1, "{second:?}");
+    assert_eq!(scale_out(&state).as_deref(), Some("60"));
+
+    match state.inject("units", &addr("scale", 1), int(12), 3) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    match state.inject("units", &addr("scale", 1), int(12), 4) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    let third = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    assert!(
+        third.iter().any(|r| matches!(
+            r,
+            UniverseReport::Refused { body, .. } if body == "units"
+        )),
+        "{third:?}"
+    );
+    assert!(
+        !third.iter().any(|r| matches!(r, UniverseReport::Link(_))),
+        "{third:?}"
+    );
 }
 
 #[test]
@@ -337,7 +407,7 @@ fn second_sum_stays_home() {
     };
     let far = reports.iter().find_map(|r| match r {
         UniverseReport::Link(refusal) => Some(format!("{refusal:?}")),
-        UniverseReport::Fired { .. } => None,
+        UniverseReport::Fired { .. } | UniverseReport::Refused { .. } => None,
     });
     let far = far.unwrap_or_else(|| panic!("expected a link refusal in reports"));
     assert!(!far.contains("join refuse"), "{far}");

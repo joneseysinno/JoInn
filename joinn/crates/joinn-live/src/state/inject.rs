@@ -3,6 +3,7 @@
 use joinn_frame::{CheckId, Refusal, Subject, Value, Verdict};
 
 use crate::activation::Mail;
+use crate::slot::{SlotWrite, apply_slot};
 use crate::state::BodyState;
 
 impl BodyState {
@@ -53,6 +54,18 @@ impl BodyState {
                 counterexample: None,
                 seed: self.seed,
             });
+        }
+        // After a membrane refusal the in-port may still hold the rejected value;
+        // clear it so a recovery inject is not a join refuse. describe_refusal
+        // must run before this inject (CLI probe order).
+        if self.last_refusal.is_some() {
+            let seed = self.seed;
+            if let Some(root) = self.stack.first_mut() {
+                if let Some(inst) = root.instances.get_mut(instance) {
+                    let policy = inst.cell.coding.contract.join_policy;
+                    let _ = apply_slot(inst, port, SlotWrite::Consume, policy, instance, seed);
+                }
+            }
         }
         let seq = self.next_seq();
         self.enqueue(

@@ -38,6 +38,7 @@ impl BodyState {
             last_ports: BTreeMap::new(),
             budget,
             last_refusal: None,
+            refusal_site: None,
         })
     }
 }
