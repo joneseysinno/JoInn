@@ -37,4 +37,3 @@ jobs:
         run: cargo xtask power
       - name: gate all
         run: cargo xtask gate all
-        continue-on-error: true

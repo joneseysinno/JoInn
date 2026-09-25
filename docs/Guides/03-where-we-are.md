@@ -20,6 +20,7 @@ You can, from the `joinn` code folder:
 - Run the **universe** (`joinn run universe`): the calculator's transcript, then `factor: 12` and `5 ft = 60 in`
 - See a **refusal** when input isn’t a real integer (`"two"`), then a correct `2 + 3 = 5`
 - Run machines that check vocabulary, the floor, agreement, gates, and the corpus (see the code README)
+- A gate control reads the parsed body, universe, or transcript, and flips when that artifact is damaged in a way that still parses
 
 Under the hood, the project has already built the early “truth core”: frames and values, DNA plans, the gate, the floor of sealed basics, the live runner, and the start of **hosts** (a host is proved by there being two — CLI and a test host).
 

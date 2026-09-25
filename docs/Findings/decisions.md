@@ -35,4 +35,23 @@ line must name a file under `docs/Findings/`.
 | R57 | a universe that waits half-fed | 5.1 | open | |
 | R58 | correlation of a reply with its question | 5.1 | open | |
 | R63 | vocabulary ban against a host language | 5.2 | holds | JoInn's language only (§2.14) |
+| V98 | A control never sees bytes; an artifact that doesn't parse refuses the run | 5.2 | holds | |
+| V99 | Every catalogue mutant parses, moves the hash, and has a named downstream effect | 5.2 | holds | |
+| V100 | Each non-legacy control flips on its declared mutant | 5.2 | holds | |
+| V101 | Each non-legacy control ignores its neutral edit | 5.2 | holds | |
+| V102 | The harness fixtures come out right before any gate runs | 5.2 | holds | |
+| V103 | No two non-legacy items share (artifact, opposes) | 5.2 | holds | |
+| V104 | A Bound can only come from a store | 5.2 | holds | |
+| V105 | A hash the store doesn't hold is refused naming the alias | 5.2 | holds | |
+| V106 | A body refusal is a report, and the universe keeps running | 5.2 | holds | |
+| V107 | LinkRefusal::Refused only for a delivery in the same pass | 5.2 | holds | |
+| V108 | Grants are declared; no host calls grant | 5.2 | holds | |
+| V109 | A host's output doesn't depend on link ids or aliases | 5.2 | holds | |
+| V110 | The far side is a kind at both hosts; the probe has the words | 5.2 | holds | |
+| V111 | One coding hash, one face; results don't depend on folder order or empty folders | 5.2 | holds | |
+| R59 | Interactive hosts and races | 5.2 | open | |
+| R60 | Every file kind ships its mutants | 5.2 | open | |
+| R61 | Whose budget is it | 5.2 | open | |
+| R62 | One host, both sides | 5.2 | open | |
+| R64 | Legacy gates upgrade | 5.2 | open | |
 

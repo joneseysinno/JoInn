@@ -43,3 +43,7 @@ universe.universe 0b784f4c5219fd0bc77076dd6562e53ae5562884637c68b81486458f585bb8
 alone.universe da4db686fe8461e35304bc5cfb988ceac4a5ede07b66390d493469de1a71dcf4
 ordered.universe ded37f4f0d3fba33085fb0cb6037083b507bba138fa05acc69d52ca66e0a667e
 adversary.universe 313bc956d9f79f1b8e7c58f211a0af9cb1989ee117246dfc63072e9b276d61a5
+# Phase 5.2. lookup.body — the factor question. Hash of the coding, not a rebless.
+lookup d999c0b83dfb9d1eee6b3cb4e8b461d38dd7dd585976b1aecf05ecdbece3acf3
+# Phase 5.2. lookup.universe — two unordered links from the factor port.
+lookup.universe 494b93e96fc62bb21adbbf8f1d6da4adeb8db821b042e65d44f60e75bfc0bc87
