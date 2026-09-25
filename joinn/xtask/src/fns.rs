@@ -10,6 +10,7 @@ mod assay_idents;
 mod budget_not_membrane;
 mod calculator_success_trace;
 mod check_vocab_fixtures;
+mod controls_fail_closed;
 mod corpus_artifact;
 mod corpus_rebless;
 mod corpus_verify;

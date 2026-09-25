@@ -7,14 +7,14 @@ use joinn_link::{assemble_universe, bind_bodies};
 
 pub(crate) fn g5_assemble_control(subject: &Subject) -> bool {
     let Subject::Universe(universe) = subject else {
-        return true;
+        return false;
     };
     let Ok(supplied) = load_phase5_bodies() else {
-        return true;
+        return false;
     };
     let bound = match bind_bodies(universe, &supplied) {
         Verdict::Ok(b) => b,
-        Verdict::Refused(_) => return true,
+        Verdict::Refused(_) => return false,
     };
     match assemble_universe(universe, &bound) {
         Verdict::Refused(r) => r.reason.contains("no such port"),

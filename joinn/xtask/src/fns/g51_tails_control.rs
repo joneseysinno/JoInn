@@ -7,13 +7,13 @@ use joinn_link::{bind_bodies, check_link_types};
 
 pub(crate) fn g51_tails_control(subject: &Subject) -> bool {
     let Subject::Universe(universe) = subject else {
-        return true;
+        return false;
     };
     let Ok(supplied) = load_phase5_bodies() else {
-        return true;
+        return false;
     };
     let Verdict::Ok(bound) = bind_bodies(universe, &supplied) else {
-        return true;
+        return false;
     };
     match check_link_types(universe, &bound) {
         Verdict::Refused(r) => r.reason.contains("calc.sum@2"),
