@@ -420,3 +420,92 @@ fn second_sum_stays_home() {
     };
     assert!(seen.contains("join refuse at scale port 0"), "{seen}");
 }
+
+/// Copied from the plan. A test fixture, not a corpus file.
+const CHAIN_UNIVERSE: &str = "\
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as again
+  }
+  links {
+    link e0 order none {
+      calc.sum@2 tail
+      units.scale@0 head
+    }
+    link e1 order none {
+      units.scale@2 tail
+      again.scale@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system s { calc units again }
+      }
+    }
+  }
+}
+";
+
+fn open_chain() -> UniverseState {
+    let u = match parse_universe(CHAIN_UNIVERSE) {
+        Verdict::Ok(u) => u,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    open(&u)
+}
+
+fn inject_ok(state: &mut UniverseState, body: &str, address: Address, value: Value, epoch: u64) {
+    match state.inject(body, &address, value, epoch) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+}
+
+#[test]
+fn second_hop_reaches_again() {
+    let mut state = open_chain();
+    feed_calc(&mut state, "2", "3");
+    inject_ok(&mut state, "units", addr("scale", 1), int(12), 2);
+    inject_ok(&mut state, "again", addr("scale", 1), int(12), 3);
+    let reports = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    assert!(
+        reports.iter().any(|r| matches!(
+            r,
+            UniverseReport::Fired { body, instance }
+                if body == "again" && instance == "scale"
+        )),
+        "{reports:?}"
+    );
+}
+
+#[test]
+fn again_refusal_is_reported_once() {
+    let mut state = open_chain();
+    feed_calc(&mut state, "2", "3");
+    inject_ok(&mut state, "units", addr("scale", 1), int(12), 2);
+    inject_ok(&mut state, "again", addr("scale", 1), int(12), 3);
+    inject_ok(&mut state, "again", addr("scale", 1), int(12), 4);
+    inject_ok(&mut state, "again", addr("scale", 1), int(12), 5);
+    let reports = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let refused = reports
+        .iter()
+        .filter(|r| {
+            matches!(
+                r,
+                UniverseReport::Refused { body, instance }
+                    if body == "again" && instance == "scale"
+            )
+        })
+        .count();
+    assert_eq!(refused, 1, "{reports:?}");
+}
