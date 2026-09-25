@@ -5,7 +5,7 @@ use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdic
 use joinn_host::{Address, describe, describe_refusal, probe};
 use joinn_link::{
     BodyStore, LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind,
-    check_link_types, parse_universe, revoke,
+    check_link_types, format_link_refusal, parse_universe, revoke,
 };
 use std::collections::BTreeMap;
 use std::fs;
@@ -400,7 +400,7 @@ fn second_sum_stays_home() {
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
     let far = reports.iter().find_map(|r| match r {
-        UniverseReport::Link(refusal) => Some(format!("{refusal:?}")),
+        UniverseReport::Link(refusal) => Some(format_link_refusal(refusal)),
         UniverseReport::Fired { .. } | UniverseReport::Refused { .. } => None,
     });
     let far = far.unwrap_or_else(|| panic!("expected a link refusal in reports"));

@@ -41,10 +41,11 @@ fn main() -> ExitCode {
             Some(path) => fns::witness(path),
             None => Err("usage: cargo xtask witness <path>".into()),
         },
+        "probe-refusal" => fns::probe_refusal(),
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | perf | floor | decisions | witness"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }

@@ -3,7 +3,7 @@
 use super::{load_phase5_bodies, load_universe_file, text_val, workspace_root};
 use joinn_frame::Verdict;
 use joinn_host::probe;
-use joinn_link::{Address, UniverseState, bind};
+use joinn_link::{Address, UniverseReport, UniverseState, bind, format_link_refusal};
 use std::fs;
 
 pub(crate) fn g5_locality() -> bool {
@@ -81,8 +81,17 @@ pub(crate) fn g5_locality() -> bool {
         Verdict::Ok(r) => r,
         Verdict::Refused(_) => return false,
     };
-    let far = format!("{reports:?}");
-    if far.contains(secret) {
+    let far_lines: Vec<String> = reports
+        .iter()
+        .filter_map(|r| match r {
+            UniverseReport::Link(refusal) => Some(format_link_refusal(refusal)),
+            _ => None,
+        })
+        .collect();
+    if far_lines.is_empty() {
+        return false;
+    }
+    if far_lines.iter().any(|line| line.contains(secret)) {
         return false;
     }
     let Some(body) = state.body("units") else {
