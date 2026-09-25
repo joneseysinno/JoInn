@@ -21,10 +21,8 @@ pub(crate) fn apply_slot(
                 Some(slot @ Slot::Filled(_)) => {
                     *slot = Slot::Empty;
                 }
-                Some(Slot::Queue(q)) => {
-                    if !q.is_empty() {
-                        q.remove(0);
-                    }
+                Some(Slot::Queue(q)) if !q.is_empty() => {
+                    q.remove(0);
                 }
                 _ => {}
             }
