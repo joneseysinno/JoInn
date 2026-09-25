@@ -15,6 +15,7 @@ joinn-host = { path = "../crates/joinn-host" }
 joinn-link = { path = "../crates/joinn-link" }
 joinn-assay = { path = "../crates/joinn-assay" }
 joinn-test-host = { path = "../crates/joinn-test-host" }
+joinn-cli = { path = "../crates/joinn-cli" }
 
 [lints]
 workspace = true

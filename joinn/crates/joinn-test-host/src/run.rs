@@ -74,6 +74,7 @@ pub fn run(
     }
     Verdict::Ok(Capture {
         descriptions: host.captures,
+        far_side: Vec::new(),
         intent_set,
     })
 }

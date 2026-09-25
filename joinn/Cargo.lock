@@ -719,6 +719,7 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "joinn-assay",
+ "joinn-cli",
  "joinn-dna",
  "joinn-frame",
  "joinn-gate",

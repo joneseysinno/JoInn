@@ -6,10 +6,11 @@ use joinn_host::describe;
 use joinn_link::{Bound, Universe, UniverseReport, UniverseState};
 
 use crate::capture::Capture;
+use crate::host_intent_set::host_intent_set;
 use crate::raw_event::RawEvent;
 use crate::value_of::value_of;
 
-/// Inject scripted events, run, capture fire descriptions.
+/// Inject scripted events, run, capture fire descriptions and far-side refusals.
 pub fn run_universe(
     universe: &Universe,
     bound: Bound,
@@ -35,20 +36,34 @@ pub fn run_universe(
         Verdict::Refused(r) => return Verdict::Refused(r),
     };
     let mut descriptions = Vec::new();
+    let mut far_side = Vec::new();
     for report in reports {
-        let UniverseReport::Fired { body, instance } = report else {
-            continue;
-        };
-        let Some(live) = state.body(&body) else {
-            continue;
-        };
-        match describe(live, &instance) {
-            Verdict::Ok(d) => descriptions.push(d),
-            Verdict::Refused(r) => return Verdict::Refused(r),
+        match report {
+            UniverseReport::Fired { body, instance } => {
+                let Some(live) = state.body(&body) else {
+                    continue;
+                };
+                match describe(live, &instance) {
+                    Verdict::Ok(d) => descriptions.push(d),
+                    Verdict::Refused(r) => return Verdict::Refused(r),
+                }
+            }
+            UniverseReport::Link(refusal) => far_side.push(refusal),
+            UniverseReport::Refused { .. } => {}
         }
     }
+    // Done-when: intent_set for units is {scale@1}. Prefer units, else meters.
+    let intent_set = ["units", "meters"]
+        .iter()
+        .find_map(|alias| {
+            bound
+                .get(alias)
+                .map(|(body, cells)| host_intent_set(universe, alias, body, cells))
+        })
+        .unwrap_or_default();
     Verdict::Ok(Capture {
         descriptions,
-        intent_set: Default::default(),
+        far_side,
+        intent_set,
     })
 }

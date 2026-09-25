@@ -9,6 +9,10 @@ publish.workspace = true
 name = "joinn"
 path = "src/main.rs"
 
+[lib]
+name = "joinn_cli"
+path = "src/lib.rs"
+
 [dependencies]
 joinn-dna = { path = "../joinn-dna" }
 joinn-frame = { path = "../joinn-frame" }

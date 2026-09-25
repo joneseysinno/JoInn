@@ -3,7 +3,7 @@
 use std::io::{self, BufRead};
 
 /// Run a named body against stdin and print what the host presented.
-pub(crate) fn run_named(name: &str) -> Result<(), String> {
+pub fn run_named(name: &str) -> Result<(), String> {
     let stdin = io::stdin();
     let mut lines = stdin.lock().lines();
     if name == "universe" {
