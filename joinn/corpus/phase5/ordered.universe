@@ -10,6 +10,9 @@ universe {
       units.scale@0 head
     }
   }
+  grants {
+    path: units
+  }
   lenses {
     lens function {
       galaxy app {

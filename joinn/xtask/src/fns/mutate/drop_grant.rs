@@ -1,17 +1,17 @@
 //! Drop a declared grant for a link.
-//!
-//! Snag (P52-04): universe grants land in P52-11. Until then there is no grants
-//! field on `Universe`, so this always refuses naming the link.
 
 use joinn_frame::Verdict;
 use joinn_link::Universe;
 
 use super::refuse::refuse;
 
-pub(super) fn drop_grant(_u: &mut Universe, link: &str) -> Verdict<()> {
-    Verdict::Refused(refuse(format!(
-        "no grant on link {link}; acceptance is a declared grants section (P52-11)"
-    )))
+pub(super) fn drop_grant(u: &mut Universe, link: &str) -> Verdict<()> {
+    if u.coding.grants.remove(link).is_none() {
+        return Verdict::Refused(refuse(format!(
+            "no grant on link {link}; acceptance is a declared grant on that link"
+        )));
+    }
+    Verdict::Ok(())
 }
 
 #[cfg(test)]
@@ -19,7 +19,9 @@ mod tests {
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
+    use crate::fns::units_after::units_after;
     use joinn_frame::Verdict;
+    use joinn_link::hash_universe;
 
     fn universe() -> Subject {
         let src = include_str!("../../../../corpus/phase5/universe.universe");
@@ -28,16 +30,28 @@ mod tests {
     }
 
     #[test]
-    fn drop_grant_refuses_naming_link_until_p52_11() {
+    fn drop_grant_e0_stops_units() {
         let s = universe();
-        let Verdict::Refused(r) = mutate(&s, &Mutation::DropGrant("e0")) else {
-            panic!("DropGrant must refuse before grants exist");
+        let Subject::Universe(orig) = &s else {
+            panic!("universe");
         };
-        assert!(r.reason.contains("e0"), "{}", r.reason);
-        assert!(r.reason.contains("grant"), "{}", r.reason);
-        let Verdict::Refused(r2) = mutate(&s, &Mutation::DropGrant("ghost")) else {
+        let orig_hash = hash_universe(&orig.coding);
+        let Verdict::Ok(mutant) = mutate(&s, &Mutation::DropGrant("e0")) else {
+            panic!("DropGrant e0 must accept");
+        };
+        let Subject::Universe(u) = &mutant else {
+            panic!("universe mutant");
+        };
+        assert_ne!(hash_universe(&u.coding), orig_hash);
+        assert!(!u.coding.grants.contains_key("e0"));
+        match units_after(u) {
+            Ok((0, _)) => {}
+            Ok((n, _)) => panic!("units must not fire without grant on e0, got {n}"),
+            Err(reason) => panic!("{reason}"),
+        }
+        let Verdict::Refused(r) = mutate(&s, &Mutation::DropGrant("ghost")) else {
             panic!("missing grant target must refuse");
         };
-        assert!(r2.reason.contains("ghost"), "{}", r2.reason);
+        assert!(r.reason.contains("ghost"), "{}", r.reason);
     }
 }

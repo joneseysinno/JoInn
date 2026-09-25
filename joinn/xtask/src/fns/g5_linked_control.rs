@@ -7,7 +7,7 @@ pub(crate) fn g5_linked_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
         return true;
     };
-    match units_after(u, Some("e0")) {
+    match units_after(u) {
         Ok((n, _)) => n == 0,
         Err(_) => true,
     }

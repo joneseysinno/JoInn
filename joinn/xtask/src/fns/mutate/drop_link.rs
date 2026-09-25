@@ -13,6 +13,7 @@ pub(super) fn drop_link(u: &mut Universe, id: &str) -> Verdict<()> {
             "no such link {id}; acceptance is a declared link id"
         )));
     }
+    u.coding.grants.remove(id);
     Verdict::Ok(())
 }
 
@@ -46,7 +47,7 @@ mod tests {
         };
         assert_ne!(hash_universe(&u.coding), orig_hash);
         assert!(u.coding.links.iter().all(|l| l.id != "e0"));
-        match units_after(u, Some("e0")) {
+        match units_after(u) {
             Ok((0, _)) => {}
             Err(reason) => assert!(reason.contains("e0") || reason.contains("link"), "{reason}"),
             Ok((n, _)) => panic!("units must not fire without e0, got {n}"),

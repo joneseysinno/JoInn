@@ -6,6 +6,8 @@ mod to_coding;
 pub use from_universe::csr_from_universe;
 pub use to_coding::coding_from_csr;
 
+use std::collections::BTreeMap;
+
 use crate::universe::{Mark, Order};
 
 /// One CSR member. Indices refer to the parallel name tables.
@@ -40,6 +42,8 @@ pub struct Csr {
     pub link_offsets: Vec<u32>,
     /// Flat member table.
     pub members: Vec<CsrMember>,
+    /// Declared capability grants.
+    pub grants: BTreeMap<String, String>,
     /// Lenses restored when printing back.
     pub lenses: Vec<crate::universe::Lens>,
 }

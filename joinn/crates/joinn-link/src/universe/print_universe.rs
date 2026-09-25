@@ -67,6 +67,11 @@ pub fn print_universe(coding: &UniverseCoding) -> String {
         );
     }
     let _ = writeln!(out, "  }}");
+    let _ = writeln!(out, "  grants {{");
+    for (link, body) in &coding.grants {
+        let _ = writeln!(out, "    {link}: {body}");
+    }
+    let _ = writeln!(out, "  }}");
     let _ = writeln!(out, "  lenses {{");
     let mut lenses = coding.lenses.clone();
     lenses.sort_by(|a, b| a.name.cmp(&b.name));

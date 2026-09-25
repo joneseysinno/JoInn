@@ -3,12 +3,9 @@
 use super::{int_val, load_phase5_bodies, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{Address, Universe, UniverseReport, UniverseState, bind, grant};
+use joinn_link::{Address, Universe, UniverseReport, UniverseState, bind};
 
-pub(crate) fn units_after(
-    universe: &Universe,
-    grant_link: Option<&str>,
-) -> Result<(usize, Option<String>), String> {
+pub(crate) fn units_after(universe: &Universe) -> Result<(usize, Option<String>), String> {
     let store = load_phase5_bodies()?;
     let bound = match bind(universe, &store) {
         Verdict::Ok(b) => b,
@@ -18,12 +15,6 @@ pub(crate) fn units_after(
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    if let Some(link_id) = grant_link {
-        match grant(state.link_runtime(), universe, link_id, "units") {
-            Verdict::Ok(()) => {}
-            Verdict::Refused(r) => return Err(r.reason),
-        }
-    }
     let a = Address {
         instance: "cli_a".into(),
         port: 0,

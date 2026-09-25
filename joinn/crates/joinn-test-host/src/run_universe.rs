@@ -3,30 +3,23 @@
 use joinn_frame::Verdict;
 use joinn_gate::NativeRegistry;
 use joinn_host::describe;
-use joinn_link::{Bound, Universe, UniverseReport, UniverseState, grant};
+use joinn_link::{Bound, Universe, UniverseReport, UniverseState};
 
 use crate::capture::Capture;
 use crate::raw_event::RawEvent;
 use crate::value_of::value_of;
 
-/// Inject scripted events, grant one ordered link, run, capture fire descriptions.
+/// Inject scripted events, run, capture fire descriptions.
 pub fn run_universe(
     universe: &Universe,
     bound: Bound,
     natives: NativeRegistry,
-    grant_to: Option<(&str, &str)>,
     events: Vec<(String, RawEvent)>,
 ) -> Verdict<Capture> {
     let mut state = match UniverseState::new(universe, &bound, natives) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Verdict::Refused(r),
     };
-    if let Some((link, body)) = grant_to {
-        match grant(state.link_runtime(), universe, link, body) {
-            Verdict::Ok(()) => {}
-            Verdict::Refused(r) => return Verdict::Refused(r),
-        }
-    }
     for (epoch, (alias, raw)) in events.into_iter().enumerate() {
         let value = match value_of(raw.term) {
             Verdict::Ok(v) => v,

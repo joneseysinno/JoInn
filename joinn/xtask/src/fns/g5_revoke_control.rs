@@ -7,7 +7,7 @@ pub(crate) fn g5_revoke_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
         return true;
     };
-    match units_after(u, Some("path")) {
+    match units_after(u) {
         Ok((n, _)) => n == 0,
         Err(_) => true,
     }

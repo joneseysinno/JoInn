@@ -6,6 +6,7 @@ use joinn_live::BodyState;
 use std::collections::BTreeMap;
 
 use crate::bind::Bound;
+use crate::capability::grant;
 use crate::check_link_types::check_link_types;
 use crate::universe::Universe;
 use crate::universe_state::UniverseState;
@@ -27,10 +28,17 @@ impl UniverseState {
             };
             bodies.insert(alias.to_owned(), state);
         }
+        let mut runtime = crate::capability::LinkRuntime::default();
+        for (link_id, to) in &universe.coding.grants {
+            match grant(&mut runtime, universe, link_id, to) {
+                Verdict::Ok(()) => {}
+                Verdict::Refused(r) => return Verdict::Refused(r),
+            }
+        }
         Verdict::Ok(Self {
             universe: universe.clone(),
             bodies,
-            runtime: crate::capability::LinkRuntime::default(),
+            runtime,
             budget,
             spent: 0,
         })

@@ -11,6 +11,8 @@ universe {
     }
     wire calc.sum@2 -> units.scale@0
   }
+  grants {
+  }
   lenses {
     lens function {
       galaxy app {

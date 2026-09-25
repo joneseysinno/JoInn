@@ -6,6 +6,8 @@ universe {
   }
   links {
   }
+  grants {
+  }
   lenses {
     lens function {
       galaxy app {

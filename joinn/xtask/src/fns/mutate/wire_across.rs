@@ -17,6 +17,7 @@ pub(super) fn wire_across(u: &mut Universe, link_id: &str) -> Verdict<()> {
             "link {link_id} has fewer than two members; acceptance is a pair to wire"
         )));
     }
+    u.coding.grants.remove(link_id);
     let src = &link.members[0];
     let dst = &link.members[1];
     u.coding.cross_wires.push(CrossWire {

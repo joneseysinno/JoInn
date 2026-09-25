@@ -58,6 +58,7 @@ pub fn csr_from_universe(coding: &UniverseCoding) -> Csr {
         link_orders,
         link_offsets,
         members,
+        grants: coding.grants.clone(),
         lenses: coding.lenses.clone(),
     }
 }

@@ -5,7 +5,7 @@ use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdic
 use joinn_host::{Address, describe, describe_refusal, probe};
 use joinn_link::{
     BodyStore, LinkRefusalKind, Universe, UniverseReport, UniverseState, assemble_universe, bind,
-    check_link_types, grant, parse_universe, revoke,
+    check_link_types, parse_universe, revoke,
 };
 use std::collections::BTreeMap;
 use std::fs;
@@ -111,22 +111,15 @@ fn addr(instance: &str, port: u32) -> Address {
     }
 }
 
-fn open(u: &Universe, grant_e0: bool) -> UniverseState {
+fn open(u: &Universe) -> UniverseState {
     let bound = match bind(u, &store()) {
         Verdict::Ok(b) => b,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
-    let mut state = match UniverseState::new(u, &bound, joinn_prim::sealed_natives()) {
+    match UniverseState::new(u, &bound, joinn_prim::sealed_natives()) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => panic!("{}", r.reason),
-    };
-    if grant_e0 {
-        match grant(state.link_runtime(), u, "e0", "units") {
-            Verdict::Ok(()) => {}
-            Verdict::Refused(r) => panic!("{}", r.reason),
-        }
     }
-    state
 }
 
 fn feed_calc(state: &mut UniverseState, a: &str, b: &str) {
@@ -164,7 +157,7 @@ fn scale_out(state: &UniverseState) -> Option<String> {
 #[test]
 fn body_refusal_is_a_report_and_universe_keeps_running() {
     let u = universe("phase5/universe.universe");
-    let mut state = open(&u, true);
+    let mut state = open(&u);
     match state.inject("calc", &addr("cli_a", 0), text("two"), 0) {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => panic!("{}", r.reason),
@@ -234,7 +227,7 @@ fn body_refusal_is_a_report_and_universe_keeps_running() {
 #[test]
 fn sixty_crosses_and_unlinked_does_not_fire() {
     let u = universe("phase5/universe.universe");
-    let mut state = open(&u, true);
+    let mut state = open(&u);
     feed_calc(&mut state, "2", "3");
     match state.inject("units", &addr("scale", 1), int(12), 2) {
         Verdict::Ok(()) => {}
@@ -249,7 +242,8 @@ fn sixty_crosses_and_unlinked_does_not_fire() {
 
     let mut bare = universe("phase5/universe.universe");
     bare.coding.links.retain(|l| l.id != "e0");
-    let mut quiet = open(&bare, false);
+    bare.coding.grants.remove("e0");
+    let mut quiet = open(&bare);
     feed_calc(&mut quiet, "2", "3");
     match quiet.inject("units", &addr("scale", 1), int(12), 2) {
         Verdict::Ok(()) => {}
@@ -356,7 +350,7 @@ fn no_such_port_is_not_interior() {
 #[test]
 fn revoke_stops_the_second_delivery() {
     let u = universe("phase5/universe.universe");
-    let mut state = open(&u, true);
+    let mut state = open(&u);
     feed_calc(&mut state, "2", "3");
     match state.inject("units", &addr("scale", 1), int(12), 2) {
         Verdict::Ok(()) => {}
@@ -397,7 +391,7 @@ fn revoke_stops_the_second_delivery() {
 #[test]
 fn second_sum_stays_home() {
     let u = universe("phase5/universe.universe");
-    let mut state = open(&u, true);
+    let mut state = open(&u);
     feed_calc(&mut state, "2", "3");
     let _ = state.run();
     feed_calc(&mut state, "2", "3");

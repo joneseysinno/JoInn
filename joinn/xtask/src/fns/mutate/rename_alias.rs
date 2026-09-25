@@ -47,6 +47,11 @@ pub(super) fn rename_alias(u: &mut Universe, from: &str, to: &str) -> Verdict<()
             }
         }
     }
+    for holder in u.coding.grants.values_mut() {
+        if holder == from {
+            *holder = to.to_owned();
+        }
+    }
     if let Some(v) = u.regulatory.names.remove(from) {
         u.regulatory.names.insert(to.to_owned(), v);
     }

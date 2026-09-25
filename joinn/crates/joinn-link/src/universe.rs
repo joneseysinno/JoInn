@@ -102,6 +102,8 @@ pub struct UniverseCoding {
     pub links: Vec<Link>,
     /// Cross-body wires written in a universe. Always refused by Law 4.
     pub cross_wires: Vec<CrossWire>,
+    /// Capability grants: ordered link id → receiving body alias.
+    pub grants: BTreeMap<String, String>,
     /// Lenses.
     pub lenses: Vec<Lens>,
 }

@@ -73,13 +73,9 @@ pub(crate) fn g51_hosts() -> bool {
             },
         ),
     ];
-    let Verdict::Ok(cap) = joinn_test_host::run_universe(
-        &universe,
-        bound,
-        joinn_prim::sealed_natives(),
-        Some(("e0", "units")),
-        events,
-    ) else {
+    let Verdict::Ok(cap) =
+        joinn_test_host::run_universe(&universe, bound, joinn_prim::sealed_natives(), events)
+    else {
         return false;
     };
     cap.descriptions.iter().any(|d| {

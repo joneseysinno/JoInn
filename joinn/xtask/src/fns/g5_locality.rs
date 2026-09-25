@@ -3,7 +3,7 @@
 use super::{load_phase5_bodies, load_universe_file, text_val, workspace_root};
 use joinn_frame::Verdict;
 use joinn_host::probe;
-use joinn_link::{Address, UniverseState, bind, grant};
+use joinn_link::{Address, UniverseState, bind};
 use std::fs;
 
 pub(crate) fn g5_locality() -> bool {
@@ -35,12 +35,6 @@ pub(crate) fn g5_locality() -> bool {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };
-    if !matches!(
-        grant(state.link_runtime(), &u, "e0", "units"),
-        Verdict::Ok(())
-    ) {
-        return false;
-    }
     let Ok(two) = text_val("2") else {
         return false;
     };

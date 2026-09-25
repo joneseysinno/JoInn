@@ -55,6 +55,67 @@ fn three_universes_round_trip() {
 }
 
 #[test]
+fn grant_on_unordered_link_is_refused_naming_the_link() {
+    let src = r#"universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+  }
+  links {
+    link transit order none {
+      calc.sum@2 tail
+      units.scale@0 head
+    }
+  }
+  grants {
+    transit: units
+  }
+  lenses { }
+}
+"#;
+    match parse_universe(src) {
+        Verdict::Refused(r) => {
+            assert!(r.reason.contains("transit"), "{}", r.reason);
+            assert!(r.reason.contains("units"), "{}", r.reason);
+            assert!(r.reason.contains("ordered"), "{}", r.reason);
+        }
+        Verdict::Ok(_) => panic!("grant on unordered link must refuse"),
+    }
+}
+
+#[test]
+fn grant_to_non_member_is_refused_naming_both() {
+    let src = r#"universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+    body:fa812abd9ab0b1b6a3aef72b3c8ca1e2641c6f307350a8cc86ebea56187b8123 as bus
+  }
+  links {
+    link e0 order ordered {
+      calc.sum@2 tail
+      units.scale@0 head
+    }
+  }
+  grants {
+    e0: bus
+  }
+  lenses { }
+}
+"#;
+    match parse_universe(src) {
+        Verdict::Refused(r) => {
+            assert!(r.reason.contains("bus"), "{}", r.reason);
+            assert!(r.reason.contains("e0"), "{}", r.reason);
+            assert!(r.reason.contains("member"), "{}", r.reason);
+        }
+        Verdict::Ok(_) => panic!("grant to a non-member body must refuse"),
+    }
+}
+
+#[test]
 fn undeclared_body_alias_is_refused_by_name() {
     let src = load("phase5/controls/undeclared.universe");
     match parse_universe(&src) {
@@ -76,11 +137,10 @@ fn hand_computed_universe_hash_matches() {
     let text = print_universe(&u.coding);
     let h = hash_universe(&u.coding);
     assert_eq!(h, keyed_hash(TAG_UNIVERSE, text.as_bytes()));
-    // Hand-computed: BLAKE3-256(len_le(tag) ‖ joinn.universe.v1 ‖ len_le(bytes) ‖ canonical_text)
-    // of print_universe(universe.universe) after P51-12. Recorded in phase-5.1-hashes.md.
+    // Hand-computed after P52-11 declared grants. Recorded in the P52-11 report.
     assert_eq!(
         h.to_hex(),
-        "2ccbb067db0b150ca607d1e7469fd28ea46892142d6b7729f1075cb899c9d1ad"
+        "0b784f4c5219fd0bc77076dd6562e53ae5562884637c68b81486458f585bb828"
     );
 }
 

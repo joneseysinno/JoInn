@@ -29,6 +29,7 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
     let mut bodies = Vec::new();
     let mut links = Vec::new();
     let mut cross_wires = Vec::new();
+    let mut grants = BTreeMap::new();
     let mut lenses = Vec::new();
     loop {
         p.skip();
@@ -56,6 +57,10 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
                     links = l;
                     cross_wires = w;
                 }
+                Verdict::Refused(r) => return Verdict::Refused(r),
+            },
+            Some("grants") => match parse_grants(&mut p) {
+                Verdict::Ok(g) => grants = g,
                 Verdict::Refused(r) => return Verdict::Refused(r),
             },
             Some("lenses") => match parse_lenses(&mut p) {
@@ -98,11 +103,42 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
             }
         }
     }
+    for (link_id, body) in &grants {
+        if !aliases.contains(body) {
+            return Verdict::Refused(Refusal::structural(
+                CheckId::Parse,
+                format!("body alias {body} is not declared; acceptance is a name in bodies"),
+            ));
+        }
+        let Some(link) = links.iter().find(|l| l.id == *link_id) else {
+            return Verdict::Refused(Refusal::structural(
+                CheckId::Parse,
+                format!("link {link_id} is not in this universe; acceptance is a declared link"),
+            ));
+        };
+        if link.order != Order::Ordered {
+            return Verdict::Refused(Refusal::structural(
+                CheckId::Parse,
+                format!(
+                    "link {link_id} is not ordered for grant to {body}; acceptance is an ordered hyperedge for a capability"
+                ),
+            ));
+        }
+        if !link.members.iter().any(|m| m.body == *body) {
+            return Verdict::Refused(Refusal::structural(
+                CheckId::Parse,
+                format!(
+                    "body {body} is not a member of link {link_id}; acceptance is a member of that link"
+                ),
+            ));
+        }
+    }
     let coding = UniverseCoding {
         codex,
         bodies,
         links,
         cross_wires,
+        grants,
         lenses,
     };
     let regulatory = parse_regulatory(rest);
@@ -279,6 +315,43 @@ fn parse_member(p: &mut Cursor<'_>) -> Verdict<Member> {
         port,
         mark,
     })
+}
+
+fn parse_grants(p: &mut Cursor<'_>) -> Verdict<BTreeMap<String, String>> {
+    p.take_ident();
+    p.skip();
+    if !p.take_char('{') {
+        return Verdict::Refused(p.refuse("expected { after grants"));
+    }
+    let mut out = BTreeMap::new();
+    loop {
+        p.skip();
+        if p.peek() == Some('}') {
+            p.advance();
+            break;
+        }
+        let link_id = p.take_ident();
+        if link_id.is_empty() {
+            return Verdict::Refused(p.refuse("expected grant link id"));
+        }
+        p.skip();
+        if !p.take_char(':') {
+            return Verdict::Refused(p.refuse(format!("expected : after grant link {link_id}")));
+        }
+        p.skip();
+        let body = p.take_ident();
+        if body.is_empty() {
+            return Verdict::Refused(
+                p.refuse(format!("expected body alias for grant on {link_id}")),
+            );
+        }
+        if out.insert(link_id.clone(), body).is_some() {
+            return Verdict::Refused(p.refuse(format!(
+                "grant on link {link_id} is declared twice; acceptance is one line per link"
+            )));
+        }
+    }
+    Verdict::Ok(out)
 }
 
 fn parse_lenses(p: &mut Cursor<'_>) -> Verdict<Vec<Lens>> {

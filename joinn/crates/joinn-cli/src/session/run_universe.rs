@@ -5,7 +5,7 @@ use crate::present::{fill_present, prompt};
 use joinn_dna::Body;
 use joinn_frame::Verdict;
 use joinn_host::{describe, describe_refusal};
-use joinn_link::{Address, Mark, UniverseReport, UniverseState, bind, grant, parse_universe};
+use joinn_link::{Address, Mark, UniverseReport, UniverseState, bind, parse_universe};
 use joinn_live::BodyState;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
@@ -39,12 +39,6 @@ pub(in crate::session) fn run_universe(
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(r.reason),
     };
-    if universe.coding.links.iter().any(|link| link.id == "e0") {
-        match grant(state.link_runtime(), &universe, "e0", "units") {
-            Verdict::Ok(()) => {}
-            Verdict::Refused(r) => return Err(r.reason),
-        }
-    }
     let mut fed = BTreeSet::new();
     for link in &universe.coding.links {
         for member in &link.members {

@@ -37,6 +37,7 @@ pub fn coding_from_csr(csr: &Csr) -> UniverseCoding {
         bodies,
         links,
         cross_wires: Vec::new(),
+        grants: csr.grants.clone(),
         lenses: csr.lenses.clone(),
     }
 }

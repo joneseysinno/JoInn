@@ -8,6 +8,8 @@ universe {
       ghost.sum@2 tail
     }
   }
+  grants {
+  }
   lenses {
     lens alone {
       galaxy app {

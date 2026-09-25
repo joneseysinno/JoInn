@@ -10,6 +10,9 @@ universe {
       units.scale@0 head
     }
   }
+  grants {
+    e0: units
+  }
   lenses {
     lens deployment {
       galaxy app {

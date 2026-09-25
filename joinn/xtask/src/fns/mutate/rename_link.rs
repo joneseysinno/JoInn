@@ -30,6 +30,9 @@ pub(super) fn rename_link(u: &mut Universe, from: &str, to: &str) -> Verdict<()>
     if let Some(v) = u.regulatory.labels.remove(from) {
         u.regulatory.labels.insert(to.to_owned(), v);
     }
+    if let Some(body) = u.coding.grants.remove(from) {
+        u.coding.grants.insert(to.to_owned(), body);
+    }
     Verdict::Ok(())
 }
 
@@ -64,11 +67,12 @@ mod tests {
         assert_ne!(hash_universe(&u.coding), orig_hash);
         assert!(u.coding.links.iter().all(|l| l.id != "e0"));
         assert!(u.coding.links.iter().any(|l| l.id == "e1"));
-        // Grant still names e0 at runtime, so the renamed link is not granted.
-        match units_after(u, Some("e0")) {
-            Ok((0, _)) => {}
-            Err(reason) => assert!(reason.contains("e0") || reason.contains("link"), "{reason}"),
-            Ok((n, _)) => panic!("units must not fire after RenameLink, got {n}"),
+        assert!(!u.coding.grants.contains_key("e0"));
+        assert_eq!(u.coding.grants.get("e1").map(String::as_str), Some("units"));
+        match units_after(u) {
+            Ok((1, Some(value))) => assert_eq!(value, "60"),
+            Ok((n, v)) => panic!("units must still fire after RenameLink, got {n} {v:?}"),
+            Err(reason) => panic!("{reason}"),
         }
         let Verdict::Refused(r) = mutate(&s, &Mutation::RenameLink("ghost", "e1")) else {
             panic!("missing link must refuse");

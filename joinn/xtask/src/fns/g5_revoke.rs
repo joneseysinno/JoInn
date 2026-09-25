@@ -3,7 +3,7 @@
 use super::{int_val, load_phase5_bodies, load_universe_file, text_val};
 use joinn_frame::Verdict;
 use joinn_host::describe;
-use joinn_link::{Address, LinkRefusalKind, UniverseReport, UniverseState, bind, grant, revoke};
+use joinn_link::{Address, LinkRefusalKind, UniverseReport, UniverseState, bind, revoke};
 
 pub(crate) fn g5_revoke() -> bool {
     let Ok(u) = load_universe_file("phase5/universe.universe") else {
@@ -19,12 +19,6 @@ pub(crate) fn g5_revoke() -> bool {
         Verdict::Ok(s) => s,
         Verdict::Refused(_) => return false,
     };
-    if !matches!(
-        grant(state.link_runtime(), &u, "e0", "units"),
-        Verdict::Ok(())
-    ) {
-        return false;
-    }
     let Ok(two) = text_val("2") else {
         return false;
     };

@@ -56,8 +56,8 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         name: "A capability can be revoked",
         check: g5_revoke,
         control: g5_revoke_control,
-        control_artifact: "corpus/phase5/ordered.universe",
-        opposes: Mutation::DropLink("path"),
+        control_artifact: "corpus/phase5/universe.universe",
+        opposes: Mutation::DropGrant("e0"),
     },
     GateItem {
         name: "A refusal stays home",
