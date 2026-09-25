@@ -55,8 +55,7 @@ mod tests {
             lines.iter().all(|l| l != &line1),
             "mutant must have no line equal to original line 1: {lines:?}"
         );
-        // Plan said hosts control "still answers false" on the mutant; DropLine(1)
-        // removes a calculator.txt line, so the control answers true (prefix broken).
+        // §2.2 and Amendment B: g51_hosts_control answers true on DropLine(1).
         assert!(
             g51_hosts_control(&mutant),
             "DropLine(1) breaks the calculator prefix"
