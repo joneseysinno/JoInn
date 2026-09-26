@@ -88,6 +88,7 @@ pub(crate) fn assay_agree() -> Result<String, String> {
 
     let mut lines = String::new();
     let mut n = 0_u32;
+    let mut m = 0_u32;
     let mut plant: Option<(AssayReport, AssayReport)> = None;
     for path in &subjects {
         let text = fs::read_to_string(path).map_err(|e| e.to_string())?;
@@ -127,25 +128,38 @@ pub(crate) fn assay_agree() -> Result<String, String> {
         };
         let bound = match bind(&universe, &store) {
             Verdict::Ok(bound) => bound,
-            Verdict::Refused(_) => continue,
+            Verdict::Refused(r) => {
+                lines.push_str(&format!("{rel}: not measured: {}\n", r.reason));
+                m = m.saturating_add(1);
+                continue;
+            }
         };
         let fast = match assay(&universe, &bound) {
-            Verdict::Ok(report) => Some(report),
-            Verdict::Refused(_) => None,
+            Verdict::Ok(report) => Ok(report),
+            Verdict::Refused(r) => Err(r.reason),
         };
         let reference = match assay_reference(&universe, &bound) {
-            Verdict::Ok(report) => Some(report),
-            Verdict::Refused(_) => None,
+            Verdict::Ok(report) => Ok(report),
+            Verdict::Refused(r) => Err(r.reason),
         };
         let (fast, reference) = match (fast, reference) {
-            (Some(fast), Some(reference)) => (fast, reference),
-            (None, None) => continue,
-            (Some(_), None) => {
+            (Ok(fast), Ok(reference)) => (fast, reference),
+            (Err(fast_reason), Err(reference_reason)) => {
+                let reason = if fast_reason == reference_reason {
+                    fast_reason
+                } else {
+                    format!("{fast_reason} | {reference_reason}")
+                };
+                lines.push_str(&format!("{rel}: not measured: {reason}\n"));
+                m = m.saturating_add(1);
+                continue;
+            }
+            (Ok(_), Err(_)) => {
                 return Err(format!(
                     "{rel}: reference derivation refused a subject the fast derivation measured"
                 ));
             }
-            (None, Some(_)) => {
+            (Err(_), Ok(_)) => {
                 return Err(format!(
                     "{rel}: fast derivation refused a subject the reference derivation measured"
                 ));
@@ -165,25 +179,34 @@ pub(crate) fn assay_agree() -> Result<String, String> {
         n = n.saturating_add(1);
     }
 
-    let Some((mut fast, reference)) = plant else {
+    let Some((fast, reference)) = plant else {
         return Err(
             "injected disagreement had no calculator subject; acceptance is phase2/calculator.body binding"
                 .into(),
         );
     };
-    if fast.filled.pop().is_none() {
+    let mut dropped = fast.clone();
+    if dropped.filled.pop().is_none() {
         return Err(
             "injected disagreement found no filling on calculator.body; acceptance is two roundtrip fillings"
                 .into(),
         );
     }
-    if same(&fast, &reference) {
+    if same(&dropped, &reference) {
         return Err(
             "injected disagreement was accepted; acceptance is a refusal as truth violation".into(),
         );
     }
+    let mut raised = fast;
+    raised.b1 = raised.b1.saturating_add(1);
+    if same(&raised, &reference) {
+        return Err(
+            "injected disagreement on b₁ was accepted; acceptance is a refusal as truth violation"
+                .into(),
+        );
+    }
     lines.push_str(&format!(
-        "assay agree: {n} subject(s) agree; injected disagreement: refused as truth violation (ok)\n"
+        "assay agree: {n} subject(s) agree, {m} not measured; injected disagreements: 2 refused as truth violation (ok)\n"
     ));
     Ok(lines)
 }
