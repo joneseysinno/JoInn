@@ -55,6 +55,16 @@ fn main() -> ExitCode {
                 }
                 Err(e) => Err(e),
             },
+            Some("--all") => match fns::assay_all() {
+                Ok(text) => {
+                    let mut out = io::stdout();
+                    match out.write_all(text.as_bytes()) {
+                        Ok(()) => Ok(()),
+                        Err(e) => Err(e.to_string()),
+                    }
+                }
+                Err(e) => Err(e),
+            },
             Some(path) => match fns::assay(path) {
                 Ok(text) => {
                     let mut out = io::stdout();
@@ -66,7 +76,7 @@ fn main() -> ExitCode {
                 Err(e) => Err(e),
             },
             None => Err(
-                "usage: cargo xtask assay <path> | cargo xtask assay agree | cargo xtask assay invariance"
+                "usage: cargo xtask assay <path> | cargo xtask assay agree | cargo xtask assay invariance | cargo xtask assay --all"
                     .into(),
             ),
         },
@@ -81,7 +91,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | assay --all | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }

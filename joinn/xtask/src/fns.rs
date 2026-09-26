@@ -193,7 +193,7 @@ pub(crate) use admit_sum_turn::admit_sum_turn;
 pub(crate) use agree::agree;
 pub(crate) use agree_cached::agree_cached;
 pub(crate) use allow_vocab_reason::allow_vocab_reason;
-pub(crate) use assay::{assay, assay_agree, assay_invariance};
+pub(crate) use assay::{assay, assay_agree, assay_all, assay_invariance};
 pub(crate) use budget_not_membrane::budget_not_membrane;
 pub(crate) use calculator_success_trace::calculator_success_trace;
 pub(crate) use check_vocab_fixtures::check_vocab_fixtures;
