@@ -15,8 +15,14 @@ impl Chain {
     pub fn from_coeffs(pairs: impl IntoIterator<Item = (BlockId, i32)>) -> Self {
         let mut coeff = BTreeMap::new();
         for (id, c) in pairs {
-            if c != 0 {
-                coeff.insert(id, c);
+            if c == 0 {
+                continue;
+            }
+            let sum = coeff.get(&id).copied().unwrap_or(0_i32).saturating_add(c);
+            if sum == 0 {
+                coeff.remove(&id);
+            } else {
+                coeff.insert(id, sum);
             }
         }
         Self { coeff }

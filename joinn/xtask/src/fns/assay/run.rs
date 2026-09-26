@@ -133,6 +133,7 @@ mod tests {
     use joinn_dna::{hash, parse_body, parse_cell};
     use joinn_frame::{FrameRegistry, Hash, Verdict};
     use joinn_link::assay as derive;
+    use joinn_link::assay_reference;
     use joinn_link::{
         BodyBinding, BodyStore, Universe, UniverseCoding, UniverseRegulatory, bind, print_assay,
     };
@@ -404,5 +405,72 @@ euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
             twin_text.contains("euler: V 3 − E 3 + F 0 = 0 = 1 − 1 + 0\n"),
             "{twin_text}"
         );
+    }
+
+    #[test]
+    fn reference_matches_fast_on_section_3_2() {
+        let (cells, mut store) = corpus();
+        let subjects = [
+            "phase2/calculator.body",
+            "phase5/universe.universe",
+            "phase52/adversary/ask.universe",
+            "phase4/loop.universe",
+        ];
+        for rel in subjects {
+            let subject = read_subject(rel);
+            let universe = match &subject {
+                Subject::Body(body) => {
+                    match store.insert(body.clone(), cells.clone(), rel) {
+                        Verdict::Ok(_) => {}
+                        Verdict::Refused(r) if r.reason.contains("distinct faces") => {}
+                        Verdict::Refused(r) => panic!("{}", r.reason),
+                    }
+                    wrap(body)
+                }
+                Subject::Universe(u) => u.clone(),
+                _ => panic!("body or universe"),
+            };
+            let bound = match bind(&universe, &store) {
+                Verdict::Ok(bound) => bound,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            let fast = match derive(&universe, &bound) {
+                Verdict::Ok(report) => report,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            let reference = match assay_reference(&universe, &bound) {
+                Verdict::Ok(report) => report,
+                Verdict::Refused(r) => panic!("{rel}: {}", r.reason),
+            };
+            assert_eq!(reference.regions, fast.regions, "{rel} regions");
+            assert_eq!(reference.islands, fast.islands, "{rel} islands");
+            assert_eq!(
+                reference.b1,
+                fast.b1,
+                "{rel} b1\nfast {}\nref {}",
+                print_assay(&fast),
+                print_assay(&reference)
+            );
+            assert_eq!(
+                reference.b2,
+                fast.b2,
+                "{rel} b2\n{}",
+                print_assay(&reference)
+            );
+            assert_eq!(
+                reference.filled,
+                fast.filled,
+                "{rel} filled\nfast {}\nref {}",
+                print_assay(&fast),
+                print_assay(&reference)
+            );
+            assert_eq!(
+                reference.open,
+                fast.open,
+                "{rel} open\nfast {}\nref {}",
+                print_assay(&fast),
+                print_assay(&reference)
+            );
+        }
     }
 }

@@ -20,7 +20,7 @@ mod universe;
 mod universe_state;
 
 pub use address::Address;
-pub use assay::{AssayReport, RegionPieces, assay, print_assay};
+pub use assay::{AssayReport, RegionPieces, assay, assay_reference, print_assay};
 pub use assemble_universe::assemble_universe;
 pub use bind::{Bound, bind};
 pub use body_store::BodyStore;

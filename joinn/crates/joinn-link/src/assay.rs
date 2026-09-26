@@ -2,10 +2,12 @@
 
 mod assay_run;
 mod print_assay;
+mod reference;
 mod roundtrip;
 
 pub use assay_run::assay;
 pub use print_assay::print_assay;
+pub use reference::assay_reference;
 
 /// One connected piece of a body's inside, instances in name order.
 #[derive(Clone, PartialEq, Eq, Debug)]

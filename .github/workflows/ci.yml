@@ -33,6 +33,8 @@ jobs:
         run: cargo xtask corpus verify
       - name: agree
         run: cargo xtask agree
+      - name: assay agree
+        run: cargo xtask assay agree
       - name: power
         run: cargo xtask power
       - name: gate all
