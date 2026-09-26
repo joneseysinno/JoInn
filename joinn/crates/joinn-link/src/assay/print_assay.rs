@@ -9,21 +9,20 @@ pub fn print_assay(report: &AssayReport) -> String {
     let mut out = String::new();
     let _ = writeln!(out, "{}", report.headline);
     for region in &report.regions {
-        if region.pieces.len() > 1 {
-            let groups = region
-                .pieces
+        let mut pieces: Vec<Vec<String>> = region.pieces.clone();
+        for piece in &mut pieces {
+            piece.sort();
+        }
+        pieces.sort_by(|a, b| a.first().cmp(&b.first()).then(a.cmp(b)));
+        if pieces.len() > 1 {
+            let groups = pieces
                 .iter()
                 .map(|piece| format!("{{{}}}", piece.join(", ")))
                 .collect::<Vec<_>>()
                 .join(" ");
-            let _ = writeln!(
-                out,
-                "regions: {} {} {groups}",
-                region.alias,
-                region.pieces.len()
-            );
+            let _ = writeln!(out, "regions: {} {} {groups}", region.alias, pieces.len());
         } else {
-            let _ = writeln!(out, "regions: {} {}", region.alias, region.pieces.len());
+            let _ = writeln!(out, "regions: {} {}", region.alias, pieces.len());
         }
     }
     let _ = writeln!(out, "islands: {}", report.islands);

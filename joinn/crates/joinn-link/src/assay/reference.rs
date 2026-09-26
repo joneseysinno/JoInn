@@ -40,7 +40,6 @@ pub fn assay_reference(universe: &Universe, bound: &Bound) -> Verdict<AssayRepor
     struct Inst {
         alias: String,
         name: String,
-        genome_pos: u32,
         cell: Option<Hash>,
         ports: Vec<PortDecl>,
     }
@@ -64,7 +63,6 @@ pub fn assay_reference(universe: &Universe, bound: &Bound) -> Verdict<AssayRepor
         };
         cells_of.insert(binding.alias.clone(), cells.clone());
         let mut idxs = Vec::new();
-        let mut genome_pos = 0_u32;
         for entry in &body.coding.genome {
             let ports = match &entry.target {
                 GenomeTarget::Cell(hash) => match cells.get(hash) {
@@ -95,11 +93,9 @@ pub fn assay_reference(universe: &Universe, bound: &Bound) -> Verdict<AssayRepor
                 insts.push(Inst {
                     alias: binding.alias.clone(),
                     name: name.clone(),
-                    genome_pos,
                     cell,
                     ports: ports.clone(),
                 });
-                genome_pos = genome_pos.saturating_add(1);
             }
         }
         by_alias.insert(binding.alias.clone(), (binding.hash, idxs));
@@ -170,24 +166,19 @@ pub fn assay_reference(universe: &Universe, bound: &Bound) -> Verdict<AssayRepor
             let root = parent.get(*idx).copied().unwrap_or(*idx);
             groups.entry(root).or_default().push(*idx);
         }
-        let mut pieces: Vec<(u32, Vec<String>, Vec<usize>)> = Vec::new();
+        let mut pieces: Vec<(Vec<String>, Vec<usize>)> = Vec::new();
         for members in groups.values() {
             let mut names: Vec<String> = members
                 .iter()
                 .filter_map(|i| insts.get(*i).map(|n| n.name.clone()))
                 .collect();
             names.sort();
-            let pos = members
-                .iter()
-                .filter_map(|i| insts.get(*i).map(|n| n.genome_pos))
-                .min()
-                .unwrap_or(0);
-            pieces.push((pos, names, members.clone()));
+            pieces.push((names, members.clone()));
         }
-        pieces.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
+        pieces.sort_by(|a, b| a.0.first().cmp(&b.0.first()).then(a.0.cmp(&b.0)));
         let piece_count = pieces.len();
         let mut printed = Vec::new();
-        for (_, names, members) in &pieces {
+        for (names, members) in &pieces {
             let name = if piece_count == 1 {
                 alias.clone()
             } else {

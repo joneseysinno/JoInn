@@ -314,7 +314,7 @@ euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
         let ask = must("phase52/adversary/ask.universe");
         show("ask.universe", &ask);
         assert!(
-            ask.contains("regions: lookup 2 {question} {answer}\n"),
+            ask.contains("regions: lookup 2 {answer} {question}\n"),
             "{ask}"
         );
         assert!(ask.contains("regions: units 1\n"), "{ask}");
@@ -472,5 +472,64 @@ euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
                 print_assay(&reference)
             );
         }
+    }
+
+    #[test]
+    fn asker_reports_ignore_genome_instance_order() {
+        let root = workspace_root().unwrap_or_else(|e| panic!("{e}"));
+        let text = fs::read_to_string(root.join("corpus").join("phase52/adversary/asker.body"))
+            .unwrap_or_else(|e| panic!("{e}"));
+        let frames = FrameRegistry::phase1();
+        let original = match parse_body(&text, &frames) {
+            Verdict::Ok(body) => body,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let flipped_text = text.replacen("as question, answer", "as answer, question", 1);
+        assert!(
+            flipped_text.contains("as answer, question"),
+            "the genome entry was not rewritten"
+        );
+        assert!(
+            flipped_text.contains("stdin: question, answer"),
+            "grants must stay question, answer"
+        );
+        let flipped = match parse_body(&flipped_text, &frames) {
+            Verdict::Ok(body) => body,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        assert_eq!(hash(&original.coding), hash(&flipped.coding));
+
+        let (cells, _) = corpus();
+        let measure = |body: &joinn_dna::Body| {
+            let mut store = BodyStore::new();
+            match store.insert(body.clone(), cells.clone(), "asker order") {
+                Verdict::Ok(_) => {}
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            }
+            let universe = wrap(body);
+            let bound = match bind(&universe, &store) {
+                Verdict::Ok(bound) => bound,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            let fast = match derive(&universe, &bound) {
+                Verdict::Ok(report) => report,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            let reference = match assay_reference(&universe, &bound) {
+                Verdict::Ok(report) => report,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            assert_eq!(fast.regions, reference.regions);
+            (print_assay(&fast), print_assay(&reference))
+        };
+        let left = measure(&original);
+        let right = measure(&flipped);
+        assert_eq!(left.0, right.0, "fast reports");
+        assert_eq!(left.1, right.1, "reference reports");
+        assert!(
+            left.0.contains("regions: body 2 {answer} {question}\n"),
+            "{}",
+            left.0
+        );
     }
 }
