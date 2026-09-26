@@ -24,6 +24,10 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
         return root.join("corpus").join("descriptions").join(name);
     }
     if name.ends_with(".universe") {
+        let phase4 = root.join("corpus").join("phase4").join(name);
+        if phase4.exists() {
+            return phase4;
+        }
         let phase5 = root.join("corpus").join("phase5").join(name);
         if phase5.exists() {
             return phase5;
@@ -47,6 +51,7 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
         return controls;
     }
     for dir in [
+        "phase4",
         "phase5",
         "phase5/controls",
         "phase52/controls",

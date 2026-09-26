@@ -1,0 +1,26 @@
+coding {
+  codex 1
+  frame ℤ 1
+  contract {
+    join refuse
+    port 0 in ℤ 1 required
+    port 1 out Text 1 required
+  }
+  laws {
+    deterministic: forall n:ℤ 1 m:ℤ 1. (n = m) → (self@1(0: n) = self@1(0: m))
+  }
+  founding {
+    witness {
+      in 0: ℤ 1 2
+      out 1: Text 1 "2"
+    }
+  }
+  lineage none
+}
+
+---
+
+regulatory { names { 0 n  1 text } }
+alleles {
+  allele { frame ℤ 1 native format@ℤ witnesses { } }
+}

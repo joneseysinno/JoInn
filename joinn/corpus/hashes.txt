@@ -51,3 +51,9 @@ lookup.universe 494b93e96fc62bb21adbbf8f1d6da4adeb8db821b042e65d44f60e75bfc0bc87
 asker 6570a20fde6d141338f43949b40fc554dd10a445a708787efa32e7854e050fe9
 # Phase 5.2. ask.universe — one question out, the product back. Hash of the coding.
 ask.universe 10bffd04102ae01db7e9bee3f3ceeef0aec2de3eb8a277a246de852eaaf216a2
+# Phase 4. New cells, bodies, and the ring. No earlier hash moved.
+cli_input_open eb8479f42622365a12d5eb6ae3f35386d782cb9679144582774c49ea83945678
+format_twin fcc1ba589d125d8b490c631510dcec4d86d65a9e1f032ecb8d254b692999b85d
+fmt 5ed25b02b183bdb22709917bd7a5bb19d2bbf6e31d83ba3617a0ad3b05defed0
+fmt_twin f1b05fd17e9eeaa284a03a6ea586073b7b328e377c169628fa347cdec239b0cf
+loop.universe bf5f0c4c7a9690a31a86193e791b31e02480ae76e167d535b551f1db12fc2ace

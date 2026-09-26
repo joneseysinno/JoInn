@@ -1,0 +1,24 @@
+universe {
+  codex 1
+  bodies {
+    body:b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde as calc
+    body:5ed25b02b183bdb22709917bd7a5bb19d2bbf6e31d83ba3617a0ad3b05defed0 as fmt
+  }
+  links {
+    link back order none {
+      calc.sum@2 tail
+      fmt.fmt@0 head
+    }
+    link again order none {
+      fmt.fmt@1 tail
+      calc.cli_a@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system s { calc fmt }
+      }
+    }
+  }
+}

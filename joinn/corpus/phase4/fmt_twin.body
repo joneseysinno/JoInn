@@ -1,0 +1,16 @@
+body {
+  codex 1
+  genome {
+    cell:fcc1ba589d125d8b490c631510dcec4d86d65a9e1f032ecb8d254b692999b85d as fmt
+  }
+  grants { }
+  wires { }
+  budget { steps 100000 }
+  lineage none
+}
+
+---
+
+regulatory {
+  names { fmt "Format" }
+}
