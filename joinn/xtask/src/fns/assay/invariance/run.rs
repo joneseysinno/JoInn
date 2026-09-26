@@ -14,6 +14,7 @@ use crate::fns::walk_cells::walk_cells;
 use crate::fns::workspace_root::workspace_root;
 
 use super::edit_one::edit_one;
+use super::phenotype::phenotype_report;
 
 /// One line per subject for edits 1–4, then the phenotype-reader line.
 pub(crate) fn assay_invariance() -> Result<String, String> {
@@ -107,6 +108,7 @@ pub(crate) fn assay_invariance() -> Result<String, String> {
 
     let mut lines = String::new();
     let mut calc_subject: Option<Subject> = None;
+    let mut loop_subject: Option<Subject> = None;
     for path in &subjects {
         let text = fs::read_to_string(path).map_err(|e| e.to_string())?;
         let rel = match path.strip_prefix(&corpus) {
@@ -139,6 +141,9 @@ pub(crate) fn assay_invariance() -> Result<String, String> {
         };
         if rel == "phase2/calculator.body" {
             calc_subject = Some(subject.clone());
+        }
+        if rel == "phase4/loop.universe" {
+            loop_subject = Some(subject.clone());
         }
 
         let edit = edit_one(&subject, &store)?;
@@ -275,36 +280,51 @@ pub(crate) fn assay_invariance() -> Result<String, String> {
         lines.push_str(&format!("{rel}: {edit1}, {edit2}, {edit3}, {edit4}\n"));
     }
 
-    let Some(subject) = calc_subject else {
-        return Err(
-            "phenotype reader had no calculator subject; acceptance is phase2/calculator.body binding"
-                .into(),
-        );
-    };
-    let Subject::Body(body) = &subject else {
-        return Err("phenotype reader expected calculator.body".into());
-    };
-    let before_n = body.regulatory.labels.len();
-    let Some(before) = printed(&wrap(body), &store)? else {
-        return Err("phenotype reader could not measure calculator.body".into());
-    };
-    let fake_before = format!("{before}{before_n}\n");
-    let Some(edited) = crate::fns::mutate::neutral(&subject) else {
-        return Err("phenotype reader: calculator.body has no neutral edit".into());
-    };
-    let Subject::Body(next) = &edited else {
-        return Err("phenotype reader: neutral edit changed the kind".into());
-    };
-    let after_n = next.regulatory.labels.len();
-    let Some(after) = printed(&wrap(next), &store)? else {
-        return Err("phenotype reader: edit 1 refused calculator.body".into());
-    };
-    let fake_after = format!("{after}{after_n}\n");
-    if fake_before == fake_after {
-        return Err(format!(
-            "{lines}phenotype reader: accepted at edit 1; label counts {before_n} and {after_n}\n"
-        ));
+    let mut accepted = false;
+    for (rel, subject) in [
+        ("phase2/calculator.body", calc_subject),
+        ("phase4/loop.universe", loop_subject),
+    ] {
+        let Some(subject) = subject else {
+            return Err(format!(
+                "phenotype reader had no {rel}; acceptance is that subject binding"
+            ));
+        };
+        let baseline = match &subject {
+            Subject::Body(body) => wrap(body),
+            Subject::Universe(u) => u.clone(),
+            _ => {
+                return Err(format!(
+                    "phenotype reader: {rel} is not a body or a universe"
+                ));
+            }
+        };
+        let before_bound = match bind(&baseline, &store) {
+            Verdict::Ok(bound) => bound,
+            Verdict::Refused(r) => return Err(r.reason),
+        };
+        let before = phenotype_report(&baseline, &before_bound)?;
+        let edit = edit_one(&subject, &store)?;
+        let assay_store = match &edit.fresh {
+            Some(fresh) => fresh,
+            None => &store,
+        };
+        let after_bound = match bind(&edit.universe, assay_store) {
+            Verdict::Ok(bound) => bound,
+            Verdict::Refused(r) => return Err(r.reason),
+        };
+        let after = phenotype_report(&edit.universe, &after_bound)?;
+        let verdict = if before == after {
+            accepted = true;
+            format!("phenotype reader: accepted at edit 1 on {rel}")
+        } else {
+            format!("phenotype reader: refused at edit 1 on {rel} (ok)")
+        };
+        lines.push_str(&verdict);
+        lines.push('\n');
     }
-    lines.push_str("phenotype reader: refused at edit 1 (ok)\n");
+    if accepted {
+        return Err(lines);
+    }
     Ok(lines)
 }
