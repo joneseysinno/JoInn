@@ -95,7 +95,11 @@ fn main() -> ExitCode {
                     Err(e) => Err(e.to_string()),
                 }
             }
-            Err(e) => Err(e),
+            Err(text) => {
+                let mut out = io::stdout();
+                let _ = out.write_all(text.as_bytes());
+                Err("decoration controls failed".into())
+            }
         },
         "probe-refusal" => fns::probe_refusal(),
         _ => {

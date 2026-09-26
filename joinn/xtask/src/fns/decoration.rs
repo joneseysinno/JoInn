@@ -1,9 +1,12 @@
 //! Does the assay catch anything the other checks do not?
 
-use joinn_dna::{AlleleBody, GenomeTarget, hash, parse_body, parse_cell, print_formula};
+use joinn_dna::{
+    AlleleBody, BodyRegulatory, Direction, GenomeTarget, hash, parse_body, parse_cell,
+    print_formula,
+};
 use joinn_frame::{FrameRegistry, Term, Verdict};
 use joinn_gate::{Budget, Gate};
-use joinn_host::{Address, print_description};
+use joinn_host::Address;
 use joinn_link::{
     BodyStore, Universe, assay, assemble_universe, bind, check_law4, check_lenses, check_link_types,
 };
@@ -92,6 +95,116 @@ pub(crate) fn decoration() -> Result<String, String> {
     let Subject::Universe(subject) = subject else {
         return Err("loop.universe did not parse as a universe".into());
     };
+
+    let read_run = |universe: &Universe, run_store: &BodyStore, cli_b: &str| -> String {
+        match bind(universe, run_store) {
+            Verdict::Refused(r) => format!("refused: {}", r.reason),
+            Verdict::Ok(owned) => {
+                let rounds = vec![vec![
+                    (
+                        "calc".to_string(),
+                        RawEvent {
+                            address: Address {
+                                instance: "cli_a".to_string(),
+                                port: 0,
+                            },
+                            term: Term::text("2"),
+                        },
+                    ),
+                    (
+                        "calc".to_string(),
+                        RawEvent {
+                            address: Address {
+                                instance: "cli_b".to_string(),
+                                port: 0,
+                            },
+                            term: Term::text(cli_b),
+                        },
+                    ),
+                ]];
+                match run_universe(universe, owned, joinn_prim::sealed_natives(), rounds) {
+                    Verdict::Refused(r) => format!("refused: {}", r.reason),
+                    Verdict::Ok(capture) => {
+                        let mut items = Vec::new();
+                        for description in &capture.descriptions {
+                            for port in &description.ports {
+                                let Some(value) = &port.value else {
+                                    continue;
+                                };
+                                let dir = match port.direction {
+                                    Direction::In => "in",
+                                    Direction::Out => "out",
+                                };
+                                items.push(format!(
+                                    "{}@{} {dir} {value}",
+                                    description.instance, port.position
+                                ));
+                            }
+                        }
+                        for refusal in &capture.far_side {
+                            items.push(format!(
+                                "far {} {} {:?}",
+                                refusal.link,
+                                refusal.member.printed(),
+                                refusal.kind
+                            ));
+                        }
+                        items.join(", ")
+                    }
+                }
+            }
+        }
+    };
+
+    let label_store = {
+        let bound = match bind(&subject, &store) {
+            Verdict::Ok(bound) => bound,
+            Verdict::Refused(r) => return Err(r.reason),
+        };
+        let mut fresh = BodyStore::new();
+        for (alias, (body, cell_map)) in bound.iter() {
+            let mut inserted = body.clone();
+            if alias == "fmt" {
+                inserted.regulatory = BodyRegulatory::default();
+                inserted
+                    .regulatory
+                    .names
+                    .insert("fmt".to_string(), "neutral".to_string());
+            }
+            match fresh.insert(inserted, cell_map.clone(), alias) {
+                Verdict::Ok(_) => {}
+                Verdict::Refused(r) => return Err(r.reason),
+            }
+        }
+        fresh
+    };
+    let subject_run = read_run(&subject, &store, "3");
+    let label_run = read_run(&subject, &label_store, "3");
+    let input_run = read_run(&subject, &store, "4");
+    let label_flag = if subject_run == label_run {
+        "same"
+    } else {
+        "differs"
+    };
+    let input_flag = if subject_run == input_run {
+        "same"
+    } else {
+        "differs"
+    };
+    let label_mark = if label_flag == "same" { "ok" } else { "FAILED" };
+    let input_mark = if input_flag == "differs" {
+        "ok"
+    } else {
+        "FAILED"
+    };
+    let mut lines = String::new();
+    lines.push_str(&format!(
+        "control run label-only: {label_flag} ({label_mark})\n"
+    ));
+    lines.push_str(&format!(
+        "control run input changed: {input_flag} ({input_mark})\n"
+    ));
+    let controls_failed = label_mark == "FAILED" || input_mark == "FAILED";
 
     let verdict = |result: Verdict<()>| -> String {
         match result {
@@ -215,57 +328,7 @@ pub(crate) fn decoration() -> Result<String, String> {
         };
         rows.push(("require/ensure", contract_answer));
 
-        let run_answer = match bind(universe, &store) {
-            Verdict::Refused(r) => format!("refused: {}", r.reason),
-            Verdict::Ok(owned) => {
-                let rounds = vec![vec![
-                    (
-                        "calc".to_string(),
-                        RawEvent {
-                            address: Address {
-                                instance: "cli_a".to_string(),
-                                port: 0,
-                            },
-                            term: Term::text("2"),
-                        },
-                    ),
-                    (
-                        "calc".to_string(),
-                        RawEvent {
-                            address: Address {
-                                instance: "cli_b".to_string(),
-                                port: 0,
-                            },
-                            term: Term::text("3"),
-                        },
-                    ),
-                ]];
-                match run_universe(universe, owned, joinn_prim::sealed_natives(), rounds) {
-                    Verdict::Refused(r) => format!("refused: {}", r.reason),
-                    Verdict::Ok(capture) => {
-                        if capture.descriptions.is_empty() && capture.far_side.is_empty() {
-                            "no report".to_string()
-                        } else {
-                            let mut parts = Vec::new();
-                            for description in &capture.descriptions {
-                                parts.push(print_description(description).replace('\n', " "));
-                            }
-                            for refusal in &capture.far_side {
-                                parts.push(format!(
-                                    "far {} {} {} {:?}",
-                                    refusal.link,
-                                    refusal.body,
-                                    refusal.member.printed(),
-                                    refusal.kind
-                                ));
-                            }
-                            parts.join(" || ")
-                        }
-                    }
-                }
-            }
-        };
-        rows.push(("run", run_answer));
+        rows.push(("run", read_run(universe, &store, "3")));
 
         let assay_answer = match &bound {
             Verdict::Refused(r) => format!("refused: {}", r.reason),
@@ -287,7 +350,6 @@ pub(crate) fn decoration() -> Result<String, String> {
             mutant_rows.len()
         ));
     }
-    let mut lines = String::new();
     let mut distinguishing = Vec::new();
     for ((name, left), (right_name, right)) in subject_rows.iter().zip(mutant_rows.iter()) {
         if name != right_name {
@@ -307,5 +369,9 @@ pub(crate) fn decoration() -> Result<String, String> {
         lines.push_str(&format!("{name}: {left} | {right} | {flag}\n"));
     }
     lines.push_str(&format!("distinguishing: {}\n", distinguishing.join(", ")));
-    Ok(lines)
+    if controls_failed {
+        Err(lines)
+    } else {
+        Ok(lines)
+    }
 }
