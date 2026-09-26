@@ -47,3 +47,7 @@ adversary.universe 313bc956d9f79f1b8e7c58f211a0af9cb1989ee117246dfc63072e9b276d6
 lookup d999c0b83dfb9d1eee6b3cb4e8b461d38dd7dd585976b1aecf05ecdbece3acf3
 # Phase 5.2. lookup.universe — two unordered links from the factor port.
 lookup.universe 494b93e96fc62bb21adbbf8f1d6da4adeb8db821b042e65d44f60e75bfc0bc87
+# Phase 5.2. asker.body — lookup with grants on question and answer. Hash of the coding.
+asker 6570a20fde6d141338f43949b40fc554dd10a445a708787efa32e7854e050fe9
+# Phase 5.2. ask.universe — one question out, the product back. Hash of the coding.
+ask.universe 10bffd04102ae01db7e9bee3f3ceeef0aec2de3eb8a277a246de852eaaf216a2

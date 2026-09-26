@@ -547,3 +547,148 @@ fn law4_adversary_attempt() {
         Verdict::Ok(()) => panic!("reading the factor out of an in-port must be refused"),
     }
 }
+
+fn store_with_asker() -> BodyStore {
+    let all = cells();
+    let mut bodies = store();
+    let asker = body_at("phase52/adversary/asker.body");
+    match bodies.insert(asker, all, "phase52/adversary/asker.body") {
+        Verdict::Ok(_) => {}
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+    bodies
+}
+
+fn open_ask(u: &Universe) -> UniverseState {
+    let bound = match bind(u, &store_with_asker()) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    match UniverseState::new(u, &bound, joinn_prim::sealed_natives()) {
+        Verdict::Ok(s) => s,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    }
+}
+
+fn feed_question(state: &mut UniverseState, factor: i64, mut epoch: u64) -> u64 {
+    let steps = [
+        ("lookup", "question", 0u32, int(1)),
+        ("lookup", "question", 1, int(1)),
+        ("units", "scale", 1, int(factor)),
+        ("lookup", "answer", 1, int(1)),
+    ];
+    for (body, instance, port, value) in steps {
+        match state.inject(body, &addr(instance, port), value, epoch) {
+            Verdict::Ok(()) => {}
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        }
+        epoch = epoch.saturating_add(1);
+    }
+    epoch
+}
+
+fn answer_at(state: &UniverseState) -> String {
+    let body = state
+        .body("lookup")
+        .unwrap_or_else(|| panic!("lookup body missing"));
+    let d = match describe(body, "answer") {
+        Verdict::Ok(d) => d,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    d.ports
+        .iter()
+        .find(|p| p.position == 2)
+        .and_then(|p| p.value.clone())
+        .unwrap_or_else(|| panic!("answer@2 empty"))
+}
+
+#[test]
+fn law4_adversary_asks_by_one() {
+    let asker = body_at("phase52/adversary/asker.body");
+    let id = hash(&asker.coding).to_hex();
+    let u = universe("phase52/adversary/ask.universe");
+    assert!(
+        u.coding
+            .bodies
+            .iter()
+            .any(|b| b.alias == "lookup" && b.hash.to_hex() == id),
+        "ask.universe must name asker {id}"
+    );
+    match check_law4(&u) {
+        Verdict::Ok(()) => println!("Law 4: admitted"),
+        Verdict::Refused(r) => println!("Law 4: {}", r.reason),
+    }
+    let bound = match bind(&u, &store_with_asker()) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    match check_link_types(&u, &bound) {
+        Verdict::Ok(()) => println!("typing: admitted"),
+        Verdict::Refused(r) => println!("typing: {}", r.reason),
+    }
+    match assemble_universe(&u, &bound) {
+        Verdict::Ok(()) => println!("assembly: admitted"),
+        Verdict::Refused(r) => println!("assembly: {}", r.reason),
+    }
+    match check_law4(&u) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("Law 4 must admit ask.universe: {}", r.reason),
+    }
+    match check_link_types(&u, &bound) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("typing must admit ask.universe: {}", r.reason),
+    }
+    match assemble_universe(&u, &bound) {
+        Verdict::Ok(()) => {}
+        Verdict::Refused(r) => panic!("assembly must admit ask.universe: {}", r.reason),
+    }
+
+    let mut state = open_ask(&u);
+    let mut epoch = feed_question(&mut state, 12, 0);
+    let reports = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let answer = answer_at(&state);
+    let round0 = format!("round 0 factor 12: {reports:?} answer {answer}");
+    println!("{round0}");
+    assert_eq!(
+        round0,
+        "round 0 factor 12: [Fired { body: \"lookup\", instance: \"question\" }, Fired { body: \"units\", instance: \"scale\" }, Fired { body: \"lookup\", instance: \"answer\" }] answer 12"
+    );
+
+    let _ = feed_question(&mut state, 5, epoch);
+    let reports = match state.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let answer = answer_at(&state);
+    let round1 = format!("round 1 factor 5: {reports:?} answer {answer}");
+    println!("{round1}");
+    assert_eq!(
+        round1,
+        "round 1 factor 5: [Fired { body: \"lookup\", instance: \"question\" }, Fired { body: \"units\", instance: \"scale\" }, Fired { body: \"lookup\", instance: \"answer\" }] answer 5"
+    );
+
+    let mut once = open_ask(&u);
+    epoch = feed_question(&mut once, 12, 0);
+    let _ = feed_question(&mut once, 5, epoch);
+    let reports = match once.run() {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => panic!("{}", r.reason),
+    };
+    let once_line = format!("one run: {reports:?}");
+    println!("{once_line}");
+    assert!(
+        !reports.iter().any(|r| matches!(
+            r,
+            UniverseReport::Fired { body, instance }
+                if body == "lookup" && instance == "answer"
+        )),
+        "{once_line}"
+    );
+    assert_eq!(
+        once_line,
+        "one run: [Refused { body: \"lookup\", instance: \"answer\" }, Refused { body: \"units\", instance: \"scale\" }]"
+    );
+}

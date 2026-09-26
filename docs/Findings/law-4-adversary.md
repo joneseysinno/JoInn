@@ -38,3 +38,24 @@ The result is the typing refusal:
 Law 4 admitted both hyperedges. The factor port is an in-port, so a hyperedge
 cannot carry that value out to `lookup`. The run never produced two answers,
 so it does not show that pairing needs an order across two links.
+
+## Second attempt
+
+`asker.body` is that same body with grants `stdin: question, answer`.
+`ask.universe` tails `lookup.question@2` into `units.scale@0` and tails
+`units.scale@2` back into `lookup.answer@0`. The question is multiply by 1.
+Lines copied from
+`cargo test -p joinn-link --test crossing law4_adversary_asks_by_one -- --nocapture`:
+
+```
+Law 4: admitted
+typing: admitted
+assembly: admitted
+round 0 factor 12: [Fired { body: "lookup", instance: "question" }, Fired { body: "units", instance: "scale" }, Fired { body: "lookup", instance: "answer" }] answer 12
+round 1 factor 5: [Fired { body: "lookup", instance: "question" }, Fired { body: "units", instance: "scale" }, Fired { body: "lookup", instance: "answer" }] answer 5
+one run: [Refused { body: "lookup", instance: "answer" }, Refused { body: "units", instance: "scale" }]
+```
+
+**Held.** Law 4 admitted a body that asks another body a question and pairs each answer with its question, using only wires, two hyperedges and declared grants. Pairing held with one question in flight per round. With two questions in one run, both were refused and no answer came back, so the pairing came from the host's rounds, not from the universe.
+
+Two things this shows. `units` keeps no memory of its factor, so "the factor you last used" can only be asked by making `units` fire again with 1, which spends a firing: asking is not free. And a universe with two questions in flight needs an order that spans the `ask` and `reply` links, which is R58.

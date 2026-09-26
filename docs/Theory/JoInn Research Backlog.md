@@ -268,6 +268,10 @@ When one tail fans out to several heads, is the value conserved (one delivery sp
 
 May a link carry a value from one frame into another by an embedding (ℤ into ℚ)? Example: two bodies whose laws each hold on their own frame, joined by an embedding whose round-trip holds on one side and not the other. This is the most likely place for Phase 4's first H¹ candidate.
 
+## R58 — Correlation of a reply with its question  ·  status: open
+
+*Example (Phase 5.2, `ask.universe`):* `lookup` asks `units` by sending 1 on `ask` and reads the factor back on `reply`. One question per run pairs correctly (12, then 5). Two questions in one run are both refused and nothing comes back. Correlating a reply with its question across two links needs either one question in flight or an order that spans both links.
+
 ## R59 — Interactive hosts and races  ·  status: open
 
 In canonical prompt order, the CLI can't deliver two values into one port before its partner arrives. Is that a property or a limitation?

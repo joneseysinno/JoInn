@@ -8,6 +8,8 @@ New artifacts, hashed at P52-16 (the body with `joinn.body.v1`, the universe wit
 
 - `corpus/phase52/adversary/lookup.body` — `d999c0b83dfb9d1eee6b3cb4e8b461d38dd7dd585976b1aecf05ecdbece3acf3`
 - `corpus/phase52/adversary/lookup.universe` — `494b93e96fc62bb21adbbf8f1d6da4adeb8db821b042e65d44f60e75bfc0bc87`
+- `corpus/phase52/adversary/asker.body` — `6570a20fde6d141338f43949b40fc554dd10a445a708787efa32e7854e050fe9`
+- `corpus/phase52/adversary/ask.universe` — `10bffd04102ae01db7e9bee3f3ceeef0aec2de3eb8a277a246de852eaaf216a2`
 
 The calculator body hash remains
 `b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde`.
