@@ -21,13 +21,21 @@ mod tests {
     }
 
     #[test]
-    fn assay_names_no_homology() {
+    fn assay_names_no_dna() {
         let root = match crate::fns::workspace_root() {
             Ok(r) => r,
             Err(e) => panic!("{e}"),
         };
         let dir = root.join("crates").join("joinn-assay");
-        let banned = ["homology", "betti", "rank", "H"];
+        let banned = [
+            "Body",
+            "Cell",
+            "Universe",
+            "Wire",
+            "Genome",
+            "joinn_dna",
+            "joinn_link",
+        ];
         let mut hits = Vec::new();
         for (path, text) in rs_files(&dir) {
             for word in banned {

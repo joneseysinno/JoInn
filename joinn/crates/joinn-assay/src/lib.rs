@@ -8,4 +8,4 @@ mod complex;
 
 pub use block::BlockId;
 pub use chain::Chain;
-pub use complex::Complex;
+pub use complex::{Complex, Homology};
