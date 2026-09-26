@@ -2,7 +2,7 @@
 
 **The assay: measure first, keep it only if it sees something nothing else sees · a working plan for Cursor**
 
-Author: AJ, with Claude · Draft 0.1 · September 26, 2026
+Author: AJ, with Claude · Draft 0.1 with Amendment A · September 26, 2026
 
 > **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going.
 
@@ -223,7 +223,7 @@ For every subject that binds, the invariance harness requires the printed report
 3. each `DropLens` that leaves at least one lens (a lens is a camera, Part I §10.2);
 4. `RenameAlias` and `RenameLink`: identical once the renamed names are mapped back.
 
-**Opposite fixture:** a fake assay that appends the count of regulatory labels to its report must be **refused** by the harness, naming edit 1. That proves the harness can see a phenotype reader.
+**Opposite fixture:** a fake assay that appends the count of regulatory labels to its report must be **refused** by the harness, naming edit 1. That proves the harness can see a phenotype reader. *(Corrected by Amendment A, P4-07c: a count cannot be seen by a text edit. The fake prints every name and label it was handed.)*
 
 ### 2.8 The decoration check (the adversary), and the rule that decides it
 
@@ -365,6 +365,29 @@ Done-when is a command, and the command must be able to fail.
 
 Dependencies: in order. P4-04 needs P4-02 and P4-03. P4-05 and P4-06 need P4-04.
 
+### Amendment A (after Stop A, 26 Sep 2026): do these first in chunk B
+
+Claude re-ran the tree at `9787be1` from a fresh clone on Linux (rustc 1.95.0). Every number in `phase-4-stop-a.md` reproduced: 193 passed, 0 failed; `gate all` exits 0 with every phase line as reported; `corpus verify` 42 hashes, and only the five new files and their `hashes.txt` lines were added; `vocab: ok`; `modules: ok (enforced 11 crate(s))`; `cargo fmt --check` and `cargo clippy -D warnings` clean; `assay agree` 37 subjects plus the plant; every §3.2 report matches by hand, including §2.4's block byte for byte. The instrument is right. The invariance harness is not yet able to fail, and these four commits fix that **before P4-08**. They are decided; nothing waits on AJ.
+
+**Why.** (1) The P4-06 snag was right, and the error was Claude's: §2.7's fake assay appended the *count* of labels, and the neutral edit changes a label's *text*, so no harness could refuse it. (2) Worse, edit 1 never reaches the assay for a body. The harness wraps the edited body into a universe that carries only its hash and alias, then binds it against the store, which still holds the *original* body. The edited universe is the same value as the baseline, so edit 1 on every body compares a report with itself. (3) 26 of the 37 measured subjects have no name or label, so `neutral()` returns nothing and edit 1 is skipped, yet the line prints `1 ok`. The same goes for edit 3 (only `universe.universe` has two lenses) and edit 4 on bodies. That includes `loop.universe`, the subject gate 4 items 2 and 4 depend on.
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P4-07a** | **Amendment A** | Commit this plan file as it is on disk. Plan text only | `git show --stat HEAD` lists only this plan |
+| **P4-07b** | **Every edit reaches the assay, and says when it didn't run** | In `xtask/src/fns/assay/invariance.rs`: **(1)** For a body subject, edit 1 inserts the edited body, with the cell map `bind` gave for the original, into a **fresh** `BodyStore`, and assays against that store (the way edit 2 already does), so `bind` hands the assay the edited body. **(2)** When `neutral()` returns nothing, the harness adds a name: for a body, `names { <first instance in name order> "neutral" }`; for a universe, `names { <first alias in name order> "neutral" }`, reprinted and reparsed as `neutral()` does. This lives in the harness only. `neutral()` is not changed, so no gate control moves. **(3)** Each line says what ran: edit 1 prints `1 ok` or `1 ok (added name)`; edit 2 prints `2 ok` (`allele strip ok` stays on `calculator.body`); edit 3 prints `3 ok` only when at least one lens was dropped, otherwise `3 n/a (one lens)` or `3 n/a (no lens)`; edit 4 prints `4 ok` for a universe and `4 n/a (body)` for a body. Never print `ok` for an edit that did not run | `cargo xtask assay invariance`, whole output pasted. It contains exactly `phase4/loop.universe: 1 ok (added name), 2 ok, 3 n/a (one lens), 4 ok`, `phase5/universe.universe: 1 ok, 2 ok, 3 ok, 4 ok` and `phase2/calculator.body: 1 ok, allele strip ok, 3 n/a (no lens), 4 n/a (body)`. A unit test asserts that, for `calculator.body`, the universe the harness assays after edit 1 binds to a body whose regulatory region differs from the original (the fix, asserted by what it does) |
+| **P4-07c** | **The phenotype reader reads the phenotype** | Replace the fake assay: it prints the real report, then every name and label of every regulatory region it was handed, one per line in key order. That means each bound body's region, read from `Bound` (the same value the real assay receives), and the universe's own region. Run it on `phase2/calculator.body` and on `phase4/loop.universe`. The harness must refuse it at edit 1 on both. The command exits 1 if either is accepted | The output ends with the two lines `phenotype reader: refused at edit 1 on phase2/calculator.body (ok)` and `phenotype reader: refused at edit 1 on phase4/loop.universe (ok)`, and `cargo xtask assay invariance` exits 0. Also shown then reverted: undo P4-07b's fresh store (bodies bound against the original store again); the calculator line becomes `phenotype reader: accepted at edit 1 on phase2/calculator.body`. Paste both printed lines in full |
+| **P4-07d** | **Agree names what it skips; two plants** | `cargo xtask assay agree`: a subject that parses but doesn't bind, or that both derivations refuse, prints `<rel>: not measured: <reason>` (one reason when both derivations print the same one, else both) instead of being skipped silently. Add a second plant on `calculator.body`: the fast report with `b1` raised by one and nothing else changed. Both plants must be refused. The last line becomes `assay agree: <n> subject(s) agree, <m> not measured; injected disagreements: 2 refused as truth violation (ok)` | Whole output pasted. It contains `phase52/controls/missing_cell.body: not measured: instance orphan cell 4a37 was not supplied; acceptance is that cell in the cell map` and ends `assay agree: 37 subject(s) agree, <m> not measured; injected disagreements: 2 refused as truth violation (ok)` |
+
+**Changes to later commits and to the stop report:**
+
+- **§2.7's opposite fixture** is P4-07c's fake from now on. Where this plan says `phenotype reader: refused at edit 1 (ok)`, read P4-07c's two lines.
+- **§0.2 item 3** also lists the last line of `cargo xtask assay invariance`, and its exit code.
+- **P4-09's C3 evidence** is the `calculator.body` line from P4-07b's output (`1 ok, allele strip ok, 3 n/a (no lens), 4 n/a (body)`).
+- **P4-05's snag is accepted.** A link whose two members are in one region is a loop (its boundary is zero), so summing a repeated block in `Chain::from_coeffs` is right. `missing_cell.body` is not measured, because the body it binds names a cell nobody supplied. P4-07d prints that instead of skipping it.
+- **Gate 4 (P4-13)**: "every item also passes §2.7's invariance on its subject" means P4-07b's edits, with `ok` or `n/a` as they print. An item whose subject prints `1 ok (added name)` is fine.
+
+Dependencies for chunk B: P4-07a, then P4-07b, P4-07c, P4-07d in that order, then P4-08, P4-09, P4-10. P4-07c needs P4-07b.
+
 ### Chunk B: the decoration check
 
 | # | Commit | Delivers | Done when |
@@ -374,7 +397,7 @@ Dependencies: in order. P4-04 needs P4-02 and P4-03. P4-05 and P4-06 need P4-04.
 | **P4-10** | **The verdict** | `docs/Findings/decoration-check.md`: the rule of §2.8 copied verbatim; P4-08's output pasted; the verdict **KEEP** if and only if the `distinguishing:` line is exactly `assay`, otherwise **CUT**; then the matching text from Appendix B for C1, and Appendix B's C2 and C3 texts with P4-09's outputs quoted. Backlog: add R65–R68 (§8); under R17, add *"Phase 4: decoration check → <KEEP/CUT>, see Findings/decoration-check.md"*. `decisions.md`: R65–R68 rows `open`; a row `P4-adv | decoration check | 4 | <held/fired> | Findings/decoration-check.md` (`held` for KEEP, `fired` for CUT) | The finding's verdict word matches the rule applied to P4-08's last line. `git grep -n "R65" -- docs` shows the backlog and `decisions.md` |
 | — | **Stop B** | `phase-4-stop-b.md`, push, stop | — |
 
-Dependencies: in order. Chunk B needs chunk A's P4-04 and P4-06.
+Dependencies: Amendment A's P4-07a–d come first (see above). Then in order. Chunk B needs chunk A's P4-04 and P4-06.
 
 ### Chunk C, if the verdict is KEEP: declarations, gate 4, freeze
 
@@ -516,4 +539,4 @@ Keep rules 1–45, 47 and 48 exactly as they are. Append:
 
 ---
 
-*JoInn Phase 4 Implementation Plan, Draft 0.1 (26 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 4 Implementation Plan, Draft 0.1 with Amendment A (26 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
