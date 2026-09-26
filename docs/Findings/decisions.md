@@ -54,4 +54,9 @@ line must name a file under `docs/Findings/`.
 | R61 | Whose budget is it | 5.2 | open | |
 | R62 | One host, both sides | 5.2 | open | |
 | R64 | Legacy gates upgrade | 5.2 | open | |
+| R65 | Laws that span bodies | 4 | open | |
+| R66 | Loops with many frame changes | 4 | open | |
+| R67 | Hyperedges in the assay | 4 | open | |
+| R68 | Promises and allele bodies | 4 | open | |
+| P4-adv | decoration check | 4 | fired | Findings/decoration-check.md |
 

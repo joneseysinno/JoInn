@@ -212,6 +212,8 @@ Remaining detail moves to **R18 (sealing)** and **R13 (naming)**. Unchanged impl
 - Coefficients: the frame supplies the group. What happens when a frame's values aren't an abelian group?
 - **Decoration check:** does it catch anything `require`/`ensure` cannot? Two candidates claimed. If neither survives a real example, cut it — because it's derived, cutting costs an instrument, not a language
 
+Phase 4: decoration check → CUT, see Findings/decoration-check.md
+
 **The test that decides it (Part III §14.1)**
 Build the calculator's complex by hand (~15 blocks). Delete the law `parse(format n) = n` and measure. If the unopposed-cycle count goes 0 → 1 and returns `host → cli_a → sum → host`, the layer is real: it found a missing law from structure alone. If it takes special pleading about orientations and basepoints, keep only "boundary of a boundary is empty" and drop the rest.
 
@@ -291,3 +293,19 @@ When a host presents several bodies, does it show a link-caused refusal's reason
 ## R64 — Legacy gates  ·  status: open
 
 Upgrade gates 1–3 to parsed subjects and a catalogue that covers `.cell`, `.desc`, `.trace` and `.rs`. That will be a short cleanup phase.
+
+## R65 — Laws that span bodies  ·  status: open
+
+H¹ with values needs a coding-level claim that two values in different bodies are the same quantity, and a factor stated in DNA. Where does that claim live: a `laws` section in `.universe`, a typed quantity frame, or something else?
+
+## R66 — Loops with many frame changes  ·  status: open
+
+Rule 3 judges loops with at most two frame changes. What pairs the conversions on a longer loop, and is the answer independent of the cycle basis?
+
+## R67 — Hyperedges in the assay  ·  status: open
+
+A link with k + 1 members is a k-block in the theory. Phase 4 prints such a link `not measured`. What are its faces?
+
+## R68 — Promises and allele bodies  ·  status: open
+
+The round-trip promise for an allele lives in the cell that carries it. Should an allele body be assayed in its owner's context?
