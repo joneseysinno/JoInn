@@ -2,7 +2,7 @@
 
 **The assay: measure first, keep it only if it sees something nothing else sees · a working plan for Cursor**
 
-Author: AJ, with Claude · Draft 0.1 with Amendment A · September 26, 2026
+Author: AJ, with Claude · Draft 0.1 with Amendments A and B · September 26, 2026
 
 > **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going.
 
@@ -31,6 +31,7 @@ Author: AJ, with Claude · Draft 0.1 with Amendment A · September 26, 2026
 
 - Chunk A: `Do chunk A of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 - Chunk B: `Do chunk B of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
+- Amendment B (after Stop B, before chunk C): `Do Amendment B of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 - Chunk C: `Do chunk C of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 
 If Cursor runs out of room partway: `Continue chunk A of docs/Plans/JoInn Phase 4 Implementation Plan.md from the first commit not in git log. Follow AGENTS.md.` (Use the right letter.)
@@ -185,7 +186,7 @@ H₂: 0
 euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
 ```
 
-- **regions**: one line per body alias, the count of its inside pieces. Where the count is more than 1, the line also lists, for each piece, its instances in name order, e.g. `regions: lookup 2 {question} {answer}`.
+- **regions**: one line per body alias, the count of its inside pieces. Where the count is more than 1, the line also lists, for each piece, its instances in name order, e.g. `regions: lookup 2 {answer} {question}`. Pieces print in the name order of their first instance (Amendment B, P4-10b).
 - **islands**: connected pieces of the complex with the outside removed.
 - **loops**: rank of the cycle space (the dimension of Z₁).
 - **filled** and **open**: one line per filling, then one line per H₁ representative (`open: …`, §2.5).
@@ -336,7 +337,7 @@ universe {
 | same, `SwapCell(cli_b, <cli_input_open>)` | body 1 | 1 | 2 | 1 | **1**: `outside →body.cli_b@0→ body →body.sum@2→ outside` | 0 | 2 − 3 + 1 = 0 |
 | same, both `cli_a` and `cli_b` swapped | body 1 | 1 | 2 | 0 | **2** | 0 | 2 − 3 + 0 = −1 |
 | `phase5/universe.universe` | calc 1, units 1 | 1 | 3 | 3 (`roundtrip` ×2, `frame ℤ`) | 0 | 0 | 3 − 5 + 3 = 1 |
-| `phase52/adversary/ask.universe` | lookup **2** `{question} {answer}`, units 1 | 1 | 4 | 4 (`frame ℤ` ×4) | 0 | 0 | 4 − 7 + 4 = 1 |
+| `phase52/adversary/ask.universe` | lookup **2** `{answer} {question}`, units 1 | 1 | 4 | 4 (`frame ℤ` ×4) | 0 | 0 | 4 − 7 + 4 = 1 |
 | `phase4/loop.universe` | calc 1, fmt 1 | 1 | 1 | 1 (`calc.cli_a roundtrip`) | 0 | 0 | 3 − 3 + 1 = 1 |
 | same, `SwapBinding(fmt, <fmt_twin>)` | calc 1, fmt 1 | 1 | 1 | 0 | **1** | 0 | 3 − 3 + 0 = 0 |
 
@@ -399,6 +400,26 @@ Dependencies for chunk B: P4-07a, then P4-07b, P4-07c, P4-07d in that order, the
 
 Dependencies: Amendment A's P4-07a–d come first (see above). Then in order. Chunk B needs chunk A's P4-04 and P4-06.
 
+### Amendment B (after Stop B, 26 Sep 2026): do these before chunk C
+
+Claude re-ran the tree at `355a3f5` from a fresh clone on Linux (rustc 1.95.0). Every number in `phase-4-stop-b.md` reproduced: 194 passed, 0 failed; `gate all` exits 0 with every phase line as reported; `corpus verify` 42; `vocab: ok`; `modules: ok (enforced 11 crate(s))`; `cargo fmt --check` and `cargo clippy -D warnings` clean; `assay agree` 37 agree, 1 not measured, 2 plants refused; `assay invariance` exits 0 with both phenotype-reader lines. `cargo xtask decoration` prints `distinguishing: run, assay`, exactly as reported. Cursor applied the rule correctly to what P4-08 printed. What P4-08 printed was the wrong thing, and the error is Claude's.
+
+**Why.** (1) The `run` row compared the whole printed description, and a description carries each cell's hash and its regulatory labels. With the cell hashes masked, the subject and mutant run texts are **equal**: every port value is the same (`2`, `3`, `5`, `"5"`). The only difference is `cell 3b0a…` against `cell fcc1…`, which is the swap itself, not a finding about it. (2) Claude changed only `fmt.body`'s label `"Format"` → `"Formatter"` (no hash moved; `corpus verify` still 42) and the subject's run text changed. So the row as printed moves under a neutral edit. The rule's own sentence says a check distinguishes under *the Phase 5.2 control rule*, and that rule ignores a harmless change. Rule 50 holds the assay to the same thing. (3) Every other row was compared by its verdict (`admitted`/`refused`), not by the identity of what it bound. `bind` would also "differ" if it printed body hashes. P4-08's done-when told Cursor to "print the reports", which is where the mistake came from.
+
+**Decided (AJ, 26 Sep): fix the run comparison, keep the rule word for word.** The §2.8 rule does not change. Only the reading of the run's answer does, and two controls must prove that the new reading can still see a real change. Whatever `distinguishing:` prints after this decides KEEP or CUT.
+
+**Also found:** the assay prints a body's pieces in the order of the in-memory genome instance list. `parse_body` keeps the file's order (`question, answer`), and `print_body` sorts it (`answer, question`). The hash is the same, but the two values print different `regions:` lines (Claude checked this with a throwaway test: `hash` equal, `coding` not equal). P4-07b's snag worked around this in the harness. P4-10b fixes it in the assay. **P4-07b's snag is accepted** as the pointer to this.
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P4-10a** | **Amendment B** | Commit this plan file as it is on disk. Plan text only | `git show --stat HEAD` lists only this plan |
+| **P4-10b** | **Pieces print in a canonical order** | In `joinn-link`'s assay (both derivations and `print_assay`), each region's instances are listed in name order, and pieces are listed in the name order of their first instance. Nothing in the report may depend on the order of instances inside a genome entry. Update the `ask.universe` and `asker.body` expectations in tests to `{answer} {question}`. In `docs/Findings/assay-corpus.md`, add a section *Amendment B* with a new `cargo xtask assay --all` output pasted in full, and the sentence *"Piece order is now canonical (first instance by name), so `lookup` prints `{answer} {question}`; no count changed."* | A test parses `phase52/adversary/asker.body`, and also parses a spelling with the genome entry written `as answer, question` (grants unchanged). It asserts that the two have equal hashes and that their printed reports are identical and contain `regions: body 2 {answer} {question}`. `cargo xtask assay agree` and `cargo xtask assay invariance` still exit 0 (paste their last lines). `cargo xtask assay --all` shows no change except piece order (paste `git diff --word-diff` of the finding's two pastes, or say `identical apart from piece order` and paste both `lookup`/`asker` lines) |
+| **P4-10c** | **The run is compared by what it computes** | In `xtask/src/fns/decoration.rs`, the `run` row's answer becomes the run's **values**: for each description in order, one item `<instance>@<port position> <direction> <value>`, with the value printed canonically; then each far-side refusal as `far <link> <member> <kind>`. No cell hash, label, name, role text or port name enters it. A refusal of the run stays `refused: <reason>`. Every other row is unchanged. Before the check rows, the command prints two **controls** on the run row, using the same value reading. **Label control:** the subject against the subject bound to a fresh store in which `fmt.body`'s regulatory region is `names { fmt "neutral" }` (same hash, inserted as P4-07b does). It must print `control run label-only: same (ok)`. **Input control:** the subject against the subject run with `cli_b` `"4"` instead of `"3"`. It must print `control run input changed: differs (ok)`. If a control prints anything else, the command prints it as `... (FAILED)` and exits 1 after printing every row. `distinguishing:` stays the last line | `cargo xtask decoration`, the whole output pasted. It starts with the two control lines, each ending `(ok)`, and ends with a `distinguishing:` line. The rule is applied in P4-10d, not here |
+| **P4-10d** | **The verdict, read again** | Rewrite `docs/Findings/decoration-check.md`: the §2.8 rule copied verbatim; a section *First reading (P4-08, superseded)* with P4-08's output as it is now, and the sentence *"Superseded by Amendment B: the run row compared cell hashes and labels, not values. With cell hashes masked the two run texts were equal, and a label-only edit changed the subject's text."*; a section *Amendment B reading* with P4-10c's output pasted; the verdict **KEEP** if and only if P4-10c's `distinguishing:` line is exactly `assay`, otherwise **CUT**; then Appendix B's matching C1 text, and the C2 and C3 sections as they are. `decisions.md`: the `P4-adv` row's result becomes `held` for KEEP or stays `fired` for CUT. The backlog's R17 line *"Phase 4: decoration check → …"* matches the verdict | The verdict word matches the rule applied to P4-10c's last line. `git grep -n "P4-adv" -- docs/Findings/decisions.md` and `git grep -n "decoration check →" -- docs` are pasted |
+| — | **Stop B2** | `phase-4-stop-b2.md` (§0.2, including the CI read), push, stop | — |
+
+Dependencies: in order. P4-10c needs nothing from P4-10b, but runs after it so that the verdict is read on the final assay. After Stop B2, chunk C takes the path P4-10d chose.
+
 ### Chunk C, if the verdict is KEEP: declarations, gate 4, freeze
 
 | # | Commit | Delivers | Done when |
@@ -445,7 +466,7 @@ Carried forward and re-run on every commit: every earlier invariant. V16 (touch-
 
 - [ ] **1 · The instrument reads a known sample.** `phase2/calculator.body` prints `H₁: 0`, both loops filled by `roundtrip`. *Opposes* `SwapCell(cli_b, <cli_input_open hash>)`. The control answers `true` when `H₁ ≠ 0`.
 - [ ] **2 · A promise names its partner.** `phase4/loop.universe` prints `H₁: 0`, the ring filled by `calc.cli_a roundtrip`. *Opposes* `SwapBinding(fmt, <fmt_twin hash>)`. The control answers `true` when the report has an `open:` line.
-- [ ] **3 · A body that is two things is named.** `phase52/adversary/asker.body` prints `regions: body 2 {question} {answer}`. *Opposes* `AddWire(question@2, answer@0)`. The control answers `true` when regions is 1.
+- [ ] **3 · A body that is two things is named.** `phase52/adversary/asker.body` prints `regions: body 2 {answer} {question}`. *Opposes* `AddWire(question@2, answer@0)`. The control answers `true` when regions is 1.
 - [ ] **4 · A declaration refuses; an assay doesn't.** `phase4/loop_declared.universe` is admitted. *Opposes* `SwapBinding(fmt, <fmt_twin hash>)`. The control answers `true` when assembly refuses naming `assert H₁ = 0`.
 
 ### 6.1 Conditions for opening Phase 6
@@ -539,4 +560,4 @@ Keep rules 1–45, 47 and 48 exactly as they are. Append:
 
 ---
 
-*JoInn Phase 4 Implementation Plan, Draft 0.1 with Amendment A (26 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 4 Implementation Plan, Draft 0.1 with Amendments A and B (26 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
