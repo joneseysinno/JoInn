@@ -31,6 +31,7 @@ Author: AJ, with Claude · Draft 0.3 · September 24, 2026
 - Chunk B: `Do chunk B of docs/Plans/JoInn Phase 5.2 Implementation Plan.md. Follow AGENTS.md.`
 - Chunk C: `Do chunk C of docs/Plans/JoInn Phase 5.2 Implementation Plan.md. Follow AGENTS.md.`
 - Chunk D: `Do chunk D of docs/Plans/JoInn Phase 5.2 Implementation Plan.md. Follow AGENTS.md.`
+- Chunk E: `Do chunk E of docs/Plans/JoInn Phase 5.2 Implementation Plan.md. Follow AGENTS.md.`
 
 If Cursor runs out of room partway through a chunk, start a new Cursor chat with: `Continue chunk B of docs/Plans/JoInn Phase 5.2 Implementation Plan.md from the first commit not in git log. Follow AGENTS.md.` (Use the right letter.)
 
@@ -436,6 +437,93 @@ Dependencies (chunk D): P52-13a, P52-13b, P52-13c and P52-13d come first, in tha
 
 If something has to be cut, cut P52-14 and carry the adversary forward with a line in `decisions.md`. Never cut P52-02b, P52-03 through P52-06, or P52-10.
 
+### Amendment D (after Stop D, 25 Sep 2026): chunk E
+
+Claude re-ran the tree at `3ffe041` from a fresh clone on Linux (rustc 1.95.0). On an LF checkout every number in `phase-5.2-stop-d.md` reproduced: 183 passed, 0 failed; `gate all` exits 0 with phase 5 at 8/8, 5.1 at 4/4, 5.2 at 3/3; `corpus verify` 35 hashes; `vocab: ok`; `modules: ok`; `agree` ok; `power` 20/20; fmt and clippy clean; the `controls_cross_matrix` output matches the report line for line; the `perf` lines match apart from timings. Claude also cloned with `core.autocrlf=true` (what a Windows machine and the Windows CI runner do) and got the report's exact failure: `6 fail calculator.trace replays`, `1 fail Two hosts, one universe`, `2 fail A refusal is a report`, `3 fail The host knows no ids`, exit 1. The snag was reported honestly and diagnosed correctly.
+
+**Settled here, not reopened:**
+
+- **P52-13b.** The repo copy of Amendment C described the *Once* test on the chain universe (`again`), and Cursor followed it. Claude also ran the separate-body form (`lone`, no link) on `d17e524`: exactly one `Refused { lone, scale }`. The `already_refused` set is accepted: a body that refused keeps its stuck value until the host acts, so skipping it for the rest of one `run()` loses nothing today. It becomes a question when a link can deliver the value that unsticks a body (R57).
+- **Stop C review, item 6, is withdrawn.** Amendment B said `g51_hosts_control` "still answers `false`" on `DropLine(1)`. Cursor's P52-08c snag was right, and the correction Amendment C asked for in `mutate/drop_line.rs` was Claude's error. The comment as it stands now (the control answers true) matches the code; leave it.
+- **The adversary is graded weak but honest.** P52-14 tailed an in-port, so typing refused it before Law 4 or pairing was ever tested. Claude built the attempt the spec asked for and ran it on `d17e524`. It assembles, and it answers. P52-16d commits it.
+
+**AJ's decision (in conversation, 25 Sep):** the three gate 5 controls that find `units` by name are fixed now (P52-16c), not carried to R64.
+
+Prompt for AJ to give Cursor: `Do chunk E of docs/Plans/JoInn Phase 5.2 Implementation Plan.md. Follow AGENTS.md.`
+
+### Chunk E: line endings, the last controls, the real adversary, CI
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P52-16a** | **Amendment D** | Commit this plan file as it is on disk. Plan text only | — |
+| **P52-16b** | **Line endings are pinned** | Add `D:\JoInn\.gitattributes` (repository root) containing exactly `* text=auto eol=lf`. Run `git add --renormalize .`; it must stage nothing except `.gitattributes` (Claude checked: every committed blob is already LF). Add an xtask test `corpus_has_no_carriage_returns` that reads every file under `corpus/` and fails naming the first file that contains `\r` | `git clone -c core.autocrlf=true <repo> <temp>` after the push, then in `<temp>`: `git ls-files --eol` prints no line containing `w/crlf` (paste the count, 0), and `cargo xtask gate all` from `<temp>\joinn` exits 0 with 8/8, 4/4, 3/3 (paste the phase lines and the exit code). Convert `corpus/transcripts/universe.txt` to CRLF in the working tree, run the new test, paste the line naming the file, then restore the file with `git checkout` |
+| **P52-16c** | **The last controls stop naming `units`** | `g5_linked_control`, `g5_revoke_control` and `g5_lenses_control` find their body by its role, never by the string `"units"`: the body at the head of each link, read from the parsed universe's links (never from an alias string or a link id). All three answer `false` on a subject that is not a universe and on any binding, assembly or run error; they answer `true` only when they see their own fact. `g5_revoke_control` answers `true` only when the link to that body is still present **and** the body does not fire (the grant is what is missing); `g5_linked_control` answers `true` when no value reaches the head body. Add all three to the quiet list in `controls_cross_matrix` | `controls_cross_matrix` asserts all nine controls answer `false` on `CorruptHash(calc)`, `CorruptHash(units)`, `RenameLink(e0, e1)` and `RenameAlias(units, meters)`, and asserts that the printed rows for *Something crosses* and *A capability can be revoked* are not equal. Paste the new matrix. `gate all` exits 0 with 8/8, 4/4, 3/3. `git grep -n '"units"' -- xtask/src/fns/g5_linked_control.rs xtask/src/fns/g5_revoke_control.rs xtask/src/fns/g5_lenses_control.rs` prints nothing |
+| **P52-16d** | **The adversary, asked properly** | Keep `lookup.body` and `lookup.universe` as the first attempt (no hash moves). Add `corpus/phase52/adversary/asker.body`: `lookup.body` with the grants line `stdin: question, answer` and nothing else changed. Add `corpus/phase52/adversary/ask.universe` (text below, with `<asker hash>` replaced by the hash `cargo xtask corpus verify` or the test prints). Record both new hashes in `corpus/hashes.txt` and `phase-5.2-hashes.md`. Add test `law4_adversary_asks_by_one` to `crossing.rs` (below). Rewrite `docs/Findings/law-4-adversary.md`: keep the first attempt's section, add *Second attempt* quoting every printed line, and give the verdict text below. Add the R58 example below to `docs/Theory/JoInn Research Backlog.md` under R58 | The test prints and asserts the lines below. The finding quotes them and does not use **fired** as a verdict word. R58 has the example |
+| **P52-16e** | **CI is read, not assumed** | Nothing in code. After the push, read the latest run with PowerShell: `Invoke-RestMethod "https://api.github.com/repos/joneseysinno/JoInn/actions/runs?branch=main&per_page=3"` and, for the newest run, `Invoke-RestMethod <that run's jobs_url>` | Paste, for the newest run: `head_sha`, `status`, `conclusion`, and each job's `name` and `conclusion`. Both `ubuntu-latest` and `windows-latest` jobs must say `success`. If a job fails, paste the failing step's name and continue to the stop report; that is a snag, not a reason to change CI |
+| — | **Stop E** | `phase-5.2-stop-e.md` (§0.2), push, stop | — |
+
+Dependencies: in order. P52-16e needs P52-16b's push to have run CI.
+
+**`ask.universe`** (copy exactly; only `<asker hash>` changes):
+
+```
+universe {
+  codex 1
+  bodies {
+    body:2d5fcc96689b26df93fa86ace7525b4820d1bd7f68b46e9ce75ee77d7e2c9fda as units
+    body:<asker hash> as lookup
+  }
+  links {
+    link ask order none {
+      lookup.question@2 tail
+      units.scale@0 head
+    }
+    link reply order none {
+      units.scale@2 tail
+      lookup.answer@0 head
+    }
+  }
+  lenses {
+    lens function {
+      galaxy app {
+        system s { units lookup }
+      }
+    }
+  }
+}
+```
+
+**`law4_adversary_asks_by_one`.** The question is "multiply by 1": `lookup.question` computes `1 × 1 = 1` and sends it to `units.scale@0`; `units` multiplies it by the factor it is given; the product comes back on `reply` into `lookup.answer@0`, and `lookup.answer` multiplies by 1 again. The test:
+
+1. Store: the usual bodies plus `asker.body`. Print `Law 4:`, `typing:` and `assembly:` lines as `law4_adversary_attempt` does. All three must print `admitted`.
+2. **Two rounds.** Round 0: inject `lookup.question@0 = 1`, `lookup.question@1 = 1`, `units.scale@1 = 12`, `lookup.answer@1 = 1`; one `run()`; print the reports and the value at `describe(lookup, "answer")` port 2. Round 1: the same with factor `5`. Assert each round's reports are exactly `[Fired { lookup, question }, Fired { units, scale }, Fired { lookup, answer }]` and the answers are `12` then `5`.
+3. **One run.** A fresh state; inject both rounds' values, then one `run()`; print the reports. Assert they contain no `Fired { lookup, answer }`.
+
+Claude's run on `d17e524` printed:
+
+```
+Law 4: admitted
+typing: admitted
+assembly: admitted
+round 0 factor 12: [Fired { body: "lookup", instance: "question" }, Fired { body: "units", instance: "scale" }, Fired { body: "lookup", instance: "answer" }] answer 12
+round 1 factor 5: [Fired { body: "lookup", instance: "question" }, Fired { body: "units", instance: "scale" }, Fired { body: "lookup", instance: "answer" }] answer 5
+one run: [Refused { body: "lookup", instance: "answer" }, Refused { body: "units", instance: "scale" }]
+```
+
+If Cursor's output differs, paste Cursor's and write the difference as a snag.
+
+**Verdict text for `law-4-adversary.md`** (copy, then quote the lines above as Cursor printed them):
+
+> **Held.** Law 4 admitted a body that asks another body a question and pairs each answer with its question, using only wires, two hyperedges and declared grants. Pairing held with one question in flight per round. With two questions in one run, both were refused and no answer came back, so the pairing came from the host's rounds, not from the universe.
+>
+> Two things this shows. `units` keeps no memory of its factor, so "the factor you last used" can only be asked by making `units` fire again with 1, which spends a firing: asking is not free. And a universe with two questions in flight needs an order that spans the `ask` and `reply` links, which is R58.
+
+**R58 example** (append under R58 in the backlog):
+
+> *Example (Phase 5.2, `ask.universe`):* `lookup` asks `units` by sending 1 on `ask` and reads the factor back on `reply`. One question per run pairs correctly (12, then 5). Two questions in one run are both refused and nothing comes back. Correlating a reply with its question across two links needs either one question in flight or an order that spans both links.
+
+**Changes to earlier text:** §6.1 condition 1 is met only by P52-16e's pasted CI result. Phase 4 opens after Claude's stop-E review.
+
 ---
 
 ## 5. Test Strategy
@@ -624,4 +712,4 @@ with a universe refusal.
 
 ---
 
-*JoInn Phase 5.2 Implementation Plan, Draft 0.3 with Amendments B and C (25 Sep 2026). It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 5.2 Implementation Plan, Draft 0.3 with Amendments B, C and D (25 Sep 2026). It closes F44–F54 of the Phase 5.1 review and the three problems found on 24 Sep by running the tree on Linux. Every decision is made. Cursor executes. Claude verifies at each stop.*
