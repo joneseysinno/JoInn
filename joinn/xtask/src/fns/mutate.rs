@@ -30,6 +30,8 @@ mod wire_across;
 
 pub(crate) use mutate_fn::mutate;
 pub(crate) use neutral::neutral;
+pub(crate) use reparse::reparse;
+pub(crate) use reprint::reprint;
 
 /// One catalogue mutation. Closed; every non-legacy control opposes one.
 #[allow(dead_code)] // closed catalogue; not every variant is declared by a gate row yet

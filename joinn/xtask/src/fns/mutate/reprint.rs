@@ -5,7 +5,7 @@ use joinn_dna::print_body;
 use joinn_link::print_universe;
 use std::fmt::Write as _;
 
-pub(super) fn reprint(s: &Subject) -> String {
+pub(crate) fn reprint(s: &Subject) -> String {
     match s {
         Subject::Body(body) => {
             let mut out = print_body(&body.coding);

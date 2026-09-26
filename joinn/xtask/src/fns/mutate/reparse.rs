@@ -8,7 +8,7 @@ use joinn_link::parse_universe;
 
 use super::refuse::refuse;
 
-pub(super) fn reparse(kind: &Subject, text: &str) -> Verdict<Subject> {
+pub(crate) fn reparse(kind: &Subject, text: &str) -> Verdict<Subject> {
     match kind {
         Subject::Body(_) => match parse_body(text, &FrameRegistry::phase1()) {
             Verdict::Ok(b) => Verdict::Ok(Subject::Body(b)),
