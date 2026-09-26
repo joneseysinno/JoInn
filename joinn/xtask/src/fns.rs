@@ -13,6 +13,7 @@ mod check_vocab_fixtures;
 mod controls_cross_matrix;
 mod controls_fail_closed;
 mod corpus_artifact;
+mod corpus_has_no_carriage_returns;
 mod corpus_rebless;
 mod corpus_verify;
 mod csr_no_hash;
