@@ -50,7 +50,7 @@ line must name a file under `docs/Findings/`.
 | V110 | The far side is a kind at both hosts; the probe has the words | 5.2 | holds | |
 | V111 | One coding hash, one face; results don't depend on folder order or empty folders | 5.2 | holds | |
 | R59 | Interactive hosts and races | 5.2 | open | |
-| R60 | Every file kind ships its mutants | 5.2 | open | |
+| R60 | Every file kind ships its mutants | 5.2 | decided | Option A (AJ, 26 Sep): new grammar ships its mutants |
 | R61 | Whose budget is it | 5.2 | open | |
 | R62 | One host, both sides | 5.2 | open | |
 | R64 | Legacy gates upgrade | 5.2 | open | |

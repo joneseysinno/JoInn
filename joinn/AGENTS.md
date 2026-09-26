@@ -1,14 +1,14 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 5.2 is a correction phase. Its one idea is DAMAGE MUST
-KEEP THE FORM: a control sees a parsed value and must flip on a mutant that still
-parses. The build plan is docs/Plans/JoInn Phase 5.2 Implementation Plan.md.
-Work one CHUNK at a time (B, C or D), one git commit per numbered step, and stop
-at the chunk's stop report. Every decision is in the plan. Never stop to ask;
-follow the plan's Snags section instead.
+This repo is JoInn. Phase 4 is the assay: a measurement of loops over bodies and
+universes. Its one idea is MEASURE FIRST, KEEP IT ONLY IF IT SEES SOMETHING
+NOTHING ELSE SEES. The build plan is docs/Plans/JoInn Phase 4 Implementation
+Plan.md. Work one CHUNK at a time (A, B or C), one git commit per numbered step,
+and stop at the chunk's stop report. Every decision is in the plan. Never stop to
+ask; follow the plan's Snags section instead.
 
-There is no renderer, no homology, no third linked body and no compiler in this
-phase. Phase 4 runs after it.
+There is no renderer, no holonomy, no universe-level law and no compiler in this
+phase. Phase 6 runs after it.
 
 ## Hard rules
 
@@ -154,6 +154,20 @@ phase. Phase 4 runs after it.
 48. NOTHING DEPENDS ON FOLDER ORDER OR EMPTY FOLDERS. Every directory walk sorts
     its entries by name. A capsule root needs a folder that contains `.rs` files.
     Results must be the same on Windows and Linux, and CI runs both.
+49. AN ASSAY NEVER REFUSES ON ITS OWN. It reports. Only a declaration
+    (`assert H₁ = 0` in a body or universe) refuses, at admission. The gate
+    keeps four checks and names no assay type.
+50. AN ASSAY IS BLIND TO THE REGULATORY REGION, TO ALLELES AND TO LENSES. The
+    invariance harness checks it on every subject. An assay that moves under any
+    of them is inadmissible.
+51. TWO DERIVATIONS, ONE TRUTH. The region derivation and the port derivation
+    agree on every corpus subject, and Euler's identity holds in both. A
+    disagreement is a truth violation, never a test failure.
+52. NEW GRAMMAR SHIPS ITS MUTANTS (R60). No control points at an artifact that
+    uses new grammar until the catalogue has that grammar's mutations, each
+    tested by what the mutant does.
+53. A FILLING NAMES WHAT MADE IT: a frame, or one law by alias, instance and
+    name. Nothing else closes a loop.
 
 ## Definition of done
 

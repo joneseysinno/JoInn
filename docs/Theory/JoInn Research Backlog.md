@@ -276,9 +276,9 @@ May a link carry a value from one frame into another by an embedding (ℤ into �
 
 In canonical prompt order, the CLI can't deliver two values into one port before its partner arrives. Is that a property or a limitation?
 
-## R60 — Every file kind ships its mutants  ·  status: open
+## R60 — Every file kind ships its mutants  ·  status: decided
 
-Should a new file kind be required to come with its mutation catalogue before any control may point at it?
+Option A (AJ, 26 Sep): new grammar ships its mutants. A new file kind, or new grammar in an existing kind, comes with its mutation catalogue before any control may point at it.
 
 ## R61 — Whose budget is it  ·  status: open
 
