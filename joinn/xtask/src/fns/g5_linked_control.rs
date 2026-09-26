@@ -1,14 +1,19 @@
-//! Gate 5 item 1 control: true when units does not fire.
+//! Gate 5 item 1 control: true when no value reaches the head body.
 
+use super::drive_head::drive_head;
+use super::head_role::HeadRole;
 use super::subject::Subject;
-use super::units_after;
 
 pub(crate) fn g5_linked_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
-        return true;
+        return false;
     };
-    match units_after(u) {
-        Ok((n, _)) => n == 0,
-        Err(_) => true,
+    match drive_head(u) {
+        Err(_) => false,
+        Ok(seen) => match seen.role {
+            HeadRole::Absent => true,
+            HeadRole::Split => false,
+            HeadRole::One(_) => !seen.value_reached,
+        },
     }
 }

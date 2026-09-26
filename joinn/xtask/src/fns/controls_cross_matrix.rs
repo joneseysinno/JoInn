@@ -6,11 +6,13 @@ mod tests {
     use crate::fns::parse_subject::parse_subject;
     use crate::fns::subject::Subject;
     use crate::fns::{
-        g5_assemble_control, g5_law4_control, g51_frame_control, g51_tails_control,
-        g52_ids_control, g52_refusal_control, gate_five_items, gate_five_one_items,
-        gate_five_two_items, resolve_named,
+        g5_assemble_control, g5_law4_control, g5_lenses_control, g5_linked_control,
+        g5_revoke_control, g51_frame_control, g51_tails_control, g52_ids_control,
+        g52_refusal_control, gate_five_items, gate_five_one_items, gate_five_two_items,
+        resolve_named,
     };
     use joinn_frame::Verdict;
+    use std::collections::BTreeMap;
     use std::fs;
 
     fn mutations_for(subject: &Subject) -> Vec<Mutation> {
@@ -53,6 +55,7 @@ mod tests {
             gate_five_one_items(),
             gate_five_two_items(),
         ];
+        let mut rows = BTreeMap::new();
         for table in tables {
             for item in table {
                 let path = resolve_named(0, item.name, item.control_artifact)
@@ -69,9 +72,23 @@ mod tests {
                         fired.push(format!("{mutation:?}"));
                     }
                 }
-                println!("{}: {}", item.name, fired.join(", "));
+                let line = fired.join(", ");
+                println!("{}: {}", item.name, line);
+                rows.insert(item.name, line);
             }
         }
+        let crosses = rows
+            .get("Something crosses")
+            .map(String::as_str)
+            .unwrap_or("");
+        let revoked = rows
+            .get("A capability can be revoked")
+            .map(String::as_str)
+            .unwrap_or("");
+        assert_ne!(
+            crosses, revoked,
+            "Something crosses and A capability can be revoked printed the same row"
+        );
 
         let path = resolve_named(0, "universe", "corpus/phase5/universe.universe")
             .unwrap_or_else(|e| panic!("{e}"));
@@ -92,6 +109,9 @@ mod tests {
             ("g51_tails_control", g51_tails_control),
             ("g51_frame_control", g51_frame_control),
             ("g5_law4_control", g5_law4_control),
+            ("g5_linked_control", g5_linked_control),
+            ("g5_revoke_control", g5_revoke_control),
+            ("g5_lenses_control", g5_lenses_control),
         ];
         for mutation in quiet {
             let Verdict::Ok(mutant) = mutate(&universe, &mutation) else {

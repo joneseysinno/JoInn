@@ -1,14 +1,15 @@
-//! Gate 5 item 7 control: true when units does not fire before any revoke.
+//! Gate 5 item 7 control: true when the head's link remains and that body does not fire.
 
+use super::drive_head::drive_head;
+use super::head_role::HeadRole;
 use super::subject::Subject;
-use super::units_after;
 
 pub(crate) fn g5_revoke_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
-        return true;
+        return false;
     };
-    match units_after(u) {
-        Ok((n, _)) => n == 0,
-        Err(_) => true,
+    match drive_head(u) {
+        Err(_) => false,
+        Ok(seen) => matches!(seen.role, HeadRole::One(_)) && !seen.fired,
     }
 }
