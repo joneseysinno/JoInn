@@ -34,6 +34,19 @@ fn main() -> ExitCode {
         },
         "power" => fns::power(),
         "agree" => fns::agree(),
+        "assay" => match args.next() {
+            Some(path) => match fns::assay(&path) {
+                Ok(text) => {
+                    let mut out = io::stdout();
+                    match out.write_all(text.as_bytes()) {
+                        Ok(()) => Ok(()),
+                        Err(e) => Err(e.to_string()),
+                    }
+                }
+                Err(e) => Err(e),
+            },
+            None => Err("usage: cargo xtask assay <path>".into()),
+        },
         "perf" => fns::perf(),
         "floor" => fns::floor(),
         "decisions" => fns::decisions(),
@@ -45,7 +58,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }

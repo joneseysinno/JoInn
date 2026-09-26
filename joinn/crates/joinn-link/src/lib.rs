@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 mod address;
+mod assay;
 mod assemble_universe;
 mod bind;
 mod body_store;
@@ -19,6 +20,7 @@ mod universe;
 mod universe_state;
 
 pub use address::Address;
+pub use assay::{AssayReport, RegionPieces, assay, print_assay};
 pub use assemble_universe::assemble_universe;
 pub use bind::{Bound, bind};
 pub use body_store::BodyStore;
