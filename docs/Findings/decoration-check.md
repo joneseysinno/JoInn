@@ -6,7 +6,7 @@
 
 A check **distinguishes** only if it answers differently on subject and mutant. Refusing both, or admitting both, is not distinguishing (the Phase 5.2 control rule).
 
-## P4-08
+## First reading (P4-08, superseded)
 
 ```
 gate admission: admitted | admitted | same
@@ -20,19 +20,41 @@ require/ensure: none declared | none declared | same
 run: description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_b   label "cli_b"   role cell   port 0 in Text 1 "line" label "line" role input value "3"   port 1 out ℤ 1 "value" label "value" role output value 3 }  || description {   cell 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39   instance sum   label "Sum"   role cell   port 0 in ℤ 1 "a" label "first addend" role input value 2   port 1 in ℤ 1 "b" label "second addend" role input value 3   port 2 out ℤ 1 "result" label "sum" role output value 5 }  || description {   cell 3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11   instance fmt   label "Format"   role cell   port 0 in ℤ 1 "n" label "n" role input value 5   port 1 out Text 1 "text" label "text" role output value "5" }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  | description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_b   label "cli_b"   role cell   port 0 in Text 1 "line" label "line" role input value "3"   port 1 out ℤ 1 "value" label "value" role output value 3 }  || description {   cell 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39   instance sum   label "Sum"   role cell   port 0 in ℤ 1 "a" label "first addend" role input value 2   port 1 in ℤ 1 "b" label "second addend" role input value 3   port 2 out ℤ 1 "result" label "sum" role output value 5 }  || description {   cell fcc1ba589d125d8b490c631510dcec4d86d65a9e1f032ecb8d254b692999b85d   instance fmt   label "Format"   role cell   port 0 in ℤ 1 "n" label "n" role input value 5   port 1 out Text 1 "text" label "text" role output value "5" }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  | differs
 assay: H₁: 0 | H₁: 1 | differs
 distinguishing: run, assay
+```
+
+Superseded by Amendment B: the run row compared cell hashes and labels, not values. With cell hashes masked the two run texts were equal, and a label-only edit changed the subject's text.
+
+## Amendment B reading
+
+```
+control run label-only: same (ok)
+control run input changed: differs (ok)
+gate admission: admitted | admitted | same
+insert: admitted | admitted | same
+bind: admitted | admitted | same
+assemble: admitted | admitted | same
+check_link_types: admitted | admitted | same
+check_law4: admitted | admitted | same
+check_lenses: admitted | admitted | same
+require/ensure: none declared | none declared | same
+run: cli_a@0 in "5", cli_a@1 out 5, cli_b@0 in "3", cli_b@1 out 3, sum@0 in 2, sum@1 in 3, sum@2 out 5, fmt@0 in 5, fmt@1 out "5", cli_a@0 in "5", cli_a@1 out 5 | cli_a@0 in "5", cli_a@1 out 5, cli_b@0 in "3", cli_b@1 out 3, sum@0 in 2, sum@1 in 3, sum@2 out 5, fmt@0 in 5, fmt@1 out "5", cli_a@0 in "5", cli_a@1 out 5 | same
+assay: H₁: 0 | H₁: 1 | differs
+distinguishing: assay
 ```
 
 ## Verdict
 
-Verdict: CUT
+Verdict: KEEP
 
-The `distinguishing:` line is `run, assay`. The rule keeps the assay only when that line is exactly `assay`.
+The `distinguishing:` line is `assay`. The rule keeps the assay only when that line is exactly `assay`.
 
 ## C1
 
-> **Fired.** C1: the check(s) named on the `distinguishing:` line told `loop.universe` from its `fmt_twin` mutant without the assay. The assay found nothing that JoInn could not already see. Per D7 the layer is cut; ∂ and the ∂∂ assembly stay, because the touch-only law (V16) is checked by them.
+> **Held.** C1: the assay distinguished `loop.universe` from its `fmt_twin` mutant, and no other check did, including a run. Every body in the mutant is lawful on its own. What the assay found is a round trip across two bodies whose promise names a different partner. `cli_input` promises to undo `format`, and the ring converts with `format_twin`, a different cell by content. The two formatters behave the same today, so this is a missing promise, not a wrong number. Under Law 1, an operation whose opposition isn't declared is untrue by structure, and the assay is the only instrument in JoInn that sees it across a membrane without running anything.
 
 ```
+control run label-only: same (ok)
+control run input changed: differs (ok)
 gate admission: admitted | admitted | same
 insert: admitted | admitted | same
 bind: admitted | admitted | same
@@ -41,9 +63,9 @@ check_link_types: admitted | admitted | same
 check_law4: admitted | admitted | same
 check_lenses: admitted | admitted | same
 require/ensure: none declared | none declared | same
-run: description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_b   label "cli_b"   role cell   port 0 in Text 1 "line" label "line" role input value "3"   port 1 out ℤ 1 "value" label "value" role output value 3 }  || description {   cell 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39   instance sum   label "Sum"   role cell   port 0 in ℤ 1 "a" label "first addend" role input value 2   port 1 in ℤ 1 "b" label "second addend" role input value 3   port 2 out ℤ 1 "result" label "sum" role output value 5 }  || description {   cell 3b0ab2bca11406a7e3bb3c1c4fd78e95af213f82fe2c1c5c6ffc0d4ec76e9c11   instance fmt   label "Format"   role cell   port 0 in ℤ 1 "n" label "n" role input value 5   port 1 out Text 1 "text" label "text" role output value "5" }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  | description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_b   label "cli_b"   role cell   port 0 in Text 1 "line" label "line" role input value "3"   port 1 out ℤ 1 "value" label "value" role output value 3 }  || description {   cell 6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39   instance sum   label "Sum"   role cell   port 0 in ℤ 1 "a" label "first addend" role input value 2   port 1 in ℤ 1 "b" label "second addend" role input value 3   port 2 out ℤ 1 "result" label "sum" role output value 5 }  || description {   cell fcc1ba589d125d8b490c631510dcec4d86d65a9e1f032ecb8d254b692999b85d   instance fmt   label "Format"   role cell   port 0 in ℤ 1 "n" label "n" role input value 5   port 1 out Text 1 "text" label "text" role output value "5" }  || description {   cell c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e   instance cli_a   label "cli_a"   role cell   port 0 in Text 1 "line" label "line" role input value "5"   port 1 out ℤ 1 "value" label "value" role output value 5 }  | differs
+run: cli_a@0 in "5", cli_a@1 out 5, cli_b@0 in "3", cli_b@1 out 3, sum@0 in 2, sum@1 in 3, sum@2 out 5, fmt@0 in 5, fmt@1 out "5", cli_a@0 in "5", cli_a@1 out 5 | cli_a@0 in "5", cli_a@1 out 5, cli_b@0 in "3", cli_b@1 out 3, sum@0 in 2, sum@1 in 3, sum@2 out 5, fmt@0 in 5, fmt@1 out "5", cli_a@0 in "5", cli_a@1 out 5 | same
 assay: H₁: 0 | H₁: 1 | differs
-distinguishing: run, assay
+distinguishing: assay
 ```
 
 ## C2

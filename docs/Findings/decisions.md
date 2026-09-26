@@ -58,5 +58,5 @@ line must name a file under `docs/Findings/`.
 | R66 | Loops with many frame changes | 4 | open | |
 | R67 | Hyperedges in the assay | 4 | open | |
 | R68 | Promises and allele bodies | 4 | open | |
-| P4-adv | decoration check | 4 | fired | Findings/decoration-check.md |
+| P4-adv | decoration check | 4 | held | Findings/decoration-check.md |
 

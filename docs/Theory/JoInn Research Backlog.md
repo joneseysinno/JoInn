@@ -212,7 +212,7 @@ Remaining detail moves to **R18 (sealing)** and **R13 (naming)**. Unchanged impl
 - Coefficients: the frame supplies the group. What happens when a frame's values aren't an abelian group?
 - **Decoration check:** does it catch anything `require`/`ensure` cannot? Two candidates claimed. If neither survives a real example, cut it — because it's derived, cutting costs an instrument, not a language
 
-Phase 4: decoration check → CUT, see Findings/decoration-check.md
+Phase 4: decoration check → KEEP, see Findings/decoration-check.md
 
 **The test that decides it (Part III §14.1)**
 Build the calculator's complex by hand (~15 blocks). Delete the law `parse(format n) = n` and measure. If the unopposed-cycle count goes 0 → 1 and returns `host → cli_a → sum → host`, the layer is real: it found a missing law from structure alone. If it takes special pleading about orientations and basepoints, keep only "boundary of a boundary is empty" and drop the rest.
