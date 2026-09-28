@@ -12,6 +12,7 @@ mod check_law4;
 mod check_lenses;
 mod check_link_types;
 mod csr;
+mod instance_ports;
 mod membrane;
 mod structural;
 
@@ -29,6 +30,7 @@ pub use check_law4::{check_law4, law4_refusals};
 pub use check_lenses::check_lenses;
 pub use check_link_types::check_link_types;
 pub use csr::{Csr, CsrMember, coding_from_csr, csr_from_universe};
+pub use instance_ports::instance_ports;
 pub use membrane::{BoundaryPort, membrane};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,

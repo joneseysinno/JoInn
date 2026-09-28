@@ -1,11 +1,11 @@
 //! ∂(body): every port no internal wire consumes, with direction and frame.
 
-use joinn_dna::{Body, Cell, Direction, GenomeTarget};
+use joinn_dna::{Body, Cell, Direction};
 use joinn_frame::{FrameRef, Hash, Verdict};
-use joinn_prim::prim_ports;
 use std::collections::{BTreeMap, BTreeSet};
 
 use crate::Address;
+use crate::instance_ports::instance_ports;
 
 /// One port of ∂(body). Address is identity; direction and frame come from the contract.
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -21,51 +21,29 @@ pub struct BoundaryPort {
 /// Every port of every instance that no wire consumes.
 /// A genome entry whose cell is not supplied is refused, never skipped.
 pub fn membrane(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<BTreeSet<BoundaryPort>> {
+    let ports = match instance_ports(body, cells) {
+        Verdict::Ok(ports) => ports,
+        Verdict::Refused(r) => return Verdict::Refused(r),
+    };
     let mut consumed = BTreeSet::new();
     for wire in &body.coding.wires {
         consumed.insert((wire.src_instance.clone(), wire.src_port));
         consumed.insert((wire.dst_instance.clone(), wire.dst_port));
     }
     let mut set = BTreeSet::new();
-    for entry in &body.coding.genome {
-        let ports = match &entry.target {
-            GenomeTarget::Cell(hash) => match cells.get(hash) {
-                Some(cell) => cell.coding.contract.ports.clone(),
-                None => {
-                    let names = if entry.instances.is_empty() {
-                        "(none)".to_owned()
-                    } else {
-                        entry.instances.join(", ")
-                    };
-                    return crate::refuse(format!(
-                        "instance {names} cell {} was not supplied; acceptance is that cell in the cell map",
-                        hash.short_hex()
-                    ));
-                }
-            },
-            GenomeTarget::Prim(name) => match prim_ports(name) {
-                Some(ports) => ports,
-                None => {
-                    return crate::refuse(format!(
-                        "primitive {name} has no port table; acceptance is a floor primitive"
-                    ));
-                }
-            },
-        };
-        for instance in &entry.instances {
-            for port in &ports {
-                if consumed.contains(&(instance.clone(), port.position)) {
-                    continue;
-                }
-                set.insert(BoundaryPort {
-                    address: Address {
-                        instance: instance.clone(),
-                        port: port.position,
-                    },
-                    direction: port.direction,
-                    frame: port.frame,
-                });
+    for (instance, decls) in &ports {
+        for port in decls {
+            if consumed.contains(&(instance.clone(), port.position)) {
+                continue;
             }
+            set.insert(BoundaryPort {
+                address: Address {
+                    instance: instance.clone(),
+                    port: port.position,
+                },
+                direction: port.direction,
+                frame: port.frame,
+            });
         }
     }
     Verdict::Ok(set)
