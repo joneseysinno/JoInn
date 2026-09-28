@@ -27,10 +27,11 @@ fn main() -> ExitCode {
             Some("2.1") => fns::gate_two_one(fns::PHASE_LABELS[3]).and_then(fns::require_full),
             Some("2.2") => fns::gate_two_two(fns::PHASE_LABELS[4]).and_then(fns::require_full),
             Some("3") => fns::gate_three(fns::PHASE_LABELS[5]).and_then(fns::require_full),
-            Some("5") => fns::gate_five(fns::PHASE_LABELS[6]).and_then(fns::require_full),
-            Some("5.1") => fns::gate_five_one(fns::PHASE_LABELS[7]).and_then(fns::require_full),
-            Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[8]).and_then(fns::require_full),
-            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|5|5.1|5.2".into()),
+            Some("4") => fns::gate_four(fns::PHASE_LABELS[6]).and_then(fns::require_full),
+            Some("5") => fns::gate_five(fns::PHASE_LABELS[7]).and_then(fns::require_full),
+            Some("5.1") => fns::gate_five_one(fns::PHASE_LABELS[8]).and_then(fns::require_full),
+            Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[9]).and_then(fns::require_full),
+            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2".into()),
         },
         "power" => fns::power(),
         "agree" => fns::agree(),
@@ -105,7 +106,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }
@@ -243,6 +244,7 @@ mod tests {
             super::fns::gate_three_items(),
         ];
         let non_legacy = [
+            super::fns::gate_four_items(),
             super::fns::gate_five_items(),
             super::fns::gate_five_one_items(),
             super::fns::gate_five_two_items(),

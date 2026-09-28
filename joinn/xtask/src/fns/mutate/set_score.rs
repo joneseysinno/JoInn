@@ -26,7 +26,7 @@ mod tests {
     use joinn_frame::Verdict;
 
     fn lock() -> Subject {
-        let phase = PHASE_LABELS[6];
+        let phase = PHASE_LABELS[7];
         let src = format!("# fixture lock for SetScore\nphase 0: pass\n{phase}: 7/8\n");
         parse_subject("gates.lock", &src).unwrap_or_else(|e| panic!("parse gates.lock: {e}"))
     }
@@ -37,7 +37,7 @@ mod tests {
         let Subject::Lock(orig) = &s else {
             panic!("lock");
         };
-        let phase = PHASE_LABELS[6];
+        let phase = PHASE_LABELS[7];
         let before = orig
             .iter()
             .find(|r| r.phase == phase)

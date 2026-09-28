@@ -3,6 +3,7 @@
 use crate::fns::gate_five_items::gate_five_items;
 use crate::fns::gate_five_one_items::gate_five_one_items;
 use crate::fns::gate_five_two_items::gate_five_two_items;
+use crate::fns::gate_four_items::gate_four_items;
 use crate::fns::mutate::Mutation;
 use crate::fns::subject::Subject;
 use joinn_gate::GateItem;
@@ -10,6 +11,7 @@ use joinn_gate::GateItem;
 /// Refuse when two non-legacy rows declare the same opposition pair.
 pub(crate) fn check_distinct_opposition() -> Result<(), String> {
     let tables: &[&[GateItem<Subject, Mutation>]] = &[
+        gate_four_items(),
         gate_five_items(),
         gate_five_one_items(),
         gate_five_two_items(),
