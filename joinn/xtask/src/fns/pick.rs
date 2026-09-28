@@ -9,6 +9,7 @@ mod plant;
 mod port_slot;
 mod run;
 
+pub(crate) use port_slot::port_slot;
 pub(crate) use run::pick;
 
 use std::collections::BTreeSet;

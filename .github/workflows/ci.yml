@@ -42,6 +42,8 @@ jobs:
         run: cargo xtask assay agree
       - name: pick
         run: cargo xtask pick
+      - name: regrow
+        run: cargo xtask regrow
       - name: power
         run: cargo xtask power
       - name: gate all
