@@ -40,6 +40,8 @@ jobs:
         run: cargo xtask agree
       - name: assay agree
         run: cargo xtask assay agree
+      - name: pick
+        run: cargo xtask pick
       - name: power
         run: cargo xtask power
       - name: gate all

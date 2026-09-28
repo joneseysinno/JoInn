@@ -4,32 +4,23 @@ use joinn_frame::Verdict;
 use joinn_visual::Camera;
 
 use super::read_target::read_target;
-use super::target::target;
-use super::{OFFSCREEN_FORMAT, Picture, Renderer};
+use super::{Picture, Renderer};
 use crate::gpu::Gpu;
 use crate::refuse::refuse;
 
 impl Renderer {
-    /// Draws the tables as last uploaded at the camera's viewport into a fresh
-    /// color target, then reads back the color and ID targets.
+    /// One `frame` at the camera's viewport, then the color and ID targets read
+    /// back row by row.
     pub fn picture(&mut self, gpu: &Gpu, camera: &Camera) -> Verdict<Picture> {
-        if self.format != OFFSCREEN_FORMAT {
-            return refuse(format!(
-                "picture: this renderer writes {:?}; acceptance is a renderer built for {OFFSCREEN_FORMAT:?}",
-                self.format
-            ));
-        }
-        let color = target(gpu.device(), OFFSCREEN_FORMAT, camera.width, camera.height);
-        let view = color.create_view(&wgpu::TextureViewDescriptor::default());
-        if let Verdict::Refused(r) = self.draw(gpu, camera, &view) {
+        if let Verdict::Refused(r) = self.frame(gpu, camera) {
             return Verdict::Refused(r);
         }
-        let color = match read_target(gpu, &color, 4) {
+        let (Some(color), Some(ids)) = (self.color.as_ref(), self.ids.as_ref()) else {
+            return refuse("picture: the frame left no targets; acceptance is a drawn frame");
+        };
+        let color = match read_target(gpu, color, 4) {
             Verdict::Ok(c) => c,
             Verdict::Refused(r) => return Verdict::Refused(r),
-        };
-        let Some(ids) = self.ids.as_ref() else {
-            return refuse("picture: the draw left no ID target; acceptance is a drawn frame");
         };
         read_target(gpu, ids, 16).map(|raw| Picture {
             color,

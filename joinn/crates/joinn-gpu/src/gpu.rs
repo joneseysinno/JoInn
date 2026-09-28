@@ -8,6 +8,7 @@ mod wait;
 pub use open::open;
 pub(crate) use read_buffer::read_buffer;
 pub(crate) use scoped::scoped;
+pub use wait::wait;
 
 use std::sync::{Arc, Mutex};
 

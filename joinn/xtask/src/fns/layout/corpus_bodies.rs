@@ -10,10 +10,10 @@ use crate::fns::walk_cells::walk_cells;
 use crate::fns::workspace_root::workspace_root;
 
 /// A corpus-relative path with the lone body it binds to, or the refusal.
-pub(super) type BoundBody = (String, Verdict<(Body, BTreeMap<Hash, Cell>)>);
+pub(crate) type BoundBody = (String, Verdict<(Body, BTreeMap<Hash, Cell>)>);
 
 /// `counterfeit/` directories are skipped, as `walk_cells` and the assay skip them.
-pub(super) fn corpus_bodies() -> Result<Vec<BoundBody>, String> {
+pub(crate) fn corpus_bodies() -> Result<Vec<BoundBody>, String> {
     let corpus = workspace_root()?.join("corpus");
     let frames = FrameRegistry::phase1();
     let mut cell_paths = Vec::new();

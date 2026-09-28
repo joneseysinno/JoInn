@@ -4,6 +4,7 @@
 mod apply;
 mod bind_groups;
 mod draw;
+mod frame;
 mod layouts;
 mod new;
 mod picture;
@@ -77,6 +78,7 @@ pub struct Renderer {
     rows: [usize; 6],
     groups: [wgpu::BindGroup; 4],
     ids: Option<wgpu::Texture>,
+    color: Option<wgpu::Texture>,
 }
 
 impl Renderer {

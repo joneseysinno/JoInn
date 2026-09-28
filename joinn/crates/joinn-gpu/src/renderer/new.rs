@@ -39,6 +39,7 @@ impl Renderer {
                 rows: [0; 6],
                 groups,
                 ids: None,
+                color: None,
             }
         })
     }

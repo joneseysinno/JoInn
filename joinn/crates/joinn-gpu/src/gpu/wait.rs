@@ -6,7 +6,7 @@ use super::Gpu;
 use crate::refuse::refuse;
 
 /// Blocks until the queue is idle.
-pub(crate) fn wait(gpu: &Gpu) -> Verdict<()> {
+pub fn wait(gpu: &Gpu) -> Verdict<()> {
     match gpu.device.poll(wgpu::PollType::wait_indefinitely()) {
         Ok(_) => Verdict::Ok(()),
         Err(e) => refuse(format!(
