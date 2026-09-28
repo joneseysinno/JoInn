@@ -94,3 +94,7 @@ joinn/corpus/transcripts/universe.txt:6:factor: 12
 ```
 phase2/calculator.body: 1 ok, allele strip ok, 3 n/a (no lens), 4 n/a (body)
 ```
+
+## Size of the claim
+
+C1 shows a missing promise, not a wrong number. A narrower check (does a round-trip law name the cell it is linked to?) would also see this one case. No such check exists in the tree, which is why the rule kept the assay. What the assay adds is finding which loops need a promise at all, as universes grow.

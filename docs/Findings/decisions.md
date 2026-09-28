@@ -49,6 +49,13 @@ line must name a file under `docs/Findings/`.
 | V109 | A host's output doesn't depend on link ids or aliases | 5.2 | holds | |
 | V110 | The far side is a kind at both hosts; the probe has the words | 5.2 | holds | |
 | V111 | One coding hash, one face; results don't depend on folder order or empty folders | 5.2 | holds | |
+| V112 | Ranks are exact over ℚ, and b₀ − b₁ + b₂ = V − E + F on every complex, or the assay refuses | 4 | holds | |
+| V113 | The fast and reference derivations agree on every corpus subject; an injected disagreement is a truth violation | 4 | holds | |
+| V114 | An assay report does not move under a neutral edit, an allele strip, a lens drop, or a rename (apart from the renamed names) | 4 | holds | |
+| V115 | An assay never refuses on its own; only a declaration refuses | 4 | holds | |
+| V116 | Every filling names the law or frame that made it; nothing fills a loop except §2.3's three rules | 4 | holds | |
+| V117 | New grammar ships its mutants before a control points at it (R60) | 4 | holds | |
+| V118 | `joinn-assay` depends on `joinn-frame` alone and names no DNA type | 4 | holds | |
 | R59 | Interactive hosts and races | 5.2 | open | |
 | R60 | Every file kind ships its mutants | 5.2 | decided | Option A (AJ, 26 Sep): new grammar ships its mutants |
 | R61 | Whose budget is it | 5.2 | open | |
@@ -58,5 +65,6 @@ line must name a file under `docs/Findings/`.
 | R66 | Loops with many frame changes | 4 | open | |
 | R67 | Hyperedges in the assay | 4 | open | |
 | R68 | Promises and allele bodies | 4 | open | |
+| R69 | Descriptions of an instance that fires twice in a round | 4 | open | |
 | P4-adv | decoration check | 4 | held | Findings/decoration-check.md |
 

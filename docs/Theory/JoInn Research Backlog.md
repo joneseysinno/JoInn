@@ -39,6 +39,7 @@ Open research topics for the JoInn fractal architecture. Mirrors Section 14 of *
 - Frames, laws (incl. each operation's opposite), witnesses/testimony, contracts
 - Evolution gate: conservative extension / Liskov-style substitution check
 - **New:** does a declaration (R17) add a fifth check to the gate's four?
+- Note: declarations are checked at admission of bodies and universes; the gate keeps four checks (Phase 4)
 - Note: the four layers of truth are exactly the contents of the coding region — the coding region is §9.1 written down and hashed
 
 ## R4 — SPLIT into R4a and R4b
@@ -309,3 +310,7 @@ A link with k + 1 members is a k-block in the theory. Phase 4 prints such a link
 ## R68 — Promises and allele bodies  ·  status: open
 
 The round-trip promise for an allele lives in the cell that carries it. Should an allele body be assayed in its owner's context?
+
+## R69 — Descriptions of an instance that fires twice in a round  ·  status: open
+
+The test host describes each firing after the round ends, so both descriptions carry end-of-round values (in `loop.universe`, `cli_a` prints `in "5"` twice; its first value `"2"` shows only at `sum@0`). Should a host describe at firing time, and would that move any Phase 3 description golden?

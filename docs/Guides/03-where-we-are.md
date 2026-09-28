@@ -21,6 +21,21 @@ You can, from the `joinn` code folder:
 - See a **refusal** when input isn’t a real integer (`"two"`), then a correct `2 + 3 = 5`
 - Run machines that check vocabulary, the floor, agreement, gates, and the corpus (see the code README)
 - A gate control reads the parsed body, universe, or transcript, and flips when that artifact is damaged in a way that still parses
+- Assay a body or universe for loops nothing closes (`cargo xtask assay phase4/loop.universe`), described below
+
+## The assay (Phase 4)
+
+JoInn can now measure the *shape* of a body or a universe without running it. The **assay** (`cargo xtask assay <path>`) counts the loops a value can travel: in from the outside world and back out, or around between bodies through links. For each loop it says whether something closes it — the loop keeps its kind of value (a number stays a number), or a cell carries a law that promises to undo the conversion, naming the cell it pairs with. A loop nothing closes is printed as `open:`.
+
+What it measures:
+
+- **regions** — how many separate pieces a body's inside falls into (a body whose cells aren't wired together is "two things");
+- **islands** — how many separate pieces the whole universe falls into once the outside world is removed;
+- **open loops** (the number printed as `H₁`) — round trips that no frame and no law closes.
+
+What it does not measure: whether a value is *wrong*, how anything is implemented (alleles are invisible to it), labels, names, or lenses. It also never refuses on its own. Only a body or universe that writes `declarations { assert H₁ = 0 }` is refused at admission when a loop is open; without the declaration the same loop is just reported.
+
+C1 shows a missing promise, not a wrong number. A narrower check (does a round-trip law name the cell it is linked to?) would also see this one case. No such check exists in the tree, which is why the rule kept the assay. What the assay adds is finding which loops need a promise at all, as universes grow.
 
 Under the hood, the project has already built the early “truth core”: frames and values, DNA plans, the gate, the floor of sealed basics, the live runner, and the start of **hosts** (a host is proved by there being two — CLI and a test host).
 

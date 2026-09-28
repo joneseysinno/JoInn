@@ -318,6 +318,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 **R-items.** R17, R4b, R3.
 
+> **Note (28 Sep 2026, Phase 4).** The exit gate's "0 to 1" is corrected in `docs/Findings/assay-corpus.md`: `cli_a` and `cli_b` are one cell, so deleting `roundtrip` prints H₁ 0 → 2; swapping one instance for the cell without the law prints 0 → 1. The decoration check kept the layer (`docs/Findings/decoration-check.md`). Declarations are checked at admission of bodies and universes, and the gate keeps four checks.
+
 ---
 
 #### Phase 5 · The link graph

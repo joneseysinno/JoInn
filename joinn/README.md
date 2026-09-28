@@ -24,7 +24,11 @@ You should see a refusal for `"two"`, then `2 + 3 = 5`. Details: [Try the calcul
 
 ## Gates
 
-`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), and gate 5.2 (a control sees a parsed value and flips on a mutant that still parses). There is no gate 4; that phase inserts later. The lock records the score each gate returned. This file does not quote one.
+`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), and gate 5.2 (a control sees a parsed value and flips on a mutant that still parses). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
+
+## The assay
+
+`cargo xtask assay <path>` measures a body or universe without running it. It prints each body's **regions** (connected pieces of its inside), the **islands** of the universe with the outside removed, and every loop a value can travel through the outside or across links, each either `filled:` (closed by a frame, or by one law that names the cell it undoes) or `open:`. It does not see values, alleles, labels, names or lenses, and it never refuses on its own. A body or universe that declares `declarations { assert H₁ = 0 }` is refused at admission when a loop is open. Findings: [assay-corpus.md](../docs/Findings/assay-corpus.md), [decoration-check.md](../docs/Findings/decoration-check.md).
 
 ## Proof commands
 
@@ -37,6 +41,9 @@ You should see a refusal for `"two"`, then `2 + 3 = 5`. Details: [Try the calcul
 | `cargo xtask gate all` | Gate proof suite |
 | `cargo xtask power` | Strength checks for the current freeze |
 | `cargo xtask corpus verify` | Golden corpus still matches |
+| `cargo xtask assay <path>` | Loops in one body or universe, filled or open |
+| `cargo xtask assay agree` | Two derivations of the assay agree on the corpus |
+| `cargo xtask assay invariance` | The assay holds still under labels, alleles, lenses and renames |
 | `cargo xtask perf` | Performance measurements |
 
 Edition 2024, workspace resolver 3, `module.rs` layout (no `mod.rs`).

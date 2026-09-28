@@ -18,6 +18,12 @@ Added at P4-11 (28 September 2026), the same way:
 
 The `declarations` section prints only when it is non-empty, so every earlier body and universe prints and hashes as before.
 
+## Final (P4-14, 28 September 2026)
+
+`cargo xtask corpus verify` → `corpus verify: 43 hash(es) match; cells admitted`.
+
+`git diff 4b47cf6..HEAD -- joinn/corpus/hashes.txt` (from P4-02, the last commit before the Phase 4 corpus, to P4-13) prints only added lines: the two comment lines and the six Phase 4 hashes above. No line was removed or changed, so no Phase 0–5.2 hash moved.
+
 The calculator body hash remains
 `b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde`.
 The format cell hash remains
