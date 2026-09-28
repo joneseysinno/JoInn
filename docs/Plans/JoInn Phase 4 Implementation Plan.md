@@ -2,7 +2,7 @@
 
 **The assay: measure first, keep it only if it sees something nothing else sees · a working plan for Cursor**
 
-Author: AJ, with Claude · Draft 0.1 with Amendments A and B · September 26, 2026
+Author: AJ, with Claude · Draft 0.1 with Amendments A, B and C · September 28, 2026
 
 > **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going.
 
@@ -32,7 +32,7 @@ Author: AJ, with Claude · Draft 0.1 with Amendments A and B · September 26, 20
 - Chunk A: `Do chunk A of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 - Chunk B: `Do chunk B of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 - Amendment B (after Stop B, before chunk C): `Do Amendment B of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
-- Chunk C: `Do chunk C of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
+- Chunk C (after Stop B2; starts with Amendment C's P4-10e): `Do chunk C of docs/Plans/JoInn Phase 4 Implementation Plan.md. Follow AGENTS.md.`
 
 If Cursor runs out of room partway: `Continue chunk A of docs/Plans/JoInn Phase 4 Implementation Plan.md from the first commit not in git log. Follow AGENTS.md.` (Use the right letter.)
 
@@ -420,7 +420,61 @@ Claude re-ran the tree at `355a3f5` from a fresh clone on Linux (rustc 1.95.0). 
 
 Dependencies: in order. P4-10c needs nothing from P4-10b, but runs after it so that the verdict is read on the final assay. After Stop B2, chunk C takes the path P4-10d chose.
 
+### Amendment C (after Stop B2, 28 Sep 2026): read before chunk C, and do P4-10e first
+
+Claude re-ran the tree at `59697b8` from a fresh clone on Linux (rustc 1.95.0). Every number in `phase-4-stop-b2.md` reproduced: 195 passed, 0 failed; `gate all` exits 0 with every phase line as reported; `corpus verify` 42; `vocab: ok`; `modules: ok (enforced 11 crate(s))`; `cargo fmt --check` and `cargo clippy -D warnings` clean; `assay agree` 37 agree, 1 not measured, 2 plants refused; `assay invariance` exits 0 with both phenotype-reader lines; `cargo xtask decoration` prints both controls `(ok)` and ends `distinguishing: assay`. The run row now compares values only (checked in `decoration.rs`). **The verdict is KEEP. Chunk C takes the KEEP path. P4-11x and P4-12x are not done.**
+
+**Also found (Claude, recorded, not fixed; AJ, 28 Sep: record it, fix later).** `run_universe` in `joinn-test-host` describes each firing *after* `state.run()` returns, so every description carries end-of-round values. In `loop.universe`, `cli_a` fires twice in one round (once from the host with `"2"`, once from link `again` with `"5"`), and both descriptions print `cli_a@0 in "5"`. The `"2"` shows only as `sum@0 in 2`. This does not change the verdict: subject and mutant are read the same way, and every value the ring computes still appears. It opens **R69** (§8). No code changes for it in this phase.
+
+**Details for chunk C that the plan left open. They are decided.**
+
+1. **Declarations grammar (P4-11).**
+   - **Source form.** In a `.body` or `.universe` coding region, `declarations { … }` may appear wherever a section may appear. Inside the braces, each line is one sentence. The only sentence is exactly the four tokens `assert`, `H₁`, `=`, `0`, separated by single spaces. Anything else is refused at parse, naming the text and `acceptance is assert H₁ = 0`. The same sentence written twice is refused, naming it and `declared twice`. An empty `declarations { }` parses as empty and prints nothing, so its hash equals the same file without it.
+   - **Canonical print.** `.body` (flat form): directly after the `codex <n>` line, a line `declarations` and then a line `assert H₁ = 0`. `.universe`: directly after `  codex <n>`, the three lines `  declarations {`, `    assert H₁ = 0`, `  }`. Nothing is printed when the list is empty.
+   - **The flat body form ends instance lists on section keywords.** In `joinn-dna/src/body/coding_body.rs`, the genome and grants loops stop on `cell prim grants wires budget lineage read codex`. Add `declarations` to every such list. Otherwise the word is read as an instance name. Test: a body with its `declarations` section directly after `genome`, in both the braced source form and the canonical flat form, parses with the same genome instances as without it.
+   - **`.cell` is unchanged.** The cell's own `declarations` parser and the gate's refusal of a non-empty cell declaration stay as they are.
+2. **The body check (P4-11).** `BodyStore::insert` assays a body that carries a declaration before storing it. It does this as the one-body universe with alias `body`, using the cell map passed to `insert`. The refusal names `assert H₁ = 0`, the printed `H₁`, and every `open:` line. **Added test** (in memory, no corpus file, so the hash count stays 43): `calculator.body` with `declarations { assert H₁ = 0 }` is inserted. The same body with `SwapCell(cli_b, <cli_input_open hash>)` is refused, naming `assert H₁ = 0` and `open: outside →body.cli_b@0→ body →body.sum@2→ outside`. The swapped body without the declaration inserts. Paste the refusal line.
+3. **Expected counts after P4-11.** `corpus verify` → `43 hash(es) match`. `assay agree` → `assay agree: 38 subject(s) agree, 1 not measured; injected disagreements: 2 refused as truth violation (ok)`. `assay invariance` contains `phase4/loop_declared.universe: 1 ok (added name), 2 ok, 3 n/a (one lens), 4 ok`. `cargo xtask assay phase4/loop_declared.universe` prints the same report as `phase4/loop.universe`, because a declaration is not part of the complex. A different number is a snag, pasted next to this one.
+4. **The mutations (P4-12).**
+   - `Mutation::DropDeclaration` takes no argument. On a subject with no declaration it is refused, with the reason `no declaration to drop`. **Body test:** the declared, swapped calculator from item 2 is refused at insert; after `DropDeclaration` it inserts. **Universe test:** §2.10's test (the `fmt_twin` mutant of `loop_declared.universe` is refused; after `DropDeclaration` it assembles).
+   - `Mutation::AddWire(src, dst)` uses the same `instance@port` endpoints as `DropWire`, and goes through reprint and reparse the same way. It is refused when either instance is missing (naming it) or when the wire is already there (naming the wire). It does not check frames. The body check does that. **Claude ran it by hand** (on a copy of `asker.body` with the wire written in) and got exactly this report. The test asserts it byte for byte:
+
+     ```
+     assay body
+     regions: body 1
+     islands: 1
+     loops: 3
+     filled: outside →body.answer@1→ body →body.answer@2→ outside by frame ℤ
+     filled: outside →body.question@0→ body →body.answer@2→ outside by frame ℤ
+     filled: outside →body.question@1→ body →body.answer@2→ outside by frame ℤ
+     not measured: 0
+     H₀: 1
+     H₁: 0
+     H₂: 0
+     euler: V 2 − E 4 + F 3 = 1 = 1 − 0 + 0
+     ```
+5. **Gate 4 (P4-13).** Items in `xtask/src/fns/gate_four_items.rs`, built like `gate_five_two_items.rs`:
+
+   | Item | `control_artifact` | `opposes` |
+   |---|---|---|
+   | 1 · The instrument reads a known sample | `corpus/phase2/calculator.body` | `SwapCell("cli_b", CLI_INPUT_OPEN_HASH)` |
+   | 2 · A promise names its partner | `corpus/phase4/loop.universe` | `SwapBinding("fmt", FMT_TWIN_HASH)` |
+   | 3 · A body that is two things is named | `corpus/phase52/adversary/asker.body` | `AddWire("question@2", "answer@0")` |
+   | 4 · A declaration refuses; an assay doesn't | `corpus/phase4/loop_declared.universe` | `SwapBinding("fmt", FMT_TWIN_HASH)` |
+
+   `CLI_INPUT_OPEN_HASH` is `eb8479f42622365a12d5eb6ae3f35386d782cb9679144582774c49ea83945678` and `FMT_TWIN_HASH` is `f1b05fd17e9eeaa284a03a6ea586073b7b328e377c169628fa347cdec239b0cf`, both as recorded in `hashes.txt`. Each is a `const`, checked by a test against `hashes.txt`. `"phase 4"` goes into `PHASE_LABELS` between `"phase 3"` and `"phase 5"`. `gates.lock` gains `phase 4: 4/4` in the same place, written by the lock writer, never by hand.
+6. **The size of the claim (P4-14).** `Guides/03-where-we-are.md` and a new section *Size of the claim* at the end of `decoration-check.md` both carry this text: *"C1 shows a missing promise, not a wrong number. A narrower check (does a round-trip law name the cell it is linked to?) would also see this one case. No such check exists in the tree, which is why the rule kept the assay. What the assay adds is finding which loops need a promise at all, as universes grow."* The verdict and every earlier section of `decoration-check.md` stay as they are.
+7. **R69 (P4-14).** Backlog: add R69 with the text in §8. `decisions.md`: an R69 row, `open`.
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P4-10e** | **Amendment C** | Commit this plan file as it is on disk. Plan text only | `git show --stat HEAD` lists only this plan |
+
+Then P4-11 to P4-14 as below, with the details above.
+
 ### Chunk C, if the verdict is KEEP: declarations, gate 4, freeze
+
+First commit: P4-10e (Amendment C). Then P4-11 to P4-14 in order.
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
@@ -430,7 +484,7 @@ Dependencies: in order. P4-10c needs nothing from P4-10b, but runs after it so t
 | **P4-14** | **Docs and freeze** | `phase-4-hashes.md` final; README and `Guides/03-where-we-are.md` (the assay exists, what it measures, what it doesn't); `Guides/05-glossary.md` gains *assay, region, island, filling, declaration*; `decisions.md` rows V112–V118 `holds`; R3 note: *"declarations are checked at admission of bodies and universes; the gate keeps four checks (Phase 4)"*; the roadmap's Phase 4 section gains a dated note pointing at `assay-corpus.md` for the 0 → 2 correction | `cargo xtask gate all` from a fresh clone prints the fixtures, then phases 0, 1, 2, 2.1, 2.2, 3 (legacy), 4, 5, 5.1 and 5.2, and exits 0. `corpus verify` 43. `assay agree` and `assay invariance` pass. `phase-4-hashes.md` confirms no Phase 0–5.2 hash moved |
 | — | **Stop C** | `phase-4-stop-c.md` with the CI read (§0.2 item 4), push, stop | — |
 
-### Chunk C, if the verdict is CUT: the cut
+### Chunk C, if the verdict is CUT: the cut (not taken: the verdict is KEEP, Amendment C)
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
@@ -499,6 +553,7 @@ Carried forward and re-run on every commit: every earlier invariant. V16 (touch-
 | **R66** | Loops with many frame changes | Rule 3 judges loops with at most two frame changes. What pairs the conversions on a longer loop, and is the answer independent of the cycle basis? |
 | **R67** | Hyperedges in the assay | A link with k + 1 members is a k-block in the theory. Phase 4 prints such a link `not measured`. What are its faces? |
 | **R68** | Promises and allele bodies | The round-trip promise for an allele lives in the cell that carries it. Should an allele body be assayed in its owner's context? |
+| **R69** | Descriptions of an instance that fires twice in a round | The test host describes each firing after the round ends, so both descriptions carry end-of-round values (in `loop.universe`, `cli_a` prints `in "5"` twice; its first value `"2"` shows only at `sum@0`). Should a host describe at firing time, and would that move any Phase 3 description golden? |
 | **R60** | Every file kind ships its mutants | **Decided 26 Sep:** Option A (§2.10) |
 
 ---
@@ -560,4 +615,4 @@ Keep rules 1–45, 47 and 48 exactly as they are. Append:
 
 ---
 
-*JoInn Phase 4 Implementation Plan, Draft 0.1 with Amendments A and B (26 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
+*JoInn Phase 4 Implementation Plan, Draft 0.1 with Amendments A and B (26 Sep 2026) and C (28 Sep 2026). Opens after Phase 5.2's stop-E review. AJ decided: R60 Option A; kill test first; static detection counts; H¹ tested as written, not extended. Every other decision is made here. Cursor executes. Claude verifies at each stop.*
