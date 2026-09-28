@@ -495,13 +495,14 @@ Dependencies: in order. P6-05 needs P6-03 and P6-04. P6-06 and P6-07 need P6-05.
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
+| **P6-07a** | **Record Amendment A** | This plan file as it now stands on disk (it adds Amendment A and R74). `decisions.md`: row R74 `open`. Backlog: R74 with §8's text. No code | `git show --stat HEAD` lists the plan, `decisions.md` and the backlog, and nothing under `joinn/crates` or `joinn/xtask` |
 | **P6-08** | **The GPU** | joinn-gpu per §2.8: `adapters`, `open`, `Renderer` (`new`, `upload_all`, `apply`, `draw`), the two organelles in WGSL, the ID target, `render_offscreen`, `read_texel`; `cargo xtask adapters` | `cargo xtask adapters` lists at least one adapter (paste the whole output). A joinn-gpu test renders the calculator at 640×360 on every adapter and asserts the ID at each §2.13 probe (scaled to that viewport) decodes to the expected owner. The `min_binding_size` test passes. CI green on both OSes (paste the read) |
 | **P6-09** | **Both pickers name it** | `cargo xtask pick` (§3), with the plant; CI step `pick` after `assay agree` | Whole output pasted. Every line `disagree 0`, calculator lines `owners 13/13`, last line as in §3 |
 | **P6-10** | **Regrow** | `cargo xtask regrow` (§3), with the plant; CI step `regrow` after `pick` | Whole output pasted. Every event line ends `tables equal regrow`; `camera change: rows 0`; `idle tick: nothing to draw`; every adapter `color identical, ids identical`; last line as in §3 |
 | **P6-11** | **Findings** | `docs/Findings/phase-6-pick.md`: the commands, their full output from P6-09 and P6-10, the adapters, and a *Predictions* section marking each of §2.3, §2.4, §2.7's 5 rows and §2.13 `as predicted` or `differs` with both values | Every prediction is marked. The frame-time lines are quoted and labelled *information, not a check* |
 | — | **Stop B** | `phase-6-stop-b.md`, push, stop | — |
 
-Dependencies: P6-08 first. P6-09 and P6-10 need P6-08. P6-11 needs both.
+Dependencies: P6-07a first, then P6-08. P6-09 and P6-10 need P6-08. P6-11 needs both.
 
 ### Chunk C: the window, gate 6, freeze
 
@@ -590,6 +591,22 @@ Tell Claude "window worked", or which step looked wrong.
 
 ---
 
+## Amendment A (Stop A, 28 Sep 2026)
+
+Claude's review of chunk A (fresh clone, Linux) reproduced every number. These four points settle chunk A's snags and tighten chunk B. They are decisions, like the rest of the plan.
+
+**A1 · The edge band (settles P6-06's snag).** §2.5's rule stands exactly as written and as built: a pixel is **edge** only when its distance is strictly between −1/16 and +1/16 of a pixel. A pixel 1/16 px inside a straight edge is **inside**. P6-06's done-when was worded wrong; the tests are right. The 312 edge pixels at 1280×720 match Claude's independent script exactly.
+
+**A2 · What `agree` counts in `cargo xtask pick`.** In P6-09, `agree` is the number of **non-edge** pixels where the GPU and `cpu_pick` name the same owner. For every line, `agree + edge + disagree = width × height`, and a test asserts that sum. The calculator 1280×720 line is predicted to read `agree 921288, edge 312, disagree 0, owners 13/13`. (The P6-06 test line counts edge pixels inside `agree`. That line compares two CPU pickers and stays as it is.)
+
+**A3 · Bodies the scene refuses (settles P6-07's snag).** A body whose instance has an in-port and an out-port at one position is refused by `Scene::grow`, as built. This is R74 (§8), not a bug to fix in Phase 6. In `cargo xtask pick` and `cargo xtask regrow`, a corpus body that binds but that `layout` or `Scene::grow` refuses prints `<rel>: not measured: <reason>` and does not count toward `<m> subject(s)`. Claude's prediction: `phase3/columns_reader.body` and `phase3/environment.body` print `not measured`, and 12 corpus bodies are measured at 1280×720.
+
+**A4 · The delta bound, stated exactly (V121).** A non-refusal presentation clears the `refused` bit on whichever cell holds it, and that cell may not be one the run touched. So the bound for one `apply_run` is `Σ (1 + ports(i))` over the touched instances, **plus 1 if the run cleared a refused bit on an instance it did not touch**. `cargo xtask regrow` prints the bound with this rule. P6-10 adds one event to the check that `cargo xtask regrow` runs after §2.12's script, on a fresh calculator: `cli_b@0` ← `"x"` (refused at the membrane), then `cli_a@0` ← `"2"`. The second event clears `cli_b`'s refused bit without touching `cli_b`, and its line must show the `+1` and end `tables equal regrow`. §2.12's three-event script and its predicted rows are unchanged.
+
+**Accepted as built:** P6-03 (the reverse edge is a Cargo cycle, so Cargo refuses it before `layers` can; the in-tree fixture covers the check); P6-04 (`PortDecl` is joinn-link's name for a port); P6-05 (nine phase 2.1/2.2 reference bodies and `missing_cell.body` print `not measured`, as §7 says they should).
+
+---
+
 ## 8. Open Items
 
 | ID | Topic | Question |
@@ -598,6 +615,7 @@ Tell Claude "window worked", or which step looked wrong.
 | **R71** | Authored layout | Layout is computed from the coding region. When a creator places a cell by hand, where does that live? A regulatory `layout` section (new grammar, so R60 applies), or the creator's own store? |
 | **R72** | The vertex-buffer fallback | `joinn-gpu` refuses an adapter without vertex-stage storage. S2 showed the fallback draws the same IDs, but it rewrites every instance row when a chart moves. When a compatibility-only target matters, is the fallback worth that cost? |
 | **R73** | Text on screen | The glyph organelle, a borrowed shaping crate, and text's inverse (point → character index). Planned with Phase 7's bands |
+| **R74** | One address, one port | Floor primitives number in-ports and out-ports separately (`eq`: in 0, in 1, out 0), while cells number all their ports in one sequence. So `a@0` can name two ports, and the ID target (`PORT_TAG \| position`) can't tell them apart. Phase 6 refuses such a body in the scene (`columns_reader.body`, `environment.body`). Should primitives number ports the way cells do (new grammar, so R60 applies), or should an address carry its direction? |
 | R64 | Legacy gates | Carried forward (AJ, 28 Sep) |
 | R69 | Describe at firing time | Carried forward (AJ, 28 Sep). Phase 6 describes after the run, the same as the test host |
 
@@ -660,4 +678,4 @@ Keep every other rule exactly as it is. Append:
 
 ---
 
-*JoInn Phase 6 Implementation Plan, Draft 0.1 (28 Sep 2026). Opens after Phase 4's stop-C review and the S2 run on AJ's desktop. AJ decided: floats only below the renderer boundary; software adapters in CI; R64 and R69 carried forward. Claude decided, open to AJ's veto before chunk A: no text until Phase 7; computed layout; one body per picture; exact integer picking as the reference; no fallback path. Every other decision is made here. Cursor executes. Claude verifies at each stop. AJ runs the window at Stop C.*
+*JoInn Phase 6 Implementation Plan, Draft 0.1 (28 Sep 2026), with Amendment A from Stop A. Opens after Phase 4's stop-C review and the S2 run on AJ's desktop. AJ decided: floats only below the renderer boundary; software adapters in CI; R64 and R69 carried forward. Claude decided, open to AJ's veto before chunk A: no text until Phase 7; computed layout; one body per picture; exact integer picking as the reference; no fallback path. Every other decision is made here. Cursor executes. Claude verifies at each stop. AJ runs the window at Stop C.*
