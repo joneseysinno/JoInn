@@ -28,6 +28,8 @@ pub struct CsrMember {
 pub struct Csr {
     /// Codex copied from the universe.
     pub codex: u16,
+    /// Declarations copied from the universe.
+    pub declarations: Vec<joinn_dna::Assertion>,
     /// Body aliases in the order bodies were indexed.
     pub body_aliases: Vec<String>,
     /// Body hashes parallel to `body_aliases`.

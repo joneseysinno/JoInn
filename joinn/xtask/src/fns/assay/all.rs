@@ -91,6 +91,7 @@ pub(crate) fn assay_all() -> Result<String, String> {
             Universe {
                 coding: UniverseCoding {
                     codex: 1,
+                    declarations: Vec::new(),
                     bodies: vec![BodyBinding {
                         hash: hash(&body.coding),
                         alias: "body".to_string(),

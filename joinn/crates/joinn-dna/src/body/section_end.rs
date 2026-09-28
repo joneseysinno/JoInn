@@ -12,6 +12,7 @@ impl<'a> BodyParser<'a> {
             self.peek_ident(),
             Some("budget")
                 | Some("codex")
+                | Some("declarations")
                 | Some("genome")
                 | Some("grants")
                 | Some("lineage")

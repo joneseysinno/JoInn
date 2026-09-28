@@ -65,6 +65,7 @@ pub(crate) fn edit_one(subject: &Subject, store: &BodyStore) -> Result<EditOne, 
     let wrap = |body: &joinn_dna::Body| Universe {
         coding: UniverseCoding {
             codex: 1,
+            declarations: Vec::new(),
             bodies: vec![BodyBinding {
                 hash: hash(&body.coding),
                 alias: "body".to_string(),

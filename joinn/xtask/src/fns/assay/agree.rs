@@ -109,6 +109,7 @@ pub(crate) fn assay_agree() -> Result<String, String> {
             Universe {
                 coding: UniverseCoding {
                     codex: 1,
+                    declarations: Vec::new(),
                     bodies: vec![BodyBinding {
                         hash: id,
                         alias: "body".to_string(),

@@ -4,6 +4,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod assertion;
 pub mod body;
 pub mod formula;
 pub mod hash;
@@ -11,6 +12,7 @@ pub mod model;
 pub mod parse;
 pub mod print;
 
+pub use assertion::{Assertion, parse_assertions};
 pub use body::{
     Body, BodyCoding, BodyRegulatory, GenomeEntry, GenomeTarget, Wire, check_body, parse_body,
     print_body,

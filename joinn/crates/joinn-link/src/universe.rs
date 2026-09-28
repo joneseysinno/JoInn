@@ -8,6 +8,7 @@ pub use hash_universe::hash_universe;
 pub use parse_universe::parse_universe;
 pub use print_universe::print_universe;
 
+use joinn_dna::Assertion;
 use joinn_frame::Hash;
 use std::collections::BTreeMap;
 
@@ -96,6 +97,8 @@ pub struct Lens {
 pub struct UniverseCoding {
     /// Codex. Phase 5 is 1.
     pub codex: u16,
+    /// Declared sentences. Omitted from print when empty.
+    pub declarations: Vec<Assertion>,
     /// Body bindings.
     pub bodies: Vec<BodyBinding>,
     /// Links.

@@ -3,6 +3,7 @@
 
 #![allow(clippy::result_large_err)]
 
+use joinn_dna::{Assertion, parse_assertions};
 use joinn_frame::{CheckId, Hash, Refusal, Subject, Verdict, nfc};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -26,6 +27,7 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
         return Verdict::Refused(p.refuse("expected { after universe"));
     }
     let mut codex = 1u16;
+    let mut declarations = Vec::new();
     let mut bodies = Vec::new();
     let mut links = Vec::new();
     let mut cross_wires = Vec::new();
@@ -48,6 +50,10 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
                     Err(r) => return Verdict::Refused(r),
                 }
             }
+            Some("declarations") => match parse_declarations(&mut p) {
+                Verdict::Ok(d) => declarations = d,
+                Verdict::Refused(r) => return Verdict::Refused(r),
+            },
             Some("bodies") => match parse_bodies(&mut p) {
                 Verdict::Ok(b) => bodies = b,
                 Verdict::Refused(r) => return Verdict::Refused(r),
@@ -135,6 +141,7 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
     }
     let coding = UniverseCoding {
         codex,
+        declarations,
         bodies,
         links,
         cross_wires,
@@ -143,6 +150,21 @@ pub fn parse_universe(src: &str) -> Verdict<Universe> {
     };
     let regulatory = parse_regulatory(rest);
     Verdict::Ok(Universe { coding, regulatory })
+}
+
+fn parse_declarations(p: &mut Cursor<'_>) -> Verdict<Vec<Assertion>> {
+    p.take_ident();
+    p.skip();
+    if !p.take_char('{') {
+        return Verdict::Refused(p.refuse("expected { after declarations"));
+    }
+    let Some(end) = p.rest().find('}') else {
+        return Verdict::Refused(p.refuse("unclosed declarations section"));
+    };
+    let text = &p.rest()[..end];
+    let parsed = parse_assertions(text);
+    p.i += end + 1;
+    parsed
 }
 
 fn parse_bodies(p: &mut Cursor<'_>) -> Verdict<Vec<BodyBinding>> {

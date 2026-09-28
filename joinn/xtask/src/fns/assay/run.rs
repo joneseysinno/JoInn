@@ -90,6 +90,7 @@ pub(crate) fn assay(path: &str) -> Result<String, String> {
         Universe {
             coding: UniverseCoding {
                 codex: 1,
+                declarations: Vec::new(),
                 bodies: vec![BodyBinding {
                     hash: id,
                     alias: "body".to_string(),
@@ -130,12 +131,13 @@ mod tests {
     use crate::fns::subject::Subject;
     use crate::fns::walk_cells::walk_cells;
     use crate::fns::workspace_root::workspace_root;
-    use joinn_dna::{hash, parse_body, parse_cell};
+    use joinn_dna::{Assertion, hash, parse_body, parse_cell};
     use joinn_frame::{FrameRegistry, Hash, Verdict};
     use joinn_link::assay as derive;
     use joinn_link::assay_reference;
     use joinn_link::{
-        BodyBinding, BodyStore, Universe, UniverseCoding, UniverseRegulatory, bind, print_assay,
+        BodyBinding, BodyStore, Universe, UniverseCoding, UniverseRegulatory, assemble_universe,
+        bind, print_assay,
     };
     use std::collections::BTreeMap;
     use std::fs;
@@ -240,6 +242,7 @@ euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
         Universe {
             coding: UniverseCoding {
                 codex: 1,
+                declarations: Vec::new(),
                 bodies: vec![BodyBinding {
                     hash: hash(&body.coding),
                     alias: "body".to_string(),
@@ -471,6 +474,125 @@ euler: V 2 − E 3 + F 2 = 1 = 1 − 0 + 0
                 print_assay(&fast),
                 print_assay(&reference)
             );
+        }
+    }
+
+    fn assemble(store: &BodyStore, subject: &Subject) -> Verdict<()> {
+        let Subject::Universe(universe) = subject else {
+            panic!("universe");
+        };
+        let bound = match bind(universe, store) {
+            Verdict::Ok(bound) => bound,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        assemble_universe(universe, &bound)
+    }
+
+    #[test]
+    fn a_universe_declaration_refuses_and_an_assay_does_not() {
+        let (cells, mut store) = corpus();
+        let twin_hex = hex_body("phase4/fmt_twin.body");
+        let twin_static: &'static str = Box::leak(twin_hex.into_boxed_str());
+
+        let declared = read_subject("phase4/loop_declared.universe");
+        let plain = read_subject("phase4/loop.universe");
+        match assemble(&store, &declared) {
+            Verdict::Ok(()) => eprintln!("phase4/loop_declared.universe: assemble admitted"),
+            Verdict::Refused(r) => panic!("loop_declared must assemble: {}", r.reason),
+        }
+        assert_eq!(
+            printed(&mut store, &cells, &declared),
+            printed(&mut store, &cells, &plain),
+            "a declaration is not part of the complex"
+        );
+
+        let declared_twin = match mutate(&declared, &Mutation::SwapBinding("fmt", twin_static)) {
+            Verdict::Ok(s) => s,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let twin_report = printed(&mut store, &cells, &declared_twin);
+        let open: Vec<&str> = twin_report
+            .lines()
+            .filter(|l| l.starts_with("open: "))
+            .collect();
+        assert_eq!(open.len(), 1, "{twin_report}");
+        match assemble(&store, &declared_twin) {
+            Verdict::Refused(r) => {
+                eprintln!(
+                    "phase4/loop_declared.universe SwapBinding(fmt, fmt_twin): refused: {}",
+                    r.reason
+                );
+                assert!(r.reason.contains("assert H₁ = 0"), "{}", r.reason);
+                assert!(r.reason.contains("H₁: 1"), "{}", r.reason);
+                for line in &open {
+                    assert!(r.reason.contains(line), "{line} not in {}", r.reason);
+                }
+            }
+            Verdict::Ok(()) => panic!("the declared fmt_twin mutant must be refused"),
+        }
+
+        let plain_twin = match mutate(&plain, &Mutation::SwapBinding("fmt", twin_static)) {
+            Verdict::Ok(s) => s,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        match assemble(&store, &plain_twin) {
+            Verdict::Ok(()) => {
+                eprintln!("phase4/loop.universe SwapBinding(fmt, fmt_twin): assemble admitted")
+            }
+            Verdict::Refused(r) => panic!("an assay alone never refuses: {}", r.reason),
+        }
+    }
+
+    #[test]
+    fn a_body_declaration_refuses_at_insert() {
+        let (cells, _) = corpus();
+        let open_hex = hex_cell("phase4/cli_input_open.cell");
+        let open_static: &'static str = Box::leak(open_hex.into_boxed_str());
+        let Subject::Body(mut calc) = read_subject("phase2/calculator.body") else {
+            panic!("body");
+        };
+        calc.coding.declarations = vec![Assertion::H1Zero];
+        let declared = Subject::Body(calc);
+        let Subject::Body(declared_body) = &declared else {
+            panic!("body");
+        };
+        match BodyStore::new().insert(declared_body.clone(), cells.clone(), "declared calculator") {
+            Verdict::Ok(_) => eprintln!("calculator.body + assert H₁ = 0: insert admitted"),
+            Verdict::Refused(r) => panic!("declared calculator must insert: {}", r.reason),
+        }
+
+        let swapped = match mutate(&declared, &Mutation::SwapCell("cli_b", open_static)) {
+            Verdict::Ok(s) => s,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let Subject::Body(mut swapped_body) = swapped else {
+            panic!("body");
+        };
+        assert_eq!(swapped_body.coding.declarations, vec![Assertion::H1Zero]);
+        match BodyStore::new().insert(swapped_body.clone(), cells.clone(), "declared swap") {
+            Verdict::Refused(r) => {
+                eprintln!(
+                    "calculator.body + assert H₁ = 0, SwapCell(cli_b, cli_input_open): refused: {}",
+                    r.reason
+                );
+                assert!(r.reason.contains("assert H₁ = 0"), "{}", r.reason);
+                assert!(r.reason.contains("H₁: 1"), "{}", r.reason);
+                assert!(
+                    r.reason
+                        .contains("open: outside →body.cli_b@0→ body →body.sum@2→ outside"),
+                    "{}",
+                    r.reason
+                );
+            }
+            Verdict::Ok(_) => panic!("the declared swap must be refused at insert"),
+        }
+
+        swapped_body.coding.declarations.clear();
+        match BodyStore::new().insert(swapped_body, cells, "undeclared swap") {
+            Verdict::Ok(_) => {
+                eprintln!("SwapCell(cli_b, cli_input_open) without declaration: insert admitted")
+            }
+            Verdict::Refused(r) => panic!("an assay alone never refuses: {}", r.reason),
         }
     }
 

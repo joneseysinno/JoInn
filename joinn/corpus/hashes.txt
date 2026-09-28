@@ -57,3 +57,5 @@ format_twin fcc1ba589d125d8b490c631510dcec4d86d65a9e1f032ecb8d254b692999b85d
 fmt 5ed25b02b183bdb22709917bd7a5bb19d2bbf6e31d83ba3617a0ad3b05defed0
 fmt_twin f1b05fd17e9eeaa284a03a6ea586073b7b328e377c169628fa347cdec239b0cf
 loop.universe bf5f0c4c7a9690a31a86193e791b31e02480ae76e167d535b551f1db12fc2ace
+# Phase 4, P4-11. loop.universe with declarations { assert H₁ = 0 }.
+loop_declared.universe bd054c47fb60263b1d9d6142d86347e7dde0375ccf82bbd3159a0ad17e867e15

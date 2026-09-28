@@ -5,6 +5,7 @@
 mod check_body;
 mod close_section;
 mod coding_body;
+mod declarations_section;
 mod expect;
 mod hex_hash;
 mod ident;
@@ -25,6 +26,7 @@ pub use check_body::check_body;
 pub use parse_body::parse_body;
 pub use print_body::print_body;
 
+use crate::assertion::Assertion;
 use joinn_frame::{CheckId, Hash, Refusal, Subject};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -64,6 +66,8 @@ pub struct Wire {
 pub struct BodyCoding {
     /// Canonical-form version. Phase 2 is 1.
     pub codex: u16,
+    /// Declared sentences. Omitted from print when empty.
+    pub declarations: Vec<Assertion>,
     /// Cells in this body.
     pub genome: Vec<GenomeEntry>,
     /// Capability name → instance names, in grant order.
@@ -319,6 +323,70 @@ regulatory {{ names {{ cli_a left cli_b right }} }}
                 );
             }
             Verdict::Ok(()) => panic!("wire to missing port must refuse"),
+        }
+    }
+
+    #[test]
+    fn declarations_after_genome_keep_the_genome() {
+        let plain = format!(
+            "body {{ codex 1 genome {{ cell:{SUM} as sum cell:{CLI} as cli_a, cli_b }} grants {{ stdin cli_a cli_b }} wires {{ cli_a@1 -> sum@0 cli_b@1 -> sum@1 }} budget {{ steps 100000 }} lineage none }}\n"
+        );
+        let braced = format!(
+            "body {{\n  codex 1\n  genome {{ cell:{SUM} as sum cell:{CLI} as cli_a, cli_b }}\n  declarations {{\n    assert H₁ = 0\n  }}\n  grants {{ stdin cli_a cli_b }}\n  wires {{ cli_a@1 -> sum@0 cli_b@1 -> sum@1 }}\n  budget {{ steps 100000 }}\n  lineage none\n}}\n"
+        );
+        let flat = format!(
+            "budget\nsteps 100000\ncodex 1\ngenome\ncell:{SUM} as sum\ncell:{CLI} as cli_a, cli_b\ndeclarations\nassert H₁ = 0\ngrants\nstdin cli_a cli_b\nlineage none\nwires\ncli_a@1 -> sum@0\ncli_b@1 -> sum@1\n"
+        );
+        let base = parse_ok(&plain);
+        for src in [&braced, &flat] {
+            let body = parse_ok(src);
+            assert_eq!(body.coding.genome, base.coding.genome, "{src}");
+            assert_eq!(body.coding.grants, base.coding.grants, "{src}");
+            assert_eq!(body.coding.declarations, vec![Assertion::H1Zero], "{src}");
+        }
+        let printed = print_body(&parse_ok(&braced).coding);
+        assert!(
+            printed.contains("codex 1\ndeclarations\nassert H₁ = 0\ngenome\n"),
+            "{printed}"
+        );
+        assert_eq!(print_body(&parse_ok(&printed).coding), printed);
+        assert_ne!(
+            crate::hash::hash(&parse_ok(&braced).coding),
+            crate::hash::hash(&base.coding)
+        );
+    }
+
+    #[test]
+    fn an_empty_declarations_section_prints_nothing() {
+        let plain = format!(
+            "body {{ codex 1 genome {{ cell:{SUM} as sum }} grants {{ }} wires {{ }} budget {{ steps 1 }} lineage none }}\n"
+        );
+        let empty = format!(
+            "body {{ codex 1 declarations {{ }} genome {{ cell:{SUM} as sum }} grants {{ }} wires {{ }} budget {{ steps 1 }} lineage none }}\n"
+        );
+        assert_eq!(
+            print_body(&parse_ok(&plain).coding),
+            print_body(&parse_ok(&empty).coding)
+        );
+        assert!(!print_body(&parse_ok(&empty).coding).contains("declarations"));
+    }
+
+    #[test]
+    fn another_declaration_is_refused_at_parse() {
+        let src = format!(
+            "body {{ codex 1 declarations {{ assert H₂ = 0 }} genome {{ cell:{SUM} as sum }} grants {{ }} wires {{ }} budget {{ steps 1 }} lineage none }}\n"
+        );
+        match parse_body(&src, &frames()) {
+            Verdict::Refused(r) => {
+                eprintln!("{}", r.reason);
+                assert!(r.reason.contains("assert H₂ = 0"), "{}", r.reason);
+                assert!(
+                    r.reason.contains("acceptance is assert H₁ = 0"),
+                    "{}",
+                    r.reason
+                );
+            }
+            Verdict::Ok(_) => panic!("assert H₂ = 0 must be refused at parse"),
         }
     }
 

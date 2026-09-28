@@ -34,6 +34,7 @@ pub fn coding_from_csr(csr: &Csr) -> UniverseCoding {
     }
     UniverseCoding {
         codex: csr.codex,
+        declarations: csr.declarations.clone(),
         bodies,
         links,
         cross_wires: Vec::new(),

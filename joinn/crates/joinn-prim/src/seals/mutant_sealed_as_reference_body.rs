@@ -8,6 +8,7 @@ pub fn mutant_sealed_as_reference_body() -> Body {
     Body {
         coding: joinn_dna::BodyCoding {
             codex: 1,
+            declarations: Vec::new(),
             genome: vec![joinn_dna::GenomeEntry {
                 target: joinn_dna::GenomeTarget::Prim("add@ℤ".into()),
                 instances: vec!["x".into()],

@@ -1,11 +1,13 @@
 //! Fast derivation: regions, links, and the three filling rules.
 
 mod assay_run;
+mod check_declarations;
 mod print_assay;
 mod reference;
 mod roundtrip;
 
 pub use assay_run::assay;
+pub(crate) use check_declarations::check_declarations;
 pub use print_assay::print_assay;
 pub use reference::assay_reference;
 

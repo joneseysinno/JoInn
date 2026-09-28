@@ -10,6 +10,16 @@ pub fn print_universe(coding: &UniverseCoding) -> String {
     let mut out = String::new();
     let _ = writeln!(out, "universe {{");
     let _ = writeln!(out, "  codex {}", coding.codex);
+    if !coding.declarations.is_empty() {
+        let mut declarations = coding.declarations.clone();
+        declarations.sort();
+        declarations.dedup();
+        let _ = writeln!(out, "  declarations {{");
+        for d in declarations {
+            let _ = writeln!(out, "    {}", d.sentence());
+        }
+        let _ = writeln!(out, "  }}");
+    }
     let _ = writeln!(out, "  bodies {{");
     let mut bodies = coding.bodies.clone();
     bodies.sort_by(|a, b| a.alias.cmp(&b.alias));

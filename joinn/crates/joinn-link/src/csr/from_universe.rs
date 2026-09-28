@@ -51,6 +51,7 @@ pub fn csr_from_universe(coding: &UniverseCoding) -> Csr {
     link_offsets.push(members.len() as u32);
     Csr {
         codex: coding.codex,
+        declarations: coding.declarations.clone(),
         body_aliases,
         body_hashes,
         instances,

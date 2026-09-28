@@ -6,11 +6,13 @@ use joinn_dna::Body;
 use joinn_frame::{CheckId, Refusal, Verdict};
 use std::collections::BTreeMap;
 
+use crate::assay::check_declarations;
 use crate::bind::Bound;
 use crate::membrane::membrane;
 use crate::universe::{Mark, Universe};
 
-/// Assemble a universe: every link member must lie on a membrane.
+/// Assemble a universe: every link member must lie on a membrane. Then each
+/// declaration the universe carries is checked against its assay.
 pub fn assemble_universe(universe: &Universe, bound: &Bound) -> Verdict<()> {
     let mut dimension = BTreeMap::new();
     let mut boundaries = BTreeMap::new();
@@ -87,7 +89,7 @@ pub fn assemble_universe(universe: &Universe, bound: &Bound) -> Verdict<()> {
 
     let complex = Complex::from_parts(dimension, boundaries);
     match complex.assemble() {
-        Verdict::Ok(()) => Verdict::Ok(()),
+        Verdict::Ok(()) => check_declarations(&universe.coding.declarations, universe, bound),
         Verdict::Refused(r) => Verdict::Refused(translate_refusal(r, &port_of, bound)),
     }
 }

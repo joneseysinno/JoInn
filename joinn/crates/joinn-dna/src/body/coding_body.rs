@@ -9,6 +9,7 @@ use crate::body::{BodyCoding, BodyParser, GenomeEntry, GenomeTarget, Wire};
 impl<'a> BodyParser<'a> {
     pub(in crate::body) fn coding_body(&mut self) -> Verdict<BodyCoding> {
         let mut codex = 1u16;
+        let mut declarations = Vec::new();
         let mut genome: Vec<GenomeEntry> = Vec::new();
         let mut grants = BTreeMap::new();
         let mut reads = BTreeSet::new();
@@ -26,6 +27,13 @@ impl<'a> BodyParser<'a> {
                     match self.number_u32() {
                         Ok(n) => codex = n as u16,
                         Err(r) => return Verdict::Refused(r),
+                    }
+                }
+                Some("declarations") => {
+                    self.ident();
+                    match self.declarations_section() {
+                        Verdict::Ok(d) => declarations = d,
+                        Verdict::Refused(r) => return Verdict::Refused(r),
                     }
                 }
                 Some("budget") => {
@@ -80,7 +88,8 @@ impl<'a> BodyParser<'a> {
                                 match self.peek_ident() {
                                     Some("cell") | Some("prim") | Some("grants")
                                     | Some("wires") | Some("budget") | Some("lineage")
-                                    | Some("read") | Some("codex") | None => {
+                                    | Some("read") | Some("codex") | Some("declarations")
+                                    | None => {
                                         break;
                                     }
                                     Some(_) => instances.push(self.ident()),
@@ -114,7 +123,8 @@ impl<'a> BodyParser<'a> {
                                 match self.peek_ident() {
                                     Some("cell") | Some("prim") | Some("grants")
                                     | Some("wires") | Some("budget") | Some("lineage")
-                                    | Some("read") | Some("codex") | None => {
+                                    | Some("read") | Some("codex") | Some("declarations")
+                                    | None => {
                                         break;
                                     }
                                     Some(_) => instances.push(self.ident()),
@@ -149,6 +159,7 @@ impl<'a> BodyParser<'a> {
                                 | Some("codex")
                                 | Some("genome")
                                 | Some("read")
+                                | Some("declarations")
                         ) {
                             break;
                         }
@@ -170,7 +181,8 @@ impl<'a> BodyParser<'a> {
                                         && id != "genome"
                                         && id != "codex"
                                         && id != "budget"
-                                        && id != "read" =>
+                                        && id != "read"
+                                        && id != "declarations" =>
                                 {
                                     insts.push(self.ident());
                                 }
@@ -196,7 +208,8 @@ impl<'a> BodyParser<'a> {
                                     && name != "genome"
                                     && name != "codex"
                                     && name != "budget"
-                                    && name != "grants" =>
+                                    && name != "grants"
+                                    && name != "declarations" =>
                             {
                                 reads.insert(self.ident());
                             }
@@ -223,6 +236,7 @@ impl<'a> BodyParser<'a> {
                                 | Some("codex")
                                 | Some("genome")
                                 | Some("grants")
+                                | Some("declarations")
                         ) {
                             break;
                         }
@@ -285,6 +299,7 @@ impl<'a> BodyParser<'a> {
         }
         Verdict::Ok(BodyCoding {
             codex,
+            declarations,
             genome,
             grants,
             reads,

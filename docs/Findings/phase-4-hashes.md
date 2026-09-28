@@ -12,6 +12,12 @@ New artifacts, hashed at P4-03 (a cell with `joinn.cell.v1`, a body with `joinn.
 - `corpus/phase4/fmt_twin.body` — `f1b05fd17e9eeaa284a03a6ea586073b7b328e377c169628fa347cdec239b0cf`
 - `corpus/phase4/loop.universe` — `bf5f0c4c7a9690a31a86193e791b31e02480ae76e167d535b551f1db12fc2ace`
 
+Added at P4-11 (28 September 2026), the same way:
+
+- `corpus/phase4/loop_declared.universe` — `bd054c47fb60263b1d9d6142d86347e7dde0375ccf82bbd3159a0ad17e867e15`
+
+The `declarations` section prints only when it is non-empty, so every earlier body and universe prints and hashes as before.
+
 The calculator body hash remains
 `b55fba1eff65942099f6daf84b8bc47d605be05f637d805d260d3fcfd8c3ebde`.
 The format cell hash remains

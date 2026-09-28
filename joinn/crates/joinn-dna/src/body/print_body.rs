@@ -13,6 +13,15 @@ pub fn print_body(coding: &BodyCoding) -> String {
     let _ = writeln!(out, "budget");
     let _ = writeln!(out, "steps {}", coding.budget_steps);
     let _ = writeln!(out, "codex {}", coding.codex);
+    if !coding.declarations.is_empty() {
+        let mut declarations = coding.declarations.clone();
+        declarations.sort();
+        declarations.dedup();
+        let _ = writeln!(out, "declarations");
+        for d in declarations {
+            let _ = writeln!(out, "{}", d.sentence());
+        }
+    }
     let _ = writeln!(out, "genome");
     let mut genome = coding.genome.clone();
     for g in &mut genome {
