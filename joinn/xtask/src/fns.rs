@@ -1,5 +1,6 @@
 //! All xtask command and helper functions.
 
+mod adapters;
 mod admit_corpus_cells;
 mod admit_lineage;
 mod admit_sum_turn;
@@ -205,6 +206,7 @@ mod workspace_root;
 mod write_lock;
 mod xtask_writes_findings;
 
+pub(crate) use adapters::adapters;
 pub(crate) use admit_corpus_cells::admit_corpus_cells;
 pub(crate) use admit_lineage::admit_lineage;
 pub(crate) use admit_sum_turn::admit_sum_turn;
