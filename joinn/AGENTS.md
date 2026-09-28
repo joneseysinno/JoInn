@@ -1,21 +1,23 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 4 is the assay: a measurement of loops over bodies and
-universes. Its one idea is MEASURE FIRST, KEEP IT ONLY IF IT SEES SOMETHING
-NOTHING ELSE SEES. The build plan is docs/Plans/JoInn Phase 4 Implementation
+This repo is JoInn. Phase 6 is Visual Host I: JoInn draws one body, and every
+pixel knows who owns it. Its one idea is THE PICTURE IS THE TABLES, AND TWO
+PICKERS AGREE. The build plan is docs/Plans/JoInn Phase 6 Implementation
 Plan.md. Work one CHUNK at a time (A, B or C), one git commit per numbered step,
 and stop at the chunk's stop report. Every decision is in the plan. Never stop to
 ask; follow the plan's Snags section instead.
 
-There is no renderer, no holonomy, no universe-level law and no compiler in this
-phase. Phase 6 runs after it.
+There is no text on screen, no zoom, no second body in a picture, no
+accessibility tree and no compiler in this phase. Phase 7 runs after it.
 
 ## Hard rules
 
 1. A refusal is a VALUE (`Verdict::Refused`), never a Rust `Err` and never a
    panic. `Result` is for host errors only: IO, malformed input, bugs.
 2. Never `unwrap`, `expect`, or panic outside tests. `#![forbid(unsafe_code)]`.
-3. No `f32`/`f64` anywhere. No `HashMap`/`HashSet` — `BTreeMap`/`BTreeSet` only.
+3. No `f32`/`f64` above the renderer boundary: only crates/joinn-gpu and
+   crates/joinn-shell-desktop may hold them (rule 54). No `HashMap`/`HashSet` —
+   `BTreeMap`/`BTreeSet` only.
 4. No wall clock and no unseeded RNG in crates/. `xtask` MAY measure wall time;
    it cannot reach a hash, a canonical form, a sample or a refusal. Message
    delivery order is a function of the body's grant list, never of arrival time.
@@ -49,6 +51,7 @@ phase. Phase 6 runs after it.
 15. `std::io` AND `std::fs` APPEAR ONLY IN HOST CRATES AND xtask. joinn-host is
     protocol and does none. joinn-test-host, joinn-assay and joinn-link do none.
     joinn-frame, joinn-dna, joinn-gate, joinn-prim and joinn-live do none.
+    joinn-shell-desktop is a host crate. joinn-visual and joinn-gpu do none.
     `cargo xtask vocab` enforces this by path.
 16. A nested activation holds NO grants and can reach no capability.
 17. NO INSTRUMENT WRITES ITS OWN FINDING. `xtask` prints numbers to stdout. No
@@ -168,6 +171,28 @@ phase. Phase 6 runs after it.
     tested by what the mutant does.
 53. A FILLING NAMES WHAT MADE IT: a frame, or one law by alias, instance and
     name. Nothing else closes a loop.
+54. FLOATS LIVE BELOW THE RENDERER BOUNDARY. f32 and f64 appear only in
+    joinn-gpu and joinn-shell-desktop, and only those two crates have their own
+    [lints] table (the workspace table minus float_arithmetic). joinn-visual is
+    exact: integer layout units, integer picking.
+55. NO CELL NAMES THE GPU (V1). `cargo xtask layers` enforces the crate table of
+    the plan's §2.1. wgpu appears only in joinn-gpu and joinn-shell-desktop;
+    winit only in joinn-shell-desktop. JoInn calls Vulkan, DX12 and Metal
+    "graphics APIs".
+56. THE PICTURE IS THE TABLES. Every pixel is drawn from joinn-visual's tables
+    through the vertex shader. Nothing is drawn from a list rebuilt per tick.
+    Tables hold layout units; a camera change writes the tick uniform and no row.
+57. EVERY PIXEL HAS ONE OWNER, AND TWO PICKERS NAME IT. The exact CPU pick is the
+    reference. The GPU ID target must agree on every non-edge pixel. An edge
+    pixel (within 1/16 px) is counted, never judged. A disagreement is a truth
+    violation, never a test failure, and the band is never widened.
+58. REGROW IS THE TEST OF THE DELTA. Tables built by deltas equal tables regrown
+    from DNA and live state, byte for byte, after every run. GPU state dropped
+    and regrown draws identical color and ID bytes.
+59. AN IDLE UNIVERSE DRAWS NOTHING (V12). No tick runs without a resize, an
+    input, or a pending delta.
+60. A GPU CHECK RUNS ON EVERY ADAPTER IT FINDS, AND FAILS WHEN IT FINDS NONE. It
+    never skips. Software adapters (lavapipe, WARP) are witnesses like any other.
 
 ## Definition of done
 

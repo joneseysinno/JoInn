@@ -1,0 +1,13 @@
+[package]
+name = "s2-gpu"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "S2 core-limits GPU spike. Throwaway. Not part of the JoInn workspace."
+
+# Its own workspace, so the JoInn workspace never builds or lints it.
+[workspace]
+
+[dependencies]
+wgpu = "30"
+pollster = "0.4"

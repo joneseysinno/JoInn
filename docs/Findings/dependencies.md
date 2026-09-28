@@ -14,4 +14,15 @@ Phase 1 crates may depend only on what is listed in the implementation plan §7,
 | `trybuild` (dev) | Compile-fail tests for `Genotype` / `Value` construction |
 | `insta` (dev) | Snapshots of refusal messages and printed canonical text — never corpus hashes |
 
+## Phase 6 (the renderer boundary)
+
+Added by the Phase 6 plan §2.2. Each may be used only by the crates named.
+
+| Crate | Version | Used by | Provides |
+|---|---|---|---|
+| `wgpu` | `30` | joinn-gpu, joinn-shell-desktop | The GPU API (validated by S2 at 30.0.1) |
+| `winit` | `0.30` | joinn-shell-desktop | Window, event loop, input |
+| `pollster` | `0.4` | joinn-gpu, joinn-shell-desktop | Blocking on wgpu's async setup |
+| `bytemuck` | `1` (feature `derive`) | joinn-gpu | Casting GPU uniform structs to bytes. Not on any DNA type |
+
 Nothing else is added without a new line in this file.

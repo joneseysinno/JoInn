@@ -67,4 +67,8 @@ line must name a file under `docs/Findings/`.
 | R68 | Promises and allele bodies | 4 | open | |
 | R69 | Descriptions of an instance that fires twice in a round | 4 | open | |
 | P4-adv | decoration check | 4 | held | Findings/decoration-check.md |
+| R70 | A real weak device | 6 | open | |
+| R71 | Authored layout | 6 | open | |
+| R72 | The vertex-buffer fallback | 6 | open | |
+| R73 | Text on screen | 6 | open | |
 

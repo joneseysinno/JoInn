@@ -314,3 +314,19 @@ The round-trip promise for an allele lives in the cell that carries it. Should a
 ## R69 — Descriptions of an instance that fires twice in a round  ·  status: open
 
 The test host describes each firing after the round ends, so both descriptions carry end-of-round values (in `loop.universe`, `cli_a` prints `in "5"` twice; its first value `"2"` shows only at `sum@0`). Should a host describe at firing time, and would that move any Phase 3 description golden?
+
+## R70 — A real weak device  ·  status: open
+
+S2 and Phase 6 ran on an RTX 2080 and on software adapters. V31 asks for a real weak device in the test set. The first one AJ gets reruns `spikes/s2-gpu` and `cargo xtask pick` unchanged.
+
+## R71 — Authored layout  ·  status: open
+
+Layout is computed from the coding region. When a creator places a cell by hand, where does that live? A regulatory `layout` section (new grammar, so R60 applies), or the creator's own store?
+
+## R72 — The vertex-buffer fallback  ·  status: open
+
+`joinn-gpu` refuses an adapter without vertex-stage storage. S2 showed the fallback draws the same IDs, but it rewrites every instance row when a chart moves. When a compatibility-only target matters, is the fallback worth that cost?
+
+## R73 — Text on screen  ·  status: open
+
+The glyph organelle, a borrowed shaping crate, and text's inverse (point → character index). Planned with Phase 7's bands.
