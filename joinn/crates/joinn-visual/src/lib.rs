@@ -4,10 +4,16 @@
 
 mod camera;
 #[cfg(test)]
+mod dropped;
+#[cfg(test)]
 mod fixtures;
 mod layout;
 mod pick;
 mod refuse;
+mod scene;
+#[cfg(test)]
+mod script;
+mod tables;
 
 pub use camera::{Camera, STANDARD_VIEWPORTS, fit, print_camera};
 pub use layout::{
@@ -17,4 +23,12 @@ pub use layout::{
 pub use pick::{
     Class, Geom, Owner, PORT_TAG, Pick, PickImage, Shape, TAG_MASK, WIRE_TAG, cpu_pick,
     cpu_pick_reference, owner_of_layout, print_owner, shapes_of_layout,
+};
+pub use scene::Scene;
+pub use tables::{
+    BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CellRow, Delta, FILLED, INCIDENCE_BYTES,
+    LINK_ROW_BYTES, LIVE, LinkRow, PORT_ROW_BYTES, PortRow, REFUSED, RowWrite, STYLE_BACKGROUND,
+    STYLE_BYTES, STYLE_CELL, STYLE_CELL_REFUSED, STYLE_MEMBRANE, STYLE_PORT_EMPTY,
+    STYLE_PORT_FILLED, STYLE_TABLE, STYLE_WIRE, Table, TableBytes, Tables, WIRE_KIND, row_bytes,
+    shapes_of_tables, table_bytes,
 };
