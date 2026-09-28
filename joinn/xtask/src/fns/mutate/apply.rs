@@ -4,8 +4,10 @@ use crate::fns::subject::Subject;
 use joinn_frame::Verdict;
 
 use super::Mutation;
+use super::add_wire::add_wire;
 use super::copy_member::copy_member;
 use super::corrupt_hash::corrupt_hash;
+use super::drop_declaration::drop_declaration;
 use super::drop_genome::drop_genome;
 use super::drop_grant::drop_grant;
 use super::drop_lens::drop_lens;
@@ -46,6 +48,13 @@ pub(super) fn apply(s: &mut Subject, m: &Mutation) -> Verdict<()> {
         (Mutation::DropWire(src, dst), Subject::Body(b)) => drop_wire(b, src, dst),
         (Mutation::DropGenome(inst), Subject::Body(b)) => drop_genome(b, inst),
         (Mutation::SwapCell(inst, to_hash), Subject::Body(b)) => swap_cell(b, inst, to_hash),
+        (Mutation::AddWire(src, dst), Subject::Body(b)) => add_wire(b, src, dst),
+        (Mutation::DropDeclaration, Subject::Body(b)) => {
+            drop_declaration(&mut b.coding.declarations)
+        }
+        (Mutation::DropDeclaration, Subject::Universe(u)) => {
+            drop_declaration(&mut u.coding.declarations)
+        }
         (Mutation::SetScore(phase, n, total), Subject::Lock(rows)) => {
             set_score(rows, phase, *n, *total)
         }

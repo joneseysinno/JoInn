@@ -1,9 +1,13 @@
 //! Closed mutation catalogue: damage that keeps the form.
 
+mod add_wire;
 mod apply;
 mod coding_hash;
 mod copy_member;
+#[cfg(test)]
+mod corpus_fixture;
 mod corrupt_hash;
+mod drop_declaration;
 mod drop_genome;
 mod drop_grant;
 mod drop_lens;
@@ -51,6 +55,8 @@ pub(crate) enum Mutation {
     DropWire(&'static str, &'static str),
     DropGenome(&'static str),
     SwapCell(&'static str, &'static str),
+    AddWire(&'static str, &'static str),
+    DropDeclaration,
     SetScore(&'static str, u32, u32),
     DropLine(usize),
     SwapLines(usize, usize),
