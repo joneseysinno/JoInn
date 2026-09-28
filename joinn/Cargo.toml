@@ -11,6 +11,9 @@ members = [
     "crates/joinn-host",
     "crates/joinn-test-host",
     "crates/joinn-cli",
+    "crates/joinn-visual",
+    "crates/joinn-gpu",
+    "crates/joinn-shell-desktop",
     "xtask",
 ]
 

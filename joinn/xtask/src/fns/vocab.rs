@@ -21,12 +21,14 @@ use super::*;
 
 pub(crate) fn vocab() -> Result<(), String> {
     check_vocab_fixtures()?;
+    check_float_fixtures()?;
     let root = workspace_root()?;
+    let floats = [r"\bf32\b", r"\bf64\b"];
     let engineering = [
         r"\bHashMap\b",
         r"\bHashSet\b",
-        r"\bf32\b",
-        r"\bf64\b",
+        floats[0],
+        floats[1],
         r"\bthread_rng\b",
     ];
     let concept = [
@@ -64,6 +66,9 @@ pub(crate) fn vocab() -> Result<(), String> {
                     continue;
                 }
                 for pat in engineering {
+                    if floats.contains(&pat) && float_allowed(&p) {
+                        continue;
+                    }
                     if line_has(line, pat) {
                         hits.push(format!("{}:{}: {pat}", path.display(), i + 1));
                     }
@@ -219,7 +224,7 @@ pub(crate) fn vocab() -> Result<(), String> {
         if p.contains("/tests/") {
             return;
         }
-        let io_ok = p.contains("/joinn-cli/");
+        let io_ok = p.contains("/joinn-cli/") || p.contains("/joinn-shell-desktop/");
         let mut depth = 0i32;
         let mut skip_test = 0i32;
         let mut pending_test = false;

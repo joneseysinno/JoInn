@@ -1,0 +1,24 @@
+[package]
+name = "joinn-gpu"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-frame = { path = "../joinn-frame" }
+joinn-visual = { path = "../joinn-visual" }
+wgpu = "30"
+bytemuck = { version = "1", features = ["derive"] }
+pollster = "0.4"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+todo = "deny"
+dbg_macro = "deny"
+collapsible_if = "allow"
+too_many_arguments = "allow"

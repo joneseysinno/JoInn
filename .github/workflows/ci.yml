@@ -32,6 +32,8 @@ jobs:
         run: cargo xtask vocab
       - name: modules
         run: cargo xtask modules
+      - name: layers
+        run: cargo xtask layers
       - name: corpus verify
         run: cargo xtask corpus verify
       - name: agree

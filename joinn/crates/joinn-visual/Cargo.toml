@@ -1,0 +1,16 @@
+[package]
+name = "joinn-visual"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+joinn-frame = { path = "../joinn-frame" }
+joinn-dna = { path = "../joinn-dna" }
+joinn-link = { path = "../joinn-link" }
+joinn-host = { path = "../joinn-host" }
+joinn-live = { path = "../joinn-live" }
+
+[lints]
+workspace = true

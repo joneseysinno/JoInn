@@ -1,0 +1,17 @@
+# Layers fixture: a joinn-visual that names the GPU. `cargo xtask layers` must refuse it.
+[package]
+name = "joinn-visual"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+joinn-frame = { path = "../joinn-frame" }
+joinn-dna = { path = "../joinn-dna" }
+joinn-link = { path = "../joinn-link" }
+joinn-host = { path = "../joinn-host" }
+joinn-live = { path = "../joinn-live" }
+joinn-gpu = { path = "../joinn-gpu" }
+
+[lints]
+workspace = true
