@@ -16,6 +16,23 @@ fn main() -> ExitCode {
         "vocab" => fns::vocab(),
         "modules" => modules::run(),
         "layers" => fns::layers(),
+        "layout" => {
+            let text = match args.next().as_deref() {
+                Some("--all") => fns::layout_all(),
+                Some(path) => fns::layout_text(path),
+                None => Err("usage: cargo xtask layout <path> | cargo xtask layout --all".into()),
+            };
+            match text {
+                Ok(text) => {
+                    let mut out = io::stdout();
+                    match out.write_all(text.as_bytes()) {
+                        Ok(()) => Ok(()),
+                        Err(e) => Err(e.to_string()),
+                    }
+                }
+                Err(e) => Err(e),
+            }
+        }
         "corpus" => match args.next().as_deref() {
             Some("verify") => fns::corpus_verify(),
             Some("rebless") => fns::corpus_rebless(args.collect()),
@@ -107,7 +124,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | layers | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | layers | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }
