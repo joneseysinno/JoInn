@@ -5,7 +5,7 @@ use joinn_visual::{Owner, REFUSED, Scene, Tables};
 
 /// Cells whose `refused` bit was set in `before` and is clear now, whose
 /// instance is not in `touched`. Each adds one row to the V121 bound.
-pub(super) fn cleared_elsewhere(scene: &Scene, before: &Tables, touched: &[String]) -> usize {
+pub(crate) fn cleared_elsewhere(scene: &Scene, before: &Tables, touched: &[String]) -> usize {
     (0u32..)
         .zip(scene.tables().cell.iter().zip(&before.cell))
         .filter(|(_, (now, was))| was.flags & REFUSED != 0 && now.flags & REFUSED == 0)

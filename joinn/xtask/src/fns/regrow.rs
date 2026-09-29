@@ -6,6 +6,8 @@ mod drive;
 mod event;
 mod run;
 
+pub(crate) use cleared_elsewhere::cleared_elsewhere;
+pub(crate) use event::event;
 pub(crate) use run::regrow;
 
 /// One scripted input: the instance whose port 0 it types into, and the text.

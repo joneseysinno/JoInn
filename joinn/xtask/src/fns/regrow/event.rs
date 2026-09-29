@@ -13,7 +13,7 @@ use joinn_visual::{Delta, Scene};
 /// on a refused run the refusal presentation for the intent's instance, the way
 /// the test host does. Returns the delta and the instances the run touched,
 /// counted here from the reports, apart from `apply_run`.
-pub(super) fn event(
+pub(crate) fn event(
     scene: &mut Scene,
     state: &mut BodyState,
     (body, cells): (&Body, &BTreeMap<Hash, Cell>),
