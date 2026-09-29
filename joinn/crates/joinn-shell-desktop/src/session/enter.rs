@@ -79,7 +79,57 @@ impl Desktop {
 
 #[cfg(test)]
 mod tests {
+    use joinn_frame::Verdict;
+    use joinn_visual::{Scene, table_bytes};
+
+    use super::super::Desktop;
     use super::super::fixtures::calculator;
+
+    /// The script at 1280×720: the pixel of the in-port, then the text typed there.
+    const SCRIPT: [((u32, u32), &str); 3] =
+        [((192, 220), "two"), ((192, 220), "2"), ((192, 500), "3")];
+
+    /// V125: click, type and Enter through the shell's own leaves; after each
+    /// Enter the session's tables equal `Scene::regrow` of its live state, byte
+    /// for byte. Returns the rows each Enter wrote.
+    fn run_path_rows(desktop: &mut Desktop) -> Vec<usize> {
+        let mut rows = Vec::new();
+        for (step, ((x, y), text)) in SCRIPT.iter().enumerate() {
+            let clicked = desktop.click(*x, *y);
+            assert!(
+                clicked.iter().any(|line| line.starts_with("selected ")),
+                "step {step}: {clicked:?}"
+            );
+            for ch in text.chars() {
+                let typed = desktop.type_char(&ch.to_string());
+                assert!(typed.is_some(), "step {step}: typing {ch}");
+            }
+            let lines = desktop.enter();
+            assert!(!lines.is_empty(), "step {step}: Enter ran nothing");
+            let regrown = match Scene::regrow("body", &desktop.body, &desktop.cells, &desktop.state)
+            {
+                Verdict::Ok(scene) => scene,
+                Verdict::Refused(r) => panic!("step {step}: {}", r.reason),
+            };
+            assert_eq!(
+                table_bytes(desktop.tables()),
+                table_bytes(regrown.tables()),
+                "step {step} {text:?}: V122 on the shell's run path; lines {lines:?}"
+            );
+            let delta = desktop.take_pending().unwrap_or_default();
+            rows.push(delta.rows.len());
+        }
+        rows
+    }
+
+    #[test]
+    fn the_shell_run_path_keeps_tables_equal_to_regrow_on_the_calculator() {
+        let mut desktop = calculator();
+        let rows = run_path_rows(&mut desktop);
+        let printed: Vec<String> = rows.iter().map(usize::to_string).collect();
+        println!("calculator.body rows {}", printed.join(", "));
+        assert_eq!(rows, vec![2, 3, 4]);
+    }
 
     #[test]
     fn typing_2_then_enter_on_cli_a_yields_the_intent() {
