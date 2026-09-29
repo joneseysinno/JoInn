@@ -5,6 +5,7 @@ use winit::keyboard::{Key, NamedKey};
 
 use super::ShellApp;
 use super::emit::emit;
+use crate::session::NOTHING_SENT;
 
 impl ShellApp {
     /// A character echoes. Enter runs the body and redraws. Moving nothing else does not.
@@ -16,7 +17,7 @@ impl ShellApp {
             Key::Named(NamedKey::Escape) => self.desktop.escape(),
             Key::Named(NamedKey::Enter) => {
                 let lines = self.desktop.enter();
-                let ran = !lines.is_empty();
+                let ran = lines.iter().any(|line| line != NOTHING_SENT);
                 for line in lines {
                     emit(&line);
                 }

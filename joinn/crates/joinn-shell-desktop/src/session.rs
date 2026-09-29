@@ -24,6 +24,9 @@ use joinn_host::{Address, Signals};
 use joinn_live::BodyState;
 use joinn_visual::{Camera, Delta, Scene, Tables};
 
+/// What Enter prints on an empty buffer: no intent, no run, no tick.
+pub const NOTHING_SENT: &str = "  (empty: nothing sent)";
+
 /// A click waiting for the ID target to name the same owner.
 pub struct Confirm {
     /// Pixel x.

@@ -3,15 +3,19 @@
 use joinn_frame::{Frame, TextFrame, Verdict};
 use joinn_host::{Host, check_intent, describe_refusal, probe};
 
-use super::Desktop;
+use super::{Desktop, NOTHING_SENT};
 
 impl Desktop {
     /// `intent cli_a@0 "2"`, then `fired <instances>` or `refused: <reason>`.
-    /// The delta lands in the scene for the next draw.
+    /// The delta lands in the scene for the next draw. An empty buffer sends
+    /// nothing and keeps the selection.
     pub fn enter(&mut self) -> Vec<String> {
         let Some(address) = self.selected.clone() else {
             return Vec::new();
         };
+        if self.buffer.is_empty() {
+            return vec![NOTHING_SENT.to_owned()];
+        }
         let text = std::mem::take(&mut self.buffer);
         let mut lines = Vec::new();
         let intent = match self.intend(text.clone()) {
@@ -129,6 +133,40 @@ mod tests {
         let printed: Vec<String> = rows.iter().map(usize::to_string).collect();
         println!("calculator.body rows {}", printed.join(", "));
         assert_eq!(rows, vec![2, 3, 4]);
+    }
+
+    #[test]
+    fn enter_on_an_empty_buffer_sends_nothing_and_keeps_the_selection() {
+        let mut desktop = calculator();
+        let selected = desktop.click(192, 220);
+        assert!(
+            selected.iter().any(|line| line == "selected body.cli_a@0"),
+            "{selected:?}"
+        );
+        let lines = desktop.enter();
+        println!("{lines:?}");
+        assert_eq!(lines, vec!["  (empty: nothing sent)".to_owned()]);
+        assert_eq!(desktop.take_pending(), None, "no run, so no delta");
+        let described = match joinn_host::describe(&desktop.state, "cli_a") {
+            Verdict::Ok(d) => d,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let fresh = calculator();
+        let untouched = match joinn_host::describe(&fresh.state, "cli_a") {
+            Verdict::Ok(d) => d,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        assert_eq!(described, untouched, "no intent reached cli_a");
+        assert_eq!(
+            desktop.type_char("2").as_deref(),
+            Some("  typing: 2"),
+            "the selection stays"
+        );
+        let lines = desktop.enter();
+        assert!(
+            lines.iter().any(|line| line == "intent cli_a@0 \"2\""),
+            "{lines:?}"
+        );
     }
 
     #[test]
