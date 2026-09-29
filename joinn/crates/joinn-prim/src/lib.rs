@@ -6,6 +6,7 @@
 
 pub mod alleles;
 pub mod floor;
+pub mod forces;
 #[cfg(any(test, feature = "mutants"))]
 pub mod mutants;
 pub mod natives;

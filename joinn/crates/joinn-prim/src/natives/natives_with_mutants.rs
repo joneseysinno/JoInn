@@ -1,7 +1,7 @@
 //! Sealed alleles plus the mutant register. Test and xtask only.
 
 use crate::mutants::{
-    Difference, Impostor, Leading, Max, NoRestrict, PanicNeg, Plus1, Saturating, Times,
+    Difference, Impostor, Leading, Max, Midpoint, NoRestrict, PanicNeg, Plus1, Saturating, Times,
     TurnPosOnly, Wrapping, WrongFrame, WrongRat, Zero,
 };
 use joinn_gate::NativeRegistry;
@@ -27,5 +27,6 @@ pub fn natives_with_mutants() -> NativeRegistry {
     r.insert("mutant.leading", Arc::new(Leading));
     r.insert("mutant.wrapping", Arc::new(Wrapping));
     r.insert("mutant.turn_pos_only", Arc::new(TurnPosOnly));
+    r.insert("mutant.midpoint", Arc::new(Midpoint));
     r
 }
