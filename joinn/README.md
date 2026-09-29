@@ -2,7 +2,7 @@
 
 This folder is the **running code** for JoInn: libraries (crates), the calculator demo, golden examples (`corpus/`), and build checks (`xtask`).
 
-JoInn is a **truth-first** platform for composing apps from small blocks called **cells**. Today you can run a terminal calculator that refuses bad input and computes `2 + 3`. A full visual editor comes later.
+JoInn is a **truth-first** platform for composing apps from small blocks called **cells**. The terminal calculator still refuses bad input and computes `2 + 3`. A desktop window now draws that one body: the picture is the tables, and every pixel names its owner. It does not draw text, a second body, or a zoom.
 
 ## Start here (humans)
 
@@ -24,7 +24,7 @@ You should see a refusal for `"two"`, then `2 + 3 = 5`. Details: [Try the calcul
 
 ## Gates
 
-`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), and gate 5.2 (a control sees a parsed value and flips on a mutant that still parses). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
+`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), gate 5.2 (a control sees a parsed value and flips on a mutant that still parses), and gate 6 (one body drawn from its tables: every pixel has one owner and both pickers name it, the picture shows the row the engine computed, and a stale click is refused). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
 
 ## The assay
 

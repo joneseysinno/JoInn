@@ -73,4 +73,16 @@ line must name a file under `docs/Findings/`.
 | R73 | Text on screen | 6 | open | |
 | R74 | One address, one port | 6 | open | |
 | R75 | Membrane ports | 6 | open | |
+| VH1 | No crate above the renderer boundary names wgpu or winit | 6 | holds | Part II V1 |
+| VH2 | GPU state discarded and regrown draws identical color and ID bytes | 6 | holds | Part II V2 |
+| VH5 | Every non-edge pixel has one owner, and both pickers name it | 6 | holds | Part II V5 |
+| VH11 | The device opens at WebGPU core limits and the bind-group layout fits | 6 | holds | Part II V11 |
+| VH12 | An idle scene has nothing to draw; the shell redraws only on change | 6 | holds | Part II V12 |
+| VH14 | A picker disagreement is a truth violation, on every adapter | 6 | holds | Part II V14 |
+| V119 | A layout is blind to the regulatory region and to alleles | 6 | holds | |
+| V120 | The grid picker and the brute-force picker agree on every pixel | 6 | holds | |
+| V121 | One run writes at most Σ(1 + ports) over the instances it touched, plus one when it clears a refused bit it did not touch; a camera change writes none | 6 | holds | |
+| V122 | Delta-built tables equal regrow, byte for byte | 6 | holds | |
+| V123 | A stale pick is refused naming both generations | 6 | holds | |
+| V124 | Floats exist only in joinn-gpu and joinn-shell-desktop | 6 | holds | |
 

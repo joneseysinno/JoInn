@@ -375,6 +375,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 **R-items.** R16, R15, R9 (device loss as visual death).
 
+> **28 Sep 2026.** Phase 6 is built. JoInn draws one body: the picture is the tables, and the two pickers agree. Findings: [phase-6-pick.md](../Findings/phase-6-pick.md). Gate 6 item 2 passes (`2 ok  What the engine computes is a row the picture shows`). Swapping the empty-port and filled-port colors fails it: `event grow pixel 192,220 adapter Microsoft Basic Render Driver · Dx12 · Cpu · vertex storage yes: F2B134FF C9CED6FF`. Deferred to Phase 7: the glyph, image, and snapshot organelles. The vertex-buffer fallback stays R72.
+
 ---
 
 #### Phase 7 · Visual Host II: charts, zoom, bands, links

@@ -6,8 +6,8 @@ JoInn is being built in three big stages. Think of them as ladders: each one let
 
 | Stage | Nickname | What it means in plain words | Status (roughly) |
 |-------|----------|------------------------------|------------------|
-| **B0** | True but unseen | The universe is correct and checkable, but you meet it mainly as text / terminal | **In progress — this is today** |
-| **B1** | Seen and touched | Same universe drawn, picked, zoomed; CPU and GPU must agree | Future |
+| **B0** | True but unseen | The universe is correct and checkable, and you can still meet it as text | **The truth core holds** |
+| **B1** | Seen and touched | Same universe drawn and picked; zoom comes next | **Started — one body is on screen** |
 | **B2** | Self-editing | You build JoInn *inside* JoInn; the visual creator and the text form match byte-for-byte | Future |
 
 The rule of the road: **pixels come after truth.** A gorgeous editor with a weak core would force the core to bend. So Bootstrap 0 comes first on purpose.
@@ -22,6 +22,13 @@ You can, from the `joinn` code folder:
 - Run machines that check vocabulary, the floor, agreement, gates, and the corpus (see the code README)
 - A gate control reads the parsed body, universe, or transcript, and flips when that artifact is damaged in a way that still parses
 - Assay a body or universe for loops nothing closes (`cargo xtask assay phase4/loop.universe`), described below
+- Open one body in a window (`cargo run -p joinn-shell-desktop -- corpus/phase2/calculator.body`), described below
+
+## The picture (Phase 6)
+
+JoInn draws one body. The calculator appears as a membrane holding three cells, their ports, and two wires. The picture is the tables: a pixel's color is the style of the row that owns it, so a refused cell and a filled port look different because those rows changed. A click prints that owner (`body.sum`, `body.cli_a@0`, `body wire cli_a@1 -> sum@0`). The GPU's ID for the same pixel names the same owner. Typing a number into an in-port on the membrane runs the body, and the window changes because the run wrote rows.
+
+The window draws no text, no second body, and no zoom. Glyphs, images, and snapshots wait for Phase 7. A GPU that cannot read storage in the vertex stage is still an open question (R72).
 
 ## The assay (Phase 4)
 
@@ -39,7 +46,7 @@ C1 shows a missing promise, not a wrong number. A narrower check (does a round-t
 
 Under the hood, the project has already built the early “truth core”: frames and values, DNA plans, the gate, the floor of sealed basics, the live runner, and the start of **hosts** (a host is proved by there being two — CLI and a test host).
 
-There is **not** yet a full visual editor, GPU face, or “build any app by clicking” experience. That’s Bootstrap 1 and 2.
+The window is one body, not an editor. Building any app by clicking, zooming, and reading the screen aloud is still ahead in Bootstrap 1 and 2.
 
 ## What “Phase” language means
 
@@ -57,7 +64,7 @@ If an agent mentions “Phase 3,” it means: proving hosts properly (descriptio
 
 Because JoInn’s claim is **truth first**. The calculator transcript — including the refusal — is evidence that the system can say “no” and still compute when the input is honest.
 
-When the visual host arrives, it should be a **view over the same truth**, not a second competing reality.
+The window is that view: one body, drawn from the same tables the engine mutates.
 
 ## Next
 
