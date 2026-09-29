@@ -1,14 +1,15 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 6 is Visual Host I: JoInn draws one body, and every
-pixel knows who owns it. Its one idea is THE PICTURE IS THE TABLES, AND TWO
-PICKERS AGREE. The build plan is docs/Plans/JoInn Phase 6 Implementation
-Plan.md. Work one CHUNK at a time (A, B or C), one git commit per numbered step,
-and stop at the chunk's stop report. Every decision is in the plan. Never stop to
-ask; follow the plan's Snags section instead.
+This repo is JoInn. Phase 7 is contact bodies: a body is cells in contact, with
+no wires inside, and an operation is a force from outside. Its one idea is A BODY
+HAS NO WIRES; THE ENGINE DOES ITS OWN PLUMBING. The build plan is
+docs/Plans/JoInn Phase 7 Implementation Plan.md. Work one CHUNK at a time (A, B
+or C), one git commit per numbered step, and stop at the chunk's stop report.
+Every decision is in the plan. Never stop to ask; follow the plan's Snags
+section instead.
 
-There is no text on screen, no zoom, no second body in a picture, no
-accessibility tree and no compiler in this phase. Phase 7 runs after it.
+Only combine is written in this phase. .body is the legacy form and keeps its
+hashes. There is no zoom, text, second body in a picture, or beam yet.
 
 ## Hard rules
 
@@ -99,12 +100,13 @@ accessibility tree and no compiler in this phase. Phase 7 runs after it.
 29. A GATE'S SCORE IS RETURNED BY THE GATE. No literal gate score appears
     anywhere under xtask/src. `write_lock` receives counts; it does not choose
     them.
-30. A MEMBRANE IS ∂(BODY) AND IS STORED NOWHERE. It is every port of every
-    instance in the genome — cell or primitive — that no internal wire consumes,
-    each with its direction and frame, computed on demand. A genome entry whose
-    cell is not supplied is refused, never skipped. Nothing in a .body or
-    .universe file declares it.
-31. A LINK TOUCHES PORTS ON MEMBRANES ONLY. A member naming an interior port is
+30. A SURFACE IS ∂(BODY) AND IS STORED NOWHERE. For a .body it is every port of
+    every instance that no internal wire consumes; for a .contact it is every
+    port no force reaches, plus each response's out-port. It is computed on
+    demand, with its direction and frame. A genome entry whose cell is not
+    supplied is refused, never skipped. Nothing in a .body, .contact or
+    .universe file declares it. A MEMBRANE IS A CELL'S BOUNDARY ONLY.
+31. A LINK TOUCHES PORTS ON SURFACES ONLY. A member naming an interior port is
     refused naming the port and the wire that consumes it. This is checked by
     assembling the complex and requiring ∂∂ = 0, never by a predicate written
     beside the check.
@@ -193,6 +195,24 @@ accessibility tree and no compiler in this phase. Phase 7 runs after it.
     input, or a pending delta.
 60. A GPU CHECK RUNS ON EVERY ADAPTER IT FINDS, AND FAILS WHEN IT FINDS NONE. It
     never skips. Software adapters (lavapipe, WARP) are witnesses like any other.
+61. A BODY HAS NO WIRES. A .contact file has no wires section and its parser
+    refuses one ("wires belong to systems"). The engine derives its own
+    deliveries (`lower`) from the contact, its cells and the force register
+    only; the derivation is never written to disk, described, or drawn.
+62. AN OPERATION IS A FORCE, NOT A CELL. A force's response law lives with the
+    frame it acts on, in joinn-prim::forces. A .contact pins the response by
+    hash, and admission refuses a pin the register does not hold.
+63. COMBINE IS ORDER-FREE, AND EVERY FORCE IS OPPOSED. A registered combine
+    passes the order-free sample and has a registered separate that is a turn
+    of its response. Member order is never hashed.
+64. A FORCE OWNS NO PIXEL. It is seen only through its response. Interior ports
+    are not drawn; a contact picture has no link rows.
+65. ROLES ARE DERIVED, NEVER WRITTEN. A role is (faces out | in) × (holds |
+    reacts): protect, carry, store, respond. There is no role list and no
+    four-variant role enum. joinn-host's Role is the accessibility role and is
+    a different thing.
+66. THE ENGINE HEARS DEVICE LOSS FROM WGPU. The device-lost callback is the
+    only signal of a lost device; a lost surface only reconfigures.
 
 ## Definition of done
 

@@ -267,6 +267,8 @@ Engineering bans (`HashMap`, `f32`, …) still scan all Rust unmasked.
 
 When one tail fans out to several heads, is the value conserved (one delivery split, like a sum over heads) or copied (each head gets it all)? Example: `calc.sum@2` feeding both `units.scale@1` and a logger body. If augmentation ε counts deliveries, copying breaks ε∘∂ = 0.
 
+Part V reading (Claude, 29 Sep, not decided): copied, not split.
+
 ## R56 — Embeddings across a link  ·  status: open
 
 May a link carry a value from one frame into another by an embedding (ℤ into ℚ)? Example: two bodies whose laws each hold on their own frame, joined by an embedding whose round-trip holds on one side and not the other. This is the most likely place for Phase 4's first H¹ candidate.
@@ -338,3 +340,55 @@ Floor primitives number in-ports and out-ports separately (`eq`: in 0, in 1, out
 ## R75 — Membrane ports  ·  status: open
 
 A body's own ports (`self@n`) have no place in Phase 6's layout, so a body whose wires reach its own membrane is not drawn (the nine phase 2.1/2.2 reference bodies print `not measured`). Phase 7 links bodies through their membranes. Where does a membrane port sit, and does a wire to `self` end on the membrane's edge?
+
+> **29 Sep 2026 · Part V.** R76–R81 come from *JoInn Cells, Bodies and Forces* (Part V), written after Phase 6 closed. Part V also reframes two earlier items. **R74** may dissolve if cells in a body are no longer addressed by position. **R75** becomes: where does a *system* wire meet a body, on a protective cell or on the surface?
+
+## R76 — Order inside a body  ·  status: decided
+
+Combine is order-free. Where do order-dependent things live? Proposal: arithmetic ÷ and − are combine read at a turn, so the turn carries the order; presentation ("{0} + {1} = {2}") belongs to the host; anything else that depends on order is a system matter, wired between bodies. AJ said R76 is decided once the forces are settled, and they now are (Part V C19–C21).
+
+**Decided:** AJ 29 Sep: combine is order-free; − and ÷ are combine at a turn; presentation is the host's; other order is a system matter.
+
+## R77 — Where a force's truth lives  ·  status: decided
+
+A force is not DNA: it is determinant and real (C16). The response law lives in the thing being forced, at each level (C10). Part V §4.1.
+
+## R78 — The Floor re-read as forces  ·  status: attempted
+
+**Attempted:** see `Findings/the-floor.md` §5 (29 Sep): no pair left; eq/choose kept paired (AJ).
+
+Part V proposes the Floor sorts into two opposed forces (combine / separate, carry / release), distinction (`eq`, which is opposition itself and not a force), and the membrane (`bound` / `fill`), with `bind` / `unbind` moving to systems. Test it by the Floor's own rule: try to rebuild each current pair from these, and record each reduction that succeeds or fails before any amendment. Also: where does contact between cells in a body fit, as a new pair or as combine / separate at a body's scale?
+
+## R79 — Link policy  ·  status: open
+
+Every link resolves to a pinned edition at the moment it is used (C13). Where is a link's mode (pinned, live, watch) written: the coding region, since it changes behavior? How is an edition named? Can a body with a live link be sealed?
+
+## R80 — Wrapping a body  ·  status: decided
+
+A body never becomes a cell. Its cells differentiate into roles, and a wrapped body is wrapped by its own protective cells, not by a membrane (C17). Part V §6.1.
+
+## R81 — Roles of cells in a body  ·  status: decided
+
+Cells in a body take roles: protect, respond, carry, store, and so on. Is the set of roles a short fixed list, or generative like kinds (C18)? Roles must not grow into a registry.
+
+**Decided:** AJ 29 Sep: (faces out/in) × (holds/reacts) = protect, carry, store, respond; derived, never written.
+
+## R82 — The opposite of a lossy combine  ·  status: open
+
+Sum forgets its parts, so separate can only be a turn given one part back. Structural combine (`build`, `pair`) is lossless, and its separate (`case`, `split`) is exact. Is every combine one of these two, and should the register say which?
+
+## R83 — Multiplication  ·  status: open
+
+Is `a × b` combine *across* dimensions (length × length = area) while `a + b` is combine *within* one? If so, a product is the same act as `pair`, with a dimension instead of no frame (R38).
+
+## R84 — Many members, chained forces  ·  status: open
+
+A fold over more members than the response has in-ports, and layout for members that don't touch in one column. The beam will need both.
+
+## R85 — One port, two forces  ·  status: open
+
+Can a value be combined in two places? Part V's reading is that values are copied, not split (R55), which makes it carry, not combine.
+
+## R86 — The two open Floor reductions  ·  status: open
+
+`pair`/`split` into a frameless combine (needs R38), and `join` as combine's completion rule. Attempt them in code when carry arrives.

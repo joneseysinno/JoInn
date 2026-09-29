@@ -6,6 +6,10 @@ Supersedes `minimal-primitives.md`. Amended September 18, 2026 — see §5.
 
 ---
 
+> **29 Sep 2026 · re-read, not amended.** Part V's reading of the Floor as
+> forces was tried by this document's own rule (R78). The attempts are recorded
+> in §5. No pair left the Floor.
+
 ## 1. The rule
 
 There is no target count. A count is an aesthetic; this is a test.
@@ -158,3 +162,34 @@ Every change to the floor is dated here, with its reason and its refuted reducti
 **What this cost.** `Frame::constructors()` is now ordered and that order is part of the frame's identity, because `build(ℤ, 1, [x])` means "successor" only while ℤ's constructor list says so. Appending a constructor stays conservative; reordering or removing one moves the frame version. That is **R34**.
 
 **Standing rule from here.** The floor grows or shrinks only through an entry in this section, with a date, a reason, and a refuted reduction. A change with no refuted reduction is not an amendment; it is a convenience.
+
+### 2026-09-29 · R78 attempted: the Floor re-read as forces · no amendment
+
+**Why.** Part V (*Cells, Bodies and Forces*) proposed that the Floor sorts into
+two opposed forces (combine / separate, carry / release), distinction, and the
+membrane. The rule here says nothing changes until each reduction is tried.
+
+**What was tried, and how it came out.**
+
+| Pair | Tried as | Result |
+|---|---|---|
+| `build` / `case` | combine / separate in a frame | A regrouping, not a reduction. Stays |
+| `pair` / `split` | combine / separate with no frame | Reduces only if a frameless combine exists (R38). Not attempted in code. Stays (R86) |
+| `join` / `fan` | combine's completion rule; carry to many | `join` reads as when a combine completes; `fan` as carry of a value that is copied, not used up. Not attempted in code until carry exists. Stays (R86) |
+| `eq` / `choose` | distinction; carry one, release the other | **Kept as a pair (AJ, 29 Sep).** `choose` is where distinction meets a force: a decision made and a decision acted on. Taking `choose` away would leave `eq` unopposed and the count odd |
+| `grant` / `revoke` | carry / release of authority | Does not fit: release leaves a thing where it is, revoke brings it back. Stays as authority |
+| `bind` / `unbind` | moves to systems | Stays in the Floor, in the system's register: systems are written in the Floor too |
+| `bound` / `fill` | the membrane | Stays |
+| `hash` / `resolve` | distinction by identity, and the store | Stays |
+
+**Contact needs no new pair.** Cells that fill one boundary with no `bind`
+between them are in contact. Phase 7's `.contact` grammar has no way to write a
+`bind`, which is the test of this.
+
+**Forces are opposed at the frame, not in the Floor.** Combine on ℤ is admitted
+only with its separate, a turn of its response (Phase 7, `joinn-prim::forces`).
+Separate for a lossy combine like sum is a turn given one part back; for a
+lossless combine like `build` it is `case` (R82).
+
+Standing rule unchanged: the Floor grows or shrinks only through an entry here
+with a refuted reduction.

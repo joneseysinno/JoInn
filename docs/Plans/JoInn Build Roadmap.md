@@ -379,7 +379,13 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 ---
 
-#### Phase 7 · Visual Host II: charts, zoom, bands, links
+> **29 Sep 2026 · Phase 7 is contact bodies.** After Part V, the next phase makes
+> a body cells in contact with no wires, and an operation a force (combine):
+> `Plans/JoInn Phase 7 Implementation Plan.md`. The section below, charts, zoom,
+> bands and links, is now **Phase 7.1**, to be replanned around bodies, forces
+> and systems after the steel beam. Every later phase keeps its number.
+
+#### Phase 7.1 · Visual Host II: charts, zoom, bands, links
 
 **Goal.** The fractal, actually working: zoom from universe to a digit, and hyperedges drawn as hyperedges.
 

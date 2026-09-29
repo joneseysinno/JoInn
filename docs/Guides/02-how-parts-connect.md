@@ -1,5 +1,7 @@
 # How the parts connect
 
+> **29 Sep 2026: the theory has moved.** This guide describes the code as built through Phase 6, where a body joins its cells with wires. The theory now says a body has no wires inside: its cells touch, operations such as sum are forces applied from outside, and wires belong to systems (between bodies). See *Theory/JoInn Cells, Bodies and Forces.md*. This guide will be rewritten when the code follows.
+
 This page is the **map**. Each diagram shows how pieces fit. Under the boxes you’ll find **what it is** and **why JoInn needs it**.
 
 If a word is new, peek at the [glossary](05-glossary.md).

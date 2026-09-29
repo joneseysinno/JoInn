@@ -13,4 +13,6 @@ That folder explains what JoInn is, how the pieces connect, where the project st
 | **[Plans/](Plans/)** | Build work | Roadmap and phase-by-phase construction plans |
 | **[Findings/](Findings/)** | Evidence / lab notes | Proofs, reviews, spikes, and decisions from the build |
 
+**Newest theory (29 Sep 2026):** [Theory/JoInn Cells, Bodies and Forces.md](Theory/JoInn%20Cells,%20Bodies%20and%20Forces.md). Read it first when planning what comes after Phase 6.
+
 The code itself lives in [`../joinn/`](../joinn/). Its README points back here for humans and to `AGENTS.md` for coding agents.

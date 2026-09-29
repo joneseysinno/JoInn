@@ -85,4 +85,14 @@ line must name a file under `docs/Findings/`.
 | V122 | Delta-built tables equal regrow, byte for byte | 6 | holds | |
 | V123 | A stale pick is refused naming both generations | 6 | holds | |
 | V124 | Floats exist only in joinn-gpu and joinn-shell-desktop | 6 | holds | |
-
+| R76 | Order inside a body | V | decided | AJ 29 Sep: combine is order-free; − and ÷ are combine at a turn; presentation is the host's; other order is a system matter |
+| R77 | Where a force's truth lives | V | decided | Part V C10, C16 |
+| R78 | The Floor re-read as forces | V | attempted | Findings/the-floor.md §5, 29 Sep: no pair left; eq/choose kept paired (AJ) |
+| R79 | Link policy: pinned, live, watch | V | open | Part V §7.2 |
+| R80 | Wrapping a body | V | decided | Part V C17 |
+| R81 | Roles of cells in a body | V | decided | AJ 29 Sep: (faces out/in) × (holds/reacts) = protect, carry, store, respond; derived, never written |
+| R82 | The opposite of a lossy combine | 7 | open | |
+| R83 | Multiplication | 7 | open | |
+| R84 | Many members, chained forces | 7 | open | |
+| R85 | One port, two forces | 7 | open | |
+| R86 | The two open Floor reductions | 7 | open | |

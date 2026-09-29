@@ -8,6 +8,8 @@ Author: AJ · Draft 0.1 · September 17, 2026
 
 > Status tags follow Part I: **DECIDED**, **PROPOSED**, **OPEN**. Everything in this part is **PROPOSED** unless marked otherwise. New research items R17–R18 are tracked in §15, and R4 is split there.
 
+> **29 Sep 2026 · superseded in part by Part V** (*JoInn Cells, Bodies and Forces*). §5's "cell-in-body and body-bus differ in scale, not in kind" no longer holds: contact inside a body differs in kind from a system's wires. §11's add cell no longer exists as a cell: `+` is the **combine** force, and the add cell's laws and witnesses move to the frame ℤ (Part V §4.5). The hash boundary (§2), alleles, Turn and Fold stand unchanged.
+
 > **Thesis.** One word — *primitive* — is currently doing three unrelated jobs, and DNA has never been told what it is made of. Separating the three jobs makes the primitive set small. Deciding what DNA is made of makes evolution possible. Those two answers are the same answer, and it is a line: **hash only what the gate judges.**
 
 ---

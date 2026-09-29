@@ -28,7 +28,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **ID target** | The second picture: one integer per pixel naming its owner. A click reads one texel of it. |
 | **Layout unit** | The integer length the tables use for positions. Pixels are what the camera makes of them. |
 | **Live engine** | The runner that executes a body now, with an explicit step budget. |
-| **Membrane** | The boundary of a body — the only place it meets the outside. |
+| **Membrane** | The boundary of a cell — the only place it meets anything outside itself. A body has no membrane; its outline is its *surface*. |
 | **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve. Glyph, image, and snapshot are Phase 7. |
 | **Owner** | The one thing a pixel belongs to: the background, the membrane, a cell, a port, or a wire. |
 | **Primitive** | A sealed basic piece below ordinary cells. Creators compose with them; they don’t invent new floor primitives casually. |
@@ -36,6 +36,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Refusal / Verdict** | A normal value meaning “no” (`Refused`), not a crash. Host IO errors are different. |
 | **Regrow** | Rebuild the tables from the body's DNA and its live state. They must match the delta-built tables byte for byte, and a discarded GPU redraws the same picture from them. |
 | **Regulatory region** | The unhashed part of DNA: looks, labels, literals, layout choices — versioned, not the identity. |
+| **Surface** | The derived outline of a body: every cell port nothing inside uses up. Never declared, and never called a membrane. |
 | **Seal** | A locked pair: a reference body and checks (including a counterfeit that must be caught). |
 | **Tick** | One redraw. It carries the camera. An idle scene has nothing to draw, so the window waits. |
 | **Witness** | A recorded true result that future versions must still satisfy — testimony the gate can replay. |
@@ -53,3 +54,5 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 ## Next
 
 Back to the start: [README.md](README.md).
+
+> **29 Sep 2026.** The theory moved ahead of the code: see *Theory/JoInn Cells, Bodies and Forces.md* (Part V). In the theory, a body has no wires inside (its cells touch), operations like sum are **forces** from outside (combine / separate, carry / release), and wires belong to systems. The code still builds bodies with wires until a later phase changes that.

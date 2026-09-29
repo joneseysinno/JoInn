@@ -12,6 +12,8 @@ Status: working theory; specifics of each item to follow in later parts
 
 JoInn is to be a software architecture that provides application creators a platform to build any app that they want.
 
+> **29 Sep 2026 · Part V.** *JoInn Cells, Bodies and Forces* builds on this document. It keeps §3's membrane (the boundary of a cell) and §6.1's rule (cells communicate directly within their body, across their membranes), and adds: a body has no wires inside; operations are forces from outside (combine / separate, carry / release); distinguishing is opposition itself (Law 1), not a force; wires belong to systems.
+
 # 0. How to Read This Document
 
 This part records the **general theory** of JoInn: its purpose, laws, vocabulary, and overall shape. It deliberately stops short of implementation detail. Each later part takes one item from this theory and works it out.
