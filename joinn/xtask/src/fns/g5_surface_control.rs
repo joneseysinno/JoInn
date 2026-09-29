@@ -3,10 +3,10 @@
 use super::load_calculator;
 use super::subject::Subject;
 use joinn_frame::Verdict;
-use joinn_link::membrane;
+use joinn_link::surface;
 use std::collections::BTreeSet;
 
-pub(crate) fn g5_membrane_control(subject: &Subject) -> bool {
+pub(crate) fn g5_surface_control(subject: &Subject) -> bool {
     let Subject::Body(body) = subject else {
         return true;
     };
@@ -18,7 +18,7 @@ pub(crate) fn g5_membrane_control(subject: &Subject) -> bool {
         "cli_b@0".to_string(),
         "sum@2".to_string(),
     ]);
-    match membrane(body, &cells) {
+    match surface(body, &cells) {
         Verdict::Ok(set) => {
             let got: BTreeSet<String> = set.iter().map(|a| a.address.printed()).collect();
             got != expected

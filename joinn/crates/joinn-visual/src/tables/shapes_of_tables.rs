@@ -3,7 +3,7 @@
 use super::{LIVE, Tables};
 use crate::pick::{Geom, PORT_TAG, Shape, WIRE_TAG};
 
-/// Membranes, cells, wires, ports, each by slot. A wire's endpoints are read
+/// Surfaces, cells, wires, ports, each by slot. A wire's endpoints are read
 /// through `link → incidence → port`, the way the curve organelle reads them.
 /// A port's ID carries its cell's generation.
 pub fn shapes_of_tables(tables: &Tables) -> Vec<Shape> {

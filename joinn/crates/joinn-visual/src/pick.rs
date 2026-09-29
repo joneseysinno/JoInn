@@ -36,7 +36,7 @@ pub const TAG_MASK: u32 = 0xF000_0000;
 /// A shape's geometry in layout units.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Geom {
-    /// A rounded rectangle `x y w h` with corner radius `r` (membranes, cells).
+    /// A rounded rectangle `x y w h` with corner radius `r` (surfaces, cells).
     RoundRect {
         /// Left.
         x: i64,
@@ -135,8 +135,8 @@ pub struct PickImage {
 pub enum Owner {
     /// The clear colour.
     Background,
-    /// The body's membrane.
-    Membrane,
+    /// The body's surface.
+    Surface,
     /// An instance's cell face.
     Cell(String),
     /// A port.

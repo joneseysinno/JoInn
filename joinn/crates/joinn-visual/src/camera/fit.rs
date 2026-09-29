@@ -1,12 +1,12 @@
-//! Fit a layout's membrane to a viewport.
+//! Fit a layout's surface to a viewport.
 
 use super::Camera;
 use crate::layout::Layout;
 
 /// `k` is the largest multiple of 4 with `W·k ≤ width − 32` and `H·k ≤ height − 32`,
-/// and at least 4. The membrane is centred, rounding down.
+/// and at least 4. The surface is centred, rounding down.
 pub fn fit(layout: &Layout, width: u32, height: u32) -> Camera {
-    let (w, h) = (layout.membrane.w, layout.membrane.h);
+    let (w, h) = (layout.surface.w, layout.surface.h);
     let (vw, vh) = (i64::from(width), i64::from(height));
     let most = |room: i64, size: i64| {
         if size > 0 {

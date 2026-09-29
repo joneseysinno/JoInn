@@ -17,8 +17,8 @@ mod tables;
 
 pub use camera::{Camera, STANDARD_VIEWPORTS, fit, print_camera};
 pub use layout::{
-    CELL_RADIUS, CELL_W, CellBox, GAP_X, GAP_Y, Layout, MARGIN, MEMBRANE_RADIUS, PITCH, PORT_INSET,
-    PORT_RADIUS, PortDot, Rect, WIRE_HALF_WIDTH_QUARTERS, WireSeg, layout, print_layout,
+    CELL_RADIUS, CELL_W, CellBox, GAP_X, GAP_Y, Layout, MARGIN, PITCH, PORT_INSET, PORT_RADIUS,
+    PortDot, Rect, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS, WireSeg, layout, print_layout,
 };
 pub use pick::{
     Class, Geom, Owner, PORT_TAG, Pick, PickImage, Shape, TAG_MASK, WIRE_TAG, cpu_pick,
@@ -28,7 +28,7 @@ pub use scene::Scene;
 pub use tables::{
     BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CellRow, Delta, FILLED, INCIDENCE_BYTES,
     LINK_ROW_BYTES, LIVE, LinkRow, PORT_ROW_BYTES, PortRow, REFUSED, RowWrite, STYLE_BACKGROUND,
-    STYLE_BYTES, STYLE_CELL, STYLE_CELL_REFUSED, STYLE_MEMBRANE, STYLE_PORT_EMPTY,
-    STYLE_PORT_FILLED, STYLE_TABLE, STYLE_WIRE, Table, TableBytes, Tables, WIRE_KIND, row_bytes,
+    STYLE_BYTES, STYLE_CELL, STYLE_CELL_REFUSED, STYLE_PORT_EMPTY, STYLE_PORT_FILLED,
+    STYLE_SURFACE, STYLE_TABLE, STYLE_WIRE, Table, TableBytes, Tables, WIRE_KIND, row_bytes,
     shapes_of_tables, table_bytes,
 };

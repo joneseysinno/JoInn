@@ -20,7 +20,7 @@ pub struct BoundaryPort {
 
 /// Every port of every instance that no wire consumes.
 /// A genome entry whose cell is not supplied is refused, never skipped.
-pub fn membrane(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<BTreeSet<BoundaryPort>> {
+pub fn surface(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<BTreeSet<BoundaryPort>> {
     let ports = match instance_ports(body, cells) {
         Verdict::Ok(ports) => ports,
         Verdict::Refused(r) => return Verdict::Refused(r),
@@ -55,7 +55,7 @@ mod tests {
     use joinn_frame::{FrameRegistry, Verdict};
     use std::collections::{BTreeMap, BTreeSet};
 
-    use super::membrane;
+    use super::surface;
 
     fn calculator() -> (
         joinn_dna::Body,
@@ -81,14 +81,14 @@ mod tests {
         body: &joinn_dna::Body,
         cells: &BTreeMap<joinn_frame::Hash, joinn_dna::Cell>,
     ) -> BTreeSet<String> {
-        match membrane(body, cells) {
+        match surface(body, cells) {
             Verdict::Ok(set) => set.iter().map(|a| a.address.printed()).collect(),
             Verdict::Refused(r) => panic!("{}", r.reason),
         }
     }
 
     #[test]
-    fn calculator_membrane_is_three_ports() {
+    fn calculator_surface_is_three_ports() {
         let (body, cells) = calculator();
         let set = printed(&body, &cells);
         assert_eq!(
@@ -102,7 +102,7 @@ mod tests {
     }
 
     #[test]
-    fn an_extra_wire_makes_a_strictly_smaller_membrane() {
+    fn an_extra_wire_makes_a_strictly_smaller_surface() {
         let (mut body, cells) = calculator();
         let before = printed(&body, &cells);
         body.coding.wires.push(Wire {

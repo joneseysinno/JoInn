@@ -66,20 +66,20 @@ pub(crate) fn perf() -> Result<(), String> {
     let t5 = Instant::now();
     let uni_ports = two_body_universe_ports()?;
     let uni_ms = t5.elapsed().as_millis();
-    println!("two-body universe membrane ports: {uni_ports} milliseconds: {uni_ms}");
+    println!("two-body universe surface ports: {uni_ports} milliseconds: {uni_ms}");
 
     let t_load = Instant::now();
-    let (parsed, cells) = membrane_load_corpus()?;
+    let (parsed, cells) = surface_load_corpus()?;
     let load_ms = t_load.elapsed().as_millis();
     let t_mem = Instant::now();
-    let (bodies, ports, refused) = membrane_compute(&parsed, &cells);
+    let (bodies, ports, refused) = surface_compute(&parsed, &cells);
     let mem_ms = t_mem.elapsed().as_millis();
     println!(
-        "membrane load+parse milliseconds: {load_ms} compute milliseconds: {mem_ms} bodies: {bodies} ports: {ports} refused: {refused}"
+        "surface load+parse milliseconds: {load_ms} compute milliseconds: {mem_ms} bodies: {bodies} ports: {ports} refused: {refused}"
     );
     if refused != 0 {
         return Err(format!(
-            "membrane refused {refused} corpus bodies; acceptance is a cell for every genome entry"
+            "surface refused {refused} corpus bodies; acceptance is a cell for every genome entry"
         ));
     }
     Ok(())
@@ -129,7 +129,7 @@ fn two_body_universe_ports() -> Result<usize, String> {
             Verdict::Ok(b) => b,
             Verdict::Refused(r) => return Err(r.reason),
         };
-        match joinn_link::membrane(&body, &cells) {
+        match joinn_link::surface(&body, &cells) {
             Verdict::Ok(m) => total += m.len(),
             Verdict::Refused(r) => return Err(r.reason),
         }
@@ -141,7 +141,7 @@ fn two_body_universe_ports() -> Result<usize, String> {
     Ok(total)
 }
 
-fn membrane_load_corpus() -> Result<(Vec<joinn_dna::Body>, BTreeMap<Hash, joinn_dna::Cell>), String>
+fn surface_load_corpus() -> Result<(Vec<joinn_dna::Body>, BTreeMap<Hash, joinn_dna::Cell>), String>
 {
     let root = workspace_root()?;
     let frames = FrameRegistry::phase1();
@@ -183,7 +183,7 @@ fn membrane_load_corpus() -> Result<(Vec<joinn_dna::Body>, BTreeMap<Hash, joinn_
     Ok((parsed, cells))
 }
 
-fn membrane_compute(
+fn surface_compute(
     parsed: &[joinn_dna::Body],
     cells: &BTreeMap<Hash, joinn_dna::Cell>,
 ) -> (usize, usize, usize) {
@@ -191,7 +191,7 @@ fn membrane_compute(
     let mut ports = 0usize;
     let mut refused = 0usize;
     for body in parsed {
-        match joinn_link::membrane(body, cells) {
+        match joinn_link::surface(body, cells) {
             Verdict::Ok(m) => {
                 bodies += 1;
                 ports += m.len();

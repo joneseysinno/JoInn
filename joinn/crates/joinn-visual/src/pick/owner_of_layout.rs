@@ -23,7 +23,7 @@ pub fn owner_of_layout(layout: &Layout, id: [u32; 4]) -> Verdict<Owner> {
     }
     let n = b & !TAG_MASK;
     match (cell, b & TAG_MASK) {
-        (0, 0) if b == 0 => Verdict::Ok(Owner::Membrane),
+        (0, 0) if b == 0 => Verdict::Ok(Owner::Surface),
         (0, WIRE_TAG) => match layout.wires.get(n as usize) {
             Some(w) => Verdict::Ok(Owner::Wire {
                 src: w.src.clone(),
@@ -79,7 +79,7 @@ mod tests {
             Verdict::Refused(r) => panic!("{}", r.reason),
         };
         let probes = [
-            (136, 80, "body membrane"),
+            (136, 80, "body surface"),
             (360, 220, "body.cli_a"),
             (360, 500, "body.cli_b"),
             (920, 276, "body.sum"),

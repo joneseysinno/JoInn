@@ -40,7 +40,7 @@ mod tests {
     use crate::fns::subject::Subject;
     use joinn_dna::hash;
     use joinn_frame::Verdict;
-    use joinn_link::membrane;
+    use joinn_link::surface;
     use std::collections::BTreeSet;
 
     fn calculator() -> Subject {
@@ -50,7 +50,7 @@ mod tests {
     }
 
     #[test]
-    fn drop_genome_removes_cli_b_from_membrane() {
+    fn drop_genome_removes_cli_b_from_surface() {
         let s = calculator();
         let Subject::Body(orig) = &s else {
             panic!("body");
@@ -70,14 +70,14 @@ mod tests {
                 .all(|e| !e.instances.iter().any(|i| i == "cli_b"))
         );
         let (_, cells) = load_calculator().unwrap_or_else(|e| panic!("load calculator cells: {e}"));
-        let set = match membrane(body, &cells) {
+        let set = match surface(body, &cells) {
             Verdict::Ok(set) => set,
             Verdict::Refused(r) => panic!("{}", r.reason),
         };
         let got: BTreeSet<String> = set.iter().map(|a| a.address.printed()).collect();
         assert!(
             !got.iter().any(|p| p.starts_with("cli_b@")),
-            "cli_b must leave the membrane: {got:?}"
+            "cli_b must leave the surface: {got:?}"
         );
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropGenome("ghost")) else {
             panic!("missing instance must refuse");

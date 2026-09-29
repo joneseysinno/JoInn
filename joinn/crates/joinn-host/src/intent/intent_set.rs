@@ -2,14 +2,14 @@
 
 use joinn_dna::{Body, Cell, Direction};
 use joinn_frame::{Hash, Verdict};
-use joinn_link::membrane;
+use joinn_link::surface;
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::Address;
 
-/// One address per in-port of the membrane.
+/// One address per in-port of the surface.
 pub fn intent_set(body: &Body, cells: &BTreeMap<Hash, Cell>) -> BTreeSet<Address> {
-    let Verdict::Ok(mem) = membrane(body, cells) else {
+    let Verdict::Ok(mem) = surface(body, cells) else {
         return BTreeSet::new();
     };
     mem.into_iter()

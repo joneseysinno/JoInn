@@ -34,7 +34,7 @@ mod tests {
         let got = layout_text("phase2/calculator.body").unwrap_or_else(|e| panic!("{e}"));
         let want = "\
 layout body
-membrane 0 0 40 24 r 3
+surface 0 0 40 24 r 3
 cell cli_a 4 4 12 6 r 2
 cell cli_b 4 14 12 6 r 2
 cell sum 24 4 12 10 r 2

@@ -2,12 +2,12 @@
 
 use joinn_dna::{Body, Cell, Direction};
 use joinn_frame::{Hash, Verdict};
-use joinn_link::{BoundaryPort, membrane};
+use joinn_link::{BoundaryPort, surface};
 use std::collections::BTreeMap;
 
-/// In-ports of the membrane, genome order, then port position.
+/// In-ports of the surface, genome order, then port position.
 pub(in crate::session) fn in_ports(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Vec<BoundaryPort> {
-    let Verdict::Ok(set) = membrane(body, cells) else {
+    let Verdict::Ok(set) = surface(body, cells) else {
         return Vec::new();
     };
     let mut ordered = Vec::new();

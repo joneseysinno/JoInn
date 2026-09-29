@@ -40,7 +40,7 @@ pub(crate) const TICK_BYTES: usize = 32;
 pub(crate) const PASS_BYTES: usize = 16;
 /// The shape organelle's instance index is `kind << KIND_SHIFT | slot`.
 pub(crate) const KIND_SHIFT: u32 = 24;
-/// Shape instances of the membrane table.
+/// Shape instances of the surface table.
 pub(crate) const KIND_BODY: u32 = 0;
 /// Shape instances of the cell table.
 pub(crate) const KIND_CELL: u32 = 1;

@@ -1,19 +1,19 @@
 //! A fresh layout's shapes in draw order, with the IDs of canonical growth.
 
 use super::{Geom, PORT_TAG, Shape, WIRE_TAG};
-use crate::layout::{CELL_RADIUS, Layout, MEMBRANE_RADIUS, PORT_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
+use crate::layout::{CELL_RADIUS, Layout, PORT_RADIUS, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
 
-/// Membrane (body slot 0), cells (slots in name order), wires (link slots in
+/// Surface (body slot 0), cells (slots in name order), wires (link slots in
 /// `print_body` order), then ports. Every generation is 1.
 pub fn shapes_of_layout(layout: &Layout) -> Vec<Shape> {
-    let m = layout.membrane;
+    let m = layout.surface;
     let mut shapes = vec![Shape {
         geom: Geom::RoundRect {
             x: m.x,
             y: m.y,
             w: m.w,
             h: m.h,
-            r: MEMBRANE_RADIUS,
+            r: SURFACE_RADIUS,
         },
         id: [1, 0, 0, 1],
     }];

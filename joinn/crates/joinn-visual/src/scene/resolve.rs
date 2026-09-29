@@ -28,18 +28,18 @@ impl Scene {
         let Some(body) = r.checked_sub(1) else {
             return unknown();
         };
-        let Some(membrane) = self.tables.body.get(body as usize) else {
+        let Some(surface) = self.tables.body.get(body as usize) else {
             return unknown();
         };
         let n = b & !TAG_MASK;
         match (g, b & TAG_MASK) {
             (0, 0) if b == 0 => {
-                if membrane.generation != generation {
-                    stale("body", body, membrane.generation)
-                } else if membrane.flags & LIVE == 0 {
+                if surface.generation != generation {
+                    stale("body", body, surface.generation)
+                } else if surface.flags & LIVE == 0 {
                     unknown()
                 } else {
-                    Verdict::Ok(Owner::Membrane)
+                    Verdict::Ok(Owner::Surface)
                 }
             }
             (0, WIRE_TAG) => {

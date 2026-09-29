@@ -2,11 +2,11 @@
 
 use joinn_frame::Verdict;
 use joinn_visual::{
-    FILLED, PORT_TAG, Pick, STYLE_BACKGROUND, STYLE_MEMBRANE, STYLE_PORT_EMPTY, STYLE_PORT_FILLED,
+    FILLED, PORT_TAG, Pick, STYLE_BACKGROUND, STYLE_PORT_EMPTY, STYLE_PORT_FILLED, STYLE_SURFACE,
     STYLE_TABLE, STYLE_WIRE, Scene, TAG_MASK, WIRE_TAG,
 };
 
-/// Membrane is 1, a cell uses its row's `style`, a port is 4 or 5 by `filled`,
+/// Surface is 1, a cell uses its row's `style`, a port is 4 or 5 by `filled`,
 /// a wire is 6, and the background is 0. The bytes are the style table's RGBA8.
 pub(crate) fn g6_style_rgba(scene: &Scene, pick: &Pick) -> Result<[u8; 4], String> {
     let id = match pick {
@@ -26,7 +26,7 @@ pub(crate) fn g6_style_rgba(scene: &Scene, pick: &Pick) -> Result<[u8; 4], Strin
     } else {
         let [_, g, b, _] = id;
         if g == 0 && b == 0 {
-            STYLE_MEMBRANE
+            STYLE_SURFACE
         } else if (b & TAG_MASK) == WIRE_TAG {
             STYLE_WIRE
         } else if (b & TAG_MASK) == PORT_TAG {
@@ -57,7 +57,7 @@ pub(crate) fn g6_style_rgba(scene: &Scene, pick: &Pick) -> Result<[u8; 4], Strin
             row.style
         } else {
             return Err(format!(
-                "ID {id:?} is not a drawn owner; acceptance is membrane, cell, port, wire, or background"
+                "ID {id:?} is not a drawn owner; acceptance is surface, cell, port, wire, or background"
             ));
         }
     };

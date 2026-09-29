@@ -24,8 +24,8 @@ pub const WIRE_KIND: u32 = 1;
 
 /// Style ids (§2.8). Colours are decision, not truth.
 pub const STYLE_BACKGROUND: u32 = 0;
-/// Membrane.
-pub const STYLE_MEMBRANE: u32 = 1;
+/// Surface.
+pub const STYLE_SURFACE: u32 = 1;
 /// Cell.
 pub const STYLE_CELL: u32 = 2;
 /// Cell, refused.
@@ -76,16 +76,16 @@ pub enum Table {
     Incidence,
 }
 
-/// A membrane.
+/// A surface.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
 pub struct BodyRow {
-    /// Membrane left.
+    /// Surface left.
     pub x: i32,
-    /// Membrane top.
+    /// Surface top.
     pub y: i32,
-    /// Membrane width.
+    /// Surface width.
     pub w: i32,
-    /// Membrane height.
+    /// Surface height.
     pub h: i32,
     /// Corner radius.
     pub radius: u32,

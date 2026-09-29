@@ -101,7 +101,7 @@ pub fn layout(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<Layout> {
     } else {
         2 * MARGIN + count * CELL_W + (count - 1) * GAP_X
     };
-    let membrane = Rect {
+    let surface = Rect {
         x: 0,
         y: 0,
         w: width,
@@ -132,7 +132,7 @@ pub fn layout(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<Layout> {
         });
     }
     Verdict::Ok(Layout {
-        membrane,
+        surface,
         cells: boxes,
         ports: dots,
         wires: segs,

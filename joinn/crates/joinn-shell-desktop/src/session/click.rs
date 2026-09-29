@@ -89,7 +89,7 @@ mod tests {
 
     /// §2.13, at 1280×720.
     const PROBES: &[(u32, u32, &str)] = &[
-        (136, 80, "body membrane"),
+        (136, 80, "body surface"),
         (360, 220, "body.cli_a"),
         (360, 500, "body.cli_b"),
         (920, 276, "body.sum"),

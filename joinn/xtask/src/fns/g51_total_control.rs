@@ -3,7 +3,7 @@
 use super::load_phase5_bodies;
 use super::subject::Subject;
 use joinn_frame::Verdict;
-use joinn_link::membrane;
+use joinn_link::surface;
 
 pub(crate) fn g51_total_control(subject: &Subject) -> bool {
     let Subject::Body(body) = subject else {
@@ -15,5 +15,5 @@ pub(crate) fn g51_total_control(subject: &Subject) -> bool {
     let Some(cells) = supplied.any_cells() else {
         return true;
     };
-    matches!(membrane(body, cells), Verdict::Ok(_))
+    matches!(surface(body, cells), Verdict::Ok(_))
 }

@@ -67,7 +67,7 @@ fn intent_at(instance: &str, port: u32) -> Intent {
 }
 
 #[test]
-fn intent_set_is_the_membrane_in_ports() {
+fn intent_set_is_the_surface_in_ports() {
     let body = calculator_body();
     let got = intent_set(&body, &calculator_cells());
     let want = BTreeSet::from([addr("cli_a", 0), addr("cli_b", 0)]);

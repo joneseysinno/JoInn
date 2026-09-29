@@ -286,11 +286,11 @@ pub fn assay(universe: &Universe, bound: &Bound) -> Verdict<AssayReport> {
         let Some((body, cells)) = bound.get(alias) else {
             continue;
         };
-        let membrane = match crate::membrane(body, cells) {
+        let surface = match crate::surface(body, cells) {
             Verdict::Ok(m) => m,
             Verdict::Refused(r) => return Verdict::Refused(r),
         };
-        for port in membrane {
+        for port in surface {
             if linked.contains(&(
                 alias.clone(),
                 port.address.instance.clone(),

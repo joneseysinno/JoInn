@@ -1,4 +1,4 @@
-//! Inject a host value at one body's membrane port.
+//! Inject a host value at one body's surface port.
 
 use joinn_frame::{Value, Verdict};
 

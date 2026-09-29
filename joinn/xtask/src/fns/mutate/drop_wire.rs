@@ -38,7 +38,7 @@ mod tests {
     use crate::fns::subject::Subject;
     use joinn_dna::hash;
     use joinn_frame::Verdict;
-    use joinn_link::membrane;
+    use joinn_link::surface;
     use std::collections::BTreeSet;
 
     fn calculator() -> Subject {
@@ -48,7 +48,7 @@ mod tests {
     }
 
     #[test]
-    fn drop_wire_changes_membrane() {
+    fn drop_wire_changes_surface() {
         let s = calculator();
         let Subject::Body(orig) = &s else {
             panic!("body");
@@ -62,7 +62,7 @@ mod tests {
         };
         assert_ne!(hash(&body.coding), orig_hash);
         let (_, cells) = load_calculator().unwrap_or_else(|e| panic!("load calculator cells: {e}"));
-        let set = match membrane(body, &cells) {
+        let set = match surface(body, &cells) {
             Verdict::Ok(set) => set,
             Verdict::Refused(r) => panic!("{}", r.reason),
         };
@@ -72,7 +72,7 @@ mod tests {
             "cli_b@0".to_string(),
             "sum@2".to_string(),
         ]);
-        assert_ne!(got, expected, "membrane must change after DropWire");
+        assert_ne!(got, expected, "surface must change after DropWire");
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropWire("ghost@0", "sum@0")) else {
             panic!("missing wire must refuse");
         };

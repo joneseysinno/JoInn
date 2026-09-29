@@ -5,7 +5,7 @@ use super::subject::Subject;
 use super::{
     g5_assemble, g5_assemble_control, g5_exclusive, g5_exclusive_control, g5_law4, g5_law4_control,
     g5_lenses, g5_lenses_control, g5_linked, g5_linked_control, g5_locality, g5_locality_control,
-    g5_membrane, g5_membrane_control, g5_revoke, g5_revoke_control,
+    g5_revoke, g5_revoke_control, g5_surface, g5_surface_control,
 };
 use joinn_gate::GateItem;
 
@@ -18,9 +18,9 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         opposes: Mutation::DropLink("e0"),
     },
     GateItem {
-        name: "The membrane is measured",
-        check: g5_membrane,
-        control: g5_membrane_control,
+        name: "The surface is measured",
+        check: g5_surface,
+        control: g5_surface_control,
         control_artifact: "corpus/phase2/calculator.body",
         opposes: Mutation::DropWire("cli_a@1", "sum@0"),
     },

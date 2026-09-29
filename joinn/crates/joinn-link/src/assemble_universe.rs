@@ -8,10 +8,10 @@ use std::collections::BTreeMap;
 
 use crate::assay::check_declarations;
 use crate::bind::Bound;
-use crate::membrane::membrane;
+use crate::surface::surface;
 use crate::universe::{Mark, Universe};
 
-/// Assemble a universe: every link member must lie on a membrane. Then each
+/// Assemble a universe: every link member must lie on a surface. Then each
 /// declaration the universe carries is checked against its assay.
 pub fn assemble_universe(universe: &Universe, bound: &Bound) -> Verdict<()> {
     let mut dimension = BTreeMap::new();
@@ -31,7 +31,7 @@ pub fn assemble_universe(universe: &Universe, bound: &Bound) -> Verdict<()> {
                 ),
             ));
         };
-        let mem = match membrane(body, cells) {
+        let mem = match surface(body, cells) {
             Verdict::Ok(m) => m,
             Verdict::Refused(r) => return Verdict::Refused(r),
         };

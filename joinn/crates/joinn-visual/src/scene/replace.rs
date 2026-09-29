@@ -12,7 +12,7 @@ use crate::tables::Delta;
 impl Scene {
     /// A kept instance keeps its slot and generation and is rewritten only if it
     /// moved. A gone instance's cell, port and link slots are freed. A new one
-    /// takes free slots. The body row is rewritten if the membrane changed.
+    /// takes free slots. The body row is rewritten if the surface changed.
     pub fn replace(&mut self, body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<Delta> {
         match layout(body, cells) {
             Verdict::Ok(next) => self.place(next),

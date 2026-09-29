@@ -1,11 +1,11 @@
-//! No .body file declares a membrane. The membrane is computed.
+//! No .body file declares a surface, or a membrane. The surface is computed.
 
 #[cfg(test)]
 mod tests {
     use std::fs;
 
     #[test]
-    fn no_body_declares_a_membrane_field() {
+    fn no_body_declares_a_surface_field() {
         let root = match crate::fns::workspace_root() {
             Ok(r) => r,
             Err(e) => panic!("{e}"),
@@ -35,14 +35,14 @@ mod tests {
                     Ok(s) => s,
                     Err(e) => panic!("{}: {e}", path.display()),
                 };
-                if contains_ident(&text, "membrane") {
+                if contains_ident(&text, "surface") || contains_ident(&text, "membrane") {
                     hits.push(path.display().to_string());
                 }
             }
         }
         assert!(
             hits.is_empty(),
-            "a .body file declares a membrane:\n{}",
+            "a .body file declares a surface:\n{}",
             hits.join("\n")
         );
     }

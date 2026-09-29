@@ -8,7 +8,7 @@ use joinn_frame::Verdict;
 use joinn_link::Address;
 
 use super::Scene;
-use crate::layout::{CELL_RADIUS, Layout, MEMBRANE_RADIUS, PORT_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
+use crate::layout::{CELL_RADIUS, Layout, PORT_RADIUS, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
 use crate::refuse::refuse;
 use crate::tables::{
     BodyRow, CellRow, Delta, LIVE, LinkRow, PortRow, Row, RowWrite, STYLE_CELL, Table, WIRE_KIND,
@@ -133,13 +133,13 @@ impl Scene {
             self.links.remove(&key);
         }
 
-        let m = next.membrane;
+        let m = next.surface;
         let body = BodyRow {
             x: fit!(m.x),
             y: fit!(m.y),
             w: fit!(m.w),
             h: fit!(m.h),
-            radius: fit!(MEMBRANE_RADIUS),
+            radius: fit!(SURFACE_RADIUS),
             generation: self.tables.body.first().map_or(1, |r| r.generation),
             flags: LIVE,
         };

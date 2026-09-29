@@ -40,7 +40,7 @@ mod tests {
     use crate::fns::subject::Subject;
     use joinn_dna::{GenomeTarget, hash};
     use joinn_frame::Verdict;
-    use joinn_link::membrane;
+    use joinn_link::surface;
     use std::collections::BTreeSet;
 
     fn calculator() -> Subject {
@@ -50,7 +50,7 @@ mod tests {
     }
 
     #[test]
-    fn swap_cell_changes_membrane() {
+    fn swap_cell_changes_surface() {
         let s = calculator();
         let Subject::Body(orig) = &s else {
             panic!("body");
@@ -89,7 +89,7 @@ mod tests {
             .into_iter()
             .map(String::from)
             .collect();
-        let ports: BTreeSet<String> = match membrane(body, &cells) {
+        let ports: BTreeSet<String> = match surface(body, &cells) {
             Verdict::Ok(set) => set.iter().map(|a| a.address.printed()).collect(),
             Verdict::Refused(_) => BTreeSet::new(),
         };

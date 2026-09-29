@@ -1,9 +1,9 @@
-//! Gate 5.1 item: calculator's membrane is measured, and a missing cell is named.
+//! Gate 5.1 item: calculator's surface is measured, and a missing cell is named.
 
 use super::workspace_root;
 use joinn_dna::parse_body;
 use joinn_frame::{FrameRegistry, Verdict};
-use joinn_link::membrane;
+use joinn_link::surface;
 use std::fs;
 
 pub(crate) fn g51_total() -> bool {
@@ -36,13 +36,13 @@ pub(crate) fn g51_total() -> bool {
     let Some(cells) = supplied.any_cells() else {
         return false;
     };
-    let Verdict::Ok(mem) = membrane(&calc, cells) else {
+    let Verdict::Ok(mem) = surface(&calc, cells) else {
         return false;
     };
     if mem.is_empty() {
         return false;
     }
-    match membrane(&missing, cells) {
+    match surface(&missing, cells) {
         Verdict::Refused(r) => r.reason.contains("orphan"),
         Verdict::Ok(_) => false,
     }

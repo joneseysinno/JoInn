@@ -1,4 +1,4 @@
-//! A session over any body: membrane in-ports in, fires and refusals out.
+//! A session over any body: surface in-ports in, fires and refusals out.
 
 mod in_ports;
 mod read_line;

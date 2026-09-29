@@ -6,7 +6,7 @@ use joinn_dna::Direction;
 use joinn_frame::{FrameId, Value, Verdict};
 use joinn_host::describe;
 use joinn_link::{
-    Address, Mark, Universe, UniverseReport, UniverseState, assemble_universe, bind, membrane,
+    Address, Mark, Universe, UniverseReport, UniverseState, assemble_universe, bind, surface,
 };
 
 /// What a drive of the head body showed. An error is a binding, assembly, or run failure.
@@ -62,7 +62,7 @@ pub(crate) fn drive_head(universe: &Universe) -> Result<HeadDrive, String> {
                     member.body
                 ));
             };
-            let ports = match membrane(body, cells) {
+            let ports = match surface(body, cells) {
                 Verdict::Ok(p) => p,
                 Verdict::Refused(r) => return Err(r.reason),
             };
@@ -105,7 +105,7 @@ pub(crate) fn drive_head(universe: &Universe) -> Result<HeadDrive, String> {
             "head {head} has no bound body; acceptance is a body for every alias"
         ));
     };
-    let ports = match membrane(body, cells) {
+    let ports = match surface(body, cells) {
         Verdict::Ok(p) => p,
         Verdict::Refused(r) => return Err(r.reason),
     };

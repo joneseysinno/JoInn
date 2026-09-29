@@ -1,4 +1,4 @@
-// The shape organelle: membranes, cells and ports as rounded rectangles (a
+// The shape organelle: surfaces, cells and ports as rounded rectangles (a
 // port is a rectangle whose radius is its half-extent, which is a circle).
 // The instance index carries the table in its top bits and the slot below.
 
@@ -18,7 +18,7 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> Out {
         lo = vec2(px(tick.ox, m.x), px(tick.oy, m.y));
         hi = lo + vec2(span(m.w), span(m.h));
         r = span(i32(m.radius));
-        o.color = styles[STYLE_MEMBRANE];
+        o.color = styles[STYLE_SURFACE];
         o.id = vec4(slot + 1u, 0u, 0u, m.generation);
     } else if kind == KIND_CELL {
         let c = cells[slot];

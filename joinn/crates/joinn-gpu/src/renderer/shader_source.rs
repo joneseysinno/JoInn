@@ -1,7 +1,7 @@
 //! One organelle's WGSL, with the constants it shares with joinn-visual.
 
 use joinn_visual::{
-    FILLED, LIVE, PORT_TAG, STYLE_MEMBRANE, STYLE_PORT_EMPTY, STYLE_PORT_FILLED, STYLE_WIRE,
+    FILLED, LIVE, PORT_TAG, STYLE_PORT_EMPTY, STYLE_PORT_FILLED, STYLE_SURFACE, STYLE_WIRE,
     WIRE_TAG,
 };
 
@@ -16,7 +16,7 @@ pub(super) fn shader_source(organelle: &str) -> String {
         ("FILLED", FILLED),
         ("PORT_TAG", PORT_TAG),
         ("WIRE_TAG", WIRE_TAG),
-        ("STYLE_MEMBRANE", STYLE_MEMBRANE),
+        ("STYLE_SURFACE", STYLE_SURFACE),
         ("STYLE_PORT_EMPTY", STYLE_PORT_EMPTY),
         ("STYLE_PORT_FILLED", STYLE_PORT_FILLED),
         ("STYLE_WIRE", STYLE_WIRE),

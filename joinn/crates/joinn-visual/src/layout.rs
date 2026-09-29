@@ -11,7 +11,7 @@ pub use print_layout::print_layout;
 use joinn_dna::Direction;
 use joinn_link::Address;
 
-/// Membrane to cells.
+/// Surface to cells.
 pub const MARGIN: i64 = 4;
 /// Width of every cell.
 pub const CELL_W: i64 = 12;
@@ -27,8 +27,8 @@ pub const PORT_INSET: i64 = 3;
 pub const PORT_RADIUS: i64 = 1;
 /// Cell corner radius.
 pub const CELL_RADIUS: i64 = 2;
-/// Membrane corner radius.
-pub const MEMBRANE_RADIUS: i64 = 3;
+/// Surface corner radius.
+pub const SURFACE_RADIUS: i64 = 3;
 /// Wire half-width, in quarters of a layout unit.
 pub const WIRE_HALF_WIDTH_QUARTERS: i64 = 1;
 
@@ -84,8 +84,8 @@ pub struct WireSeg {
 /// in the order `print_body` prints them.
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Layout {
-    /// The membrane, from `(0, 0)`.
-    pub membrane: Rect,
+    /// The surface, from `(0, 0)`.
+    pub surface: Rect,
     /// Cells.
     pub cells: Vec<CellBox>,
     /// Ports.

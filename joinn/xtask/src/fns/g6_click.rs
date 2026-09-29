@@ -11,7 +11,7 @@ use super::subject::Subject;
 
 /// §2.13, which item 3 asserts on every adapter through `read_texel`.
 const PROBES: [(u32, u32, &str); 14] = [
-    (136, 80, "body membrane"),
+    (136, 80, "body surface"),
     (360, 220, "body.cli_a"),
     (360, 500, "body.cli_b"),
     (920, 276, "body.sum"),

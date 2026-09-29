@@ -38,7 +38,7 @@ mod tests {
         let camera = fit(scene.layout(), 640, 360);
         assert_eq!((camera.k, camera.ox, camera.oy), (12, 80, 36));
         let probes: [((i64, i64), &str); 13] = [
-            ((2, 2), "body membrane"),
+            ((2, 2), "body surface"),
             ((10, 7), "body.cli_a"),
             ((10, 17), "body.cli_b"),
             ((30, 9), "body.sum"),

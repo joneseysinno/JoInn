@@ -1,4 +1,4 @@
-//! Load a body, prompt each membrane in-port, present fires and a refusal.
+//! Load a body, prompt each surface in-port, present fires and a refusal.
 
 use crate::cli_host::CliHost;
 use crate::load::{environment_signals, find_corpus, load_body, load_cells, value_in_frame};
@@ -26,7 +26,7 @@ pub(in crate::session) fn run_session(
     let ports = in_ports(&body, &cells);
     if ports.is_empty() {
         return Err(format!(
-            "body `{name}` exposes no membrane in-port; acceptance is a body that exposes an in-port"
+            "body `{name}` exposes no surface in-port; acceptance is a body that exposes an in-port"
         ));
     }
 

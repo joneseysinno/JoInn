@@ -3,16 +3,16 @@
 use joinn_dna::Direction;
 use std::fmt::Write;
 
-use super::{CELL_RADIUS, Layout, MEMBRANE_RADIUS, PORT_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
+use super::{CELL_RADIUS, Layout, PORT_RADIUS, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
 
-/// `layout body`, the membrane, cells, ports, then wires. A rectangle prints
+/// `layout body`, the surface, cells, ports, then wires. A rectangle prints
 /// `x y width height`.
 pub fn print_layout(layout: &Layout) -> String {
     let mut out = String::from("layout body\n");
-    let m = layout.membrane;
+    let m = layout.surface;
     let _ = writeln!(
         out,
-        "membrane {} {} {} {} r {MEMBRANE_RADIUS}",
+        "surface {} {} {} {} r {SURFACE_RADIUS}",
         m.x, m.y, m.w, m.h
     );
     for c in &layout.cells {
@@ -68,7 +68,7 @@ mod tests {
         };
         let want = "\
 layout body
-membrane 0 0 40 24 r 3
+surface 0 0 40 24 r 3
 cell cli_a 4 4 12 6 r 2
 cell cli_b 4 14 12 6 r 2
 cell sum 24 4 12 10 r 2

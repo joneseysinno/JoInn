@@ -10,7 +10,7 @@ use crate::gpu::{Gpu, scoped};
 use crate::refuse::refuse;
 
 impl Renderer {
-    /// Writes the tick uniform, then one pass: membranes, cells, wires, ports,
+    /// Writes the tick uniform, then one pass: surfaces, cells, wires, ports,
     /// each by slot (§2.5's draw order). The color view must match the camera's
     /// viewport and this renderer's format. Submits and returns without waiting.
     pub fn draw(&mut self, gpu: &Gpu, camera: &Camera, color: &wgpu::TextureView) -> Verdict<()> {

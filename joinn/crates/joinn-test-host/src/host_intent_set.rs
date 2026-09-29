@@ -1,4 +1,4 @@
-//! Membrane in-ports of a body that no link head feeds.
+//! Surface in-ports of a body that no link head feeds.
 
 use joinn_dna::{Body, Cell};
 use joinn_frame::Hash;

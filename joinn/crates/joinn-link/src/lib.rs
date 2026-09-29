@@ -1,4 +1,4 @@
-//! Links between bodies. A membrane is the boundary of a body, computed, never stored.
+//! Links between bodies. A surface is the boundary of a body, computed, never stored.
 
 #![forbid(unsafe_code)]
 
@@ -13,8 +13,8 @@ mod check_lenses;
 mod check_link_types;
 mod csr;
 mod instance_ports;
-mod membrane;
 mod structural;
+mod surface;
 
 pub(crate) use structural::refuse;
 mod universe;
@@ -31,7 +31,7 @@ pub use check_lenses::check_lenses;
 pub use check_link_types::check_link_types;
 pub use csr::{Csr, CsrMember, coding_from_csr, csr_from_universe};
 pub use instance_ports::instance_ports;
-pub use membrane::{BoundaryPort, membrane};
+pub use surface::{BoundaryPort, surface};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,
     UniverseCoding, UniverseRegulatory, hash_universe, parse_universe, print_universe,
