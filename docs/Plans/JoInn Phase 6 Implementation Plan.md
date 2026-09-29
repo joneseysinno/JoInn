@@ -508,10 +508,13 @@ Dependencies: P6-07a first, then P6-08. P6-09 and P6-10 need P6-08. P6-11 needs 
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
+| **P6-11a** | **Record Amendment B** | This plan file as it now stands on disk (it adds Amendment B and R75). `decisions.md`: row R75 `open`. Backlog: R75 with §8's text. No code | `git show --stat HEAD` lists the plan, `decisions.md` and the backlog, and nothing under `joinn/crates` or `joinn/xtask` |
 | **P6-12** | **The shell** | joinn-shell-desktop per §2.10, with unit tests for the non-window leaves | `cargo build -p joinn-shell-desktop` succeeds on both OSes (CI). Unit tests: a click at each §2.13 probe maps to its owner string; typing `2` then Enter on the selected `cli_a@0` yields `intent cli_a@0 "2"`; an in-port outside the intent set yields `not an intent address: …`. Cursor also runs the window once on the Windows machine, clicks the `sum` cell, and pastes the two printed pick lines (only if a display is available; otherwise writes `no display`) |
-| **P6-13** | **Gate 6** | §2.11's three items; uniqueness across gates 4–6; `phase 6` label; lock row | `cargo xtask gate all` exits 0 and prints `phase 6: 3/3` after `phase 5.2: 3/3`. Shown then reverted: give item 3 item 2's `opposes`; paste the uniqueness refusal. Shown then reverted: make `adapters()` return an empty list; paste item 1's printed failure (it must fail, not skip) |
+| **P6-13** | **Gate 6** | §2.11's three items; uniqueness across gates 4–6; `phase 6` label; lock row | `cargo xtask gate all` exits 0 and prints `phase 6: 3/3` after `phase 5.2: 3/3`. Shown then reverted: give item 3 item 2's `opposes`; paste the uniqueness refusal. Shown then reverted: make `adapters()` return an empty list; paste item 1's printed failure (it must fail, not skip). Shown then reverted (Amendment B2): swap `STYLE_PORT_EMPTY` and `STYLE_PORT_FILLED` in `shape.wgsl`'s `select`; paste item 2's printed failure |
 | **P6-14** | **Docs and freeze** | README and `Guides/03-where-we-are.md` (JoInn draws one body; what the picture means; what it doesn't draw yet); `Guides/05-glossary.md` gains *layout unit, camera, tick, organelle, ID target, owner, edge pixel, delta, regrow*; `decisions.md` rows VH1, VH2, VH5, VH11, VH12, VH14 (Part II's V1, V2, V5, V11, V12, V14) and V119–V124 `holds`; the roadmap's Phase 6 section gains a dated note pointing at `phase-6-pick.md` and naming what Phase 6 deferred (glyph, image and snapshot organelles → Phase 7; fallback path → R72) | `cargo xtask gate all` from a fresh clone prints the fixtures, then phases 0, 1, 2, 2.1, 2.2, 3 (legacy), 4, 5, 5.1, 5.2 and 6, and exits 0. `corpus verify` 43. `git diff --stat <P6-01>..HEAD -- joinn/corpus` prints nothing |
 | — | **Stop C** | `phase-6-stop-c.md` with the CI read, push, stop | — |
+
+Dependencies: P6-11a first, then in order. P6-14 needs P6-12 and P6-13.
 
 If something has to be cut for time, cut `replace` and gate 6 item 3's stale-pick half together (the probe table stays), and carry them forward with a line in `decisions.md`. Never cut P6-06, P6-07's regrow equality, P6-09 or P6-10.
 
@@ -566,8 +569,8 @@ cargo run -p joinn-shell-desktop -- corpus/phase2/calculator.body
 1. A window opens: a dark membrane with two cells on the left, one on the right, and two wires.
 2. Click the middle of the right-hand cell. The terminal prints a `pick …: body.sum (cpu)` line, then a `body.sum (gpu) · agree` line.
 3. Move the mouse around without clicking. No new `tick` lines appear.
-4. Click the top-left cell's **left** port. The terminal prints `selected body.cli_a@0`. Type `two` and press Enter. The top-left cell turns red.
-5. Type `2` and press Enter. The red goes away and that cell's right port fills in.
+4. Click the top-left cell's **left** port. The terminal prints `selected body.cli_a@0`. Type `two` and press Enter. The top-left cell turns red, and its left port fills in (it holds the text you typed; the cell refused it).
+5. Type `2` and press Enter. The red goes away, that cell's right port fills in, and so does the right-hand cell's top-left port.
 6. Click the bottom-left cell's left port, type `3`, and press Enter. The right-hand cell's right port fills in.
 7. Resize the window. The picture re-centres, and the tick line says `rows 0`.
 8. Close the window.
@@ -607,6 +610,35 @@ Claude's review of chunk A (fresh clone, Linux) reproduced every number. These f
 
 ---
 
+## Amendment B (Stop B, 28 Sep 2026)
+
+Claude's review of chunk B (fresh clone of `09192c3`, Linux, llvmpipe as the only adapter) reproduced every number Cursor printed on WARP and the RTX 2080 (Dx12 and Vulkan): suite 248 passed; every `pick` line byte for byte, including `agree 921288, edge 312` at 1280×720 and the plant's `disagree 7336`; every `regrow` line, including A4's `bound 7 + 1`; `gate all` exit 0 with the same phase lines. That makes four adapters, three graphics APIs and two operating systems with zero disagreements. These points settle chunk B's snags and add one check to chunk C. They are decisions, like the rest of the plan.
+
+**B1 · Chunk B's snags, all accepted as built.**
+- P6-08: incidence and style rows are one `u32`, so a minimum one field short is 0, which wgpu reads as "no minimum". The refusal is shown for the four tables where it can be.
+- P6-09: the `not measured` lines for the 12 bodies that don't grow a scene are right (A3 said so). Their reasons: the nine phase 2.1/2.2 reference bodies wire to their own membrane (now R75), `columns_reader` and `environment` are R74, and `missing_cell` is a control.
+- P6-10: camera-change and idle checks once, on the first adapter, and the `fresh calculator (Amendment A4):` header line. Both accepted, and §3's format now includes the header.
+- P6-11: marking §2.13 `as predicted` at 1280×720 from the CPU probe test plus `disagree 0` on every adapter is sound, because agreement on every pixel carries the CPU's owners to the GPU. Gate 6 item 3 checks it directly.
+
+**B2 · The picture must show the row (gate 6 item 2).** Chunk B checks the ID target on every pixel, but nothing checks the color target except that it stays the same after a regrow. If the shader swapped the empty-port and filled-port colors, every check would still pass. Item 2's title promises that the picture shows what the engine computed, so in P6-13 item 2 also does this: on every adapter, at 1280×720, render the scene before the script and after each event (deltas applied through `Renderer::apply`, as `regrow` does). At each of §2.13's 14 probe pixels, the color bytes must equal the RGBA8 of the style that the probe's owning row names (§2.8's table: membrane 1, cell `style`, port 4 or 5 by `filled`, wire 6, background 0). The item fails naming the event, pixel, adapter, and both colors. The control stays as §2.11 says. **Claude's prediction**, run on llvmpipe (the `.` means unchanged from the line above):
+
+| After | cli_a | cli_b | sum | cli_a@0 | cli_a@1 | cli_b@0 | cli_b@1 | sum@0 | sum@1 | sum@2 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| grow | `2F5D8A` | `2F5D8A` | `2F5D8A` | `C9CED6` | `C9CED6` | `C9CED6` | `C9CED6` | `C9CED6` | `C9CED6` | `C9CED6` |
+| event 1 `"two"` | `B03A2E` | . | . | `F2B134` | . | . | . | . | . | . |
+| event 2 `"2"` | `2F5D8A` | . | . | . | `F2B134` | . | . | `F2B134` | . | . |
+| event 3 `"3"` | . | . | . | . | . | `F2B134` | `F2B134` | . | `F2B134` | `F2B134` |
+
+Every event: membrane `22262E`, both wires `8A94A3`, pixel `0,0` `15171C`; alpha `FF` everywhere. `Rgba8Unorm` returns these bytes exactly. The check compares bytes, never a tolerance. P6-13's done-when gains one shown-then-reverted step: swap `STYLE_PORT_EMPTY` and `STYLE_PORT_FILLED` in `shape.wgsl`'s `select`, and paste item 2's failure. The same swap passes every chunk B check today, and that is the gap B2 closes. `phase-6-pick.md` is not rewritten; P6-14's roadmap note quotes item 2's result.
+
+**B3 · Gate 6 item 3 reads the probes the way the shell does.** Item 3's GPU half reads each probe with `read_texel`, one texel per probe, not from a full readback. That makes gate 6 exercise the shell's pick path.
+
+**B4 · The shell's surface is not sRGB.** In P6-12, the shell configures the surface with the first of `Bgra8Unorm` or `Rgba8Unorm` that the surface offers, and only otherwise with the surface's first format. It prints `surface: <format>` after the adapter line. On an sRGB surface the style colors would come out lighter than §2.8's table. This is a decision about looks, not truth, and nothing checks the window's pixels.
+
+**B5 · R75 opened** (§8): membrane ports.
+
+---
+
 ## 8. Open Items
 
 | ID | Topic | Question |
@@ -616,6 +648,7 @@ Claude's review of chunk A (fresh clone, Linux) reproduced every number. These f
 | **R72** | The vertex-buffer fallback | `joinn-gpu` refuses an adapter without vertex-stage storage. S2 showed the fallback draws the same IDs, but it rewrites every instance row when a chart moves. When a compatibility-only target matters, is the fallback worth that cost? |
 | **R73** | Text on screen | The glyph organelle, a borrowed shaping crate, and text's inverse (point → character index). Planned with Phase 7's bands |
 | **R74** | One address, one port | Floor primitives number in-ports and out-ports separately (`eq`: in 0, in 1, out 0), while cells number all their ports in one sequence. So `a@0` can name two ports, and the ID target (`PORT_TAG \| position`) can't tell them apart. Phase 6 refuses such a body in the scene (`columns_reader.body`, `environment.body`). Should primitives number ports the way cells do (new grammar, so R60 applies), or should an address carry its direction? |
+| **R75** | Membrane ports | A body's own ports (`self@n`) have no place in Phase 6's layout, so a body whose wires reach its own membrane is not drawn (the nine phase 2.1/2.2 reference bodies print `not measured`). Phase 7 links bodies through their membranes. Where does a membrane port sit, and does a wire to `self` end on the membrane's edge? |
 | R64 | Legacy gates | Carried forward (AJ, 28 Sep) |
 | R69 | Describe at firing time | Carried forward (AJ, 28 Sep). Phase 6 describes after the run, the same as the test host |
 
@@ -678,4 +711,4 @@ Keep every other rule exactly as it is. Append:
 
 ---
 
-*JoInn Phase 6 Implementation Plan, Draft 0.1 (28 Sep 2026), with Amendment A from Stop A. Opens after Phase 4's stop-C review and the S2 run on AJ's desktop. AJ decided: floats only below the renderer boundary; software adapters in CI; R64 and R69 carried forward. Claude decided, open to AJ's veto before chunk A: no text until Phase 7; computed layout; one body per picture; exact integer picking as the reference; no fallback path. Every other decision is made here. Cursor executes. Claude verifies at each stop. AJ runs the window at Stop C.*
+*JoInn Phase 6 Implementation Plan, Draft 0.1 (28 Sep 2026), with Amendment A from Stop A and Amendment B from Stop B. Opens after Phase 4's stop-C review and the S2 run on AJ's desktop. AJ decided: floats only below the renderer boundary; software adapters in CI; R64 and R69 carried forward. Claude decided, open to AJ's veto before chunk A: no text until Phase 7; computed layout; one body per picture; exact integer picking as the reference; no fallback path. Every other decision is made here. Cursor executes. Claude verifies at each stop. AJ runs the window at Stop C.*

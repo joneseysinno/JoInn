@@ -72,4 +72,5 @@ line must name a file under `docs/Findings/`.
 | R72 | The vertex-buffer fallback | 6 | open | |
 | R73 | Text on screen | 6 | open | |
 | R74 | One address, one port | 6 | open | |
+| R75 | Membrane ports | 6 | open | |
 

@@ -334,3 +334,7 @@ The glyph organelle, a borrowed shaping crate, and text's inverse (point → cha
 ## R74 — One address, one port  ·  status: open
 
 Floor primitives number in-ports and out-ports separately (`eq`: in 0, in 1, out 0), while cells number all their ports in one sequence. So `a@0` can name two ports, and the ID target (`PORT_TAG | position`) can't tell them apart. Phase 6 refuses such a body in the scene (`columns_reader.body`, `environment.body`). Should primitives number ports the way cells do (new grammar, so R60 applies), or should an address carry its direction?
+
+## R75 — Membrane ports  ·  status: open
+
+A body's own ports (`self@n`) have no place in Phase 6's layout, so a body whose wires reach its own membrane is not drawn (the nine phase 2.1/2.2 reference bodies print `not measured`). Phase 7 links bodies through their membranes. Where does a membrane port sit, and does a wire to `self` end on the membrane's edge?
