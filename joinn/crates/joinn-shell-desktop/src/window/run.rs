@@ -38,7 +38,6 @@ pub fn run(path: &str) -> Result<(), String> {
         uploaded: false,
         cursor: None,
         configured: false,
-        tried_lost: false,
         forced: None,
     };
     event_loop.run_app(&mut app).map_err(|e| e.to_string())

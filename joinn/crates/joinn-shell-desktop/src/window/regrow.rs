@@ -7,8 +7,9 @@ use super::ShellApp;
 use super::emit::emit;
 
 impl ShellApp {
-    /// Prints `regrow: device lost, tables re-uploaded` after the tables are back.
-    pub(super) fn regrow(&mut self) -> bool {
+    /// Prints `regrow: device lost (<reason>), tables re-uploaded` after the
+    /// tables are back.
+    pub(super) fn regrow(&mut self, reason: wgpu::DeviceLostReason) -> bool {
         self.renderer = None;
         self.gpu = None;
         self.uploaded = false;
@@ -41,7 +42,9 @@ impl ShellApp {
         if !self.reconfigure() {
             return false;
         }
-        emit("regrow: device lost, tables re-uploaded");
+        emit(&format!(
+            "regrow: device lost ({reason:?}), tables re-uploaded"
+        ));
         true
     }
 }

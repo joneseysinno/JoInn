@@ -34,6 +34,5 @@ pub struct ShellApp {
     uploaded: bool,
     cursor: Option<(f64, f64)>,
     configured: bool,
-    tried_lost: bool,
     forced: Option<Upload>,
 }
