@@ -4,7 +4,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 /// The counterfeit corpus is refused on purpose and is left out.
-pub(super) fn corpus_files(corpus: &Path, ext: &str) -> Result<Vec<PathBuf>, String> {
+pub(crate) fn corpus_files(corpus: &Path, ext: &str) -> Result<Vec<PathBuf>, String> {
     let mut out = Vec::new();
     let mut dirs = vec![corpus.to_path_buf()];
     while let Some(dir) = dirs.pop() {

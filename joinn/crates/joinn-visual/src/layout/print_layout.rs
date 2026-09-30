@@ -6,7 +6,7 @@ use std::fmt::Write;
 use super::{CELL_RADIUS, Layout, PORT_RADIUS, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
 
 /// `layout body`, the surface, cells, ports, then wires. A rectangle prints
-/// `x y width height`.
+/// `x y width height`; a force's response ends its line with `response`.
 pub fn print_layout(layout: &Layout) -> String {
     let mut out = String::from("layout body\n");
     let m = layout.surface;
@@ -19,8 +19,13 @@ pub fn print_layout(layout: &Layout) -> String {
         let r = c.rect;
         let _ = writeln!(
             out,
-            "cell {} {} {} {} {} r {CELL_RADIUS}",
-            c.instance, r.x, r.y, r.w, r.h
+            "cell {} {} {} {} {} r {CELL_RADIUS}{}",
+            c.instance,
+            r.x,
+            r.y,
+            r.w,
+            r.h,
+            if c.response { " response" } else { "" }
         );
     }
     for p in &layout.ports {

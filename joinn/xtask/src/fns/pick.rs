@@ -2,6 +2,8 @@
 //! pixel, on every adapter.
 
 mod compare;
+mod contact_lines;
+mod contact_subjects;
 mod frame_median;
 mod measured;
 mod owner_name;
@@ -18,6 +20,10 @@ use joinn_visual::{Camera, PickImage, Scene};
 
 /// A measured corpus body at 1280×720 with its CPU pick, or why it isn't measured.
 pub(crate) type Subject = (String, Result<(Scene, Camera, PickImage), String>);
+
+/// A corpus contact's file name, its grown scene, and its CPU pick at each
+/// standard viewport.
+pub(crate) type ContactSubject = (String, Scene, Vec<(Camera, PickImage)>);
 
 /// Disagreements kept for printing, per comparison.
 pub(crate) const KEPT: usize = 5;

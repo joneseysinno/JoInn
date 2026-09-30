@@ -8,25 +8,26 @@ use joinn_gpu::{Gpu, Renderer};
 use joinn_live::BodyState;
 use joinn_visual::{Scene, fit, table_bytes};
 
-use super::Input;
 use super::cleared_elsewhere::cleared_elsewhere;
 use super::event::event;
+use super::{Form, Input};
 
 /// Grows the scene and uploads it whole, then for each input: runs it, takes
 /// the pending delta, applies it to the renderer and draws, regrows from the live
 /// state, and compares. One line per event goes to `lines`, each broken
-/// promise to `failures`. Returns the delta-built scene and the state.
+/// promise to `failures`. Returns the delta-built scene and the state. `ports`
+/// counts each instance's drawn ports, the V121 bound's unit.
 pub(super) fn drive(
     gpu: &Gpu,
     renderer: &mut Renderer,
-    (body, cells): (&Body, &BTreeMap<Hash, Cell>),
+    (form, body, cells): (Form, &Body, &BTreeMap<Hash, Cell>),
     ports: &BTreeMap<String, usize>,
     inputs: &[Input],
     first: usize,
     lines: &mut Vec<String>,
     failures: &mut Vec<String>,
 ) -> Result<(Scene, BodyState), String> {
-    let mut scene = match Scene::grow("body", body, cells) {
+    let mut scene = match form.grow(body, cells) {
         Verdict::Ok(s) => s,
         Verdict::Refused(r) => return Err(format!("regrow: {}", r.reason)),
     };
@@ -57,8 +58,10 @@ pub(super) fn drive(
         let pending = scene.take_pending().unwrap_or_default();
         if pending != delta {
             failures.push(format!(
-                "event {n}: the pending delta {:?} is not the run's delta {:?}",
-                pending.rows, delta.rows
+                "{}event {n}: the pending delta {:?} is not the run's delta {:?}",
+                form.prefix(),
+                pending.rows,
+                delta.rows
             ));
         }
         let up = match renderer.apply(gpu, scene.tables(), &pending) {
@@ -70,12 +73,13 @@ pub(super) fn drive(
         }
         if up.rows != delta.rows.len() {
             failures.push(format!(
-                "event {n}: the renderer wrote {} row(s) for a delta of {}",
+                "{}event {n}: the renderer wrote {} row(s) for a delta of {}",
+                form.prefix(),
                 up.rows,
                 delta.rows.len()
             ));
         }
-        let regrown = match Scene::regrow("body", body, cells, &state) {
+        let regrown = match form.regrow(body, cells, &state) {
             Verdict::Ok(s) => s,
             Verdict::Refused(r) => return Err(format!("regrow: {}", r.reason)),
         };
@@ -86,7 +90,8 @@ pub(super) fn drive(
             base.to_string()
         };
         lines.push(format!(
-            "event {n} {instance}@0 {text:?}: touched {}, rows {} (bound {bound_text}), bytes {}, {}",
+            "{}event {n} {instance}@0 {text:?}: touched {}, rows {} (bound {bound_text}), bytes {}, {}",
+            form.prefix(),
             touched.join(", "),
             delta.rows.len(),
             up.bytes,
@@ -98,18 +103,21 @@ pub(super) fn drive(
         ));
         if !equal {
             failures.push(format!(
-                "event {n}: delta-built tables differ from regrow (V122)"
+                "{}event {n}: delta-built tables differ from regrow (V122)",
+                form.prefix()
             ));
         }
         if delta.rows.len() > bound {
             failures.push(format!(
-                "event {n}: {} row(s) break the V121 bound of {bound}",
+                "{}event {n}: {} row(s) break the V121 bound of {bound}",
+                form.prefix(),
                 delta.rows.len()
             ));
         }
         if scene.take_pending().is_some() {
             failures.push(format!(
-                "event {n}: rows still pending after the draw (V12)"
+                "{}event {n}: rows still pending after the draw (V12)",
+                form.prefix()
             ));
         }
     }

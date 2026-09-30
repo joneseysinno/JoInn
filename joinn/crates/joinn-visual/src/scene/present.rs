@@ -2,6 +2,7 @@
 
 use std::collections::BTreeSet;
 
+use joinn_dna::Direction;
 use joinn_frame::Verdict;
 use joinn_host::{Description, Role};
 use joinn_link::Address;
@@ -9,13 +10,15 @@ use joinn_link::Address;
 use super::Scene;
 use crate::refuse::refuse;
 use crate::tables::{
-    CellRow, Delta, FILLED, PortRow, REFUSED, Row, RowWrite, STYLE_CELL, STYLE_CELL_REFUSED,
+    CellRow, Delta, FILLED, LATENT, PortRow, REFUSED, Row, RowWrite, STYLE_CELL, STYLE_CELL_REFUSED,
 };
 
 impl Scene {
-    /// A port is filled when its face holds a value. A refusal marks its own cell
-    /// refused; any other description clears every refused bit, as `BodyState`
-    /// clears `last_refusal` when anything fires. Only changed rows enter the delta.
+    /// A port is filled when its face holds a value; a face with no drawn port,
+    /// such as a contact member's wired port, is not presented. A refusal marks
+    /// its own cell refused; any other description clears every refused bit, as
+    /// `BodyState` clears `last_refusal` when anything fires. A response is
+    /// latent while no out-port face holds a value. Only changed rows enter the delta.
     pub fn present(&mut self, d: &Description) -> Verdict<Delta> {
         let Some(&cell) = self.cells.get(&d.instance) else {
             return refuse(format!(
@@ -30,11 +33,7 @@ impl Scene {
                 port: face.position,
             };
             let Some(&slot) = self.ports.get(&address) else {
-                return refuse(format!(
-                    "present: port {} is not in this scene; acceptance is a port of body {}",
-                    address.printed(),
-                    self.alias
-                ));
+                continue;
             };
             if let Some(&old) = self.tables.port.get(slot as usize) {
                 let flags = if face.value.is_some() {
@@ -46,9 +45,29 @@ impl Scene {
             }
         }
         let refused = d.role == Role::Refusal;
+        let response = self
+            .layout
+            .cells
+            .iter()
+            .any(|c| c.response && c.instance == d.instance);
+        let latent = !d
+            .ports
+            .iter()
+            .any(|f| f.direction == Direction::Out && f.value.is_some());
         for &slot in self.cells.values() {
             let Some(&old) = self.tables.cell.get(slot as usize) else {
                 continue;
+            };
+            let old = match (slot == cell && response, latent) {
+                (true, true) => CellRow {
+                    flags: old.flags | LATENT,
+                    ..old
+                },
+                (true, false) => CellRow {
+                    flags: old.flags & !LATENT,
+                    ..old
+                },
+                (false, _) => old,
             };
             if refused && slot == cell {
                 writes.push((

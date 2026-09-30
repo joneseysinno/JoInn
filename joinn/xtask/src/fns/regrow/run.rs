@@ -1,17 +1,20 @@
 //! `cargo xtask regrow`: §2.12's script, Amendment A4's event, the camera and
-//! idle checks, then VH2 on every adapter, then the plant.
+//! idle checks, then VH2 on every adapter, then the same on the contact
+//! calculator, then the plant.
 
 use std::collections::BTreeMap;
 
-use joinn_frame::Verdict;
+use joinn_frame::{FrameRegistry, Verdict};
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
-use joinn_link::instance_ports;
+use joinn_link::{instance_ports, lower};
 use joinn_live::BodyState;
 use joinn_visual::{FILLED, REFUSED, Scene, fit, table_bytes};
 
-use super::Input;
+use super::contact_pass::contact_pass;
 use super::drive::drive;
+use super::{Form, Input};
 use crate::fns::corpus_bodies;
+use crate::fns::layout::corpus_contacts;
 use crate::fns::pick::port_slot;
 
 /// §2.12: refused at the membrane, then `2`, then `3` (`sum` fires).
@@ -33,6 +36,30 @@ pub(crate) fn regrow() -> Result<(), String> {
         Verdict::Ok(p) => p.into_iter().map(|(i, ps)| (i, ps.len())).collect(),
         Verdict::Refused(r) => return Err(format!("regrow: {}", r.reason)),
     };
+    let contact_rel = "phase7/calculator.contact";
+    let (contacts, contact_cells) = corpus_contacts()?;
+    let contact = match contacts.into_iter().find(|(r, _)| r == contact_rel) {
+        Some((_, Verdict::Ok(c))) => c,
+        Some((_, Verdict::Refused(r))) => {
+            return Err(format!("regrow: {contact_rel}: {}", r.reason));
+        }
+        None => return Err(format!("regrow: {contact_rel} is not in the corpus")),
+    };
+    let lowered = match lower(&contact, &contact_cells, &FrameRegistry::phase1()) {
+        Verdict::Ok(b) => b,
+        Verdict::Refused(r) => return Err(format!("regrow: {contact_rel}: {}", r.reason)),
+    };
+    let drawn: BTreeMap<String, usize> = match Scene::grow_contact("body", &contact, &contact_cells)
+    {
+        Verdict::Ok(s) => {
+            let mut counts: BTreeMap<String, usize> = BTreeMap::new();
+            for p in &s.layout().ports {
+                *counts.entry(p.address.instance.clone()).or_default() += 1;
+            }
+            counts
+        }
+        Verdict::Refused(r) => return Err(format!("regrow: {contact_rel}: {}", r.reason)),
+    };
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -52,7 +79,7 @@ pub(crate) fn regrow() -> Result<(), String> {
         let (mut scene, state) = drive(
             &gpu,
             &mut renderer,
-            (&body, &cells),
+            (Form::Wired, &body, &cells),
             &ports,
             &SCRIPT,
             0,
@@ -79,7 +106,7 @@ pub(crate) fn regrow() -> Result<(), String> {
             drive(
                 &gpu,
                 &mut fresh,
-                (&body, &cells),
+                (Form::Wired, &body, &cells),
                 &ports,
                 &FRESH,
                 SCRIPT.len(),
@@ -150,6 +177,14 @@ pub(crate) fn regrow() -> Result<(), String> {
         if n == 0 {
             kept = Some((scene, state));
         }
+        contact_pass(
+            adapter,
+            n,
+            (&contact, &lowered, &contact_cells),
+            &drawn,
+            (&SCRIPT, &FRESH),
+            &mut failures,
+        )?;
     }
 
     let Some((scene, state)) = kept else {

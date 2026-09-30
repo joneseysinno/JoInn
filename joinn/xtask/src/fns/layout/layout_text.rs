@@ -1,15 +1,33 @@
 //! `cargo xtask layout <path>`: one corpus body's layout block.
 
 use joinn_frame::Verdict;
-use joinn_visual::layout;
+use joinn_visual::{layout, layout_contact};
 
 use super::corpus_bodies::corpus_bodies;
+use super::corpus_contacts::corpus_contacts;
 use super::layout_block::layout_block;
 
-/// `rel` is corpus-relative (`phase2/calculator.body`). A refusal is an error.
+/// `rel` is corpus-relative (`phase2/calculator.body`, or a `.contact`). A
+/// refusal is an error.
 pub(crate) fn layout_text(rel: &str) -> Result<String, String> {
     let rel = rel.replace('\\', "/");
     let rel = rel.strip_prefix("corpus/").unwrap_or(&rel);
+    if rel.ends_with(".contact") {
+        let (contacts, cells) = corpus_contacts()?;
+        let Some((_, parsed)) = contacts.into_iter().find(|(r, _)| r == rel) else {
+            return Err(format!(
+                "layout: {rel} is not a corpus .contact; acceptance is a path under corpus/"
+            ));
+        };
+        let placed = match parsed {
+            Verdict::Ok(c) => layout_contact(&c, &cells),
+            Verdict::Refused(r) => Verdict::Refused(r),
+        };
+        return match placed {
+            Verdict::Ok(l) => Ok(layout_block(&l)),
+            Verdict::Refused(r) => Err(format!("{rel}: {}", r.reason)),
+        };
+    }
     let Some((_, bound)) = corpus_bodies()?.into_iter().find(|(r, _)| r == rel) else {
         return Err(format!(
             "layout: {rel} is not a corpus .body; acceptance is a path under corpus/"
@@ -51,6 +69,26 @@ camera 640x360: k 12, origin 80 36
 camera 1000x777: k 24, origin 20 100
 camera 1280x720: k 28, origin 80 24
 camera 1920x1080: k 40, origin 160 60
+";
+        assert_eq!(got, want);
+    }
+
+    #[test]
+    fn the_calculator_contact_prints_the_plan_block_and_four_cameras() {
+        let got = layout_text("phase7/calculator.contact").unwrap_or_else(|e| panic!("{e}"));
+        let want = "\
+layout body
+surface 0 0 32 20 r 3
+cell cli_a 4 4 12 6 r 2
+cell cli_b 4 10 12 6 r 2
+cell sum 16 4 12 12 r 2 response
+port cli_a@0 in 4 7 r 1
+port cli_b@0 in 4 13 r 1
+port sum@2 out 28 7 r 1
+camera 640x360: k 16, origin 64 20
+camera 1000x777: k 28, origin 52 108
+camera 1280x720: k 32, origin 128 40
+camera 1920x1080: k 52, origin 128 20
 ";
         assert_eq!(got, want);
     }

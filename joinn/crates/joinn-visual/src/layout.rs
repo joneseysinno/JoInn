@@ -3,9 +3,11 @@
 
 mod columns;
 mod layout_body;
+mod layout_contact;
 mod print_layout;
 
 pub use layout_body::layout;
+pub use layout_contact::layout_contact;
 pub use print_layout::print_layout;
 
 use joinn_dna::Direction;
@@ -52,6 +54,8 @@ pub struct CellBox {
     pub instance: String,
     /// Its rectangle.
     pub rect: Rect,
+    /// A force's response in a contact body; never in a wired body.
+    pub response: bool,
 }
 
 /// One port's centre. In-ports sit on a cell's left edge, out-ports on its right.

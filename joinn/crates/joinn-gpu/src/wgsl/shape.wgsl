@@ -28,7 +28,9 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> Out {
         lo = vec2(px(tick.ox, c.x), px(tick.oy, c.y));
         hi = lo + vec2(span(c.w), span(c.h));
         r = span(i32(c.radius));
-        o.color = styles[c.style];
+        // Refused, else latent, else the row's style.
+        let latent = select(c.style, STYLE_RESPONSE_LATENT, (c.flags & LATENT) != 0u);
+        o.color = styles[select(latent, STYLE_CELL_REFUSED, (c.flags & REFUSED) != 0u)];
         o.id = vec4(c.body + 1u, slot + 1u, 0u, c.generation);
     } else {
         let p = ports[slot];

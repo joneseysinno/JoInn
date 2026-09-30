@@ -1,20 +1,35 @@
-//! `cargo xtask layout --all`: one block per corpus body that binds.
+//! `cargo xtask layout --all`: one block per corpus body or contact that binds.
 
 use joinn_frame::Verdict;
-use joinn_visual::layout;
+use joinn_visual::{Layout, layout, layout_contact};
 
 use super::corpus_bodies::corpus_bodies;
+use super::corpus_contacts::corpus_contacts;
 use super::layout_block::layout_block;
 
-/// A body that doesn't bind, or whose layout is refused, is a `not measured` line.
+/// A body that doesn't bind, or whose layout is refused, is a `not measured`
+/// line. Bodies and contacts merge in path order.
 pub(crate) fn layout_all() -> Result<String, String> {
-    let mut out = String::new();
+    let mut placed: Vec<(String, Verdict<Layout>)> = Vec::new();
     for (rel, bound) in corpus_bodies()? {
-        let placed = match bound {
+        let l = match bound {
             Verdict::Ok((body, cells)) => layout(&body, &cells),
             Verdict::Refused(r) => Verdict::Refused(r),
         };
-        match placed {
+        placed.push((rel, l));
+    }
+    let (contacts, cells) = corpus_contacts()?;
+    for (rel, parsed) in contacts {
+        let l = match parsed {
+            Verdict::Ok(c) => layout_contact(&c, &cells),
+            Verdict::Refused(r) => Verdict::Refused(r),
+        };
+        placed.push((rel, l));
+    }
+    placed.sort_by(|a, b| a.0.cmp(&b.0));
+    let mut out = String::new();
+    for (rel, l) in placed {
+        match l {
             Verdict::Ok(l) => {
                 out.push_str(&rel);
                 out.push('\n');

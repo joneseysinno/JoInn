@@ -14,6 +14,7 @@ mod script_events;
 mod surface_line;
 mod transcript_line;
 
+pub(crate) use corpus_files::corpus_files;
 pub(crate) use run::contact;
 
 /// The §2.12 script, as (instance, port, line).

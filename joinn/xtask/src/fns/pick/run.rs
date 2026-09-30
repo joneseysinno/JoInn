@@ -1,11 +1,13 @@
-//! `cargo xtask pick`: every adapter, every standard viewport, every measured
-//! corpus body, then the plant.
+//! `cargo xtask pick`: every adapter, every standard viewport, every corpus
+//! contact, every measured corpus body, then the plant.
 
 use joinn_frame::Verdict;
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
 use joinn_visual::{Camera, PickImage, STANDARD_VIEWPORTS, Scene, cpu_pick, fit, shapes_of_tables};
 
 use super::compare::compare;
+use super::contact_lines::contact_lines;
+use super::contact_subjects::contact_subjects;
 use super::frame_median::frame_median;
 use super::measured::measured;
 use super::owner_name::owner_name;
@@ -49,6 +51,7 @@ pub(crate) fn pick() -> Result<(), String> {
         };
         bodies.push((rel, entry));
     }
+    let contacts = contact_subjects()?;
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -115,6 +118,7 @@ pub(crate) fn pick() -> Result<(), String> {
                 plant_ids = Some((adapter.line().to_owned(), picture.ids));
             }
         }
+        contact_lines(&gpu, adapter.line(), &contacts, &mut failures)?;
         if let Some((camera, _)) = calc_cpu
             .iter()
             .find(|(c, _)| (c.width, c.height) == (1280, 720))

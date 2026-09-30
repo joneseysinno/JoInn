@@ -17,6 +17,8 @@ pub use table_bytes::table_bytes;
 pub const LIVE: u32 = 1;
 /// Cell flags bit 1: the instance's last run refused at its membrane.
 pub const REFUSED: u32 = 2;
+/// Cell flags bit 2: a force's response whose out-port holds no value.
+pub const LATENT: u32 = 4;
 /// Port flags bit 1: the port holds a value.
 pub const FILLED: u32 = 2;
 /// Link kind of a wire.
@@ -36,9 +38,11 @@ pub const STYLE_PORT_EMPTY: u32 = 4;
 pub const STYLE_PORT_FILLED: u32 = 5;
 /// Wire.
 pub const STYLE_WIRE: u32 = 6;
+/// A response, latent. The shader picks refused, else latent, else the row's style.
+pub const STYLE_RESPONSE_LATENT: u32 = 7;
 
 /// One RGBA8 `u32` per style id: bytes R, G, B, A in little-endian order.
-pub const STYLE_TABLE: [u32; 7] = [
+pub const STYLE_TABLE: [u32; 8] = [
     u32::from_le_bytes([0x15, 0x17, 0x1C, 0xFF]),
     u32::from_le_bytes([0x22, 0x26, 0x2E, 0xFF]),
     u32::from_le_bytes([0x2F, 0x5D, 0x8A, 0xFF]),
@@ -46,6 +50,7 @@ pub const STYLE_TABLE: [u32; 7] = [
     u32::from_le_bytes([0xC9, 0xCE, 0xD6, 0xFF]),
     u32::from_le_bytes([0xF2, 0xB1, 0x34, 0xFF]),
     u32::from_le_bytes([0x8A, 0x94, 0xA3, 0xFF]),
+    u32::from_le_bytes([0x39, 0x41, 0x4D, 0xFF]),
 ];
 
 /// Bytes per body row: 7 fields, padded.
@@ -114,7 +119,7 @@ pub struct CellRow {
     pub generation: u32,
     /// Style id.
     pub style: u32,
-    /// Bit 0 live, bit 1 refused.
+    /// Bit 0 live, bit 1 refused, bit 2 latent.
     pub flags: u32,
 }
 

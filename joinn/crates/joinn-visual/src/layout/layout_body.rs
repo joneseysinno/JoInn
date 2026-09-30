@@ -67,6 +67,7 @@ pub fn layout(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Verdict<Layout> {
                 w: CELL_W,
                 h: height,
             },
+            response: false,
         });
         let (mut k_in, mut k_out) = (0, 0);
         for p in decls {

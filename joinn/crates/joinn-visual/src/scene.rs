@@ -4,11 +4,13 @@
 
 mod apply_run;
 mod grow;
+mod grow_contact;
 mod mark_refused;
 mod place;
 mod present;
 mod print_owner;
 mod regrow;
+mod regrow_contact;
 mod replace;
 mod resolve;
 mod take_pending;
