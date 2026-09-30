@@ -7,6 +7,8 @@ use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_prim::forces::response;
 use std::collections::{BTreeMap, BTreeSet};
 
+use crate::force_loop::force_loop;
+
 /// The first refusal, in this order:
 /// 1. every genome cell is supplied (`check_body`'s refusal);
 /// 2. every granted instance exists;
@@ -14,6 +16,8 @@ use std::collections::{BTreeMap, BTreeSet};
 /// 4. every member's port is in the force's frame (receptor);
 /// 5. every member is an out-port;
 /// 6. no port is reached by two forces;
+///
+///    6a. no force reaches itself through members that are responses (V133);
 /// 7. the pinned response is the register's;
 /// 8. the member count is the response's in-port count, which needs
 /// 9. the response cell supplied.
@@ -123,6 +127,14 @@ pub fn check_contact(
                 ));
             }
         }
+    }
+
+    if let Some(path) = force_loop(&coding.forces) {
+        return crate::refuse(format!(
+            "force {} reaches itself: {}; acceptance is forces that combine only cells that exist before them (R84)",
+            path[0],
+            path.join(" → ")
+        ));
     }
 
     for force in &coding.forces {
@@ -284,6 +296,57 @@ mod tests {
         assert_eq!(
             refused(&src, &cells()),
             "cli_a@1 is reached by forces s1 and s2; acceptance is one force per port (R85)"
+        );
+    }
+
+    #[test]
+    fn a_force_that_reaches_itself_is_refused() {
+        let src = forces(&format!(
+            "    combine ℤ 1 cell:{SUM} as s from cli_a@1, s@2\n"
+        ));
+        assert_eq!(
+            refused(&src, &cells()),
+            "force s reaches itself: s → s; acceptance is forces that combine only cells that exist before them (R84)"
+        );
+        let src = forces(&format!(
+            "    combine ℤ 1 cell:{SUM} as s from cli_a@1, t@2\n    combine ℤ 1 cell:{SUM} as t from cli_b@1, s@2\n"
+        ));
+        assert_eq!(
+            refused(&src, &cells()),
+            "force s reaches itself: s → t → s; acceptance is forces that combine only cells that exist before them (R84)"
+        );
+    }
+
+    #[test]
+    fn a_chain_of_forces_is_admitted_and_lowers() {
+        let frames = FrameRegistry::phase1();
+        let src = format!(
+            "contact {{ codex 1 genome {{ cell:{CLI} as a, b, c }} grants {{ stdin: a, b, c }} forces {{ combine ℤ 1 cell:{SUM} as s1 from a@1, b@1 combine ℤ 1 cell:{SUM} as s2 from c@1, s1@2 }} budget {{ steps 100000 }} lineage none }}\n"
+        );
+        let cells = cells();
+        assert!(matches!(check(&src, &cells), Verdict::Ok(())));
+        let contact = match parse_contact(&src, &frames) {
+            Verdict::Ok(c) => c,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let body = match crate::lower(&contact, &cells, &frames) {
+            Verdict::Ok(b) => b,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let wires: Vec<String> = body
+            .coding
+            .wires
+            .iter()
+            .map(|w| {
+                format!(
+                    "{}@{} -> {}@{}",
+                    w.src_instance, w.src_port, w.dst_instance, w.dst_port
+                )
+            })
+            .collect();
+        assert_eq!(
+            wires,
+            ["a@1 -> s1@0", "b@1 -> s1@1", "c@1 -> s2@0", "s1@2 -> s2@1"]
         );
     }
 

@@ -14,6 +14,7 @@ mod check_lenses;
 mod check_link_types;
 mod contact_surface;
 mod csr;
+mod force_loop;
 mod instance_ports;
 mod lower;
 mod roles;

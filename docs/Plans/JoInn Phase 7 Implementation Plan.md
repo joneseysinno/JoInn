@@ -2,7 +2,7 @@
 
 **Contact bodies: a body with no wires inside · the combine force · a working plan for Cursor**
 
-Author: AJ, with Claude · Draft 0.2 (Amendment A, Stop A review) · September 30, 2026
+Author: AJ, with Claude · Draft 0.3 (Amendments A and B, Stop A and Stop B reviews) · September 30, 2026
 
 > **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going.
 
@@ -598,6 +598,7 @@ Dependencies: P7-06a first, then P7-07, then P7-08, then P7-09. P7-10 and P7-11 
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
+| **P7-11a** | **Amendment B** | Commit this plan as it now is on disk (Amendment B added). B2: `check_contact` step 6a, *no force reaches itself*, with its wording and its place in the order; the doc comment's list gains it | Tests: the self-loop is refused with `force s reaches itself: s → s; …`; the two-force loop with `force s reaches itself: s → t → s; …`; §2.7's chained fixture (`s1`, `s2`) is still admitted and lowers. `cargo xtask contact` prints the same lines as Stop B, byte for byte (paste them) |
 | **P7-12** | **Contact picture** | `layout_contact`, `grow_contact`, `regrow_contact`, latent bit and style 7 (§2.8–§2.9); `layout`, `pick` and `regrow` extended (§3) | `cargo xtask layout phase7/calculator.contact` prints §2.8's block byte for byte (a test asserts it). Whole outputs of `cargo xtask pick` and `cargo xtask regrow` pasted. Every contact line `disagree 0 … owners 7/7, links 0`, and every event line ends `tables equal regrow`. Gate 6 still 3/3 |
 | **P7-13** | **The shell opens `.contact`** | `cargo run -p joinn-shell-desktop -- corpus/phase7/calculator.contact`; V125 extended to the contact file | V125 passes on both files, contact rows `2, 1, 3`. Cursor runs the window once on Windows, clicks the `sum` cell, and pastes the two pick lines (or writes `no display`) |
 | **P7-14** | **Findings** | `docs/Findings/phase-7-contact.md`: every command's full output from P7-06 to P7-13, and a *Predictions* section marking each prediction in §2.3, §2.5, §2.7, §2.8, §2.9, §2.10 `as predicted` or `differs`, with both values | Every prediction is marked |
@@ -605,7 +606,7 @@ Dependencies: P7-06a first, then P7-07, then P7-08, then P7-09. P7-10 and P7-11 
 | **P7-16** | **Docs and freeze** | README and `Guides/03-where-we-are.md` (a body can be cells in contact; the calculator in both forms; what isn't built yet); `Guides/02-how-parts-connect.md` (contact inside a body, wires between bodies); `Guides/05-glossary.md` gains *contact body, force, combine, response, latent, surface port, role (protect, carry, store, respond), force register, lower*; `decisions.md` rows V125–V132 `holds`; the roadmap's Phase 7 note points at `phase-7-contact.md`, and its diagram's `Phase 7<br/>visual host II` node becomes Phase 7.1 (A4) | `cargo xtask gate all` from a fresh clone prints phases 0 … 6 and 7, and exits 0. `corpus verify` 44. `git diff --stat <P7-01>..HEAD -- joinn/corpus` lists only P7-07's two files |
 | — | **Stop C** | `phase-7-stop-c.md` with the CI read, push, stop | — |
 
-Dependencies: P7-12, then P7-13. P7-14 needs both. P7-15 needs P7-12. P7-16 needs P7-14 and P7-15.
+Dependencies: P7-11a first (P7-12's column rule needs it). P7-12, then P7-13. P7-14 needs both. P7-15 needs P7-12. P7-16 needs P7-14 and P7-15.
 
 **If something has to be cut for time:**
 
@@ -626,6 +627,7 @@ Dependencies: P7-12, then P7-13. P7-14 needs both. P7-15 needs P7-12. P7-16 need
 | **V130** | A force owns no pixel; a contact picture has no link owner | P7-12 |
 | **V131** | Roles are derived and blind to the regulatory region | P7-11 |
 | **V132** | Device loss is reported by wgpu's callback, and the shell regrows from it | P7-03 |
+| **V133** | A contact body's forces form no loop: no force's response reaches, through members, back to itself | P7-11a |
 
 Carried forward and re-run on every commit: every earlier invariant. V28: every earlier gate still passes, and the wired calculator still draws with wires under gate 6.
 
@@ -723,6 +725,41 @@ Claude reproduced chunk A from a fresh clone of `5fa61e1` on Linux (llvmpipe via
 **A4 · Roadmap diagram.** P7-16 also renames the diagram's `Phase 7<br/>visual host II` node to Phase 7.1 (B5 retitled the section but not the diagram).
 
 **Noted, not changed.** The shell reads the device-lost flag at the start of a redraw, as §2.13 says. A device lost while the window is idle regrows on the next redraw, not at once. That is enough for Phase 7.
+
+---
+
+## Amendment B · Stop B review (Claude, 30 Sep 2026)
+
+Claude reproduced chunk B from a fresh clone of `fe6ad5b` on Linux (llvmpipe, 1 adapter): suite 313 passed, 0 failed; `gate all` exit 0 with every phase line as before (0 pass … 6 3/3); `corpus verify` 44; `forces`, `contact` and `roles` byte-identical to Cursor's; `joinn run corpus/phase7/calculator.contact` equals `calculator.txt`; vocab, modules, layers, floor, assay agree, pick and regrow unchanged. Every prediction checked in this chunk came out **as predicted**: the contact hash `868e79b2…`, the lowered body byte-identical to `calculator.body` (`b55fba1e…`), the surface of three ports, both pairings giving `sum@2 = 5`, and §2.7's roles block.
+
+**B1 · Snags settled.**
+
+| Snag | Settlement |
+|---|---|
+| P7-07 · two trybuild `.stderr` files gain `ContactCoding` | Accepted. Both still fail to compile; rustc's list of `Genotype` implementors grew by the new type, and nothing else changed |
+| P7-08 · admission outcomes tested at P7-09 | Accepted. §4 put the catalogue before admission, so the outcome tests had to follow it. `cargo xtask contact` and its tests now assert every §2.14 outcome with its words |
+| P7-09 · no `SurfacePort` type | Accepted, and better: one type for both derivations means rule 51's equality is a plain set comparison |
+| P7-10 · the shell refuses to open a `.contact` window | Right. Drawing the lowered body would draw the derived wires, which rule 61 forbids. P7-13 opens it |
+| P7-10 · `unknown cell hash …` has no acceptance clause | Accepted for now. It is `check_body`'s existing wording, which §2.4 step 1 says to reuse |
+| git trailers | Nothing to settle |
+
+**B2 · A force may not reach itself (found in review).** §2.4 lets a member be another force's response (the chained fixture needs it), but nothing stops the chain from closing. Claude built two contacts that `check_contact` and `lower` both admit:
+
+- `combine … as s from a@1, s@2`: `s` combines its own result;
+- `combine … as s from a@1, t@2` and `combine … as t from b@1, s@2`: two forces that wait on each other.
+
+Neither can ever fire, so the result stays latent with no refusal. And §2.8's column rule (`1 + max(column of its members)`) has no answer for them, so P7-12 would loop. That was a gap in this plan, not in Cursor's work. The fix is one admission step.
+
+**Step 6a · No force reaches itself.** After step 6 and before step 7. Say force F *reaches* force G when one of F's members is G's response. Visit forces in name order, and follow reached forces in name order. The first loop found is refused:
+
+`force <name> reaches itself: <name> → … → <name>; acceptance is forces that combine only cells that exist before them (R84)`
+
+So the self-loop prints `force s reaches itself: s → s; …` and the two-force loop prints `force s reaches itself: s → t → s; …`. This is V133, built by P7-11a at the start of chunk C.
+
+**Noted, not changed.**
+
+- `check_contact` walks steps 3 to 6 one member at a time, so a member with a wrong frame listed before a member with no port is refused at the receptor first. Each member passes the membrane in turn, and the first one to fail is the refusal. That reading of §2.4 is accepted.
+- The rule *keep the first file that carries alleles* is now written out in eight places (the CLI, the shell, `perf`, `load_phase5_bodies`, `corpus_cells` and three test files), because the crates can't share one helper without a new edge. They agree today. One shared helper is a candidate for the steel-beam phase, which will load many more cells.
 
 ---
 
