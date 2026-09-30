@@ -9,14 +9,20 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use super::ShellApp;
 use super::emit::emit;
 use super::pick_adapter::pick_adapter;
-use crate::load::{find_corpus, load_body_file, load_cells};
+use crate::load::{find_corpus, load_body_file, load_cells, load_contact_file};
 use crate::session::Desktop;
 
 /// `adapter: <line>`, then `surface: <format>`, then one tick per redraw.
 pub fn run(path: &str) -> Result<(), String> {
     let corpus = find_corpus()?;
-    let body = load_body_file(Path::new(path))?;
     let cells = load_cells(&corpus)?;
+    if path.ends_with(".contact") {
+        load_contact_file(Path::new(path), &cells)?;
+        return Err(format!(
+            "{path} is admitted; a contact body is drawn as cells in contact, never as its lowered wires, and that picture is not built yet. acceptance is a .body file"
+        ));
+    }
+    let body = load_body_file(Path::new(path))?;
     let desktop = Desktop::open(body, cells)?;
     let list = match adapters() {
         Verdict::Ok(list) => list,

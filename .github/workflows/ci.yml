@@ -46,6 +46,8 @@ jobs:
         run: cargo xtask regrow
       - name: forces
         run: cargo xtask forces
+      - name: contact
+        run: cargo xtask contact
       - name: power
         run: cargo xtask power
       - name: gate all

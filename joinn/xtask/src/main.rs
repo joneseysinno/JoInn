@@ -20,6 +20,7 @@ fn main() -> ExitCode {
         "pick" => fns::pick(),
         "regrow" => fns::regrow(),
         "forces" => fns::forces(),
+        "contact" => fns::contact(),
         "layout" => {
             let text = match args.next().as_deref() {
                 Some("--all") => fns::layout_all(),
@@ -129,7 +130,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | layers | adapters | pick | regrow | forces | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }

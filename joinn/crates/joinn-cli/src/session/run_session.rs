@@ -1,7 +1,9 @@
 //! Load a body, prompt each surface in-port, present fires and a refusal.
 
 use crate::cli_host::CliHost;
-use crate::load::{environment_signals, find_corpus, load_body, load_cells, value_in_frame};
+use crate::load::{
+    environment_signals, find_corpus, load_body, load_cells, load_contact, value_in_frame,
+};
 use crate::present::prompt;
 use joinn_frame::Verdict;
 use joinn_host::{Host, check_signals, describe, describe_refusal};
@@ -12,7 +14,7 @@ use std::io;
 use super::in_ports::in_ports;
 use super::read_line::read_line;
 
-/// Run `name`. The first line is aimed at the first in-port. A membrane
+/// Run `name`: a body stem, or a path ending `.contact`. The first line is aimed at the first in-port. A membrane
 /// refusal is presented, and then a line is read per in-port. An accepted
 /// first line is that port's value, and the remaining ports are read after it.
 pub(in crate::session) fn run_session(
@@ -20,8 +22,12 @@ pub(in crate::session) fn run_session(
     lines: &mut impl Iterator<Item = io::Result<String>>,
 ) -> Result<(String, Vec<u8>), String> {
     let corpus = find_corpus()?;
-    let body = load_body(&corpus, name)?;
     let cells = load_cells(&corpus)?;
+    let body = if name.ends_with(".contact") {
+        load_contact(&corpus, name, &cells)?
+    } else {
+        load_body(&corpus, name)?
+    };
     let natives = joinn_prim::sealed_natives();
     let ports = in_ports(&body, &cells);
     if ports.is_empty() {
@@ -166,6 +172,37 @@ mod tests {
             Err(e) => panic!("{e}"),
         };
         assert_eq!(out, want);
+    }
+
+    #[test]
+    fn contact_transcript_matches_golden() {
+        let lines = ["two", "2", "3"].map(|s| Ok(s.to_owned()));
+        let (out, _) = match run_session("corpus/phase7/calculator.contact", &mut lines.into_iter())
+        {
+            Ok(v) => v,
+            Err(e) => panic!("{e}"),
+        };
+        let want = match std::fs::read_to_string(
+            std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .join("..")
+                .join("..")
+                .join("corpus")
+                .join("transcripts")
+                .join("calculator.txt"),
+        ) {
+            Ok(s) => s,
+            Err(e) => panic!("{e}"),
+        };
+        assert_eq!(out, want);
+    }
+
+    #[test]
+    fn a_missing_contact_is_refused_by_path() {
+        let lines = ["2"].map(|s| Ok(s.to_owned()));
+        let Err(e) = run_session("corpus/phase7/ghost.contact", &mut lines.into_iter()) else {
+            panic!("a missing contact must be refused");
+        };
+        assert_eq!(e, "no contact file at corpus/phase7/ghost.contact");
     }
 
     #[test]

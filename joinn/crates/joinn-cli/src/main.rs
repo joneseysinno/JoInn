@@ -13,7 +13,7 @@ fn main() -> ExitCode {
     let result = match (cmd.as_str(), target.as_deref()) {
         ("run", Some(name)) => session_run(name),
         _ => {
-            eprintln!("usage: joinn run <body>");
+            eprintln!("usage: joinn run <body> | joinn run <path>.contact");
             Err("usage".into())
         }
     };
