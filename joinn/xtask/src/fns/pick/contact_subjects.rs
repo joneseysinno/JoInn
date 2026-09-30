@@ -8,7 +8,7 @@ use crate::fns::layout::corpus_contacts;
 
 /// The label is the file name (`calculator.contact`). A contact that is refused
 /// or doesn't grow fails `pick`: every corpus contact is admitted (P7-07).
-pub(super) fn contact_subjects() -> Result<Vec<ContactSubject>, String> {
+pub(crate) fn contact_subjects() -> Result<Vec<ContactSubject>, String> {
     let (contacts, cells) = corpus_contacts()?;
     let mut out = Vec::new();
     for (rel, parsed) in contacts {

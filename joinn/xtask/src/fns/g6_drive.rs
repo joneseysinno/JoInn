@@ -8,7 +8,7 @@ use joinn_link::instance_ports;
 use joinn_live::BodyState;
 use joinn_visual::{Delta, Scene, table_bytes};
 
-use super::regrow::{cleared_elsewhere, event};
+use super::regrow::{Form, cleared_elsewhere, event};
 
 /// §2.12: refused at the membrane, then `2`, then `3` (`sum` fires).
 const SCRIPT: [(&str, &str); 3] = [("cli_a", "two"), ("cli_a", "2"), ("cli_b", "3")];
@@ -30,9 +30,14 @@ pub(crate) struct G6Driven {
 }
 
 /// Grow, then each script event through `check_intent`, inject, `run`, and
-/// `apply_run`. Tables after every event are compared with `regrow`.
-pub(crate) fn g6_drive(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Result<G6Driven, String> {
-    let mut scene = match Scene::grow("body", body, cells) {
+/// `apply_run`. Tables after every event are compared with `regrow`. `body` is
+/// the wired body, or a contact's lowered body; the bound counts drawn ports.
+pub(crate) fn g6_drive(
+    form: Form<'_>,
+    body: &Body,
+    cells: &BTreeMap<Hash, Cell>,
+) -> Result<G6Driven, String> {
+    let mut scene = match form.grow(body, cells) {
         Verdict::Ok(scene) => scene,
         Verdict::Refused(r) => return Err(r.reason),
     };
@@ -41,9 +46,18 @@ pub(crate) fn g6_drive(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Result<G6Dr
             Verdict::Ok(state) => state,
             Verdict::Refused(r) => return Err(r.reason),
         };
-    let ports: BTreeMap<String, usize> = match instance_ports(body, cells) {
-        Verdict::Ok(map) => map.into_iter().map(|(name, ps)| (name, ps.len())).collect(),
-        Verdict::Refused(r) => return Err(r.reason),
+    let ports: BTreeMap<String, usize> = match form {
+        Form::Wired => match instance_ports(body, cells) {
+            Verdict::Ok(map) => map.into_iter().map(|(name, ps)| (name, ps.len())).collect(),
+            Verdict::Refused(r) => return Err(r.reason),
+        },
+        Form::Contact(_) => {
+            let mut counts = BTreeMap::new();
+            for p in &scene.layout().ports {
+                *counts.entry(p.address.instance.clone()).or_default() += 1;
+            }
+            counts
+        }
     };
     let mut steps = vec![G6Step {
         label: "grow".to_owned(),
@@ -78,7 +92,7 @@ pub(crate) fn g6_drive(body: &Body, cells: &BTreeMap<Hash, Cell>) -> Result<G6Dr
                 delta.rows.len()
             ));
         }
-        let regrown = match Scene::regrow("body", body, cells, &state) {
+        let regrown = match form.regrow(body, cells, &state) {
             Verdict::Ok(scene) => scene,
             Verdict::Refused(r) => return Err(r.reason),
         };

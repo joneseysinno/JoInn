@@ -83,11 +83,12 @@ pub(crate) enum Mutation {
 mod tests {
     use crate::fns::{
         gate_five_items, gate_five_one_items, gate_five_two_items, gate_four_items, gate_one_items,
-        gate_six_items, gate_three_items, gate_two_items, gate_two_one_items, gate_two_two_items,
+        gate_seven_items, gate_six_items, gate_three_items, gate_two_items, gate_two_one_items,
+        gate_two_two_items,
     };
 
     #[test]
-    fn no_gate_row_names_a_contact_artifact_yet() {
+    fn only_gate_seven_names_a_contact_artifact() {
         let legacy = [
             gate_one_items(),
             gate_two_items(),
@@ -117,5 +118,10 @@ mod tests {
             .filter(|a| a.ends_with(".contact"))
             .collect();
         assert!(contacts.is_empty(), "{contacts:?}");
+        let seven: Vec<&str> = gate_seven_items()
+            .iter()
+            .map(|i| i.control_artifact)
+            .collect();
+        assert_eq!(seven, vec!["corpus/phase7/calculator.contact"; 3]);
     }
 }

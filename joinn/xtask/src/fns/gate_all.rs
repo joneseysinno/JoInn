@@ -32,6 +32,7 @@ pub(crate) const PHASE_LABELS: &[&str] = &[
     "phase 5.1",
     "phase 5.2",
     "phase 6",
+    "phase 7",
 ];
 
 // Rule 4: xtask MAY measure wall time.
@@ -53,6 +54,7 @@ pub(crate) fn gate_all() -> Result<(), String> {
     let p51 = gate_five_one(PHASE_LABELS[8]);
     let p52 = gate_five_two(PHASE_LABELS[9]);
     let p6 = gate_six(PHASE_LABELS[10]);
+    let p7 = gate_seven(PHASE_LABELS[11]);
     let score = |label: &str, result: Result<(u32, u32), String>| match result {
         Ok((n, total)) => (n == total, n, total),
         Err(e) => {
@@ -70,6 +72,7 @@ pub(crate) fn gate_all() -> Result<(), String> {
     let (p51_ok, p51_n, p51_t) = score(PHASE_LABELS[8], p51);
     let (p52_ok, p52_n, p52_t) = score(PHASE_LABELS[9], p52);
     let (p6_ok, p6_n, p6_t) = score(PHASE_LABELS[10], p6);
+    let (p7_ok, p7_n, p7_t) = score(PHASE_LABELS[11], p7);
     let outcomes = [
         (PHASE_LABELS[0], p0, 1, 1, false),
         (PHASE_LABELS[1], p1_ok, p1_n, p1_t, true),
@@ -82,6 +85,7 @@ pub(crate) fn gate_all() -> Result<(), String> {
         (PHASE_LABELS[8], p51_ok, p51_n, p51_t, false),
         (PHASE_LABELS[9], p52_ok, p52_n, p52_t, false),
         (PHASE_LABELS[10], p6_ok, p6_n, p6_t, false),
+        (PHASE_LABELS[11], p7_ok, p7_n, p7_t, false),
     ];
     let lock = workspace_root()?.join("gates.lock");
     write_lock(&lock, &outcomes)?;
@@ -101,6 +105,7 @@ pub(crate) fn gate_all() -> Result<(), String> {
         || !p51_ok
         || !p52_ok
         || !p6_ok
+        || !p7_ok
     {
         return Err("gate all: a phase failed".into());
     }

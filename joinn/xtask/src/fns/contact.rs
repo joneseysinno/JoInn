@@ -15,7 +15,12 @@ mod surface_line;
 mod transcript_line;
 
 pub(crate) use corpus_files::corpus_files;
+pub(crate) use lowered_line::lowered_line;
+pub(crate) use pairings::pairings;
 pub(crate) use run::contact;
+pub(crate) use script_events::script_events;
+pub(crate) use surface_line::surface_line;
+pub(crate) use transcript_line::transcript_line;
 
 /// The §2.12 script, as (instance, port, line).
 const SCRIPT: [(&str, u32, &str); 3] = [("cli_a", 0, "two"), ("cli_a", 0, "2"), ("cli_b", 0, "3")];

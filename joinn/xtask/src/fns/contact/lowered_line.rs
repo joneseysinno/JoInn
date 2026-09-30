@@ -9,7 +9,7 @@ use super::corpus_files::corpus_files;
 
 /// `lowered = <rel> (<hash>…)` when the two canonical texts are byte-identical;
 /// otherwise the first line where they differ.
-pub(super) fn lowered_line(corpus: &Path, stem: &str, lowered: &Body) -> Result<String, String> {
+pub(crate) fn lowered_line(corpus: &Path, stem: &str, lowered: &Body) -> Result<String, String> {
     let want_name = format!("{stem}.body");
     let hits: Vec<_> = corpus_files(corpus, "body")?
         .into_iter()

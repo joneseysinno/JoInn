@@ -3,6 +3,7 @@
 use super::g6_drive::g6_drive;
 use super::load_calculator::load_calculator;
 use super::pick::port_slot;
+use super::regrow::Form;
 use super::subject::Subject;
 use joinn_visual::FILLED;
 
@@ -14,7 +15,7 @@ pub(crate) fn g6_picture_control(subject: &Subject) -> bool {
     let Ok((_, cells)) = load_calculator() else {
         return false;
     };
-    let Ok(driven) = g6_drive(body, &cells) else {
+    let Ok(driven) = g6_drive(Form::Wired, body, &cells) else {
         return false;
     };
     let filled = port_slot(&driven.scene, "body.sum@2")

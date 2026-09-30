@@ -12,7 +12,7 @@ use super::owner_name::owner_name;
 /// One line per contact and viewport: `<label> <w>x<h>: agree, edge,
 /// disagree, owners n/total, links l`. A disagreement, a count that doesn't sum
 /// to the image, an owner with no pixel, or any link owner (V130) fails.
-pub(super) fn contact_lines(
+pub(crate) fn contact_lines(
     gpu: &Gpu,
     adapter: &str,
     subjects: &[ContactSubject],

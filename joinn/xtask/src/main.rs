@@ -68,7 +68,8 @@ fn main() -> ExitCode {
             Some("5.1") => fns::gate_five_one(fns::PHASE_LABELS[8]).and_then(fns::require_full),
             Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[9]).and_then(fns::require_full),
             Some("6") => fns::gate_six(fns::PHASE_LABELS[10]).and_then(fns::require_full),
-            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2|6".into()),
+            Some("7") => fns::gate_seven(fns::PHASE_LABELS[11]).and_then(fns::require_full),
+            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2|6|7".into()),
         },
         "power" => fns::power(),
         "agree" => fns::agree(),
@@ -286,6 +287,7 @@ mod tests {
             super::fns::gate_five_one_items(),
             super::fns::gate_five_two_items(),
             super::fns::gate_six_items(),
+            super::fns::gate_seven_items(),
         ];
         let mut checks = Vec::new();
         let mut controls = Vec::new();

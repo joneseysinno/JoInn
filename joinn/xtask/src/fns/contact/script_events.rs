@@ -6,7 +6,7 @@ use joinn_test_host::RawEvent;
 
 use super::SCRIPT;
 
-pub(super) fn script_events() -> Vec<RawEvent> {
+pub(crate) fn script_events() -> Vec<RawEvent> {
     SCRIPT
         .iter()
         .map(|(instance, port, line)| RawEvent {

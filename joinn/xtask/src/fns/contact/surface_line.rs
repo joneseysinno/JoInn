@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 /// `surface equal (<n> ports)` when `contact_surface` equals the surface of the
 /// lowered body and the two in-port address sets agree.
-pub(super) fn surface_line(
+pub(crate) fn surface_line(
     contact: &Contact,
     lowered: &Body,
     cells: &BTreeMap<Hash, Cell>,

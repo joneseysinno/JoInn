@@ -7,7 +7,7 @@ use super::SCRIPT;
 use crate::fns::run_body_bin;
 
 /// `transcript equal` when the CLI prints `transcripts/<stem>.txt` byte for byte.
-pub(super) fn transcript_line(corpus: &Path, rel: &str, stem: &str) -> Result<String, String> {
+pub(crate) fn transcript_line(corpus: &Path, rel: &str, stem: &str) -> Result<String, String> {
     let golden = corpus.join("transcripts").join(format!("{stem}.txt"));
     let want = fs::read_to_string(&golden)
         .map_err(|e| format!("transcript: {}: {e}", golden.display()))?

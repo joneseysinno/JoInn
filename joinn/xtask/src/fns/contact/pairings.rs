@@ -12,7 +12,7 @@ use super::script_events::script_events;
 
 /// `pairings: <n>, <response>@<port> = <value> in each`. The first order is the
 /// canonical one; any order that disagrees with it is the failure.
-pub(super) fn pairings(
+pub(crate) fn pairings(
     contact: &Contact,
     cells: &BTreeMap<Hash, Cell>,
     frames: &FrameRegistry,

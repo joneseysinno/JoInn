@@ -9,6 +9,7 @@ use super::g6_colors::g6_colors;
 use super::g6_drive::g6_drive;
 use super::load_calculator::load_calculator;
 use super::pick::port_slot;
+use super::regrow::Form;
 
 /// The script's deltas stay inside the bound and match `regrow`. On every
 /// adapter the probe colors match the owning row, and a dropped device redraws
@@ -21,7 +22,7 @@ pub(crate) fn g6_picture() -> bool {
         println!("calculator did not load; acceptance is corpus/phase2/calculator.body");
         return false;
     };
-    let mut driven = match g6_drive(&body, &cells) {
+    let mut driven = match g6_drive(Form::Wired, &body, &cells) {
         Ok(driven) => driven,
         Err(reason) => {
             println!("{reason}");
