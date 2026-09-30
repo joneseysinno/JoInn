@@ -1,6 +1,6 @@
 # How the parts connect
 
-> **29 Sep 2026: the theory has moved.** This guide describes the code as built through Phase 6, where a body joins its cells with wires. The theory now says a body has no wires inside: its cells touch, operations such as sum are forces applied from outside, and wires belong to systems (between bodies). See *Theory/JoInn Cells, Bodies and Forces.md*. This guide will be rewritten when the code follows.
+> **30 Sep 2026: the code has started to follow the theory.** A body can now be cells in contact, with no wires inside (section 4). The calculator exists in both forms; the older wired form below still runs and is still checked. See *Theory/JoInn Cells, Bodies and Forces.md* for the theory.
 
 This page is the **map**. Each diagram shows how pieces fit. Under the boxes you’ll find **what it is** and **why JoInn needs it**.
 
@@ -126,7 +126,36 @@ Step-by-step to run it yourself: [04-try-the-calculator.md](04-try-the-calculato
 
 ---
 
-## 4. How the documentation folders connect
+## 4. Contact inside a body, wires between bodies
+
+The theory draws one line: **inside a body, cells touch; between bodies, wires**. A wire is a system's business, joining one body's surface to another's. Inside a body there is nothing to wire, because an operation such as sum is a **force** applied to the cells from outside.
+
+```mermaid
+flowchart LR
+  subgraph body1 [Contact body: the calculator]
+    cliA[cli_a cell] --- sum[sum: combine's response]
+    cliB[cli_b cell] --- sum
+  end
+  subgraph body2 [Another body]
+    other[its cells]
+  end
+  sum -. "wire (a system's)" .-> other
+  register[Force register: combine on integers] -. "answers with" .-> sum
+```
+
+| Piece | What it is | Why it's necessary |
+|-------|------------|--------------------|
+| **Contact body** (`.contact`) | Cells that touch, plus the forces that act on them. The file can't write a wire | The body says *what* touches, never *how values travel*, so it can't be wired wrong |
+| **Force** | An operation applied from outside, such as combine | The operation's truth lives in what it acts on, not in a wire someone drew |
+| **Force register** | One short table: combine on integers answers with the sum cell, and its opposite is on file | Only order-free forces with a known opposite are allowed, so member order can never change a result |
+| **`lower`** (joinn-link) | The engine's own derivation of the deliveries a contact body needs to run | The engine runs one kind of body; the derivation is never written, described or drawn |
+| **Wire between bodies** | Phase 5's typed link, in a universe | Systems join bodies at their surfaces; that part is unchanged |
+
+The two calculator forms are checked against each other (gate 7): the contact one lowers to exactly the wired one, so they print the same transcript and descriptions.
+
+---
+
+## 5. How the documentation folders connect
 
 ```mermaid
 flowchart LR

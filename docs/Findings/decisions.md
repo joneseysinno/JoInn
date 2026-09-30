@@ -96,3 +96,12 @@ line must name a file under `docs/Findings/`.
 | R84 | Many members, chained forces | 7 | open | |
 | R85 | One port, two forces | 7 | open | |
 | R86 | The two open Floor reductions | 7 | open | |
+| V125 | The shell's own run path keeps V122: tables equal regrow after every Enter | 7 | holds | wired rows 2, 3, 4; contact rows 2, 1, 3 |
+| V126 | A `.contact` file holds no wire: the parser refuses a wires section | 7 | holds | gate 7 item 1 |
+| V127 | Member order is never hashed | 7 | holds | four spellings share 868e79b2… (gate 7 item 2) |
+| V128 | `lower` is a function of the contact, its cells and the register only, and `contact_surface(c) = surface(lower(c))` | 7 | holds | gate 7 item 1 |
+| V129 | Every registered combine is order-free and opposed by a registered separate (a turn of its response) | 7 | holds | `cargo xtask forces`; gate 7 item 2 |
+| V130 | A force owns no pixel; a contact picture has no link owner | 7 | holds | gate 7 item 3 |
+| V131 | Roles are derived and blind to the regulatory region | 7 | holds | |
+| V132 | Device loss is reported by wgpu's callback, and the shell regrows from it | 7 | holds | |
+| V133 | A contact body's forces form no loop: no force's response reaches, through members, back to itself | 7 | holds | Amendment B |
