@@ -1,50 +1,22 @@
 //! Canonical text for a subject, ready to re-parse.
 
 use crate::fns::subject::Subject;
-use joinn_dna::print_body;
+use joinn_dna::{print_body, print_contact};
 use joinn_link::print_universe;
 use std::fmt::Write as _;
+
+use super::reprint_regulatory::reprint_regulatory;
 
 pub(crate) fn reprint(s: &Subject) -> String {
     match s {
         Subject::Body(body) => {
             let mut out = print_body(&body.coding);
-            if !body.regulatory.prompts.is_empty()
-                || !body.regulatory.present.is_empty()
-                || !body.regulatory.names.is_empty()
-                || !body.regulatory.labels.is_empty()
-            {
-                out.push_str("---\nregulatory {\n");
-                if !body.regulatory.prompts.is_empty() {
-                    out.push_str("  prompts {");
-                    for (k, v) in &body.regulatory.prompts {
-                        let _ = write!(out, " {k} \"{v}\"");
-                    }
-                    out.push_str(" }\n");
-                }
-                if !body.regulatory.present.is_empty() {
-                    out.push_str("  present {");
-                    for (k, v) in &body.regulatory.present {
-                        let _ = write!(out, " {k} \"{v}\"");
-                    }
-                    out.push_str(" }\n");
-                }
-                if !body.regulatory.names.is_empty() {
-                    out.push_str("  names {");
-                    for (k, v) in &body.regulatory.names {
-                        let _ = write!(out, " {k} \"{v}\"");
-                    }
-                    out.push_str(" }\n");
-                }
-                if !body.regulatory.labels.is_empty() {
-                    out.push_str("  labels {");
-                    for (k, v) in &body.regulatory.labels {
-                        let _ = write!(out, " {k} \"{v}\"");
-                    }
-                    out.push_str(" }\n");
-                }
-                out.push_str("}\n");
-            }
+            out.push_str(&reprint_regulatory(&body.regulatory));
+            out
+        }
+        Subject::Contact(contact) => {
+            let mut out = print_contact(&contact.coding);
+            out.push_str(&reprint_regulatory(&contact.regulatory));
             out
         }
         Subject::Universe(u) => {

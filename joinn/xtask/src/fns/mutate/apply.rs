@@ -7,23 +7,29 @@ use super::Mutation;
 use super::add_wire::add_wire;
 use super::copy_member::copy_member;
 use super::corrupt_hash::corrupt_hash;
+use super::drop_contact_genome::drop_contact_genome;
 use super::drop_declaration::drop_declaration;
+use super::drop_force::drop_force;
 use super::drop_genome::drop_genome;
 use super::drop_grant::drop_grant;
 use super::drop_lens::drop_lens;
 use super::drop_line::drop_line;
 use super::drop_link::drop_link;
+use super::drop_member::drop_member;
 use super::drop_wire::drop_wire;
 use super::flip_mark::flip_mark;
 use super::refuse::refuse;
 use super::rename_alias::rename_alias;
+use super::rename_contact_alias::rename_contact_alias;
 use super::rename_link::rename_link;
 use super::replace::replace;
 use super::set_score::set_score;
+use super::shift_member::shift_member;
 use super::shift_port::shift_port;
 use super::swap_binding::swap_binding;
 use super::swap_cell::swap_cell;
 use super::swap_lines::swap_lines;
+use super::swap_response::swap_response;
 use super::wire_across::wire_across;
 
 pub(super) fn apply(s: &mut Subject, m: &Mutation) -> Verdict<()> {
@@ -47,6 +53,18 @@ pub(super) fn apply(s: &mut Subject, m: &Mutation) -> Verdict<()> {
         (Mutation::RenameAlias(from, to), Subject::Universe(u)) => rename_alias(u, from, to),
         (Mutation::DropWire(src, dst), Subject::Body(b)) => drop_wire(b, src, dst),
         (Mutation::DropGenome(inst), Subject::Body(b)) => drop_genome(b, inst),
+        (Mutation::DropGenome(inst), Subject::Contact(c)) => drop_contact_genome(c, inst),
+        (Mutation::RenameAlias(from, to), Subject::Contact(c)) => rename_contact_alias(c, from, to),
+        (Mutation::DropForce(response), Subject::Contact(c)) => drop_force(c, response),
+        (Mutation::SwapResponse(response, to_hash), Subject::Contact(c)) => {
+            swap_response(c, response, to_hash)
+        }
+        (Mutation::ShiftMember(response, member, to), Subject::Contact(c)) => {
+            shift_member(c, response, member, *to)
+        }
+        (Mutation::DropMember(response, member), Subject::Contact(c)) => {
+            drop_member(c, response, member)
+        }
         (Mutation::SwapCell(inst, to_hash), Subject::Body(b)) => swap_cell(b, inst, to_hash),
         (Mutation::AddWire(src, dst), Subject::Body(b)) => add_wire(b, src, dst),
         (Mutation::DropDeclaration, Subject::Body(b)) => {
@@ -64,6 +82,7 @@ pub(super) fn apply(s: &mut Subject, m: &Mutation) -> Verdict<()> {
         (m, other) => {
             let kind = match other {
                 Subject::Body(_) => "body",
+                Subject::Contact(_) => "contact",
                 Subject::Universe(_) => "universe",
                 Subject::Lock(_) => "lock",
                 Subject::Transcript(_) => "transcript",

@@ -5,7 +5,7 @@ use crate::fns::subject::Subject;
 use super::reparse::reparse;
 use super::reprint::reprint;
 
-/// One regulatory label changed (body/universe), or a comment line (lock).
+/// One regulatory label changed (body/contact/universe), or a comment line (lock).
 /// Transcript and text have no neutral edit.
 pub(crate) fn neutral(s: &Subject) -> Option<Subject> {
     match s {
@@ -19,6 +19,22 @@ pub(crate) fn neutral(s: &Subject) -> Option<Subject> {
                 return None;
             }
             let subject = Subject::Body(next);
+            let text = reprint(&subject);
+            match reparse(s, &text) {
+                joinn_frame::Verdict::Ok(p) => Some(p),
+                joinn_frame::Verdict::Refused(_) => None,
+            }
+        }
+        Subject::Contact(contact) => {
+            let mut next = contact.clone();
+            if let Some((_, label)) = next.regulatory.labels.iter_mut().next() {
+                label.push_str(" (neutral)");
+            } else if let Some((_, name)) = next.regulatory.names.iter_mut().next() {
+                name.push_str(" (neutral)");
+            } else {
+                return None;
+            }
+            let subject = Subject::Contact(next);
             let text = reprint(&subject);
             match reparse(s, &text) {
                 joinn_frame::Verdict::Ok(p) => Some(p),
@@ -84,5 +100,23 @@ mod tests {
         )
         .unwrap_or_else(|e| panic!("parse transcript: {e}"));
         assert!(neutral(&t).is_none());
+    }
+
+    #[test]
+    fn neutral_edits_a_contact_label_and_keeps_its_hash() {
+        let c = crate::fns::mutate::contact_fixture::contact_fixture();
+        let nc = neutral(&c).unwrap_or_else(|| panic!("contact neutral edit missing"));
+        let (Subject::Contact(orig), Subject::Contact(next)) = (&c, &nc) else {
+            panic!("contact");
+        };
+        assert_eq!(
+            next.regulatory.labels.get("sum").map(String::as_str),
+            Some("Sum (neutral)")
+        );
+        assert_eq!(
+            orig.regulatory.labels.get("sum").map(String::as_str),
+            Some("Sum")
+        );
+        assert_eq!(joinn_dna::hash(&next.coding), joinn_dna::hash(&orig.coding));
     }
 }

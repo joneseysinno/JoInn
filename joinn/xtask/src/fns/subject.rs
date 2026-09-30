@@ -1,6 +1,6 @@
 //! Parsed control-artifact subjects for non-legacy gates.
 
-use joinn_dna::Body;
+use joinn_dna::{Body, Contact};
 use joinn_link::Universe;
 
 use super::parse_lock_scores::LockRow;
@@ -9,6 +9,7 @@ use super::parse_lock_scores::LockRow;
 #[derive(Clone, Debug)]
 pub(crate) enum Subject {
     Body(Body),
+    Contact(Contact),
     Universe(Universe),
     Lock(Vec<LockRow>),
     Transcript(Vec<String>),

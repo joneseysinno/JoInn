@@ -44,7 +44,7 @@ mod tests {
                 Mutation::Replace("units"),
                 Mutation::Replace("link"),
             ],
-            Subject::Body(_) | Subject::Lock(_) => Vec::new(),
+            Subject::Body(_) | Subject::Contact(_) | Subject::Lock(_) => Vec::new(),
         }
     }
 

@@ -2,7 +2,7 @@
 
 use crate::fns::parse_lock_scores::parse_lock_scores;
 use crate::fns::subject::Subject;
-use joinn_dna::parse_body;
+use joinn_dna::{parse_body, parse_contact};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::parse_universe;
 
@@ -12,6 +12,10 @@ pub(crate) fn reparse(kind: &Subject, text: &str) -> Verdict<Subject> {
     match kind {
         Subject::Body(_) => match parse_body(text, &FrameRegistry::phase1()) {
             Verdict::Ok(b) => Verdict::Ok(Subject::Body(b)),
+            Verdict::Refused(r) => Verdict::Refused(r),
+        },
+        Subject::Contact(_) => match parse_contact(text, &FrameRegistry::phase1()) {
+            Verdict::Ok(c) => Verdict::Ok(Subject::Contact(c)),
             Verdict::Refused(r) => Verdict::Refused(r),
         },
         Subject::Universe(_) => match parse_universe(text) {

@@ -1,6 +1,6 @@
 //! Parse a control artifact's text into a Subject by file kind.
 
-use joinn_dna::parse_body;
+use joinn_dna::{parse_body, parse_contact};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::parse_universe;
 
@@ -13,6 +13,12 @@ pub(crate) fn parse_subject(path: &str, text: &str) -> Result<Subject, String> {
     if path.ends_with(".body") {
         return match parse_body(text, &FrameRegistry::phase1()) {
             Verdict::Ok(body) => Ok(Subject::Body(body)),
+            Verdict::Refused(r) => Err(r.reason),
+        };
+    }
+    if path.ends_with(".contact") {
+        return match parse_contact(text, &FrameRegistry::phase1()) {
+            Verdict::Ok(contact) => Ok(Subject::Contact(contact)),
             Verdict::Refused(r) => Err(r.reason),
         };
     }
