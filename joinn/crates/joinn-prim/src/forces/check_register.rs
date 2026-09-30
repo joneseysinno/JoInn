@@ -11,7 +11,8 @@ use super::{REGISTER_BOUND, REGISTER_SEED, RegisterRow, order_free};
 /// 1. the response cell is supplied, has in-ports `0 … k−1` and one out-port
 ///    `k`, all in the row's frame, and an allele for that frame whose native
 ///    is registered;
-/// 2. that native passes `order_free` at `REGISTER_SEED` and `REGISTER_BOUND`;
+/// 2. every such native passes `order_free` at `REGISTER_SEED` and
+///    `REGISTER_BOUND`;
 /// 3. the separate cell is supplied, its lineage is the response, and it
 ///    declares a turn.
 ///
@@ -83,11 +84,15 @@ pub fn check_register(
                 ),
             );
         }
-        let oracle = cell.alleles.iter().find_map(|allele| match &allele.body {
-            AlleleBody::Native(id) if allele.frame == frame_ref => natives.get(id),
-            _ => None,
-        });
-        let Some(oracle) = oracle else {
+        let oracles: Vec<_> = cell
+            .alleles
+            .iter()
+            .filter_map(|allele| match &allele.body {
+                AlleleBody::Native(id) if allele.frame == frame_ref => natives.get(id),
+                _ => None,
+            })
+            .collect();
+        if oracles.is_empty() {
             return refuse(
                 row.response,
                 format!(
@@ -95,15 +100,17 @@ pub fn check_register(
                     row.response
                 ),
             );
-        };
-        if let Verdict::Refused(r) = order_free(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
-            return refuse(
-                row.response,
-                format!(
-                    "{word} on {frame_ref} by cell:{}: {}",
-                    row.response, r.reason
-                ),
-            );
+        }
+        for oracle in oracles {
+            if let Verdict::Refused(r) = order_free(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
+                return refuse(
+                    row.response,
+                    format!(
+                        "{word} on {frame_ref} by cell:{}: {}",
+                        row.response, r.reason
+                    ),
+                );
+            }
         }
         let opposed = cells.get(&row.separate).is_some_and(|separate| {
             separate.coding.lineage == Some(row.response) && !separate.coding.turns.is_empty()
@@ -126,7 +133,7 @@ mod tests {
     use super::check_register;
     use crate::forces::register;
     use crate::natives_with_mutants; // allow(vocab): tests inject mutants
-    use joinn_dna::{Cell, hash, parse_cell};
+    use joinn_dna::{Allele, AlleleBody, Cell, NativeId, hash, parse_cell};
     use joinn_frame::{FrameRegistry, Hash, Verdict};
     use std::collections::BTreeMap;
 
@@ -173,6 +180,36 @@ mod tests {
                 "combine on ℤ 1 is unopposed: no separate; acceptance is a turn of cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39"
             ),
             Verdict::Ok(()) => panic!("an unopposed row was admitted"),
+        }
+    }
+
+    #[test]
+    fn a_second_allele_that_depends_on_order_is_refused() {
+        let row = register()[0];
+        let mut with_difference = cells();
+        let Some(sum) = with_difference.get_mut(&row.response) else {
+            panic!("the sum cell was not supplied");
+        };
+        let frame = sum.coding.contract.ports[0].frame;
+        sum.alleles.push(Allele {
+            frame,
+            body: AlleleBody::Native(NativeId("mutant.difference".into())),
+            witnesses: Vec::new(),
+        });
+        match check_register(
+            &[row],
+            &with_difference,
+            &natives_with_mutants(), // allow(vocab): tests inject mutants
+            &FrameRegistry::phase1(),
+        ) {
+            Verdict::Refused(r) => assert!(
+                r.reason.starts_with(
+                    "combine on ℤ 1 by cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39: not order-free: f(a, b) = "
+                ) && r.reason.contains(" but f(b, a) = "),
+                "{}",
+                r.reason
+            ),
+            Verdict::Ok(()) => panic!("a second, order-dependent allele passed the register"),
         }
     }
 

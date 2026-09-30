@@ -9,7 +9,8 @@ use crate::fns::{walk_cells, workspace_root};
 
 /// Cells that are refused on parse (fixtures that must be refused) are left out;
 /// the register names its cells by hash, so a missing one is refused by name.
-/// Files sharing a coding region (`sum`, `sum_b`, …) pool their alleles.
+/// Files sharing a coding region (`sum`, `sum_b`, …) keep the corpus's one rule:
+/// the first file that carries alleles.
 pub(crate) fn corpus_cells(frames: &FrameRegistry) -> Result<BTreeMap<Hash, Cell>, String> {
     let mut paths = Vec::new();
     walk_cells(&workspace_root()?.join("corpus"), &mut paths)?;
@@ -19,17 +20,13 @@ pub(crate) fn corpus_cells(frames: &FrameRegistry) -> Result<BTreeMap<Hash, Cell
         let Verdict::Ok(cell) = parse_cell(&src, frames) else {
             continue;
         };
-        match cells.get_mut(&hash(&cell.coding)) {
-            Some(kept) => {
-                for allele in cell.alleles {
-                    if !kept.alleles.contains(&allele) {
-                        kept.alleles.push(allele);
-                    }
-                }
-            }
-            None => {
-                cells.insert(hash(&cell.coding), cell);
-            }
+        let id = hash(&cell.coding);
+        let replace = match cells.get(&id) {
+            Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
+            None => true,
+        };
+        if replace {
+            cells.insert(id, cell);
         }
     }
     Ok(cells)

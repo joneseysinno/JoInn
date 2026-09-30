@@ -2,7 +2,7 @@
 
 **Contact bodies: a body with no wires inside · the combine force · a working plan for Cursor**
 
-Author: AJ, with Claude · Draft 0.1 · September 29, 2026
+Author: AJ, with Claude · Draft 0.2 (Amendment A, Stop A review) · September 30, 2026
 
 > **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going.
 
@@ -584,6 +584,7 @@ Dependencies: in order. P7-02 to P7-04 touch only the shell and joinn-gpu. P7-06
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
+| **P7-06a** | **Amendment A** | Commit this plan as it now is on disk (Amendment A added). A2: `xtask`'s `forces::corpus_cells` keeps the corpus's one rule for files sharing a coding region, *keep the first file that carries alleles*, instead of pooling. A3: `check_register` runs `order_free` on **every** native allele in the row's frame | `cargo xtask forces` prints the same seven lines as Stop A, byte for byte (paste them). New test: the sum cell given a second ℤ allele `mutant.difference` is refused by `check_register` with a commutativity counterexample. `grep -rn "kept.alleles" xtask` prints nothing |
 | **P7-07** | **`.contact`** | `joinn-dna::contact` (§2.3); `TAG_CONTACT`; `corpus/phase7/calculator.contact` exactly as §2.3; `hashes.txt` gains `# Phase 7. The calculator as a contact body. New file, no earlier hash moved.` and `calculator.contact 868e79b293c8d35625f514274eb0bf04d228898ed994a795b23b942a530b6209`; corpus walkers and `corpus_artifact` learn `phase7` and `.contact` | The four-spellings test passes. `cargo xtask corpus verify` prints 44 and ends ok. Each §2.3 parse refusal has a test. `git diff --stat <P7-01>..HEAD -- joinn/corpus` lists only `corpus/phase7/calculator.contact` and `corpus/hashes.txt` (one comment line and one row added) |
 | **P7-08** | **Catalogue first** | §2.14: `Subject::Contact`, the four new mutations, the two extensions, neutral edit, each tested by what the mutant does | Tests pass. A test asserts no gate row names a `.contact` artifact yet |
 | **P7-09** | **Admission and derivation** | `check_contact`, `contact_surface`, `lower` (§2.4–§2.6) | Tests: each §2.4 refusal with its wording; `print_body(lower(calculator.contact))` equals `calculator.body`'s canonical text and hash `b55fba1e…`; surface equality on every `.contact` in the corpus |
@@ -591,7 +592,7 @@ Dependencies: in order. P7-02 to P7-04 touch only the shell and joinn-gpu. P7-06
 | **P7-11** | **Roles** | `body_roles` (§2.7); `cargo xtask roles` | `cargo xtask roles corpus/phase7/calculator.contact` prints §2.7's block byte for byte (a test asserts it). The invariance, respond and store tests pass |
 | — | **Stop B** | `phase-7-stop-b.md`, push, stop | — |
 
-Dependencies: P7-07, then P7-08, then P7-09. P7-10 and P7-11 need P7-09. P7-09 needs P7-06.
+Dependencies: P7-06a first, then P7-07, then P7-08, then P7-09. P7-10 and P7-11 need P7-09. P7-09 needs P7-06.
 
 ### Chunk C: the picture, gate 7, freeze
 
@@ -601,7 +602,7 @@ Dependencies: P7-07, then P7-08, then P7-09. P7-10 and P7-11 need P7-09. P7-09 n
 | **P7-13** | **The shell opens `.contact`** | `cargo run -p joinn-shell-desktop -- corpus/phase7/calculator.contact`; V125 extended to the contact file | V125 passes on both files, contact rows `2, 1, 3`. Cursor runs the window once on Windows, clicks the `sum` cell, and pastes the two pick lines (or writes `no display`) |
 | **P7-14** | **Findings** | `docs/Findings/phase-7-contact.md`: every command's full output from P7-06 to P7-13, and a *Predictions* section marking each prediction in §2.3, §2.5, §2.7, §2.8, §2.9, §2.10 `as predicted` or `differs`, with both values | Every prediction is marked |
 | **P7-15** | **Gate 7** | §2.15's three items; uniqueness through gate 7; `phase 7` label; lock row | `cargo xtask gate all` exits 0 and prints `phase 7: 3/3` after `phase 6: 3/3`. Shown then reverted, pasting each printed failure: (a) give item 2 item 3's `opposes` (uniqueness refusal); (b) make `lower` assign members in reverse order (item 1 must fail on the description; item 2 must still pass: order-free is about the result); (c) remove style 7 from the shader's `select` (item 3 must fail on the grow line's `sum` color) |
-| **P7-16** | **Docs and freeze** | README and `Guides/03-where-we-are.md` (a body can be cells in contact; the calculator in both forms; what isn't built yet); `Guides/02-how-parts-connect.md` (contact inside a body, wires between bodies); `Guides/05-glossary.md` gains *contact body, force, combine, response, latent, surface port, role (protect, carry, store, respond), force register, lower*; `decisions.md` rows V125–V132 `holds`; the roadmap's Phase 7 note points at `phase-7-contact.md` | `cargo xtask gate all` from a fresh clone prints phases 0 … 6 and 7, and exits 0. `corpus verify` 44. `git diff --stat <P7-01>..HEAD -- joinn/corpus` lists only P7-07's two files |
+| **P7-16** | **Docs and freeze** | README and `Guides/03-where-we-are.md` (a body can be cells in contact; the calculator in both forms; what isn't built yet); `Guides/02-how-parts-connect.md` (contact inside a body, wires between bodies); `Guides/05-glossary.md` gains *contact body, force, combine, response, latent, surface port, role (protect, carry, store, respond), force register, lower*; `decisions.md` rows V125–V132 `holds`; the roadmap's Phase 7 note points at `phase-7-contact.md`, and its diagram's `Phase 7<br/>visual host II` node becomes Phase 7.1 (A4) | `cargo xtask gate all` from a fresh clone prints phases 0 … 6 and 7, and exits 0. `corpus verify` 44. `git diff --stat <P7-01>..HEAD -- joinn/corpus` lists only P7-07's two files |
 | — | **Stop C** | `phase-7-stop-c.md` with the CI read, push, stop | — |
 
 Dependencies: P7-12, then P7-13. P7-14 needs both. P7-15 needs P7-12. P7-16 needs P7-14 and P7-15.
@@ -697,6 +698,31 @@ Tell Claude "window worked", or which step looked wrong.
 | **R86** | The two open Floor reductions | `pair`/`split` into a frameless combine (needs R38), and `join` as combine's completion rule. Attempt them in code when carry arrives |
 | R55, R74, R75 | Reframed by Part V | Stay open. R74 may dissolve for contact bodies, since interior ports aren't addressed on screen. R75 becomes the beam's question: where a system wire meets a body |
 | R64, R69 | Legacy gates; describe at firing time | Carried forward |
+
+---
+
+## Amendment A · Stop A review (Claude, 30 Sep 2026)
+
+Claude reproduced chunk A from a fresh clone of `5fa61e1` on Linux (llvmpipe via GL, 1 adapter): suite 266 passed, 0 failed; `gate all` exit 0 with every phase line as before; `forces` byte-identical to Cursor's, counterexamples included; `corpus verify` 43; vocab, modules, layers, floor unchanged. The device-lost test prints `Some(Destroyed)` on llvmpipe too.
+
+**A1 · Snags settled.**
+
+| Snag | Settlement |
+|---|---|
+| P7-01 · `Claude outputs/` copy not committed | Right. The plan lists docs only |
+| P7-02 · test moved into `enter.rs` | Accepted. A test belongs in the leaf it tests |
+| P7-03 · `regrow.rs:12` in the `Lost` grep | Accepted. It is wgpu's `DeviceLostReason`, the callback's own word. No surface `Lost` regrows |
+| P7-05 · gate 5 item 2 now `The surface is measured` | Accepted: §2.11's "xtask messages that mean a body's outline". Every other renamed string was checked and means a body's outline; every remaining `membrane` in code means a cell's |
+| P7-06 · midpoint's counterexample differs | Prediction differs, accepted. ℤ is unbounded and seed 7 draws large values first. The plan's example is still a true counterexample |
+| P7-06 · alleles pooled across files | Result accepted, rule not: see A2 |
+
+**A2 · One rule for files that share a coding region.** Four loaders already settle it one way: *keep the first file that carries alleles* (`joinn-cli`, `joinn-shell-desktop`, `xtask` `perf` and `load_phase5_bodies`). Pooling is a fifth, different rule, which gives the same answer today only because `sum_b`, `sum_c` and `sum_d` carry no alleles. `forces::corpus_cells` follows the established rule. `cargo xtask contact`, the pairing test and gate 7 in chunks B and C get their cell map from it, not from a new loader.
+
+**A3 · Every allele is order-free, not the first.** `check_register` took the first native allele in the row's frame. A response with a second allele in that frame could carry an order-dependent answer past the register. `order_free` now runs on each native allele in the frame, and the first refusal wins.
+
+**A4 · Roadmap diagram.** P7-16 also renames the diagram's `Phase 7<br/>visual host II` node to Phase 7.1 (B5 retitled the section but not the diagram).
+
+**Noted, not changed.** The shell reads the device-lost flag at the start of a redraw, as §2.13 says. A device lost while the window is idle regrows on the next redraw, not at once. That is enough for Phase 7.
 
 ---
 
