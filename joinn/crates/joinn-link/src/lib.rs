@@ -8,11 +8,14 @@ mod assemble_universe;
 mod bind;
 mod body_store;
 mod capability;
+mod check_contact;
 mod check_law4;
 mod check_lenses;
 mod check_link_types;
+mod contact_surface;
 mod csr;
 mod instance_ports;
+mod lower;
 mod structural;
 mod surface;
 
@@ -26,11 +29,14 @@ pub use assemble_universe::assemble_universe;
 pub use bind::{Bound, bind};
 pub use body_store::BodyStore;
 pub use capability::{LinkRuntime, check_capability, grant, revoke};
+pub use check_contact::check_contact;
 pub use check_law4::{check_law4, law4_refusals};
 pub use check_lenses::check_lenses;
 pub use check_link_types::check_link_types;
+pub use contact_surface::contact_surface;
 pub use csr::{Csr, CsrMember, coding_from_csr, csr_from_universe};
 pub use instance_ports::instance_ports;
+pub use lower::lower;
 pub use surface::{BoundaryPort, surface};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,

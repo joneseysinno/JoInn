@@ -4,6 +4,8 @@ mod add_wire;
 mod apply;
 mod coding_hash;
 #[cfg(test)]
+mod contact_admission;
+#[cfg(test)]
 mod contact_fixture;
 mod copy_member;
 #[cfg(test)]

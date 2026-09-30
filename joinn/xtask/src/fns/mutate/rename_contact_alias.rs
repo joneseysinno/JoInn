@@ -57,6 +57,7 @@ pub(super) fn rename_contact_alias(contact: &mut Contact, from: &str, to: &str) 
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -91,6 +92,8 @@ mod tests {
             Some("Sum")
         );
         assert!(c.regulatory.present.contains_key("total"));
+        let admitted = contact_admission(&mutant);
+        assert!(matches!(admitted, Verdict::Ok(())), "{admitted:?}");
         let Verdict::Refused(r) = mutate(&s, &Mutation::RenameAlias("sum", "cli_a")) else {
             panic!("a taken name must refuse");
         };

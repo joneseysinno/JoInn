@@ -27,6 +27,7 @@ pub(super) fn swap_response(contact: &mut Contact, response: &str, to_hash: &str
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -50,6 +51,15 @@ mod tests {
         assert_ne!(hash(&c.coding), hash(&orig.coding));
         assert_eq!(c.coding.forces.len(), 1);
         assert_eq!(c.coding.forces[0].response.to_hex(), MUL);
+        let Verdict::Refused(r) = contact_admission(&mutant) else {
+            panic!("a re-pinned response must be refused");
+        };
+        assert_eq!(
+            r.reason,
+            format!(
+                "combine on ℤ 1 responds by cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39; force sum pins cell:{MUL}. acceptance is the registered response"
+            )
+        );
         let Verdict::Refused(r) = mutate(&s, &Mutation::SwapResponse("ghost", MUL)) else {
             panic!("missing force must refuse");
         };

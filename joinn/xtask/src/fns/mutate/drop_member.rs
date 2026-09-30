@@ -33,6 +33,7 @@ pub(super) fn drop_member(contact: &mut Contact, response: &str, member_s: &str)
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -58,6 +59,13 @@ mod tests {
             .map(ToString::to_string)
             .collect();
         assert_eq!(members, ["cli_a@1"]);
+        let Verdict::Refused(r) = contact_admission(&mutant) else {
+            panic!("a dropped member must be refused");
+        };
+        assert_eq!(
+            r.reason,
+            "force sum has 1 members; its response takes 2. acceptance is 2 members (R84)"
+        );
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropMember("sum", "cli_b@0")) else {
             panic!("missing member must refuse");
         };

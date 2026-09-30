@@ -37,6 +37,7 @@ pub(super) fn shift_member(
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -62,6 +63,13 @@ mod tests {
             .map(ToString::to_string)
             .collect();
         assert_eq!(members, ["cli_a@0", "cli_b@1"]);
+        let Verdict::Refused(r) = contact_admission(&mutant) else {
+            panic!("a shifted member must be refused");
+        };
+        assert_eq!(
+            r.reason,
+            "receptor: cli_a@0 is Text 1, the force is combine ℤ 1; acceptance is a member in ℤ 1"
+        );
         let Verdict::Refused(r) = mutate(&s, &Mutation::ShiftMember("sum", "ghost@1", 0)) else {
             panic!("missing member must refuse");
         };

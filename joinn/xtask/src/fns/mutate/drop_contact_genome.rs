@@ -29,6 +29,7 @@ pub(super) fn drop_contact_genome(contact: &mut Contact, instance: &str) -> Verd
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -63,6 +64,13 @@ mod tests {
                 .members
                 .iter()
                 .any(|m| m.instance == "cli_b")
+        );
+        let Verdict::Refused(r) = contact_admission(&mutant) else {
+            panic!("a member of a dropped instance must be refused");
+        };
+        assert_eq!(
+            r.reason,
+            "member cli_b@1 names no instance; acceptance is an instance of the genome or a force's response"
         );
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropGenome("ghost")) else {
             panic!("missing instance must refuse");

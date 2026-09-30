@@ -18,6 +18,7 @@ pub(super) fn drop_force(contact: &mut Contact, response: &str) -> Verdict<()> {
 
 #[cfg(test)]
 mod tests {
+    use crate::fns::mutate::contact_admission::contact_admission;
     use crate::fns::mutate::contact_fixture::contact_fixture;
     use crate::fns::mutate::{Mutation, mutate};
     use crate::fns::subject::Subject;
@@ -41,6 +42,8 @@ mod tests {
         let text = print_contact(&c.coding);
         assert!(!text.contains("sum"), "{text}");
         assert!(text.ends_with("lineage none\nforces\n"), "{text}");
+        let admitted = contact_admission(&mutant);
+        assert!(matches!(admitted, Verdict::Ok(())), "{admitted:?}");
         let Verdict::Refused(r) = mutate(&s, &Mutation::DropForce("ghost")) else {
             panic!("missing force must refuse");
         };
