@@ -16,6 +16,7 @@ mod contact_surface;
 mod csr;
 mod instance_ports;
 mod lower;
+mod roles;
 mod structural;
 mod surface;
 
@@ -37,6 +38,7 @@ pub use contact_surface::contact_surface;
 pub use csr::{Csr, CsrMember, coding_from_csr, csr_from_universe};
 pub use instance_ports::instance_ports;
 pub use lower::lower;
+pub use roles::{BodyRole, Facing, Holding, body_roles};
 pub use surface::{BoundaryPort, surface};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,
