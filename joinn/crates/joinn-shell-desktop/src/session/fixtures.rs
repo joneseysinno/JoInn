@@ -16,7 +16,7 @@ pub(super) fn calculator() -> Desktop {
         Ok(cells) => cells,
         Err(e) => panic!("{e}"),
     };
-    match Desktop::open(body, cells) {
+    match Desktop::open(body, cells, None) {
         Ok(desktop) => desktop,
         Err(e) => panic!("{e}"),
     }

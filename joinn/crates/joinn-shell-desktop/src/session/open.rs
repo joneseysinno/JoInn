@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use joinn_dna::{Body, Cell};
+use joinn_dna::{Body, Cell, Contact};
 use joinn_frame::{Hash, Verdict};
 use joinn_host::{Signals, check_signals, intent_set};
 use joinn_live::BodyState;
@@ -13,9 +13,19 @@ use super::Desktop;
 
 impl Desktop {
     /// Grow the scene, fit 1280×720 until the window says otherwise, and refuse
-    /// a body that reads a signal this host does not emit.
-    pub fn open(body: Body, cells: BTreeMap<Hash, Cell>) -> Result<Desktop, String> {
-        let scene = match Scene::grow("body", &body, &cells) {
+    /// a body that reads a signal this host does not emit. With a contact, the
+    /// scene is the contact's cells in contact and `body` is its lowered body,
+    /// which only runs.
+    pub fn open(
+        body: Body,
+        cells: BTreeMap<Hash, Cell>,
+        contact: Option<&Contact>,
+    ) -> Result<Desktop, String> {
+        let grown = match contact {
+            Some(c) => Scene::grow_contact("body", c, &cells),
+            None => Scene::grow("body", &body, &cells),
+        };
+        let scene = match grown {
             Verdict::Ok(scene) => scene,
             Verdict::Refused(r) => return Err(r.reason),
         };

@@ -87,18 +87,28 @@ mod tests {
     use joinn_visual::{Scene, table_bytes};
 
     use super::super::Desktop;
+    use super::super::contact_fixture::calculator_contact;
     use super::super::fixtures::calculator;
 
     /// The script at 1280×720: the pixel of the in-port, then the text typed there.
     const SCRIPT: [((u32, u32), &str); 3] =
         [((192, 220), "two"), ((192, 220), "2"), ((192, 500), "3")];
 
+    /// The same script on the contact calculator: cli_a@0 and cli_b@0 sit at
+    /// layout (4, 7) and (4, 13), pixels (256, 264) and (256, 456) at k 32.
+    const CONTACT_SCRIPT: [((u32, u32), &str); 3] =
+        [((256, 264), "two"), ((256, 264), "2"), ((256, 456), "3")];
+
     /// V125: click, type and Enter through the shell's own leaves; after each
-    /// Enter the session's tables equal `Scene::regrow` of its live state, byte
-    /// for byte. Returns the rows each Enter wrote.
-    fn run_path_rows(desktop: &mut Desktop) -> Vec<usize> {
+    /// Enter the session's tables equal the scene regrown from its live state,
+    /// byte for byte. Returns the rows each Enter wrote.
+    fn run_path_rows(
+        desktop: &mut Desktop,
+        script: &[((u32, u32), &str)],
+        regrow: &dyn Fn(&Desktop) -> Verdict<Scene>,
+    ) -> Vec<usize> {
         let mut rows = Vec::new();
-        for (step, ((x, y), text)) in SCRIPT.iter().enumerate() {
+        for (step, ((x, y), text)) in script.iter().enumerate() {
             let clicked = desktop.click(*x, *y);
             assert!(
                 clicked.iter().any(|line| line.starts_with("selected ")),
@@ -110,8 +120,7 @@ mod tests {
             }
             let lines = desktop.enter();
             assert!(!lines.is_empty(), "step {step}: Enter ran nothing");
-            let regrown = match Scene::regrow("body", &desktop.body, &desktop.cells, &desktop.state)
-            {
+            let regrown = match regrow(desktop) {
                 Verdict::Ok(scene) => scene,
                 Verdict::Refused(r) => panic!("step {step}: {}", r.reason),
             };
@@ -129,10 +138,30 @@ mod tests {
     #[test]
     fn the_shell_run_path_keeps_tables_equal_to_regrow_on_the_calculator() {
         let mut desktop = calculator();
-        let rows = run_path_rows(&mut desktop);
+        let rows = run_path_rows(&mut desktop, &SCRIPT, &|d| {
+            Scene::regrow("body", &d.body, &d.cells, &d.state)
+        });
         let printed: Vec<String> = rows.iter().map(usize::to_string).collect();
         println!("calculator.body rows {}", printed.join(", "));
         assert_eq!(rows, vec![2, 3, 4]);
+    }
+
+    #[test]
+    fn the_shell_run_path_keeps_tables_equal_to_regrow_on_the_contact_calculator() {
+        let (mut desktop, contact) = calculator_contact();
+        let rows = run_path_rows(&mut desktop, &CONTACT_SCRIPT, &|d| {
+            Scene::regrow_contact("body", &contact, &d.cells, &d.state)
+        });
+        let printed: Vec<String> = rows.iter().map(usize::to_string).collect();
+        println!("calculator.contact rows {}", printed.join(", "));
+        assert_eq!(rows, vec![2, 1, 3]);
+    }
+
+    #[test]
+    fn clicking_sum_in_the_contact_picture_names_the_response() {
+        let (mut desktop, _) = calculator_contact();
+        let lines = desktop.click(832, 360);
+        assert_eq!(lines, vec!["pick 832,360: body.sum (cpu)".to_owned()]);
     }
 
     #[test]

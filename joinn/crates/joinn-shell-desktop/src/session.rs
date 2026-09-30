@@ -1,6 +1,8 @@
 //! The shell's host: clicks, typing, and the scene. No window.
 
 mod click;
+#[cfg(test)]
+mod contact_fixture;
 mod enter;
 mod escape;
 mod fit_viewport;

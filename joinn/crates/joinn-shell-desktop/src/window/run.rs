@@ -16,14 +16,12 @@ use crate::session::Desktop;
 pub fn run(path: &str) -> Result<(), String> {
     let corpus = find_corpus()?;
     let cells = load_cells(&corpus)?;
-    if path.ends_with(".contact") {
-        load_contact_file(Path::new(path), &cells)?;
-        return Err(format!(
-            "{path} is admitted; a contact body is drawn as cells in contact, never as its lowered wires, and that picture is not built yet. acceptance is a .body file"
-        ));
-    }
-    let body = load_body_file(Path::new(path))?;
-    let desktop = Desktop::open(body, cells)?;
+    let desktop = if path.ends_with(".contact") {
+        let (contact, body) = load_contact_file(Path::new(path), &cells)?;
+        Desktop::open(body, cells, Some(&contact))?
+    } else {
+        Desktop::open(load_body_file(Path::new(path))?, cells, None)?
+    };
     let list = match adapters() {
         Verdict::Ok(list) => list,
         Verdict::Refused(r) => return Err(r.reason),

@@ -1,6 +1,6 @@
 //! Parse, admit and lower the `.contact` file the shell was given.
 
-use joinn_dna::{Body, Cell, parse_contact};
+use joinn_dna::{Body, Cell, Contact, parse_contact};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_link::lower;
 use std::collections::BTreeMap;
@@ -8,8 +8,12 @@ use std::fs;
 use std::path::Path;
 
 /// Parse `path` as a contact, admit it against `cells`, and derive the body
-/// the engine runs. The argument is a path, not a stem.
-pub(crate) fn load_contact_file(path: &Path, cells: &BTreeMap<Hash, Cell>) -> Result<Body, String> {
+/// the engine runs. The contact is what is drawn; the lowered body is only run
+/// (rule 61). The argument is a path, not a stem.
+pub(crate) fn load_contact_file(
+    path: &Path,
+    cells: &BTreeMap<Hash, Cell>,
+) -> Result<(Contact, Body), String> {
     let src = fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
     let frames = FrameRegistry::phase1();
     let contact = match parse_contact(&src, &frames) {
@@ -17,7 +21,7 @@ pub(crate) fn load_contact_file(path: &Path, cells: &BTreeMap<Hash, Cell>) -> Re
         Verdict::Refused(r) => return Err(r.reason),
     };
     match lower(&contact, cells, &frames) {
-        Verdict::Ok(body) => Ok(body),
+        Verdict::Ok(body) => Ok((contact, body)),
         Verdict::Refused(r) => Err(r.reason),
     }
 }
@@ -32,8 +36,9 @@ mod tests {
     fn the_contact_calculator_loads_as_the_wired_calculator() {
         let corpus = find_corpus().unwrap_or_else(|e| panic!("{e}"));
         let cells = load_cells(&corpus).unwrap_or_else(|e| panic!("{e}"));
-        let lowered = load_contact_file(&corpus.join("phase7").join("calculator.contact"), &cells)
-            .unwrap_or_else(|e| panic!("{e}"));
+        let (_, lowered) =
+            load_contact_file(&corpus.join("phase7").join("calculator.contact"), &cells)
+                .unwrap_or_else(|e| panic!("{e}"));
         let wired = load_body_file(&corpus.join("phase2").join("calculator.body"))
             .unwrap_or_else(|e| panic!("{e}"));
         assert_eq!(print_body(&lowered.coding), print_body(&wired.coding));
