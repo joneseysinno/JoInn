@@ -12,6 +12,8 @@ pub const TAG_ALLELE: &[u8] = b"joinn.allele.v1";
 pub const TAG_WITNESS: &[u8] = b"joinn.witness.v1";
 /// Domain tag for a body's coding region.
 pub const TAG_BODY: &[u8] = b"joinn.body.v1";
+/// Domain tag for a contact body's coding region.
+pub const TAG_CONTACT: &[u8] = b"joinn.contact.v1";
 /// Domain tag for a cell description.
 pub const TAG_DESCRIPTION: &[u8] = b"joinn.description.v1";
 /// Domain tag for a universe's coding region.

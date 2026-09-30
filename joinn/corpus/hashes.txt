@@ -59,3 +59,5 @@ fmt_twin f1b05fd17e9eeaa284a03a6ea586073b7b328e377c169628fa347cdec239b0cf
 loop.universe bf5f0c4c7a9690a31a86193e791b31e02480ae76e167d535b551f1db12fc2ace
 # Phase 4, P4-11. loop.universe with declarations { assert H₁ = 0 }.
 loop_declared.universe bd054c47fb60263b1d9d6142d86347e7dde0375ccf82bbd3159a0ad17e867e15
+# Phase 7. The calculator as a contact body. New file, no earlier hash moved.
+calculator.contact 868e79b293c8d35625f514274eb0bf04d228898ed994a795b23b942a530b6209

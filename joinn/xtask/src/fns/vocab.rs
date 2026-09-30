@@ -127,7 +127,7 @@ pub(crate) fn vocab() -> Result<(), String> {
                     continue;
                 }
                 let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
-                if !matches!(ext, "cell" | "body" | "universe" | "desc") {
+                if !matches!(ext, "cell" | "body" | "contact" | "universe" | "desc") {
                     continue;
                 }
                 let text = match fs::read_to_string(&path) {

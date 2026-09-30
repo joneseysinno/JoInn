@@ -19,7 +19,8 @@ pub use canon::{CanonWriter, nfc};
 pub use frame::{Case, Frame, FrameId, FrameRef, OpName, Signature};
 pub use frames::{DEFAULT_SIZE, IntFrame, RatFrame, TextFrame};
 pub use hash::{
-    Hash, TAG_ALLELE, TAG_BODY, TAG_CELL, TAG_DESCRIPTION, TAG_UNIVERSE, TAG_WITNESS, keyed_hash,
+    Hash, TAG_ALLELE, TAG_BODY, TAG_CELL, TAG_CONTACT, TAG_DESCRIPTION, TAG_UNIVERSE, TAG_WITNESS,
+    keyed_hash,
 };
 pub use registry::FrameRegistry;
 pub use rng::SeedRng;

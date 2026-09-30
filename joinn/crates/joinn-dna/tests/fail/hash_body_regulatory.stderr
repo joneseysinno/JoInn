@@ -21,6 +21,11 @@ help: the following other types implement trait `Genotype`
   |
   | impl Genotype for CodingRegion {
   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `CodingRegion`
+  |
+ ::: src/hash/contact_coding.rs
+  |
+  | impl Genotype for ContactCoding {
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `ContactCoding`
 note: required by a bound in `joinn_dna::hash`
  --> src/hash/hash_fn.rs
   |

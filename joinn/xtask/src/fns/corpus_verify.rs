@@ -2,7 +2,8 @@
 #![allow(unused_imports)]
 
 use joinn_dna::{
-    AlleleBody, NativeId, hash, parse_body, parse_cell, print_body, print_coding, sum_cell,
+    AlleleBody, NativeId, hash, parse_body, parse_cell, parse_contact, print_body, print_coding,
+    sum_cell,
 };
 use joinn_frame::{
     Frame, FrameRegistry, Hash, IntFrame, TAG_DESCRIPTION, Term, TextFrame, Value, Verdict,
@@ -51,6 +52,14 @@ pub(crate) fn corpus_verify() -> Result<(), String> {
                 }
             };
             hash_universe(&u.coding).to_hex()
+        } else if path.extension().is_some_and(|e| e == "contact") {
+            let contact = match parse_contact(&src, &frames) {
+                Verdict::Ok(c) => c,
+                Verdict::Refused(r) => {
+                    return Err(format!("{}: parse refusal: {}", path.display(), r.reason));
+                }
+            };
+            hash(&contact.coding).to_hex()
         } else if path.extension().is_some_and(|e| e == "body") {
             let body = match parse_body(&src, &frames) {
                 Verdict::Ok(b) => b,

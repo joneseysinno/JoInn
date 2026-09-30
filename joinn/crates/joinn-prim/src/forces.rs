@@ -12,6 +12,7 @@ pub use order_free::order_free;
 pub use register::register;
 pub use response::response;
 
+pub use joinn_dna::ForceKind;
 use joinn_frame::{FrameId, FrameRef, Hash};
 use std::num::NonZeroU32;
 
@@ -23,22 +24,6 @@ pub const REGISTER_BOUND: NonZeroU32 = match NonZeroU32::new(64) {
 
 /// The seed the register is admitted at.
 pub const REGISTER_SEED: u64 = 7;
-
-/// A force. Closed: Phase 7 writes combine only.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub enum ForceKind {
-    /// Cells brought together; the response appears beside them.
-    Combine,
-}
-
-impl ForceKind {
-    /// The word a `.contact` file writes.
-    pub fn word(self) -> &'static str {
-        match self {
-            ForceKind::Combine => "combine",
-        }
-    }
-}
 
 /// How `frame` responds to `force`, and the opposite that separates it.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

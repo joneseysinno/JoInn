@@ -5,6 +5,7 @@
 mod check_body;
 mod close_section;
 mod coding_body;
+pub mod contact;
 mod declarations_section;
 mod expect;
 mod hex_hash;

@@ -3,11 +3,13 @@
 mod allele;
 mod body_coding;
 mod coding_region;
+mod contact_coding;
 mod hash_fn;
 
 pub use hash_fn::hash;
 
 use crate::body::BodyCoding;
+use crate::body::contact::ContactCoding;
 use crate::model::{Allele, CodingRegion};
 
 mod sealed {
@@ -26,3 +28,4 @@ pub trait Genotype: sealed::Sealed {
 impl sealed::Sealed for CodingRegion {}
 impl sealed::Sealed for Allele {}
 impl sealed::Sealed for BodyCoding {}
+impl sealed::Sealed for ContactCoding {}

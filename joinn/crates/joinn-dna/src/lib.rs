@@ -13,6 +13,10 @@ pub mod parse;
 pub mod print;
 
 pub use assertion::{Assertion, parse_assertions};
+pub use body::contact::{
+    self as contact, CellEntry, Contact, ContactCoding, Force, ForceKind, Member, parse_contact,
+    print_contact,
+};
 pub use body::{
     Body, BodyCoding, BodyRegulatory, GenomeEntry, GenomeTarget, Wire, check_body, parse_body,
     print_body,
