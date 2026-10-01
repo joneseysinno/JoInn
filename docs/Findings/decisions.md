@@ -92,7 +92,7 @@ line must name a file under `docs/Findings/`.
 | R80 | Wrapping a body | V | decided | Part V C17 |
 | R81 | Roles of cells in a body | V | decided | AJ 29 Sep: (faces out/in) × (holds/reacts) = protect, carry, store, respond; derived, never written |
 | R82 | The opposite of a lossy combine | 7 | open | |
-| R83 | Multiplication | 7 | open | |
+| R83 | Multiplication | 7 | decided | AJ 30 Sep: multiply is combine across dimensions; Part VI K9–K10 (stacking, order-signed) |
 | R84 | Many members, chained forces | 7 | open | |
 | R85 | One port, two forces | 7 | open | |
 | R86 | The two open Floor reductions | 7 | open | |
@@ -105,3 +105,24 @@ line must name a file under `docs/Findings/`.
 | V131 | Roles are derived and blind to the regulatory region | 7 | holds | |
 | V132 | Device loss is reported by wgpu's callback, and the shell regrows from it | 7 | holds | |
 | V133 | A contact body's forces form no loop: no force's response reaches, through members, back to itself | 7 | holds | Amendment B |
+| R87 | Presentation names parts | 7.1 | open | |
+| R88 | Base kinds | 7.1 | answered | Part VI K18–K19: no base kinds; counting, where, side |
+| R89 | Orientation | 7.1 | answered | Part VI K13a: part of where; a sign convention is presentation |
+| R90 | Is carry the mirror? | 7.1 | open | |
+| R91 | Time as pieces | 7.1 | open | |
+| R92 | The continuum | 7.1 | partly answered | Part VI K20: polynomial loads derive exactly |
+| R93 | Beyond linear bridges | 7.1 | open | |
+| R94 | Tags and the gate | 7.1 | open | |
+| R95 | Sensitive problems | 7.1 | open | |
+| R96 | Kinds as bodies | 7.1 | open | murky; go forward |
+| R97 | Witness libraries | 7.1 | open | |
+| R98 | Indeterminate beams | 7.1 | open | |
+| R99 | Where a section property lives | 7.1 | open | |
+| R100 | The decimal | 7.1 | open | |
+| V134 | `present` refuses a port the scene does not hold, unless it is a contact's interior port | 7.1 | open | |
+| V135 | Balance and moment read no bridge; deflection reads exactly the bridge edition | 7.1 | open | |
+| V136 | Every derived value equals every witness that states it, exactly | 7.1 | open | |
+| V137 | Refining the complex changes no derived value at any shared point | 7.1 | open | |
+| V138 | `add` refuses unequal tags, even when their units print the same | 7.1 | open | |
+| V139 | Every moment is taken in one order; mixed order fails the closure check | 7.1 | open | |
+| V140 | Cursor sends no input outside a window it started (rule 67) | 7.1 | open | |

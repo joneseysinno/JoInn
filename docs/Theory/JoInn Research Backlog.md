@@ -377,9 +377,11 @@ Cells in a body take roles: protect, respond, carry, store, and so on. Is the se
 
 Sum forgets its parts, so separate can only be a turn given one part back. Structural combine (`build`, `pair`) is lossless, and its separate (`case`, `split`) is exact. Is every combine one of these two, and should the register say which?
 
-## R83 — Multiplication  ·  status: open
+## R83 — Multiplication  ·  status: decided
 
 Is `a × b` combine *across* dimensions (length × length = area) while `a + b` is combine *within* one? If so, a product is the same act as `pair`, with a dimension instead of no frame (R38).
+
+**Decided:** AJ 30 Sep: multiply is combine across dimensions; Part VI K9–K10 (stacking, order-signed).
 
 ## R84 — Many members, chained forces  ·  status: open
 
@@ -392,3 +394,62 @@ Can a value be combined in two places? Part V's reading is that values are copie
 ## R86 — The two open Floor reductions  ·  status: open
 
 `pair`/`split` into a frameless combine (needs R38), and `join` as combine's completion rule. Attempt them in code when carry arrives.
+
+> **1 Oct 2026 · Part VI.** R87–R97 come from *JoInn Dimension* (Part VI) and the
+> Phase 7 Stop C review. Part VI answers R88 and R89 and partly answers R92.
+
+## R87 — Presentation names parts  ·  status: open
+
+From the Phase 7 Stop C review: `{0} + {1} = {2}` indexes ports only the engine assigns. Should presentation name parts (`{cli_a} + {cli_b} = {sum}`) instead? The beam's part names are the natural test.
+
+## R88 — Base kinds  ·  status: answered (Part VI K18–K19: no base kinds; counting, where, side)
+
+**Answered by K18–K19:** there are no base kinds. The base is counting, where and side; the rest is derived or a bridge.
+
+## R89 — Orientation  ·  status: answered (Part VI K13a: part of where; a sign convention is presentation)
+
+**Answered by K13a:** orientation is part of where, carried by every quantity; a sign convention is presentation. Open: how inner and outer orientation (Tonti's terms) are written in the tag.
+
+## R90 — Is carry the mirror?  ·  status: open
+
+Combine and separate stay on one side. Does carry, across a relationship, *always* cross from one body's source side to another's, as *bears on* does? If so, the force pairs and the mirror are one structure.
+
+## R91 — Time as pieces  ·  status: open
+
+Instants and spans of time as pieces. Does a load held over time, or a run of the engine, use the same complex? Ties to R11 (ordering without a global clock).
+
+## R92 — The continuum  ·  status: partly answered (Part VI K20: polynomial loads derive exactly)
+
+**Partly answered by K20:** for polynomial loads, adding up along the span in ℚ is exact, so wL²/8 and 5wL⁴/384EI are derived. Open: loads and shapes that are not polynomial (a sine load, a tapered member), where exact adding up has no finite answer. Are those derived to a stated bound, or witnessed only?
+
+## R93 — Beyond linear bridges  ·  status: open
+
+Across-the-mirror laws are often not straight lines (yielding, cracking, buckling). Does the bridge stay one pinned edition with witnesses, or does it need state?
+
+## R94 — Tags and the gate  ·  status: open
+
+How does the evolution gate treat a tag change? Adding a tag to an untagged ℤ port is new truth. Changing "force per line" to "force" is a different cell. Ties to R27 (conservative extension).
+
+## R95 — Sensitive problems  ·  status: open
+
+Buckling, slender members and diverging analyses are chaotic in the scientific sense (K17). How does JoInn show that a result is determined but sensitive: a witness of how far the answer moves when the input moves by the smallest step its frame can state?
+
+## R96 — Kinds as bodies  ·  status: open (murky; go forward)
+
+K19 builds kinds into cells and bodies. What exactly does a kind-defining body hold: the pair, its bridge, its energy product? How does a cell say which pair it belongs to without that becoming a registry? Murky (AJ, 1 Oct); JoInn goes forward and lets testimony grow.
+
+## R97 — Witness libraries  ·  status: open
+
+Roark is the first witness (K20). How is a witness library entered (pinned edition, cases, conditions), how many must agree, and what happens when two libraries disagree with each other but not with JoInn?
+
+## R98 — Indeterminate beams  ·  status: open
+
+A propped cantilever needs compatibility (placement side) and a bridge to find its reactions. Is "balance reads no bridge" then only true for determinate beams, and does the order of the mirror change (placement first)?
+
+## R99 — Where a section property lives  ·  status: open
+
+Ix is the W12x26's section, a 2D body one zoom level in (Part VI §9). Is it a bridge (testimony from the shapes table) or derived from the section's own complex, with the table as its witness?
+
+## R100 — The decimal  ·  status: open
+
+A printed decimal is presentation. Who chooses its places: the host, the quantity's tolerance, or the edition's precision?

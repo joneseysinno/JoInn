@@ -1,15 +1,15 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 7 is contact bodies: a body is cells in contact, with
-no wires inside, and an operation is a force from outside. Its one idea is A BODY
-HAS NO WIRES; THE ENGINE DOES ITS OWN PLUMBING. The build plan is
-docs/Plans/JoInn Phase 7 Implementation Plan.md. Work one CHUNK at a time (A, B
-or C), one git commit per numbered step, and stop at the chunk's stop report.
+This repo is JoInn. Phase 7.1 is the beam computes, stage 1: worked examples in
+a spike (spikes/s8-beam), exact in ℚ, with formulas derived and libraries as
+witnesses. Its one idea is NOTHING DERIVED IS A BASE. The build plan is
+docs/Plans/JoInn Phase 7.1 Implementation Plan.md. Work one CHUNK at a time (A,
+B or C), one git commit per numbered step, and stop at the chunk's stop report.
 Every decision is in the plan. Never stop to ask; follow the plan's Snags
 section instead.
 
-Only combine is written in this phase. .body is the legacy form and keeps its
-hashes. There is no zoom, text, second body in a picture, or beam yet.
+No new grammar in this phase. The spike is its own workspace and depends on
+nothing in crates/.
 
 ## Hard rules
 
@@ -202,9 +202,10 @@ hashes. There is no zoom, text, second body in a picture, or beam yet.
 62. AN OPERATION IS A FORCE, NOT A CELL. A force's response law lives with the
     frame it acts on, in joinn-prim::forces. A .contact pins the response by
     hash, and admission refuses a pin the register does not hold.
-63. COMBINE IS ORDER-FREE, AND EVERY FORCE IS OPPOSED. A registered combine
-    passes the order-free sample and has a registered separate that is a turn
-    of its response. Member order is never hashed.
+63. COMBINE IS ORDER-BLIND, AND EVERY FORCE IS OPPOSED. Order is always real and
+    recorded; a registered combine's result does not depend on it (order-blind),
+    which the order sample checks. Every registered combine has a registered
+    separate that is a turn of its response. Member order is never hashed.
 64. A FORCE OWNS NO PIXEL. It is seen only through its response. Interior ports
     are not drawn; a contact picture has no link rows.
 65. ROLES ARE DERIVED, NEVER WRITTEN. A role is (faces out | in) × (holds |
@@ -213,6 +214,15 @@ hashes. There is no zoom, text, second body in a picture, or beam yet.
     a different thing.
 66. THE ENGINE HEARS DEVICE LOSS FROM WGPU. The device-lost callback is the
     only signal of a lost device; a lost surface only reconfigures.
+67. THE MOUSE AND KEYBOARD ARE AJ'S. Never move the system cursor, click, or type
+    outside a window you started. A window check posts messages to that window
+    only, or writes `no display`.
+68. FORMULAS ARE DERIVED; LIBRARIES WITNESS. A value JoInn can derive from
+    connection and counting is derived, never looked up. A library formula is a
+    witness, compared exactly; a disagreement is a truth violation. Only bridges
+    (material laws, section properties, constants) are read from an edition.
+69. NOTHING IS RANDOM. Every sample is seeded, every order is canonical, and
+    every run replays exactly. "Chaos" means only deterministic and sensitive.
 
 ## Definition of done
 

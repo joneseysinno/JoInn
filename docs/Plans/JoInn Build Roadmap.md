@@ -385,9 +385,16 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 > bands and links, is now **Phase 7.1**, to be replanned around bodies, forces
 > and systems after the steel beam. Every later phase keeps its number.
 
-> **30 Sep 2026.** Phase 7 is built. A body can be cells in contact: the contact calculator lowers to the wired one byte for byte and draws as three touching cells, with no link and no pixel owned by a force. Findings: [phase-7-contact.md](../Findings/phase-7-contact.md). Gate 7 item 3 passes (`3 ok  The body is drawn as cells in contact`). Removing the latent style from the shader fails it: `grow pixel 832,360 adapter Microsoft Basic Render Driver · Dx12 · Cpu · vertex storage yes: sum 2F5D8AFF, want 39414DFF`. Next is the steel beam, then Phase 7.1.
+> **30 Sep 2026.** Phase 7 is built. A body can be cells in contact: the contact calculator lowers to the wired one byte for byte and draws as three touching cells, with no link and no pixel owned by a force. Findings: [phase-7-contact.md](../Findings/phase-7-contact.md). Gate 7 item 3 passes (`3 ok  The body is drawn as cells in contact`). Removing the latent style from the shader fails it: `grow pixel 832,360 adapter Microsoft Basic Render Driver · Dx12 · Cpu · vertex storage yes: sum 2F5D8AFF, want 39414DFF`. Next is the steel beam (Phase 7.1), then Phase 7.2.
 
-#### Phase 7.1 · Visual Host II: charts, zoom, bands, links
+> **1 Oct 2026 · Phase 7.1 is the beam.** Part VI (*JoInn Dimension*) defines a
+> dimension as where a quantity lives, with counting, where and side as the base.
+> Phase 7.1 is *the beam computes*: stage 1 works five beams exactly in a spike,
+> with formulas derived and AISC and Roark as witnesses
+> (`Plans/JoInn Phase 7.1 Implementation Plan.md`); stage 2 brings it into JoInn's
+> grammar. Visual Host II is now **Phase 7.2**. Every later phase keeps its number.
+
+#### Phase 7.2 · Visual Host II: charts, zoom, bands, links
 
 **Goal.** The fractal, actually working: zoom from universe to a digit, and hyperedges drawn as hyperedges.
 
@@ -558,7 +565,7 @@ flowchart TB
   P4["Phase 4<br/>assay · conditional"]:::cond
   P5["Phase 5<br/>link graph"]
   P6["Phase 6<br/>visual host I"]
-  P7["Phase 7.1<br/>visual host II"]
+  P7["Phase 7.2<br/>visual host II"]
   P8["Phase 8<br/>visual truth"]
   P9["Phase 9<br/>creator"]
   P10["Phase 10<br/>compiler"]
