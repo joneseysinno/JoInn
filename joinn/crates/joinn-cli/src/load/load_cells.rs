@@ -1,6 +1,6 @@
 //! Load every corpus cell the parser accepts.
 
-use joinn_dna::{hash, parse_cell};
+use joinn_dna::{hash, keep_first_with_alleles, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use std::collections::BTreeMap;
 use std::fs;
@@ -30,14 +30,7 @@ pub(crate) fn load_cells(corpus: &Path) -> Result<BTreeMap<Hash, joinn_dna::Cell
             let src = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
             match parse_cell(&src, &frames) {
                 Verdict::Ok(cell) => {
-                    let id = hash(&cell.coding);
-                    let replace = match cells.get(&id) {
-                        Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                        None => true,
-                    };
-                    if replace {
-                        cells.insert(id, cell);
-                    }
+                    keep_first_with_alleles(&mut cells, hash(&cell.coding), cell);
                 }
                 Verdict::Refused(_) => {}
             }

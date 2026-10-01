@@ -1,7 +1,7 @@
 //! Load phase-5 bodies into a store.
 
 use super::workspace_root;
-use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
+use joinn_dna::{Body, Cell, hash, keep_first_with_alleles, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_link::BodyStore;
 use std::collections::BTreeMap;
@@ -28,14 +28,7 @@ pub(crate) fn load_phase5_bodies() -> Result<BodyStore, String> {
             let Verdict::Ok(cell) = parse_cell(&src, &frames) else {
                 continue;
             };
-            let id = hash(&cell.coding);
-            let replace = match cells.get(&id) {
-                Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                None => true,
-            };
-            if replace {
-                cells.insert(id, cell);
-            }
+            keep_first_with_alleles(&mut cells, hash(&cell.coding), cell);
         }
     }
     let load = |rel: &str| -> Result<Body, String> {

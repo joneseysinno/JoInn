@@ -3,7 +3,8 @@
 #![allow(unused_imports)]
 
 use joinn_dna::{
-    AlleleBody, NativeId, hash, parse_body, parse_cell, print_body, print_coding, sum_cell,
+    AlleleBody, NativeId, hash, keep_first_with_alleles, parse_body, parse_cell, print_body,
+    print_coding, sum_cell,
 };
 use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, TextFrame, Value, Verdict};
 use joinn_gate::{Budget, Gate, GateItem, demos, run_opposed};
@@ -164,14 +165,7 @@ fn surface_load_corpus() -> Result<(Vec<joinn_dna::Body>, BTreeMap<Hash, joinn_d
             let src = fs::read_to_string(&path).map_err(|e| e.to_string())?;
             if ext == Some("cell") {
                 if let Verdict::Ok(cell) = parse_cell(&src, &frames) {
-                    let id = hash(&cell.coding);
-                    let replace = match cells.get(&id) {
-                        Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                        None => true,
-                    };
-                    if replace {
-                        cells.insert(id, cell);
-                    }
+                    keep_first_with_alleles(&mut cells, hash(&cell.coding), cell);
                 }
             } else if ext == Some("body") {
                 if let Verdict::Ok(body) = parse_body(&src, &frames) {

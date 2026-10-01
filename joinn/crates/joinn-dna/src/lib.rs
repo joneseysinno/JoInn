@@ -25,7 +25,8 @@ pub use formula::{Formula, Law, LawName, Term_, VarId};
 pub use hash::{Genotype, hash};
 pub use model::{
     Allele, AlleleBody, Cell, CodingRegion, Contract, Declaration, Direction, JoinPolicy, NativeId,
-    PortDecl, RegulatoryRegion, TurnDecl, Witness, cli_input_cell, format_cell, sum_cell,
+    PortDecl, RegulatoryRegion, TurnDecl, Witness, cli_input_cell, format_cell,
+    keep_first_with_alleles, sum_cell,
 };
 pub use parse::{parse_cell, parse_coding};
 pub use print::{print_allele, print_coding, print_formula, print_term_};

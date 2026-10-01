@@ -1,7 +1,7 @@
 //! Two derivations, one truth: on every `.contact` in the corpus, the contact's
 //! own surface equals the surface of the body `lower` derives from it.
 
-use joinn_dna::{Cell, Direction, hash, parse_cell, parse_contact};
+use joinn_dna::{Cell, Direction, hash, keep_first_with_alleles, parse_cell, parse_contact};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use joinn_link::{contact_surface, lower, surface};
 use std::collections::{BTreeMap, BTreeSet};
@@ -45,14 +45,7 @@ fn cells() -> BTreeMap<Hash, Cell> {
             continue;
         };
         if let Verdict::Ok(cell) = parse_cell(&src, &frames) {
-            let id = hash(&cell.coding);
-            let replace = match out.get(&id) {
-                Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                None => true,
-            };
-            if replace {
-                out.insert(id, cell);
-            }
+            keep_first_with_alleles(&mut out, hash(&cell.coding), cell);
         }
     }
     out

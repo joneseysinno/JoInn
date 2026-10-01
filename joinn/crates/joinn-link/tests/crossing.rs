@@ -1,6 +1,6 @@
 //! A value crosses e0. Observations are descriptions, fire counts, and refusals.
 
-use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
+use joinn_dna::{Body, Cell, hash, keep_first_with_alleles, parse_body, parse_cell};
 use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, TextFrame, Value, Verdict};
 use joinn_host::{Address, describe, describe_refusal, probe};
 use joinn_link::{
@@ -42,14 +42,7 @@ fn cells() -> BTreeMap<joinn_frame::Hash, Cell> {
                 continue;
             };
             if let Verdict::Ok(cell) = parse_cell(&src, &frames) {
-                let id = hash(&cell.coding);
-                let replace = match out.get(&id) {
-                    Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                    None => true,
-                };
-                if replace {
-                    out.insert(id, cell);
-                }
+                keep_first_with_alleles(&mut out, hash(&cell.coding), cell);
             }
         }
     }

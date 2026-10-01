@@ -1,6 +1,6 @@
 //! Universe run under the test host: far side and host intents.
 
-use joinn_dna::{Body, Cell, hash, parse_body, parse_cell};
+use joinn_dna::{Body, Cell, hash, keep_first_with_alleles, parse_body, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Term, Verdict};
 use joinn_host::Address;
 use joinn_link::{BodyStore, LinkRefusal, LinkRefusalKind, bind, parse_universe};
@@ -37,14 +37,7 @@ fn load_cells(root: &Path) -> BTreeMap<Hash, Cell> {
             let Verdict::Ok(cell) = parse_cell(&src, &frames) else {
                 continue;
             };
-            let id = hash(&cell.coding);
-            let replace = match cells.get(&id) {
-                Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-                None => true,
-            };
-            if replace {
-                cells.insert(id, cell);
-            }
+            keep_first_with_alleles(&mut cells, hash(&cell.coding), cell);
         }
     }
     cells

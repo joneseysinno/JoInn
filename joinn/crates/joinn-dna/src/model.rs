@@ -4,10 +4,12 @@ mod cli_input_cell;
 mod format_cell;
 mod generate_int;
 mod generate_text;
+mod keep_first_with_alleles;
 mod sum_cell;
 
 pub use cli_input_cell::cli_input_cell;
 pub use format_cell::format_cell;
+pub use keep_first_with_alleles::keep_first_with_alleles;
 pub use sum_cell::sum_cell;
 
 use crate::formula::{Formula, Law, LawName};

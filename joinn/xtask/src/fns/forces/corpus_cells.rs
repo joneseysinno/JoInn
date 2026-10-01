@@ -1,6 +1,6 @@
 //! Every corpus cell that parses, keyed by its coding hash.
 
-use joinn_dna::{Cell, hash, parse_cell};
+use joinn_dna::{Cell, hash, keep_first_with_alleles, parse_cell};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
 use std::collections::BTreeMap;
 use std::fs;
@@ -20,14 +20,7 @@ pub(crate) fn corpus_cells(frames: &FrameRegistry) -> Result<BTreeMap<Hash, Cell
         let Verdict::Ok(cell) = parse_cell(&src, frames) else {
             continue;
         };
-        let id = hash(&cell.coding);
-        let replace = match cells.get(&id) {
-            Some(prev) => prev.alleles.is_empty() && !cell.alleles.is_empty(),
-            None => true,
-        };
-        if replace {
-            cells.insert(id, cell);
-        }
+        keep_first_with_alleles(&mut cells, hash(&cell.coding), cell);
     }
     Ok(cells)
 }
