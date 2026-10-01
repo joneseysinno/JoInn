@@ -1,17 +1,17 @@
-//! Admit the force register: every response is a response, order-free, and opposed.
+//! Admit the force register: every response is a response, order-blind, and opposed.
 
 use joinn_dna::{AlleleBody, Cell, Direction};
 use joinn_frame::{CheckId, FrameRegistry, Hash, Refusal, Subject, Verdict};
 use joinn_gate::NativeRegistry;
 use std::collections::BTreeMap;
 
-use super::{REGISTER_BOUND, REGISTER_SEED, RegisterRow, order_free};
+use super::{REGISTER_BOUND, REGISTER_SEED, RegisterRow, order_blind};
 
 /// For every row, in order:
 /// 1. the response cell is supplied, has in-ports `0 … k−1` and one out-port
 ///    `k`, all in the row's frame, and an allele for that frame whose native
 ///    is registered;
-/// 2. every such native passes `order_free` at `REGISTER_SEED` and
+/// 2. every such native passes `order_blind` at `REGISTER_SEED` and
 ///    `REGISTER_BOUND`;
 /// 3. the separate cell is supplied, its lineage is the response, and it
 ///    declares a turn.
@@ -102,7 +102,7 @@ pub fn check_register(
             );
         }
         for oracle in oracles {
-            if let Verdict::Refused(r) = order_free(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
+            if let Verdict::Refused(r) = order_blind(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
                 return refuse(
                     row.response,
                     format!(
@@ -204,7 +204,7 @@ mod tests {
         ) {
             Verdict::Refused(r) => assert!(
                 r.reason.starts_with(
-                    "combine on ℤ 1 by cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39: not order-free: f(a, b) = "
+                    "combine on ℤ 1 by cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39: not order-blind: f(a, b) = "
                 ) && r.reason.contains(" but f(b, a) = "),
                 "{}",
                 r.reason

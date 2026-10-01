@@ -147,7 +147,7 @@ flowchart LR
 |-------|------------|--------------------|
 | **Contact body** (`.contact`) | Cells that touch, plus the forces that act on them. The file can't write a wire | The body says *what* touches, never *how values travel*, so it can't be wired wrong |
 | **Force** | An operation applied from outside, such as combine | The operation's truth lives in what it acts on, not in a wire someone drew |
-| **Force register** | One short table: combine on integers answers with the sum cell, and its opposite is on file | Only order-free forces with a known opposite are allowed, so member order can never change a result |
+| **Force register** | One short table: combine on integers answers with the sum cell, and its opposite is on file | Only order-blind forces with a known opposite are allowed, so member order can never change a result |
 | **`lower`** (joinn-link) | The engine's own derivation of the deliveries a contact body needs to run | The engine runs one kind of body; the derivation is never written, described or drawn |
 | **Wire between bodies** | Phase 5's typed link, in a universe | Systems join bodies at their surfaces; that part is unchanged |
 

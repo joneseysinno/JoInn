@@ -4,26 +4,26 @@
 use joinn_dna::{AlleleBody, NativeId};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_prim::forces::{
-    ForceKind, REGISTER_BOUND, REGISTER_SEED, check_register, order_free, register,
+    ForceKind, REGISTER_BOUND, REGISTER_SEED, check_register, order_blind, register,
 };
 use std::collections::BTreeSet;
 
 use super::corpus_cells;
 
-/// Mutants that must be refused by `order_free`, with the law each breaks.
+/// Mutants that must be refused by `order_blind`, with the law each breaks.
 const REFUSED: [(&str, &str, &str); 2] = [
     (
         "mutant.difference",
         "difference",
-        "not order-free: f(a, b) = ",
+        "not order-blind: f(a, b) = ",
     ),
     (
         "mutant.midpoint",
         "midpoint",
-        "not order-free: f(f(a, b), c) = ",
+        "not order-blind: f(f(a, b), c) = ",
     ),
 ];
-/// Mutants that are order-free but wrong: order-free is necessary, not sufficient.
+/// Mutants that are order-blind but wrong: order-blind is necessary, not sufficient.
 const UNREGISTERED: [&str; 2] = ["mutant.max", "mutant.plus1"];
 
 /// A refused register, or any plant that answers other than §2.2 says, fails.
@@ -55,7 +55,7 @@ pub(crate) fn forces() -> Result<(), String> {
             })
             .unwrap_or_default();
         println!(
-            "{} {frame_ref} by cell:{}…: order-free ({} pairs, {} triples, seed {}), opposed by separate cell:{}… ({turns})",
+            "{} {frame_ref} by cell:{}…: order-blind ({} pairs, {} triples, seed {}), opposed by separate cell:{}… ({turns})",
             row.force.word(),
             row.response.short_hex(),
             REGISTER_BOUND,
@@ -86,19 +86,19 @@ pub(crate) fn forces() -> Result<(), String> {
         let oracle = natives
             .get(&NativeId(native.into()))
             .ok_or_else(|| format!("forces: {native} is not in natives_with_mutants()"))?;
-        match order_free(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
+        match order_blind(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
             Verdict::Refused(r) if r.reason.starts_with(starts) => {
                 println!(
-                    "planted: order_free on {native}: refused (ok): {}",
+                    "planted: order_blind on {native}: refused (ok): {}",
                     r.reason
                 );
             }
             Verdict::Refused(r) => failures.push(format!(
-                "planted: order_free on {native} was refused on the wrong law: {}",
+                "planted: order_blind on {native} was refused on the wrong law: {}",
                 r.reason
             )),
             Verdict::Ok(()) => failures.push(format!(
-                "planted: order_free on {native} passed; the plant was not refused"
+                "planted: order_blind on {native} passed; the plant was not refused"
             )),
         }
     }
@@ -107,15 +107,15 @@ pub(crate) fn forces() -> Result<(), String> {
         let oracle = natives
             .get(&id)
             .ok_or_else(|| format!("forces: {native} is not in natives_with_mutants()"))?;
-        match order_free(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
+        match order_blind(oracle, frame, REGISTER_SEED, REGISTER_BOUND) {
             Verdict::Ok(()) if !registered.contains(&id) => {
-                println!("planted: order_free on {native}: order-free (ok), not registered");
+                println!("planted: order_blind on {native}: order-blind (ok), not registered");
             }
             Verdict::Ok(()) => failures.push(format!(
                 "planted: {native} is a registered response; a wrong answer is in the register"
             )),
             Verdict::Refused(r) => failures.push(format!(
-                "planted: order_free on {native} was refused, but it is order-free: {}",
+                "planted: order_blind on {native} was refused, but it is order-blind: {}",
                 r.reason
             )),
         }
@@ -156,7 +156,7 @@ pub(crate) fn forces() -> Result<(), String> {
     let [(_, first_word, _), (_, second_word, _)] = REFUSED;
     let [max, plus1] = UNREGISTERED.map(|n| n.trim_start_matches("mutant."));
     println!(
-        "forces: {combines} combine registered, {} opposed; plants: {first_word} refused, {second_word} refused, {max} and {plus1} order-free but unregistered, unopposed refused (ok)",
+        "forces: {combines} combine registered, {} opposed; plants: {first_word} refused, {second_word} refused, {max} and {plus1} order-blind but unregistered, unopposed refused (ok)",
         rows.len()
     );
     Ok(())

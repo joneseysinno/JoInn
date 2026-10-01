@@ -32,7 +32,7 @@ cargo run -p joinn-cli -- run corpus/phase7/calculator.contact
 
 ## Gates
 
-`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), gate 5.2 (a control sees a parsed value and flips on a mutant that still parses), gate 6 (one body drawn from its tables: every pixel has one owner and both pickers name it, the picture shows the row the engine computed, and a stale click is refused), and gate 7 (the contact calculator and the wired one are one truth, combine is order-free and fits what it reaches, and the contact body is drawn as cells in contact with no link). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
+`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), gate 5.2 (a control sees a parsed value and flips on a mutant that still parses), gate 6 (one body drawn from its tables: every pixel has one owner and both pickers name it, the picture shows the row the engine computed, and a stale click is refused), and gate 7 (the contact calculator and the wired one are one truth, combine is order-blind and fits what it reaches, and the contact body is drawn as cells in contact with no link). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
 
 ## The assay
 
@@ -52,7 +52,7 @@ cargo run -p joinn-cli -- run corpus/phase7/calculator.contact
 | `cargo xtask assay <path>` | Loops in one body or universe, filled or open |
 | `cargo xtask assay agree` | Two derivations of the assay agree on the corpus |
 | `cargo xtask assay invariance` | The assay holds still under labels, alleles, lenses and renames |
-| `cargo xtask forces` | The force register is order-free and opposed; its plants are refused |
+| `cargo xtask forces` | The force register is order-blind and opposed; its plants are refused |
 | `cargo xtask contact` | Every `.contact` in the corpus is one truth with its wired twin |
 | `cargo xtask roles <path>` | The roles of a contact body's cells: protect, carry, store, respond |
 | `cargo xtask perf` | Performance measurements |

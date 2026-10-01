@@ -22,7 +22,7 @@ use crate::force_loop::force_loop;
 /// 8. the member count is the response's in-port count, which needs
 /// 9. the response cell supplied.
 ///
-/// A member may name a response (a chained force). Order-freedom is not
+/// A member may name a response (a chained force). Order-blindness is not
 /// resampled: the register was admitted by `check_register`.
 pub fn check_contact(
     contact: &Contact,

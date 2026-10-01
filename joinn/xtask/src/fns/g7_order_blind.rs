@@ -1,4 +1,4 @@
-//! Gate 7 item 2: combine is order-free, and it fits what it reaches.
+//! Gate 7 item 2: combine is order-blind, and it fits what it reaches.
 
 use std::fs;
 
@@ -13,9 +13,9 @@ use super::workspace_root;
 /// `pairings` names every member→port order and one sum.
 const PAIRINGS: &str = "pairings: 2, sum@2 = 5 in each";
 
-/// `cargo xtask forces` (the register, `order_free` on its four plants, and the
+/// `cargo xtask forces` (the register, `order_blind` on its four plants, and the
 /// unopposed plant), every pairing summing to 5, and §2.3's four spellings.
-pub(crate) fn g7_order_free() -> bool {
+pub(crate) fn g7_order_blind() -> bool {
     let mut failures = Vec::new();
     if let Err(e) = forces() {
         failures.push(e);

@@ -1,4 +1,4 @@
-//! Order-freedom: a combine's result does not depend on member order.
+//! Order-blindness: a combine's result does not depend on member order.
 
 use joinn_frame::{
     CheckId, CounterExample, DEFAULT_SIZE, Frame, Refusal, SeedRng, Subject, Value, Verdict,
@@ -11,7 +11,7 @@ use std::num::NonZeroU32;
 /// `seed`, and checks `f(a, b) = f(b, a)` on each pair and
 /// `f(f(a, b), c) = f(a, f(b, c))` on each triple. `f` reads in-ports 0 and 1
 /// and answers on out-port 2. The first counterexample is the refusal.
-pub fn order_free(
+pub fn order_blind(
     oracle: &dyn Oracle,
     frame: &dyn Frame,
     seed: u64,
@@ -21,7 +21,7 @@ pub fn order_free(
     let refusal = |reason: String, bindings: &[(&str, &Value)], sides: Option<(&Value, &Value)>| {
         Verdict::Refused(Refusal {
             check: CheckId::Laws,
-            subject: Subject::Law("order-free".into()),
+            subject: Subject::Law("order-blind".into()),
             reason,
             counterexample: Some(CounterExample {
                 bindings: bindings
@@ -38,13 +38,13 @@ pub fn order_free(
         match oracle.apply(&BTreeMap::from([(0, a.clone()), (1, b.clone())])) {
             Verdict::Ok(out) => out.get(&2).cloned().ok_or_else(|| {
                 format!(
-                    "not order-free: f({}, {}) gave no out-port 2; acceptance is a response with in-ports 0 and 1 and out-port 2",
+                    "not order-blind: f({}, {}) gave no out-port 2; acceptance is a response with in-ports 0 and 1 and out-port 2",
                     frame.print(a),
                     frame.print(b)
                 )
             }),
             Verdict::Refused(r) => Err(format!(
-                "not order-free: the response refused f({}, {}): {}; acceptance is a response that answers every sampled pair",
+                "not order-blind: the response refused f({}, {}): {}; acceptance is a response that answers every sampled pair",
                 frame.print(a),
                 frame.print(b),
                 r.reason
@@ -63,7 +63,7 @@ pub fn order_free(
         if !frame.eq(&ab, &ba) {
             return refusal(
                 format!(
-                    "not order-free: f(a, b) = {} but f(b, a) = {} at a = {}, b = {}; acceptance is a response whose result does not depend on member order",
+                    "not order-blind: f(a, b) = {} but f(b, a) = {} at a = {}, b = {}; acceptance is a response whose result does not depend on member order",
                     frame.print(&ab),
                     frame.print(&ba),
                     frame.print(&a),
@@ -92,7 +92,7 @@ pub fn order_free(
         if !frame.eq(&left, &right) {
             return refusal(
                 format!(
-                    "not order-free: f(f(a, b), c) = {} but f(a, f(b, c)) = {} at a = {}, b = {}, c = {}; acceptance is a response whose result does not depend on member order",
+                    "not order-blind: f(f(a, b), c) = {} but f(a, f(b, c)) = {} at a = {}, b = {}, c = {}; acceptance is a response whose result does not depend on member order",
                     frame.print(&left),
                     frame.print(&right),
                     frame.print(&a),
@@ -109,7 +109,7 @@ pub fn order_free(
 
 #[cfg(test)]
 mod tests {
-    use super::order_free;
+    use super::order_blind;
     use crate::forces::{REGISTER_BOUND, REGISTER_SEED};
     use crate::natives_with_mutants; // allow(vocab): tests inject mutants
     use joinn_dna::NativeId;
@@ -120,11 +120,11 @@ mod tests {
         let Some(oracle) = natives.get(&NativeId(native.into())) else {
             panic!("{native} is not registered");
         };
-        order_free(oracle, &IntFrame::new(), REGISTER_SEED, REGISTER_BOUND)
+        order_blind(oracle, &IntFrame::new(), REGISTER_SEED, REGISTER_BOUND)
     }
 
     #[test]
-    fn the_sum_allele_is_order_free() {
+    fn the_sum_allele_is_order_blind() {
         assert!(matches!(run("add@ℤ"), Verdict::Ok(())));
     }
 
@@ -134,13 +134,13 @@ mod tests {
             Verdict::Refused(r) => {
                 println!("{}", r.reason);
                 assert!(
-                    r.reason.starts_with("not order-free: f(a, b) = "),
+                    r.reason.starts_with("not order-blind: f(a, b) = "),
                     "{}",
                     r.reason
                 );
                 assert!(r.reason.contains(" but f(b, a) = "), "{}", r.reason);
             }
-            Verdict::Ok(()) => panic!("difference passed order-free"),
+            Verdict::Ok(()) => panic!("difference passed order-blind"),
         }
     }
 
@@ -150,18 +150,18 @@ mod tests {
             Verdict::Refused(r) => {
                 println!("{}", r.reason);
                 assert!(
-                    r.reason.starts_with("not order-free: f(f(a, b), c) = "),
+                    r.reason.starts_with("not order-blind: f(f(a, b), c) = "),
                     "{}",
                     r.reason
                 );
                 assert!(r.reason.contains(" but f(a, f(b, c)) = "), "{}", r.reason);
             }
-            Verdict::Ok(()) => panic!("midpoint passed order-free"),
+            Verdict::Ok(()) => panic!("midpoint passed order-blind"),
         }
     }
 
     #[test]
-    fn max_and_plus1_are_order_free_though_wrong() {
+    fn max_and_plus1_are_order_blind_though_wrong() {
         assert!(matches!(run("mutant.max"), Verdict::Ok(())));
         assert!(matches!(run("mutant.plus1"), Verdict::Ok(())));
     }

@@ -23,7 +23,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Filling** | What closes a loop in the assay: a frame (the value keeps its kind all the way round), or one law that promises to undo a conversion, named by body, instance and law. Nothing else closes a loop. |
 | **Floor** | The sealed set of basic operations JoInn is written in. Admitted only if irreducible and opposed. Never “fixed” by renaming its size. |
 | **Force** | An operation applied to a body's cells from outside, such as combine. It names its members (cell ports) and a response. A force owns no pixel. |
-| **Force register** | The short table of which forces a frame answers, and with which cell: combine on integers answers with the sum cell. A row is admitted only if the answer is order-free and its opposite (a turn of the response) is on file. |
+| **Force register** | The short table of which forces a frame answers, and with which cell: combine on integers answers with the sum cell. A row is admitted only if the answer is order-blind and its opposite (a turn of the response) is on file. |
 | **Frame** | The context in which truth is judged (example: integers, or a text frame). |
 | **Gate** | The checker that admits good growth and refuses bad growth. |
 | **Genome** | The full set of DNA shared by the cells of one body. |

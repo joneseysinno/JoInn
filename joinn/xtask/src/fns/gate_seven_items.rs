@@ -1,9 +1,9 @@
-//! Gate 7 table (P7-15: two forms, order-free combine, cells in contact).
+//! Gate 7 table (P7-15: two forms, order-blind combine, cells in contact).
 
 use super::mutate::Mutation;
 use super::subject::Subject;
 use super::{
-    g7_forms, g7_forms_control, g7_order_free, g7_order_free_control, g7_picture,
+    g7_forms, g7_forms_control, g7_order_blind, g7_order_blind_control, g7_picture,
     g7_picture_control,
 };
 use joinn_gate::GateItem;
@@ -20,9 +20,9 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         ),
     },
     GateItem {
-        name: "Combine is order-free, and it fits what it reaches",
-        check: g7_order_free,
-        control: g7_order_free_control,
+        name: "Combine is order-blind, and it fits what it reaches",
+        check: g7_order_blind,
+        control: g7_order_blind_control,
         control_artifact: "corpus/phase7/calculator.contact",
         opposes: Mutation::ShiftMember("sum", "cli_a@1", 0),
     },

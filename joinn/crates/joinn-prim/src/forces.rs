@@ -3,12 +3,12 @@
 //! is admitted only beside its separate (C23).
 
 mod check_register;
-mod order_free;
+mod order_blind;
 mod register;
 mod response;
 
 pub use check_register::check_register;
-pub use order_free::order_free;
+pub use order_blind::order_blind;
 pub use register::register;
 pub use response::response;
 

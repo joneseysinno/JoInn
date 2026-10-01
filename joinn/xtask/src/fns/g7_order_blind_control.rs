@@ -7,7 +7,7 @@ use super::forces::corpus_cells;
 use super::subject::Subject;
 
 /// True when `check_contact` refuses the subject at a receptor, naming `cli_a@0`.
-pub(crate) fn g7_order_free_control(subject: &Subject) -> bool {
+pub(crate) fn g7_order_blind_control(subject: &Subject) -> bool {
     let Subject::Contact(contact) = subject else {
         return false;
     };
