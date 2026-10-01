@@ -31,6 +31,7 @@ pub struct Scene {
     cells: BTreeMap<String, u32>,
     ports: BTreeMap<Address, u32>,
     links: BTreeMap<(Address, Address), u32>,
+    interior: BTreeSet<Address>,
     pending: BTreeSet<RowWrite>,
 }
 

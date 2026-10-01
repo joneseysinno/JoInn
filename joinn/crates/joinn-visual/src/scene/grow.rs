@@ -24,6 +24,7 @@ impl Scene {
             cells: BTreeMap::new(),
             ports: BTreeMap::new(),
             links: BTreeMap::new(),
+            interior: BTreeSet::new(),
             pending: BTreeSet::new(),
         };
         if let Verdict::Refused(r) = scene.place(placed) {
