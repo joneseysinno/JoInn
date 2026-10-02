@@ -6,6 +6,8 @@ mod closure;
 mod complex;
 mod derive;
 mod examples;
+mod refinement;
+mod station_at;
 mod walk;
 
 pub use balance::balance;
@@ -13,6 +15,8 @@ pub use closure::closure;
 pub use complex::complex;
 pub use derive::derive;
 pub use examples::examples;
+pub use refinement::refinement;
+pub use station_at::station_at;
 pub use walk::walk;
 
 use crate::q::Q;
@@ -84,6 +88,8 @@ pub enum Order {
     Faithful,
     /// Plant: the load's moment as F ∧ r while the reactions stay r ∧ F.
     MixedOrder,
+    /// Plant: the load's moment term omitted, a rectangle rule.
+    Rectangle,
 }
 
 /// The walk at one point: M there, and V just right of it.

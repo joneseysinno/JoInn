@@ -2,6 +2,8 @@
 
 mod line;
 mod mixed_order;
+mod rectangle;
 
 pub use line::line;
 pub use mixed_order::mixed_order;
+pub use rectangle::rectangle;

@@ -31,6 +31,7 @@ pub fn walk(complex: &Complex, balance: &Balance, order: Order) -> Verdict<Vec<S
             let load_moment = match order {
                 Order::Faithful => admit!(wedge(&lever, &load)),
                 Order::MixedOrder => admit!(wedge(&load, &lever)),
+                Order::Rectangle => Q::new(BigRational::zero(), Tag::MOMENT),
             };
             m = admit!(add(&m, &admit!(wedge(&line.length, &v))));
             m = admit!(add(&m, &load_moment));
