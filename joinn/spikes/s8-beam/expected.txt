@@ -1,0 +1,53 @@
+s8 beam · exact in ℚ · kip and inch inside, feet shown
+bridges: A992 E 29000 ksi · W12x26 Ix 204 in⁴ (pinned: AISC Manual, 16th ed.)
+witnesses: AISC Manual Table 3-23 · Roark Table 8.1 (stated, compared, never used to derive)
+E1 simple span, uniform load · L 24 ft · w 6/5 kip/ft down
+  complex: 3 points, 2 lines (elevation plane)
+  balance: R_A 72/5 kip up, R_B 72/5 kip up · ΣF 0 · ΣM 0 · M at end 0 · no bridge read
+  M(12 ft) 432/5 kip·ft sagging (86.4)
+  v(12 ft) 93312/61625 in down (1.5142~)
+  witness wL²/8 = 432/5 kip·ft: agree
+  witness 5wL⁴/384EI = 93312/61625 in: agree
+  refined to 24 lines: equal at every point of the 3
+E2 simple span, point load at midspan · L 24 ft · P 10 kip down
+  complex: 3 points, 2 lines (elevation plane)
+  balance: R_A 5 kip up, R_B 5 kip up · ΣF 0 · ΣM 0 · M at end 0 · no bridge read
+  M(12 ft) 60 kip·ft sagging
+  v(12 ft) 10368/12325 in down (0.8412~)
+  witness PL/4 = 60 kip·ft: agree
+  witness PL³/48EI = 10368/12325 in: agree
+  refined to 24 lines: equal at every point of the 3
+E3 simple span, point load at 6 ft · L 24 ft · P 10 kip down
+  complex: 3 points, 2 lines (elevation plane)
+  balance: R_A 15/2 kip up, R_B 5/2 kip up · ΣF 0 · ΣM 0 · M at end 0 · no bridge read
+  M(6 ft) 45 kip·ft sagging
+  v(6 ft) 5832/12325 in down (0.4732~)
+  witness Pab/L = 45 kip·ft: agree
+  witness Pa²b²/3EIL = 5832/12325 in: agree
+  refined to 24 lines: equal at every point of the 3
+E4 cantilever, point load at the tip · L 10 ft · P 5 kip down
+  complex: 2 points, 1 line (elevation plane)
+  balance: R_A 5 kip up, M_A 50 kip·ft hogging · ΣF 0 · ΣM 0 · M at end 0 · no bridge read
+  M(0 ft) 50 kip·ft hogging
+  v(10 ft) 240/493 in down (0.4868~)
+  witness PL = 50 kip·ft: agree
+  witness PL³/3EI = 240/493 in: agree
+  refined to 10 lines: equal at every point of the 2
+E5 simple span, uniform load and point load at 6 ft · L 24 ft · w 6/5 kip/ft · P 10 kip
+  complex: 4 points, 3 lines (elevation plane)
+  balance: R_A 219/10 kip up, R_B 169/10 kip up · ΣF 0 · ΣM 0 · M at end 0 · no bridge read
+  M(6 ft) 549/5 kip·ft sagging (109.8)
+  M(12 ft) 582/5 kip·ft sagging (116.4)
+  v(6 ft) 478224/308125 in down (1.5520~)
+  v(12 ft) 128952/61625 in down (2.0925~)
+  witness E1 + E3 at 6 ft = 549/5 kip·ft: agree
+  witness E1 + E3 at 12 ft = 582/5 kip·ft: agree
+  witness E1 + E3 at 6 ft = 478224/308125 in: agree
+  witness E1 + E3 at 12 ft = 128952/61625 in: agree
+  refined to 24 lines: equal at every point of the 4
+plant mixed order: refused (ok): balance: E1 M at end 1728/5 kip·ft, want 0; acceptance is one order for every moment
+plant rectangle rule: refused (ok): refinement: E1 M(12 ft) 864/5 kip·ft with 2 lines, 468/5 kip·ft with 24 lines; acceptance is a derivation the complex cannot change
+plant witness wL²/12: refused (ok): E1 witness wL²/12 = 288/5 kip·ft, derived 432/5 kip·ft; a disagreement is a truth violation
+plant moment + work: refused (ok): add: source · length 1 · plane and energy · length 1 · none differ, though both are kip·in; acceptance is two quantities on one piece, side and pair
+plant no bridge: refused (ok): v(12 ft) needs the bridge E·I; acceptance is a pinned edition. balance and M read no bridge
+s8: 5 example(s), 12 witness(es) agree, 0 disagree; refinement equal in 5; plants: 5 refused (ok)

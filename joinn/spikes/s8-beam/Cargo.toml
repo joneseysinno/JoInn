@@ -1,0 +1,24 @@
+[package]
+name = "s8-beam"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "S8 beam spike (Phase 7.1 stage 1): five beams worked exactly in ℚ. Not part of the JoInn workspace."
+
+# Its own workspace, so the JoInn workspace never builds or lints it.
+[workspace]
+
+[dependencies]
+num-bigint = "0.4"
+num-rational = "0.4"
+num-traits = "0.2"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+float_arithmetic = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+todo = "deny"
+dbg_macro = "deny"
