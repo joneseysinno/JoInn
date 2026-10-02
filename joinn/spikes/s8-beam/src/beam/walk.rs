@@ -30,7 +30,7 @@ pub fn walk(complex: &Complex, balance: &Balance, order: Order) -> Verdict<Vec<S
             let lever = scale(&line.length, &frac!(1, 2));
             let load_moment = match order {
                 Order::Faithful => admit!(wedge(&lever, &load)),
-                Order::MixedOrder => admit!(wedge(&load, &lever)),
+                Order::Mixed => admit!(wedge(&load, &lever)),
                 Order::Rectangle => Q::new(BigRational::zero(), Tag::MOMENT),
             };
             m = admit!(add(&m, &admit!(wedge(&line.length, &v))));
@@ -44,10 +44,10 @@ pub fn walk(complex: &Complex, balance: &Balance, order: Order) -> Verdict<Vec<S
         if i == 0 {
             v = admit!(add(&v, &balance.r_a));
         }
-        if i == last {
-            if let Some(r_b) = &balance.r_b {
-                v = admit!(add(&v, r_b));
-            }
+        if i == last
+            && let Some(r_b) = &balance.r_b
+        {
+            v = admit!(add(&v, r_b));
         }
         stations.push(Station {
             x: point.x.clone(),

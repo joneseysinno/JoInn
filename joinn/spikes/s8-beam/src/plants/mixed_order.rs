@@ -5,7 +5,7 @@ use crate::verdict::Verdict;
 /// E1 with the load's moment taken F ∧ r in the walk while the reactions stay
 /// r ∧ F. The closure check must refuse it.
 pub fn mixed_order(e1: &Example) -> Verdict<Derived> {
-    derive(e1, false, Order::MixedOrder, &mut Bridge::new(None))
+    derive(e1, false, Order::Mixed, &mut Bridge::new(None))
 }
 
 #[cfg(test)]

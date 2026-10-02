@@ -58,8 +58,4 @@ impl Bridge {
     pub fn reads(&self) -> u32 {
         self.reads
     }
-
-    pub fn edition(&self) -> Option<&Edition> {
-        self.edition.as_ref()
-    }
 }

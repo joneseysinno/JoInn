@@ -93,7 +93,7 @@ pub struct Balance {
 pub enum Order {
     Faithful,
     /// Plant: the load's moment as F ∧ r while the reactions stay r ∧ F.
-    MixedOrder,
+    Mixed,
     /// Plant: the load's moment term omitted, a rectangle rule.
     Rectangle,
 }
@@ -115,10 +115,7 @@ pub struct Deflected {
 }
 
 impl Deflected {
-    pub fn x(&self) -> &Q {
-        &self.x
-    }
-
+    #[cfg(test)]
     pub fn theta(&self) -> &Q {
         &self.theta
     }
@@ -206,18 +203,16 @@ impl Example {
 }
 
 impl Point {
+    #[cfg(test)]
     pub fn x(&self) -> &Q {
         &self.x
     }
 }
 
 impl Line {
+    #[cfg(test)]
     pub fn length(&self) -> &Q {
         &self.length
-    }
-
-    pub fn q(&self) -> &Q {
-        &self.q
     }
 }
 
@@ -254,15 +249,7 @@ impl Balance {
 }
 
 impl Station {
-    pub fn x(&self) -> &Q {
-        &self.x
-    }
-
     pub fn m(&self) -> &Q {
         &self.m
-    }
-
-    pub fn v(&self) -> &Q {
-        &self.v
     }
 }

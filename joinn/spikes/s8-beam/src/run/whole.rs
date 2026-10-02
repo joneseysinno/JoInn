@@ -1,4 +1,5 @@
-use super::Run;
+use super::{Run, example_block, plant_block};
+use crate::beam::examples;
 use crate::bridge::pinned;
 use crate::show::fraction;
 
@@ -15,7 +16,32 @@ pub fn run() -> Result<Run, String> {
         fraction(edition.ix()),
         edition.source()
     ));
-    Ok(Run { text, clean: true })
+    text.push_str(
+        "witnesses: AISC Manual Table 3-23 · Roark Table 8.1 (stated, compared, never used to derive)\n",
+    );
+    let all = examples();
+    let (mut agree, mut disagree, mut refined, mut clean) = (0, 0, 0, true);
+    for example in &all {
+        let block = example_block(example, &edition);
+        text.push_str(&block.text);
+        agree += block.agree;
+        disagree += block.disagree;
+        refined += usize::from(block.refined);
+        clean &= block.clean;
+    }
+    let plants = plant_block(&all, &edition);
+    text.push_str(&plants.text);
+    clean &= plants.admitted == 0;
+    let not_ok = match plants.admitted {
+        0 => String::new(),
+        n => format!(", {n} admitted (not ok)"),
+    };
+    text.push_str(&format!(
+        "s8: {} example(s), {agree} witness(es) agree, {disagree} disagree; refinement equal in {refined}; plants: {} refused (ok){not_ok}\n",
+        all.len(),
+        plants.refused
+    ));
+    Ok(Run { text, clean })
 }
 
 #[cfg(test)]

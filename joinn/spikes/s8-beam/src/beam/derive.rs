@@ -52,7 +52,7 @@ mod tests {
         let e1 = &examples()[0];
         let mut bridge = Bridge::new(None);
         assert_eq!(
-            refused(derive(e1, false, Order::MixedOrder, &mut bridge)),
+            refused(derive(e1, false, Order::Mixed, &mut bridge)),
             "balance: E1 M at end 1728/5 kip·ft, want 0; acceptance is one order for every moment"
         );
     }

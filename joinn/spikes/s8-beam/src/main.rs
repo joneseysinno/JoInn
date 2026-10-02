@@ -12,6 +12,7 @@ mod run;
 mod show;
 mod tag;
 mod verdict;
+mod witness;
 
 fn main() -> std::process::ExitCode {
     match run::run() {

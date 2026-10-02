@@ -40,7 +40,8 @@ impl Tag {
     pub const DENSITY: Tag = Tag::new(Side::Source, -1, Axis::Y);
     /// M.
     pub const MOMENT: Tag = Tag::new(Side::Source, 1, Axis::Plane);
-    /// Force · displacement along y.
+    /// Force · displacement along y. Only `dot` makes one.
+    #[cfg(test)]
     pub const WORK: Tag = Tag::new(Side::Energy, 1, Axis::None);
     /// θ.
     pub const ROTATION: Tag = Tag::new(Side::Placement, 0, Axis::Plane);

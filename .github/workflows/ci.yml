@@ -48,6 +48,8 @@ jobs:
         run: cargo xtask forces
       - name: contact
         run: cargo xtask contact
+      - name: spike s8
+        run: cargo test --manifest-path spikes/s8-beam/Cargo.toml
       - name: power
         run: cargo xtask power
       - name: gate all
