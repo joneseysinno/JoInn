@@ -14,11 +14,18 @@ mod tag;
 mod verdict;
 
 fn main() -> std::process::ExitCode {
-    let run = run::run();
-    print!("{}", run.text());
-    if run.clean() {
-        std::process::ExitCode::SUCCESS
-    } else {
-        std::process::ExitCode::FAILURE
+    match run::run() {
+        Ok(run) => {
+            print!("{}", run.text());
+            if run.clean() {
+                std::process::ExitCode::SUCCESS
+            } else {
+                std::process::ExitCode::FAILURE
+            }
+        }
+        Err(host) => {
+            eprintln!("s8: {host}");
+            std::process::ExitCode::FAILURE
+        }
     }
 }

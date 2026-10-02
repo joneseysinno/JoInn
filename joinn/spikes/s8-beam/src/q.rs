@@ -1,6 +1,7 @@
 //! A tagged exact quantity, and the only operations that make one.
 
 mod add;
+mod contract;
 mod count;
 mod dot;
 mod new;
@@ -10,6 +11,7 @@ mod total;
 mod wedge;
 
 pub use add::add;
+pub use contract::contract;
 pub use count::count;
 pub use dot::dot;
 pub use ratio::ratio;

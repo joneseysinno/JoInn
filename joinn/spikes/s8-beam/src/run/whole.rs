@@ -1,9 +1,21 @@
 use super::Run;
+use crate::bridge::pinned;
+use crate::show::fraction;
 
-pub fn run() -> Run {
+/// The whole run. An edition that cannot be read is a host error.
+pub fn run() -> Result<Run, String> {
+    let edition = pinned()?;
     let mut text = String::new();
     text.push_str("s8 beam · exact in ℚ · kip and inch inside, feet shown\n");
-    Run { text, clean: true }
+    text.push_str(&format!(
+        "bridges: {} E {} ksi · {} Ix {} in⁴ (pinned: {})\n",
+        edition.material(),
+        fraction(edition.e()),
+        edition.shape(),
+        fraction(edition.ix()),
+        edition.source()
+    ));
+    Ok(Run { text, clean: true })
 }
 
 #[cfg(test)]
@@ -13,7 +25,10 @@ mod tests {
     #[test]
     fn the_run_prints_the_plan_block() {
         let want = include_str!("../../expected.txt");
-        let run = run();
+        let run = match run() {
+            Ok(run) => run,
+            Err(e) => panic!("host error: {e}"),
+        };
         let got = run.text();
         if got != want {
             let mut got_lines = got.lines();

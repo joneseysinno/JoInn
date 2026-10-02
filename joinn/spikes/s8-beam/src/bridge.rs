@@ -3,8 +3,13 @@
 
 mod curvature;
 mod new;
+mod parse;
+mod pinned;
 #[cfg(test)]
 mod testing;
+
+pub use parse::parse;
+pub use pinned::pinned;
 
 use num_rational::BigRational;
 

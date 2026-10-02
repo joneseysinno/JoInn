@@ -4,18 +4,24 @@
 mod balance;
 mod closure;
 mod complex;
+mod deflect;
+mod deflected_at;
 mod derive;
 mod examples;
 mod refinement;
+mod refinement_of_deflection;
 mod station_at;
 mod walk;
 
 pub use balance::balance;
 pub use closure::closure;
 pub use complex::complex;
+pub use deflect::deflect;
+pub use deflected_at::deflected_at;
 pub use derive::derive;
 pub use examples::examples;
 pub use refinement::refinement;
+pub use refinement_of_deflection::refinement_of_deflection;
 pub use station_at::station_at;
 pub use walk::walk;
 
@@ -98,6 +104,28 @@ pub struct Station {
     x: Q,
     m: Q,
     v: Q,
+}
+
+/// Rotation θ and deflection v at one point of the complex.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Deflected {
+    x: Q,
+    theta: Q,
+    v: Q,
+}
+
+impl Deflected {
+    pub fn x(&self) -> &Q {
+        &self.x
+    }
+
+    pub fn theta(&self) -> &Q {
+        &self.theta
+    }
+
+    pub fn v(&self) -> &Q {
+        &self.v
+    }
 }
 
 /// One example derived: its complex, balance, walk, the closure's M at the
