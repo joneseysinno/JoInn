@@ -4,9 +4,12 @@
 
 #![forbid(unsafe_code)]
 
+mod beam;
 mod bridge;
+mod plants;
 mod q;
 mod run;
+mod show;
 mod tag;
 mod verdict;
 

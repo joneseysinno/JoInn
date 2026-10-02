@@ -3,6 +3,8 @@
 
 mod curvature;
 mod new;
+#[cfg(test)]
+mod testing;
 
 use num_rational::BigRational;
 

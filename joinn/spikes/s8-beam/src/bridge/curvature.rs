@@ -39,13 +39,7 @@ mod tests {
     use crate::verdict::{admitted, refused};
 
     fn aisc() -> Edition {
-        Edition {
-            source: "AISC Manual, 16th ed.".to_string(),
-            material: "A992".to_string(),
-            e: frac!(29000, 1),
-            shape: "W12x26".to_string(),
-            ix: frac!(204, 1),
-        }
+        Edition::aisc_for_tests()
     }
 
     #[test]
