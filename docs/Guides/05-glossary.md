@@ -9,8 +9,11 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Blueprint** | A shareable cell design others can reuse — meant to be seen, not only read. |
 | **Body** | A cluster of cells that belong together, with one shared genome. The main “container” for a small machine or app piece. |
 | **Bootstrap** | One of the three big build stages (true-but-unseen → seen-and-touched → self-editing). |
+| **Bridge** | A law that crosses from the placement side to the source side and back, such as moment to curvature through E·I. It cannot be derived, so it is testimony, read from a pinned edition. Balance and moment need none; deflection needs one. |
+| **Bridge edition** | The small pinned file a bridge is read from, naming its source: the beam spike's is `bridges.edition` (AISC Manual 16th ed.: A992 E 29000 ksi, W12x26 Ix 204 in⁴). Every read of it is counted. |
 | **Camera** | How a layout fits a window: an integer scale, an origin, and a width and height. Phase 6 does not zoom or pan. Changing the camera writes the tick and no table row. |
 | **Cell** | The smallest visual building block. Something you can show and still use. |
+| **Chaos** | Only the scientific sense: behavior fully fixed by its laws and its starting state, which looks random only to someone who doesn't know that state exactly. Never "disorder" or "chance". JoInn has no randomness. |
 | **Coding region** | The part of DNA that is hashed and gated: frame, contract, laws, witnesses — the cell’s true identity. |
 | **Combine** | The one force Phase 7 writes: put the values of its members together with the frame's answer (on integers, the sum). Its answer must not depend on member order. |
 | **Contact body** | A body whose cells touch, with no wires inside; its operations are forces. Written as a `.contact` file, which cannot express a wire. |
@@ -20,6 +23,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Crate** | A Rust library or program package in the repo (for example `joinn-gate`). |
 | **DNA** | The building plan for a cell: what it is and what laws it obeys. |
 | **Edge pixel** | A pixel within 1/16 of a pixel of a shape's boundary. It is counted and never judged: the two pickers need not agree there. |
+| **Elevation plane** | The flat picture a beam lives in: x along the span, y up. A moment lives on the plane itself (x ∧ y), which is why a beam is not only a line. |
 | **Filling** | What closes a loop in the assay: a frame (the value keeps its kind all the way round), or one law that promises to undo a conversion, named by body, instance and law. Nothing else closes a loop. |
 | **Floor** | The sealed set of basic operations JoInn is written in. Admitted only if irreducible and opposed. Never “fixed” by renaming its size. |
 | **Force** | An operation applied to a body's cells from outside, such as combine. It names its members (cell ports) and a response. A force owns no pixel. |
@@ -35,9 +39,14 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Live engine** | The runner that executes a body now, with an explicit step budget. |
 | **Lower** | The engine's own derivation of the deliveries a contact body needs to run. Its only inputs are the contact, its cells and the force register. It is never written to a file, described, or drawn. |
 | **Membrane** | The boundary of a cell — the only place it meets anything outside itself. A body has no membrane; its outline is its *surface*. |
-| **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve. Glyph, image, and snapshot are Phase 7.1. |
+| **Order-blind** | A result that doesn't depend on the order its members were combined in, such as a sum. The order still happened, and JoInn records it. (Earlier documents said *order-free*.) |
+| **Order-bound** | A result that depends on order completely, so the order is part of its truth. |
+| **Order-signed** | A result whose order changes at most its sign: lever arm ∧ force is a moment, and force ∧ lever arm is the same moment with the opposite sign. |
+| **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve. Glyph, image, and snapshot are Phase 7.2. |
 | **Owner** | The one thing a pixel belongs to: the background, the surface, a cell, a port, or a wire. In a contact body there is no wire, and no force owns a pixel. |
+| **Pair** | The two partners across one mirror, such as force and displacement. Multiplied, they give energy. Part of a quantity's tag. |
 | **Primitive** | A sealed basic piece below ordinary cells. Creators compose with them; they don’t invent new floor primitives casually. |
+| **Refinement** | Cutting a model into finer pieces (the beam into 1 ft lines) and checking that no answer at a shared point moves. An exact derivation cannot be changed by it; a sloppy one is caught. |
 | **Region** | In the assay, one connected piece of a body's inside (cells joined by wires). A body with two regions is two separate things sharing a container. |
 | **Refusal / Verdict** | A normal value meaning “no” (`Refused`), not a crash. Host IO errors are different. |
 | **Regrow** | Rebuild the tables from the body's DNA and its live state. They must match the delta-built tables byte for byte, and a discarded GPU redraws the same picture from them. |
@@ -47,8 +56,11 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Surface** | The derived outline of a body: every cell port nothing inside uses up. Never declared, and never called a membrane. |
 | **Surface port** | One port on a body's surface. In a contact body: every genome cell port that is not a force's member, and each response's out-port. The calculator's are `cli_a@0`, `cli_b@0` and `sum@2`. |
 | **Seal** | A locked pair: a reference body and checks (including a counterfeit that must be caught). |
+| **Side** | Which side of the mirror a quantity is on: placement (how things sit and move: lengths, deflection, rotation) or source (what pushes: loads, reactions, moment). Energy is their shared product. Part of a quantity's tag. |
 | **Tick** | One redraw. It carries the camera. An idle scene has nothing to draw, so the window waits. |
+| **Where** | The piece a quantity lives on, with its orientation: a point, a line, or the plane, and which way it faces. Its dimension, as opposed to its unit. Part of a quantity's tag. |
 | **Witness** | A recorded true result that future versions must still satisfy — testimony the gate can replay. |
+| **Witness library** | A library that states formulas JoInn derives itself, such as AISC Table 3-23 or Roark Table 8.1. Compared exactly and never used to derive; a disagreement is a truth violation. |
 | **xtask** | Helper commands that measure and enforce project rules (`floor`, `agree`, `gate`, and so on). |
 
 ## Quick analogies

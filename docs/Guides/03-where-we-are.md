@@ -24,6 +24,23 @@ You can, from the `joinn` code folder:
 - Assay a body or universe for loops nothing closes (`cargo xtask assay phase4/loop.universe`), described below
 - Open one body in a window (`cargo run -p joinn-shell-desktop -- corpus/phase2/calculator.body`), described below
 - Run and open the calculator as **cells in contact** (`joinn run corpus/phase7/calculator.contact`, and the same path in the window), described below
+- Work five steel beams exactly (`cargo run --manifest-path spikes/s8-beam/Cargo.toml`), described below
+
+## The beam, worked exactly (Phase 7.1, stage 1)
+
+JoInn has worked its first real engineering: five W12x26 beams in A992 steel, every answer an exact fraction with its decimal beside it. A 24 ft span under 1.2 kip/ft gives reactions of 72/5 kip (14.4), a midspan moment of 432/5 kip·ft (86.4) and a deflection of 93312/61625 in (about 1.514). The other four are a midspan point load, a point load at 6 ft, a 10 ft cantilever (its wall moment prints **hogging**), and the uniform and point loads together, a case no table lists.
+
+How it gets them:
+
+- **Balance first, with no material.** The reactions come from the forces and turning effects summing to zero. Nothing from a library is read; the program counts its reads of E and I and prints `no bridge read`.
+- **Adding up along the span.** Shear is the load added up and moment is the shear added up, exactly, so wL²/8 comes out without being looked up. The moment at the far support must come out exactly 0.
+- **One crossing of the mirror.** Deflection is the only answer that needs testimony: E = 29,000 ksi and Ix = 204 in⁴, from a small pinned file (`bridges.edition`, AISC Manual 16th ed.).
+- **Libraries as witnesses.** Each answer is compared with the formula AISC Table 3-23 and Roark Table 8.1 state; all 12 agree. A formula is never used to get an answer.
+- **Refinement.** Cutting the beam into 1 ft pieces changes no answer.
+
+Every quantity carries a tag: its side (placement, source, or energy), a length count, and where it lives in the beam's elevation plane (along the span, up, or the plane itself). Five planted mistakes are each refused: a moment taken in mixed order, a sloppy rectangle-rule sum, a wrong witness (wL²/12), a moment added to a work (both kip·in, told apart only by their tags), and deflection with no edition.
+
+This is a **spike**: a small separate program in `joinn/spikes/s8-beam`, outside JoInn's own files, and no gate measures it yet. Not built yet: the tag in JoInn's own grammar, ℚ with a turn and multiply as a force, balance and adding-up as forces in a contact body, the column, links between members, and beams that need their material to find their reactions (propped or fixed ends). Those are stage 2 and later. Findings: [phase-7.1-beam-examples.md](../Findings/phase-7.1-beam-examples.md).
 
 ## Cells in contact (Phase 7)
 
@@ -38,13 +55,13 @@ What makes that safe:
 
 In the window, the contact calculator is three cells touching: `cli_a` above `cli_b`, and `sum` beside both. There is no wire to draw, and a force owns no pixel. `sum` is drawn dim (*latent*) until it holds a value, and takes its normal color when the second number arrives.
 
-Not built yet: multiplication (R83), writing *separate* as a force, many members and chains of forces beyond one test fixture (R84), one port feeding two forces (R85), and wires between bodies as systems. Text on screen, zoom and charts are Phase 7.1. The next phase is the steel beam.
+Not built yet: multiplication (R83), writing *separate* as a force, many members and chains of forces beyond one test fixture (R84), one port feeding two forces (R85), and wires between bodies as systems. Text on screen, zoom and charts are Phase 7.2. The steel beam (Phase 7.1) is above.
 
 ## The picture (Phase 6)
 
 JoInn draws one body. The calculator appears as a surface holding three cells, their ports, and two wires. The picture is the tables: a pixel's color is the style of the row that owns it, so a refused cell and a filled port look different because those rows changed. A click prints that owner (`body.sum`, `body.cli_a@0`, `body wire cli_a@1 -> sum@0`). The GPU's ID for the same pixel names the same owner. Typing a number into an in-port on the surface runs the body, and the window changes because the run wrote rows.
 
-The window draws no text, no second body, and no zoom. Glyphs, images, and snapshots wait for Phase 7.1. A GPU that cannot read storage in the vertex stage is still an open question (R72).
+The window draws no text, no second body, and no zoom. Glyphs, images, and snapshots wait for Phase 7.2. A GPU that cannot read storage in the vertex stage is still an open question (R72).
 
 ## The assay (Phase 4)
 

@@ -394,6 +394,14 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 > (`Plans/JoInn Phase 7.1 Implementation Plan.md`); stage 2 brings it into JoInn's
 > grammar. Visual Host II is now **Phase 7.2**. Every later phase keeps its number.
 
+> **2 Oct 2026 · Phase 7.1 stage 1 is built.** Spike S8 (`joinn/spikes/s8-beam`)
+> works the five beams exactly in ℚ: balance and moment read no bridge,
+> deflection reads only E·I from a pinned edition, all 12 AISC and Roark
+> witnesses agree, refinement changes nothing, and all five planted mistakes are
+> refused. Every prediction came out as predicted. Findings:
+> [phase-7.1-beam-examples.md](../Findings/phase-7.1-beam-examples.md). Stage 2
+> (the tag in JoInn's grammar) is planned from its *What stage 2 needs*.
+
 #### Phase 7.2 · Visual Host II: charts, zoom, bands, links
 
 **Goal.** The fractal, actually working: zoom from universe to a digit, and hyperedges drawn as hyperedges.

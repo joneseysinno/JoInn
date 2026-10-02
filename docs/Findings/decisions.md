@@ -119,10 +119,10 @@ line must name a file under `docs/Findings/`.
 | R98 | Indeterminate beams | 7.1 | open | |
 | R99 | Where a section property lives | 7.1 | open | |
 | R100 | The decimal | 7.1 | open | |
-| V134 | `present` refuses a port the scene does not hold, unless it is a contact's interior port | 7.1 | open | |
-| V135 | Balance and moment read no bridge; deflection reads exactly the bridge edition | 7.1 | open | |
-| V136 | Every derived value equals every witness that states it, exactly | 7.1 | open | |
-| V137 | Refining the complex changes no derived value at any shared point | 7.1 | open | |
-| V138 | `add` refuses unequal tags, even when their units print the same | 7.1 | open | |
-| V139 | Every moment is taken in one order; mixed order fails the closure check | 7.1 | open | |
-| V140 | Cursor sends no input outside a window it started (rule 67) | 7.1 | open | |
+| V134 | `present` refuses a port the scene does not hold, unless it is a contact's interior port | 7.1 | holds | P71-02: `present: port sum@9 is not in this scene; acceptance is a port of body body`; gate 6 and 7 3/3 |
+| V135 | Balance and moment read no bridge; deflection reads exactly the bridge edition | 7.1 | holds | spike S8: bridge reads `[(0, 4), (0, 4), (0, 4), (0, 2), (0, 6)]`; the no-bridge plant refused ([findings](phase-7.1-beam-examples.md)) |
+| V136 | Every derived value equals every witness that states it, exactly | 7.1 | holds | spike S8: `12 witness(es) agree, 0 disagree`; the wL²/12 plant refused |
+| V137 | Refining the complex changes no derived value at any shared point | 7.1 | holds | spike S8: `refinement equal in 5`; the rectangle plant refused |
+| V138 | `add` refuses unequal tags, even when their units print the same | 7.1 | holds | spike S8: the moment + work plant, `though both are kip·in` |
+| V139 | Every moment is taken in one order; mixed order fails the closure check | 7.1 | holds | spike S8: `M at end 0` in all five; the mixed-order plant `M at end 1728/5 kip·ft, want 0` |
+| V140 | Cursor sends no input outside a window it started (rule 67) | 7.1 | holds | rule 67; no step of Phase 7.1 opened a window or sent input |
