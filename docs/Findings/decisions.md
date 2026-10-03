@@ -126,3 +126,14 @@ line must name a file under `docs/Findings/`.
 | V138 | `add` refuses unequal tags, even when their units print the same | 7.1 | holds | spike S8: the moment + work plant, `though both are kip·in` |
 | V139 | Every moment is taken in one order; mixed order fails the closure check | 7.1 | holds | spike S8: `M at end 0` in all five; the mixed-order plant `M at end 1728/5 kip·ft, want 0` |
 | V140 | Cursor sends no input outside a window it started (rule 67) | 7.1 | holds | rule 67; no step of Phase 7.1 opened a window or sent input |
+| R101 | Where the cut lives | 7.2 | open | |
+| R102 | Hysteresis or fade | 7.2 | open | |
+| R103 | Text as cells | 7.2 | open | |
+| R104 | Layout of a lens | 7.2 | open | |
+| V141 | No float decides anything: bands, owners, the cut and the rebase are integer decisions, the same on CPU and GPU | 7.2 | open | |
+| V142 | A pan or zoom writes the tick uniform and no row; a rebase writes chart rows only | 7.2 | open | |
+| V143 | A rebase moves nothing: color and ID bytes identical before and after | 7.2 | open | |
+| V144 | Zoom about one pixel is reversible: n notches in and n out return the identical camera and bytes | 7.2 | open | |
+| V145 | Two cuts, one truth: the owners in the GPU image are exactly those the CPU cut allows | 7.2 | open | |
+| V146 | A link touches each cut node at most once | 7.2 | open | |
+| V147 | An idle window draws nothing, at any zoom (V12 extended) | 7.2 | open | |

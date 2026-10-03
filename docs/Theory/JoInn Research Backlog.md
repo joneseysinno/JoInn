@@ -453,3 +453,21 @@ Ix is the W12x26's section, a 2D body one zoom level in (Part VI §9). Is it a b
 ## R100 — The decimal  ·  status: open
 
 A printed decimal is presentation. Who chooses its places: the host, the quantity's tolerance, or the edition's precision?
+
+> **3 Oct 2026 · Phase 7.2.** R101–R104 come from the zoom plan.
+
+## R101 — Where the cut lives  ·  status: open
+
+Decided twice (GPU per instance, CPU on demand) from the same integers. Is "two cuts, one truth" the general rule for every derived view (accessibility in Phase 8)?
+
+## R102 — Hysteresis or fade  ·  status: open
+
+A size-driven fade replaces separate up/down thresholds. Does any band change need hysteresis once bands carry live interiors (editing in Phase 9)?
+
+## R103 — Text as cells  ·  status: open
+
+Labels and values are strokes owned by a cell or port. When a label is edited in the creator, is a label a cell of its own, or presentation of a name?
+
+## R104 — Layout of a lens  ·  status: open
+
+The grove's grid is fixed (6 / 4 / 4). Is a lens's layout a body of its own (a layout system), so other lenses can lay out differently?

@@ -1,15 +1,14 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 7.1 is the beam computes, stage 1: worked examples in
-a spike (spikes/s8-beam), exact in ℚ, with formulas derived and libraries as
-witnesses. Its one idea is NOTHING DERIVED IS A BASE. The build plan is
-docs/Plans/JoInn Phase 7.1 Implementation Plan.md. Work one CHUNK at a time (A,
-B or C), one git commit per numbered step, and stop at the chunk's stop report.
-Every decision is in the plan. Never stop to ask; follow the plan's Snags
-section instead.
+This repo is JoInn. Phase 7.2 is Visual Host II, part 1: the zoom. A universe
+on screen, zoomed exactly from all of it to one letter, with charts, bands, the
+cut and JoInn's own stroke font. Its one idea is NO FLOAT DECIDES ANYTHING. The
+build plan is docs/Plans/JoInn Phase 7.2 Implementation Plan.md. Work one CHUNK
+at a time (A, B or C), one git commit per numbered step, and stop at the chunk's
+stop report. Every decision is in the plan. Never stop to ask; follow the plan's
+Snags section instead.
 
-No new grammar in this phase. The spike is its own workspace and depends on
-nothing in crates/.
+No new grammar in this phase. Hyperedges are counted, not drawn (Phase 7.3).
 
 ## Hard rules
 
@@ -223,6 +222,17 @@ nothing in crates/.
     (material laws, section properties, constants) are read from an edition.
 69. NOTHING IS RANDOM. Every sample is seeded, every order is canonical, and
     every run replays exactly. "Chaos" means only deterministic and sensitive.
+70. NO FLOAT DECIDES ANYTHING. Bands, owners, the cut and the rebase are integer
+    decisions, made the same way on the CPU and in the shader. A float only
+    places a pixel, after every decision is made.
+71. THE CAMERA IS EXACT. Zoom is a level and a step; the focus is a dyadic
+    point of the anchor chart; the pin is a whole pixel. A pan or zoom writes
+    the tick uniform and no row. A rebase writes chart rows only and moves
+    nothing.
+72. TWO CUTS, ONE TRUTH. What the GPU draws and what the CPU says can be drawn
+    are the same set of owners. A difference is a truth violation.
+73. GENERATED IS NOT STORED. The grove is grown from its seed wherever it is
+    needed and never written under corpus/ or docs/.
 
 ## Definition of done
 

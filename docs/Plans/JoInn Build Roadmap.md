@@ -400,9 +400,17 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 > witnesses agree, refinement changes nothing, and all five planted mistakes are
 > refused. Every prediction came out as predicted. Findings:
 > [phase-7.1-beam-examples.md](../Findings/phase-7.1-beam-examples.md). Stage 2
-> (the tag in JoInn's grammar) is planned from its *What stage 2 needs*.
+> (the tag in JoInn's grammar) waits for the creator (3 Oct note).
 
-#### Phase 7.2 · Visual Host II: charts, zoom, bands, links
+> **3 Oct 2026 · The UX first; Visual Host II in two.** AJ: the beam's stage 2
+> waits. Bodies like the beams will be built in JoInn itself, once the creator
+> exists; the order stays 7.2, 8, 9. Visual Host II is split: **Phase 7.2 is the
+> zoom** (exact charts, bands, the cut, lens nodes, JoInn's own stroke font,
+> `Plans/JoInn Phase 7.2 Implementation Plan.md`), and **Phase 7.3 is the links**
+> (hyperedges drawn as region, hub, bundle and spine, rerouting, snapshots).
+> Every later phase keeps its number.
+
+#### Phase 7.2 · Visual Host II: charts, zoom, bands
 
 **Goal.** The fractal, actually working: zoom from universe to a digit, and hyperedges drawn as hyperedges.
 
@@ -411,15 +419,24 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 - **The chart chain** with S6's findings folded in: CPU f64 resolution, camera-relative f32 upload, anchor rebasing, integer zoom level plus fraction (**V7**).
 - **Expression bands** — dot, glyph, summary, full — with separate up and down thresholds (**V8**).
 - **The cut**, on the CPU. Lens nodes. Crossfades between bands, so the user sees that the dot they zoomed into *is* the body.
-- **Snapshots** keyed by (DNA hash, state hash, band, scale bucket), with a per-tick re-render budget — the first real use of R10.
-- **Hyperedge forms**: region, hub, bundle, spine. Order drawn only when order is declared (**V17**). Rerouting to lens node boundaries under collapse.
 - **Render on demand** (**V12**): an idle universe draws nothing.
+- **The stroke font**.
+- **Two cuts, one truth**.
 
-**Exit gate.** A synthetic universe of a few thousand bodies: zoom continuously from the whole universe to a single glyph inside a cell with no jitter and no popping; collapse a system and watch a hyperedge reroute to the lens node and touch it exactly once however many members are inside; leave it idle and observe zero ticks.
+**Exit gate.** A synthetic universe of a few thousand bodies: zoom continuously from the whole universe to a single glyph inside a cell with no jitter and no popping; leave it idle and observe zero ticks.
 
 **Adversary.** The cut is a CPU cost proportional to the universe every tick. If a few thousand bodies already need the GPU compute cut that Part II lists as optional, then "optional" was wrong and Extended limits become required, which breaks V11 and D7 together.
 
 **R-items.** R16, R10, R4a (does the chart generalize to 3D — the crane mat question surfaces here).
+
+#### Phase 7.3 · Visual Host II: links
+
+**Deliverables**
+
+- **Snapshots** keyed by (DNA hash, state hash, band, scale bucket), with a per-tick re-render budget — the first real use of R10.
+- **Hyperedge forms**: region, hub, bundle, spine. Order drawn only when order is declared (**V17**). Rerouting to lens node boundaries under collapse.
+
+**Exit gate.** Collapse a system and watch a hyperedge reroute to the lens node and touch it exactly once however many members are inside.
 
 ---
 
@@ -573,7 +590,8 @@ flowchart TB
   P4["Phase 4<br/>assay · conditional"]:::cond
   P5["Phase 5<br/>link graph"]
   P6["Phase 6<br/>visual host I"]
-  P7["Phase 7.2<br/>visual host II"]
+  P7["Phase 7.2<br/>zoom"]
+  P73["Phase 7.3<br/>links"]
   P8["Phase 8<br/>visual truth"]
   P9["Phase 9<br/>creator"]
   P10["Phase 10<br/>compiler"]
@@ -597,7 +615,8 @@ flowchart TB
   S6 --> P7
   P6 --> P7
   P3 --> P8
-  P7 --> P8
+  P7 --> P73
+  P73 --> P8
   P8 --> P9
   P2 --> P10
   P9 --> P10
