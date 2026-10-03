@@ -239,6 +239,7 @@ mod witness;
 mod workspace_root;
 mod write_lock;
 mod xtask_writes_findings;
+mod zoom;
 
 pub(crate) use adapters::adapters;
 pub(crate) use admit_corpus_cells::admit_corpus_cells;
@@ -451,6 +452,7 @@ pub(crate) use witness::witness;
 pub(crate) use workspace_root::workspace_root;
 pub(crate) use write_lock::write_lock;
 pub(crate) use xtask_writes_findings::xtask_writes_findings;
+pub(crate) use zoom::zoom;
 
 pub(crate) type LoadedSeals = (
     std::collections::BTreeMap<joinn_frame::Hash, joinn_dna::Body>,

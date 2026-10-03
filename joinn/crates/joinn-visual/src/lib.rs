@@ -2,6 +2,7 @@
 
 #![forbid(unsafe_code)]
 
+mod bands;
 mod camera;
 mod charts;
 #[cfg(test)]
@@ -9,6 +10,7 @@ mod dropped;
 #[cfg(test)]
 mod fixtures;
 mod layout;
+mod lens_cut;
 mod pick;
 mod refuse;
 mod scene;
@@ -16,6 +18,7 @@ mod scene;
 mod script;
 mod tables;
 
+pub use bands::{Band, THRESHOLDS, fade_window, owner_band};
 pub use camera::{
     Camera, ChartId, FOCUS_UNIT, FitCamera, LEVEL_MAX, LEVEL_MIN, NOTCH, PIXEL_UNIT,
     STANDARD_VIEWPORTS, STEPS, Zoom, fit, print_camera, print_zoom,
@@ -29,6 +32,7 @@ pub use layout::{
     PortDot, Rect, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS, WireSeg, layout, layout_contact,
     print_layout,
 };
+pub use lens_cut::{Cut, CutEntry, CutForm, cut, touches};
 pub use pick::{
     Class, Geom, Owner, PORT_TAG, Pick, PickImage, Shape, TAG_MASK, WIRE_TAG, cpu_pick,
     cpu_pick_reference, owner_of_layout, print_owner, shapes_of_layout,

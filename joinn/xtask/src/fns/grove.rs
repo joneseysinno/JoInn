@@ -4,6 +4,7 @@
 
 mod admit_universe;
 mod grove_cmd;
+mod grove_layout;
 mod grove_line;
 mod grow_grove;
 mod kind_name;
@@ -13,6 +14,7 @@ mod splitmix64;
 
 pub(crate) use admit_universe::admit_universe;
 pub(crate) use grove_cmd::grove;
+pub(crate) use grove_layout::grove_layout;
 pub(crate) use grove_line::grove_line;
 pub(crate) use grow_grove::grow_grove;
 pub(crate) use kind_name::kind_name;
