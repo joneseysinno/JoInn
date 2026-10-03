@@ -1,13 +1,13 @@
 //! Render tables offscreen through a camera and read both targets back.
 
 use joinn_frame::Verdict;
-use joinn_visual::{Camera, Tables};
+use joinn_visual::{FitCamera, Tables};
 
 use crate::gpu::Gpu;
 use crate::renderer::{OFFSCREEN_FORMAT, Picture, Renderer};
 
 /// A fresh renderer, every table uploaded, one draw at the camera's viewport.
-pub fn render_offscreen(gpu: &Gpu, tables: &Tables, camera: &Camera) -> Verdict<Picture> {
+pub fn render_offscreen(gpu: &Gpu, tables: &Tables, camera: &FitCamera) -> Verdict<Picture> {
     let mut renderer = match Renderer::new(gpu, OFFSCREEN_FORMAT) {
         Verdict::Ok(r) => r,
         Verdict::Refused(r) => return Verdict::Refused(r),

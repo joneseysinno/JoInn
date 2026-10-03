@@ -15,7 +15,10 @@ mod scene;
 mod script;
 mod tables;
 
-pub use camera::{Camera, STANDARD_VIEWPORTS, fit, print_camera};
+pub use camera::{
+    Camera, ChartId, FOCUS_UNIT, FitCamera, LEVEL_MAX, LEVEL_MIN, NOTCH, PIXEL_UNIT,
+    STANDARD_VIEWPORTS, STEPS, Zoom, fit, print_camera, print_zoom,
+};
 pub use layout::{
     CELL_RADIUS, CELL_W, CellBox, GAP_X, GAP_Y, Layout, MARGIN, PITCH, PORT_INSET, PORT_RADIUS,
     PortDot, Rect, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS, WireSeg, layout, layout_contact,

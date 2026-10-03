@@ -5,13 +5,13 @@ use joinn_frame::Verdict;
 use super::class_at::class_at;
 use super::geom16::geom16;
 use super::{Class, Pick, PickImage, Shape};
-use crate::camera::Camera;
+use crate::camera::FitCamera;
 use crate::refuse::refuse;
 
 /// `shapes` are in draw order. Each pixel is walked in reverse draw order: the
 /// first shape that holds it inside owns it, the first that has it on its edge
 /// makes it an edge pixel, and a pixel every shape leaves outside is background.
-pub fn cpu_pick_reference(shapes: &[Shape], camera: &Camera) -> Verdict<PickImage> {
+pub fn cpu_pick_reference(shapes: &[Shape], camera: &FitCamera) -> Verdict<PickImage> {
     let mut geoms = Vec::with_capacity(shapes.len());
     for shape in shapes {
         match geom16(shape, camera) {

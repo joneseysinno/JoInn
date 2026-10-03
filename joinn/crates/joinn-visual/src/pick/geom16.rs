@@ -1,11 +1,11 @@
 //! Put a shape through the camera, in sixteenths of a pixel.
 
 use super::{Geom, Geom16, Shape};
-use crate::camera::Camera;
+use crate::camera::FitCamera;
 
 /// A layout point `u` is pixel `o + k·u`, so sixteenth `16·(o + k·u)`. A length
 /// `n` is `16·k·n`; a quarter-unit half-width `q` is `4·k·q`. `None` on overflow.
-pub(crate) fn geom16(shape: &Shape, camera: &Camera) -> Option<Geom16> {
+pub(crate) fn geom16(shape: &Shape, camera: &FitCamera) -> Option<Geom16> {
     let k = i128::from(camera.k);
     let at = |o: i64, u: i64| -> Option<i128> {
         k.checked_mul(i128::from(u))?

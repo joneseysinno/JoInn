@@ -24,7 +24,7 @@ use joinn_dna::{Body, Cell};
 use joinn_frame::Hash;
 use joinn_host::{Address, Signals};
 use joinn_live::BodyState;
-use joinn_visual::{Camera, Delta, Scene, Tables};
+use joinn_visual::{Delta, FitCamera, Scene, Tables};
 
 /// What Enter prints on an empty buffer: no intent, no run, no tick.
 pub const NOTHING_SENT: &str = "  (empty: nothing sent)";
@@ -45,7 +45,7 @@ pub struct Desktop {
     cells: BTreeMap<Hash, Cell>,
     scene: Scene,
     state: BodyState,
-    camera: Camera,
+    camera: FitCamera,
     intents: BTreeSet<Address>,
     selected: Option<Address>,
     buffer: String,
@@ -56,7 +56,7 @@ pub struct Desktop {
 
 impl Desktop {
     /// The camera the last fit wrote.
-    pub fn camera(&self) -> Camera {
+    pub fn camera(&self) -> FitCamera {
         self.camera
     }
 

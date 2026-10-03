@@ -19,14 +19,14 @@ pub(crate) use run::pick;
 
 use std::collections::BTreeSet;
 
-use joinn_visual::{Camera, PickImage, Scene};
+use joinn_visual::{FitCamera, PickImage, Scene};
 
 /// A measured corpus body at 1280×720 with its CPU pick, or why it isn't measured.
-pub(crate) type Subject = (String, Result<(Scene, Camera, PickImage), String>);
+pub(crate) type Subject = (String, Result<(Scene, FitCamera, PickImage), String>);
 
 /// A corpus contact's file name, its grown scene, and its CPU pick at each
 /// standard viewport.
-pub(crate) type ContactSubject = (String, Scene, Vec<(Camera, PickImage)>);
+pub(crate) type ContactSubject = (String, Scene, Vec<(FitCamera, PickImage)>);
 
 /// Disagreements kept for printing, per comparison.
 pub(crate) const KEPT: usize = 5;

@@ -1,11 +1,11 @@
 //! Fit a layout's surface to a viewport.
 
-use super::Camera;
+use super::FitCamera;
 use crate::layout::Layout;
 
 /// `k` is the largest multiple of 4 with `W·k ≤ width − 32` and `H·k ≤ height − 32`,
 /// and at least 4. The surface is centred, rounding down.
-pub fn fit(layout: &Layout, width: u32, height: u32) -> Camera {
+pub fn fit(layout: &Layout, width: u32, height: u32) -> FitCamera {
     let (w, h) = (layout.surface.w, layout.surface.h);
     let (vw, vh) = (i64::from(width), i64::from(height));
     let most = |room: i64, size: i64| {
@@ -17,7 +17,7 @@ pub fn fit(layout: &Layout, width: u32, height: u32) -> Camera {
     };
     let k = most(vw - 32, w).min(most(vh - 32, h));
     let k = (k.div_euclid(4) * 4).max(4);
-    Camera {
+    FitCamera {
         k,
         ox: (vw - w * k).div_euclid(2),
         oy: (vh - h * k).div_euclid(2),

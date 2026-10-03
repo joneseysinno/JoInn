@@ -1,7 +1,7 @@
 //! Draw offscreen and read back both targets.
 
 use joinn_frame::Verdict;
-use joinn_visual::Camera;
+use joinn_visual::FitCamera;
 
 use super::read_target::read_target;
 use super::{Picture, Renderer};
@@ -11,7 +11,7 @@ use crate::refuse::refuse;
 impl Renderer {
     /// One `frame` at the camera's viewport, then the color and ID targets read
     /// back row by row.
-    pub fn picture(&mut self, gpu: &Gpu, camera: &Camera) -> Verdict<Picture> {
+    pub fn picture(&mut self, gpu: &Gpu, camera: &FitCamera) -> Verdict<Picture> {
         if let Verdict::Refused(r) = self.frame(gpu, camera) {
             return Verdict::Refused(r);
         }

@@ -4,7 +4,7 @@ use std::time::Instant;
 
 use joinn_frame::Verdict;
 use joinn_gpu::{Gpu, Renderer};
-use joinn_visual::Camera;
+use joinn_visual::FitCamera;
 
 const WARMUP: usize = 5;
 const FRAMES: usize = 31;
@@ -16,7 +16,7 @@ const FRAMES: usize = 31;
 pub(super) fn frame_median(
     renderer: &mut Renderer,
     gpu: &Gpu,
-    camera: &Camera,
+    camera: &FitCamera,
 ) -> Result<String, String> {
     let mut micros: Vec<u128> = Vec::with_capacity(FRAMES);
     for i in 0..WARMUP + FRAMES {

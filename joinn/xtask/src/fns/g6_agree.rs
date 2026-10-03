@@ -3,13 +3,13 @@
 use std::collections::BTreeSet;
 
 use joinn_frame::Verdict;
-use joinn_visual::{Camera, Pick, PickImage, Scene};
+use joinn_visual::{FitCamera, Pick, PickImage, Scene};
 
 /// Disagreeing pixels and a short owner set are errors. Edge pixels are counted
 /// by being skipped: they are never judged.
 pub(crate) fn g6_agree(
     scene: &Scene,
-    camera: &Camera,
+    camera: &FitCamera,
     cpu: &PickImage,
     gpu: &[[u32; 4]],
     adapter: &str,

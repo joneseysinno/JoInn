@@ -6,7 +6,7 @@ use super::bounds16::bounds16;
 use super::class_at::class_at;
 use super::geom16::geom16;
 use super::{Class, Pick, PickImage, Shape};
-use crate::camera::Camera;
+use crate::camera::FitCamera;
 use crate::refuse::refuse;
 
 /// Pixels per bucket side.
@@ -15,7 +15,7 @@ const BUCKET: usize = 32;
 /// Each shape enters every bucket its bounding box, grown by one pixel, touches.
 /// A pixel walks its bucket's candidates in reverse draw order, exactly as
 /// `cpu_pick_reference` walks every shape.
-pub fn cpu_pick(shapes: &[Shape], camera: &Camera) -> Verdict<PickImage> {
+pub fn cpu_pick(shapes: &[Shape], camera: &FitCamera) -> Verdict<PickImage> {
     let (width, height) = (camera.width as usize, camera.height as usize);
     let (across, down) = (width.div_ceil(BUCKET), height.div_ceil(BUCKET));
     let mut buckets: Vec<Vec<usize>> = vec![Vec::new(); across * down];

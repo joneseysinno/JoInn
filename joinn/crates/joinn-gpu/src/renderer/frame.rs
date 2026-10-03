@@ -1,7 +1,7 @@
 //! One offscreen frame, finished on the GPU.
 
 use joinn_frame::Verdict;
-use joinn_visual::Camera;
+use joinn_visual::FitCamera;
 
 use super::target::target;
 use super::{OFFSCREEN_FORMAT, Renderer};
@@ -11,7 +11,7 @@ use crate::refuse::refuse;
 impl Renderer {
     /// Draws the tables as last uploaded into this renderer's own color target
     /// at the camera's viewport, and waits until the GPU has finished.
-    pub fn frame(&mut self, gpu: &Gpu, camera: &Camera) -> Verdict<()> {
+    pub fn frame(&mut self, gpu: &Gpu, camera: &FitCamera) -> Verdict<()> {
         if self.format != OFFSCREEN_FORMAT {
             return refuse(format!(
                 "frame: this renderer writes {:?}; acceptance is a renderer built for {OFFSCREEN_FORMAT:?}",

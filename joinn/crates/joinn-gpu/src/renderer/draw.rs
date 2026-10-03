@@ -1,7 +1,7 @@
 //! Draw the tables through a camera into a color view and the ID target.
 
 use joinn_frame::Verdict;
-use joinn_visual::{Camera, STYLE_BACKGROUND, STYLE_TABLE};
+use joinn_visual::{FitCamera, STYLE_BACKGROUND, STYLE_TABLE};
 
 use super::target::target;
 use super::tick_bytes::tick_bytes;
@@ -13,7 +13,12 @@ impl Renderer {
     /// Writes the tick uniform, then one pass: surfaces, cells, wires, ports,
     /// each by slot (§2.5's draw order). The color view must match the camera's
     /// viewport and this renderer's format. Submits and returns without waiting.
-    pub fn draw(&mut self, gpu: &Gpu, camera: &Camera, color: &wgpu::TextureView) -> Verdict<()> {
+    pub fn draw(
+        &mut self,
+        gpu: &Gpu,
+        camera: &FitCamera,
+        color: &wgpu::TextureView,
+    ) -> Verdict<()> {
         let tick = match tick_bytes(camera) {
             Verdict::Ok(t) => t,
             Verdict::Refused(r) => return Verdict::Refused(r),

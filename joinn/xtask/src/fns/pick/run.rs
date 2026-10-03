@@ -3,7 +3,9 @@
 
 use joinn_frame::Verdict;
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
-use joinn_visual::{Camera, PickImage, STANDARD_VIEWPORTS, Scene, cpu_pick, fit, shapes_of_tables};
+use joinn_visual::{
+    FitCamera, PickImage, STANDARD_VIEWPORTS, Scene, cpu_pick, fit, shapes_of_tables,
+};
 
 use super::compare::compare;
 use super::contact_lines::contact_lines;
@@ -27,14 +29,14 @@ pub(crate) fn pick() -> Result<(), String> {
         }
         None => return Err(format!("pick: {calculator_rel} is not in the corpus")),
     };
-    let cpu_of = |scene: &Scene, camera: &Camera| -> Result<PickImage, String> {
+    let cpu_of = |scene: &Scene, camera: &FitCamera| -> Result<PickImage, String> {
         match cpu_pick(&shapes_of_tables(scene.tables()), camera) {
             Verdict::Ok(p) => Ok(p),
             Verdict::Refused(r) => Err(format!("pick: {}", r.reason)),
         }
     };
     let owners_total = shapes_of_tables(calc.tables()).len();
-    let mut calc_cpu: Vec<(Camera, PickImage)> = Vec::new();
+    let mut calc_cpu: Vec<(FitCamera, PickImage)> = Vec::new();
     for (w, h) in STANDARD_VIEWPORTS {
         let camera = fit(calc.layout(), w, h);
         calc_cpu.push((camera, cpu_of(&calc, &camera)?));
@@ -58,7 +60,7 @@ pub(crate) fn pick() -> Result<(), String> {
     };
 
     let mut failures: Vec<String> = Vec::new();
-    let judge = |label: &str, scene: &Scene, camera: &Camera, t: &Tally, line: &str| {
+    let judge = |label: &str, scene: &Scene, camera: &FitCamera, t: &Tally, line: &str| {
         let mut out = Vec::new();
         let pixels = camera.width as usize * camera.height as usize;
         if t.agree + t.edge + t.disagree != pixels {
