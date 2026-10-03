@@ -3,6 +3,7 @@
 #![forbid(unsafe_code)]
 
 mod camera;
+mod charts;
 #[cfg(test)]
 mod dropped;
 #[cfg(test)]
@@ -18,6 +19,10 @@ mod tables;
 pub use camera::{
     Camera, ChartId, FOCUS_UNIT, FitCamera, LEVEL_MAX, LEVEL_MIN, NOTCH, PIXEL_UNIT,
     STANDARD_VIEWPORTS, STEPS, Zoom, fit, print_camera, print_zoom,
+};
+pub use charts::{
+    BODIES_MAX, BODY_MAX, Chart, ChartKind, GALAXIES_MAX, GALAXY_SIZE, SYSTEM_SIZE, SYSTEMS_MAX,
+    UNIVERSE_SIZE, UniverseLayout, layout_universe,
 };
 pub use layout::{
     CELL_RADIUS, CELL_W, CellBox, GAP_X, GAP_Y, Layout, MARGIN, PITCH, PORT_INSET, PORT_RADIUS,

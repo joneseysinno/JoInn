@@ -377,7 +377,7 @@ pub(crate) use hashes_path::hashes_path;
 pub(crate) use int_val::int_val;
 pub(crate) use join_refuse_catches_drop::join_refuse_catches_drop;
 pub(crate) use layers::layers;
-pub(crate) use layout::{corpus_bodies, layout_all, layout_text};
+pub(crate) use layout::{corpus_bodies, layout_all, layout_text, universe_layout_text};
 pub(crate) use line_has::line_has;
 pub(crate) use load_calculator::load_calculator;
 pub(crate) use load_phase5_bodies::load_phase5_bodies;

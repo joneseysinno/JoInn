@@ -38,8 +38,12 @@ fn main() -> ExitCode {
         "layout" => {
             let text = match args.next().as_deref() {
                 Some("--all") => fns::layout_all(),
+                Some("--universe") => fns::universe_layout_text(args.collect()),
                 Some(path) => fns::layout_text(path),
-                None => Err("usage: cargo xtask layout <path> | cargo xtask layout --all".into()),
+                None => Err(
+                    "usage: cargo xtask layout <path> | cargo xtask layout --all | cargo xtask layout --universe <path|grove> [--lens NAME]"
+                        .into(),
+                ),
             };
             match text {
                 Ok(text) => {
