@@ -624,3 +624,28 @@ Add rows R101–R104 with phase `7.2`, status `open`. Add rows V141–V147 with 
 ---
 
 *JoInn Phase 7.2 Implementation Plan, Draft 0.1 (3 Oct 2026). Opens after Phase 7.1's Stop C review. AJ decided on 3 Oct: the beam's stage 2 waits for the creator; roadmap order; Visual Host II split into 7.2 (zoom) and 7.3 (links); exact all the way; JoInn's own stroke font; a generated, seeded universe. Claude decided, open to AJ's veto before chunk A: two cuts, one truth; a size-driven fade instead of hysteresis; snapshots to 7.3; hyperedges counted, not drawn; values beside out-ports only. Cursor executes. Claude verifies at each stop. AJ runs the window at Stop C.*
+
+---
+
+## Amendment 1 · 3 Oct 2026 · Stop A review (Claude)
+
+Chunk A is accepted. One prediction in §2.4 was Claude's error, not Cursor's: the `sys_` links joined `sum@2` (ℤ 1) to `listen@0` of every bus, and `listen@0` is `in Text 1`. `check_link_types` refused it correctly. The fix changes the links, never a corpus body.
+
+**§2.4, the `sys_` row, now reads:**
+
+| Link | Tails | Head |
+|---|---|---|
+| `sys_<system>`, one per system (128) | `listen@1` (out ℤ 1) of every bus in the system, in alias order | `scale@1` (in ℤ 1) of the system's slot 3 |
+
+- `gal_` and `uni` are unchanged. Slot 3's `scale@0` stays the head of `gal_`; its `scale@1` is the head of `sys_`. Every port is still in at most one link.
+- Members are listed tails first in alias order, then the head.
+- Counts are unchanged: **137 links, 1182 members**. Touches are unchanged: **264** at level −4 (every `sys_` member is inside its own system node) and **1182** at the frame (every member is a distinct body).
+- §2.4's last line now holds: the grove is **admitted**. Its hash changes and is printed, not predicted.
+
+**Commit.** Chunk B starts with **P72-03a · The grove's `sys_` links (Amendment 1)**. Done when: `cargo xtask grove` prints `admitted` (paste the line), `seed_7_is_admitted_with_the_plan_s_counts` passes, the workspace suite has 0 failures, and `cargo xtask zoom` still prints §2.12's block byte for byte (paste the last line).
+
+**Interpretations accepted.** `fading` counts drawn bodies only. The capsule is named `lens_cut`. P72-01's single commit is fine.
+
+**Pushing.** Cursor's auto-review blocked `git push origin main`. From now on AJ's prompt carries the authorization. If a push is still blocked, it is a snag: record it, keep the commits local, and continue.
+
+**Stops in this run.** This phase now runs inside `docs/Plans/JoInn Run 7.2B-9.md`. Stops B and C still write their reports and push, but Cursor does not wait for Claude: it continues with the next chunk unless a tripwire in the run plan fires. §6.1's conditions for opening Phase 7.3 are replaced by the run plan's tripwires; Claude reviews every stop after the run. AJ's window check (§6.2) moves to the end of the run.
