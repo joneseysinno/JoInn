@@ -22,7 +22,7 @@ fn main() -> ExitCode {
         "forces" => fns::forces(),
         "contact" => fns::contact(),
         "grove" => fns::grove(args.collect()),
-        "zoom" => fns::zoom(),
+        "zoom" => fns::zoom(args.collect()),
         "roles" => match args.next() {
             Some(path) => match fns::roles_text(&path) {
                 Ok(text) => {
