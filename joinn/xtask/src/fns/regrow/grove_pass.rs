@@ -24,9 +24,14 @@ struct Rebase {
 /// Per step `grove step <i> <action>: rows <r>, <anchor>, tables equal
 /// regrow`; then per rebase and adapter `rebase <from> -> <to> <adapter>:
 /// color identical, ids identical`, the delta applied to the tables drawn
-/// before it. Tables that differ from a fresh grow at the step's anchor, a
-/// rebase that writes anything but chart rows, or a picture that moves fails.
-pub(crate) fn grove_pass(all: &[GpuAdapter], failures: &mut Vec<String>) -> Result<(), String> {
+/// before it. Tables that differ from a fresh grow at the step's anchor, a pan
+/// or zoom that writes a row, a rebase that writes anything but chart rows, or
+/// a picture that moves fails. The lines go to `lines`.
+pub(crate) fn grove_pass(
+    all: &[GpuAdapter],
+    lines: &mut Vec<String>,
+    failures: &mut Vec<String>,
+) -> Result<(), String> {
     let (_, layout) = grove_layout()?;
     let mut scene = match UniverseScene::grow(layout.clone(), ChartId(0)) {
         Verdict::Ok(s) => s,
@@ -57,12 +62,12 @@ pub(crate) fn grove_pass(all: &[GpuAdapter], failures: &mut Vec<String>) -> Resu
             },
         };
         let equal = *want == table_bytes(scene.tables());
-        println!(
+        lines.push(format!(
             "grove step {i} {action}: rows {}, {}, tables {} regrow",
             delta.rows.len(),
             name(to),
             if equal { "equal" } else { "differ from" }
-        );
+        ));
         if !equal {
             failures.push(format!(
                 "grove step {i} {action}: the tables differ from a fresh grow at {} (rule 58)",
@@ -72,6 +77,13 @@ pub(crate) fn grove_pass(all: &[GpuAdapter], failures: &mut Vec<String>) -> Resu
         if delta.rows.iter().any(|w| w.table != Table::Chart) {
             failures.push(format!(
                 "grove step {i} {action}: the rebase wrote a row that is not a chart row (V142)"
+            ));
+        }
+        if from == to && !delta.rows.is_empty() {
+            failures.push(format!(
+                "grove step {i} {action}: a pan or zoom at {} wrote {} row(s); acceptance is 0 (V142)",
+                name(to),
+                delta.rows.len()
             ));
         }
         if from != to {
@@ -113,7 +125,7 @@ pub(crate) fn grove_pass(all: &[GpuAdapter], failures: &mut Vec<String>) -> Resu
             let word = |same: bool| if same { "identical" } else { "differ" };
             let (color, ids) = (before.color == after.color, before.ids == after.ids);
             let line = format!("rebase {} -> {} {}", r.from, r.to, adapter.line());
-            println!("{line}: color {}, ids {}", word(color), word(ids));
+            lines.push(format!("{line}: color {}, ids {}", word(color), word(ids)));
             if !(color && ids) {
                 failures.push(format!("{line}: a rebase moved a pixel (V143)"));
             }

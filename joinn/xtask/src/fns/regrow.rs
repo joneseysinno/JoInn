@@ -10,6 +10,7 @@ mod run;
 
 pub(crate) use cleared_elsewhere::cleared_elsewhere;
 pub(crate) use event::event;
+pub(crate) use grove_pass::grove_pass;
 pub(crate) use run::regrow;
 
 use std::collections::BTreeMap;

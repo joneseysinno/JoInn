@@ -17,9 +17,12 @@ use super::measured::measured;
 use super::owner_name::owner_name;
 use super::plant::plant;
 use super::{Subject, Tally};
+use crate::fns::grove::grove_layout;
+use crate::fns::zoom::{fade_views, zoom_views};
 
 /// The calculator at the four standard viewports, then each corpus body at
-/// 1280×720, then the grove at plan 7.2 §2.12's views, on every adapter. Any
+/// 1280×720, then the grove at plan 7.2 §2.12's views and one fade-window view
+/// per threshold, on every adapter. Any
 /// disagreement, an owner that owns no pixel, a count that doesn't sum to the
 /// image, grove owners other than the cut's, or an unrefused plant fails.
 pub(crate) fn pick() -> Result<(), String> {
@@ -57,7 +60,12 @@ pub(crate) fn pick() -> Result<(), String> {
         bodies.push((rel, entry));
     }
     let contacts = contact_subjects()?;
-    let (grove_scenes, grove_views) = grove_subjects()?;
+    let (_, grove) = grove_layout()?;
+    let cameras = zoom_views(&grove)
+        .into_iter()
+        .chain(fade_views(&grove).into_iter().map(|(l, c, _)| (l, c)))
+        .collect();
+    let (grove_scenes, grove_views) = grove_subjects(&grove, cameras)?;
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -162,13 +170,17 @@ pub(crate) fn pick() -> Result<(), String> {
                 agreed += 1;
             }
         }
+        let mut lines = Vec::new();
         grove_lines(
             &gpu,
             adapter.line(),
-            &grove_scenes,
-            &grove_views,
+            (&grove_scenes, &grove_views),
+            &mut lines,
             &mut failures,
         )?;
+        for line in &lines {
+            println!("{line}");
+        }
         measured_count = if n == 0 {
             agreed
         } else {

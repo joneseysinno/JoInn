@@ -188,7 +188,11 @@ pub(crate) fn regrow() -> Result<(), String> {
         )?;
     }
 
-    grove_pass(&all, &mut failures)?;
+    let mut lines = Vec::new();
+    grove_pass(&all, &mut lines, &mut failures)?;
+    for line in &lines {
+        println!("{line}");
+    }
 
     let Some((scene, state)) = kept else {
         return Err("regrow: no adapter ran the script".into());

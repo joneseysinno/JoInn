@@ -5,6 +5,7 @@ use crate::fns::gate_five_one_items::gate_five_one_items;
 use crate::fns::gate_five_two_items::gate_five_two_items;
 use crate::fns::gate_four_items::gate_four_items;
 use crate::fns::gate_seven_items::gate_seven_items;
+use crate::fns::gate_seven_two_items::gate_seven_two_items;
 use crate::fns::gate_six_items::gate_six_items;
 use crate::fns::mutate::Mutation;
 use crate::fns::subject::Subject;
@@ -19,6 +20,7 @@ pub(crate) fn check_distinct_opposition() -> Result<(), String> {
         gate_five_two_items(),
         gate_six_items(),
         gate_seven_items(),
+        gate_seven_two_items(),
     ];
     let mut seen: Vec<(&str, &Mutation, &str)> = Vec::new();
     for table in tables {

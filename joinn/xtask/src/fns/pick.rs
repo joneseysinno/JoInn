@@ -15,6 +15,8 @@ mod run;
 
 pub(crate) use contact_lines::contact_lines;
 pub(crate) use contact_subjects::contact_subjects;
+pub(crate) use grove_lines::grove_lines;
+pub(crate) use grove_subjects::grove_subjects;
 pub(crate) use owner_name::owner_name;
 pub(crate) use port_slot::port_slot;
 pub(crate) use run::pick;

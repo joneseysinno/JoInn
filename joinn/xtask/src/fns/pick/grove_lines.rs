@@ -13,12 +13,12 @@ use super::compare::compare;
 /// pick; the whole image is judged too, and its owners are the GPU's owners of
 /// pixels the CPU doesn't call edge. A disagreement anywhere, a sampled pixel
 /// the brute-force walk names differently, or owners that differ from the
-/// cut's (V145) fails.
+/// cut's (V145) fails. The lines go to `lines`, the failures to `failures`.
 pub(crate) fn grove_lines(
     gpu: &Gpu,
     adapter: &str,
-    scenes: &[UniverseScene],
-    views: &[GroveView],
+    (scenes, views): (&[UniverseScene], &[GroveView]),
+    lines: &mut Vec<String>,
     failures: &mut Vec<String>,
 ) -> Result<(), String> {
     let mut renderers: Vec<Renderer> = Vec::new();
@@ -58,13 +58,13 @@ pub(crate) fn grove_lines(
             .filter(|(p, id)| **p != Pick::Edge && **id != [0; 4])
             .map(|(_, id)| *id)
             .collect();
-        println!(
+        lines.push(format!(
             "grove {}: sample {} agree {agree}, edge {edge}, disagree {disagree}, owners {} (cut allows {})",
             v.label,
             v.sample.len(),
             owners.len(),
             v.allows.len()
-        );
+        ));
         let line = format!("{adapter}: grove {}", v.label);
         if v.differ != 0 {
             failures.push(format!(

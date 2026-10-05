@@ -2,8 +2,8 @@
 
 use super::{
     fixture_line, gate_five_items, gate_five_one_items, gate_five_two_items, gate_one_items,
-    gate_seven_items, gate_six_items, gate_three_items, gate_two_items, gate_two_one_items,
-    gate_two_two_items, resolve_named,
+    gate_seven_items, gate_seven_two_items, gate_six_items, gate_three_items, gate_two_items,
+    gate_two_one_items, gate_two_two_items, resolve_named,
 };
 
 pub(crate) fn g3_artifacts() -> bool {
@@ -28,6 +28,7 @@ pub(crate) fn g3_artifacts() -> bool {
         gate_five_two_items(),
         gate_six_items(),
         gate_seven_items(),
+        gate_seven_two_items(),
     ];
     for table in non_legacy {
         for (i, item) in table.iter().enumerate() {

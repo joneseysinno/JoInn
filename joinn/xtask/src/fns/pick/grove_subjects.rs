@@ -1,22 +1,23 @@
 //! The grove's views and their CPU picks, made once for every adapter.
 
 use joinn_frame::Verdict;
-use joinn_visual::{Pick, UniverseScene, cpu_pick_at, cpu_pick_sample};
+use joinn_visual::{Camera, Pick, UniverseLayout, UniverseScene, cpu_pick_at, cpu_pick_sample};
 
 use super::{GROVE_SAMPLE, GroveView};
-use crate::fns::grove::{GROVE_SEED, grove_layout, splitmix64};
-use crate::fns::zoom::zoom_views;
+use crate::fns::grove::{GROVE_SEED, splitmix64};
 
-/// One scene per anchor the plan 7.2 2.12 views rebase onto, and per view the
-/// grid pick of the whole image, the sampled pixels (SplitMix64 from the
-/// grove's seed: x from the low half of a draw, y from the high half), how
-/// many of them the brute-force walk names differently, and the owners the
-/// cut's shapes give a pixel.
-pub(crate) fn grove_subjects() -> Result<(Vec<UniverseScene>, Vec<GroveView>), String> {
-    let (_, layout) = grove_layout()?;
+/// One scene per anchor the grove's views rebase onto, and per view the grid
+/// pick of the whole image, the sampled pixels (SplitMix64 from the grove's
+/// seed: x from the low half of a draw, y from the high half), how many of
+/// them the brute-force walk names differently, and the owners the cut's
+/// shapes give a pixel. An `at s` view is labelled by its zoom.
+pub(crate) fn grove_subjects(
+    layout: &UniverseLayout,
+    cameras: Vec<(String, Camera)>,
+) -> Result<(Vec<UniverseScene>, Vec<GroveView>), String> {
     let mut scenes: Vec<UniverseScene> = Vec::new();
     let mut views = Vec::new();
-    for (label, camera) in zoom_views(&layout) {
+    for (label, camera) in cameras {
         let scene = match scenes.iter().position(|s| s.anchor() == camera.anchor) {
             Some(i) => i,
             None => match UniverseScene::grow(layout.clone(), camera.anchor) {
@@ -66,10 +67,10 @@ pub(crate) fn grove_subjects() -> Result<(Vec<UniverseScene>, Vec<GroveView>), S
                 _ => None,
             })
             .collect();
-        let label = if label == "frame" {
-            label
-        } else {
+        let label = if label == "at s" {
             format!("s level {} step {}", camera.zoom.level, camera.zoom.step)
+        } else {
+            label
         };
         views.push(GroveView {
             label,

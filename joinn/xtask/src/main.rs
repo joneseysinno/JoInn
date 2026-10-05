@@ -75,7 +75,8 @@ fn main() -> ExitCode {
             Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[9]).and_then(fns::require_full),
             Some("6") => fns::gate_six(fns::PHASE_LABELS[10]).and_then(fns::require_full),
             Some("7") => fns::gate_seven(fns::PHASE_LABELS[11]).and_then(fns::require_full),
-            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2|6|7".into()),
+            Some("7.2") => fns::gate_seven_two(fns::PHASE_LABELS[12]).and_then(fns::require_full),
+            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2|6|7|7.2".into()),
         },
         "power" => fns::power(),
         "agree" => fns::agree(),
@@ -150,7 +151,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | gate 7 | gate 7.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }
@@ -294,6 +295,7 @@ mod tests {
             super::fns::gate_five_two_items(),
             super::fns::gate_six_items(),
             super::fns::gate_seven_items(),
+            super::fns::gate_seven_two_items(),
         ];
         let mut checks = Vec::new();
         let mut controls = Vec::new();

@@ -83,8 +83,8 @@ pub(crate) enum Mutation {
 mod tests {
     use crate::fns::{
         gate_five_items, gate_five_one_items, gate_five_two_items, gate_four_items, gate_one_items,
-        gate_seven_items, gate_six_items, gate_three_items, gate_two_items, gate_two_one_items,
-        gate_two_two_items,
+        gate_seven_items, gate_seven_two_items, gate_six_items, gate_three_items, gate_two_items,
+        gate_two_one_items, gate_two_two_items,
     };
 
     #[test]
@@ -102,6 +102,7 @@ mod tests {
             gate_five_one_items(),
             gate_five_two_items(),
             gate_six_items(),
+            gate_seven_two_items(),
         ];
         let artifacts: Vec<&str> = legacy
             .iter()
