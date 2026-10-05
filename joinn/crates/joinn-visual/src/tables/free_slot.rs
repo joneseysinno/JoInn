@@ -10,6 +10,9 @@ impl Tables {
             Table::Cell => self.cell.iter().map(|r| r.flags).collect(),
             Table::Port => self.port.iter().map(|r| r.flags).collect(),
             Table::Link => self.link.iter().map(|r| r.flags).collect(),
+            Table::Chart => self.chart.iter().map(|r| r.flags).collect(),
+            Table::Frame => self.frame.iter().map(|r| r.flags).collect(),
+            Table::Stroke => self.stroke.iter().map(|r| r.flags).collect(),
             Table::Incidence => Vec::new(),
         };
         let free = flags

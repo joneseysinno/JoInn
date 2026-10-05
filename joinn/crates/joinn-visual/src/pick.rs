@@ -30,6 +30,10 @@ use joinn_link::Address;
 pub const PORT_TAG: u32 = 0x1000_0000;
 /// Blue channel of a wire's ID: `WIRE_TAG | link slot`.
 pub const WIRE_TAG: u32 = 0x2000_0000;
+/// Blue channel of a system's frame or lens node: `SYSTEM_TAG | system index`.
+pub const SYSTEM_TAG: u32 = 0x3000_0000;
+/// Blue channel of a galaxy's frame or lens node: `GALAXY_TAG | galaxy index`.
+pub const GALAXY_TAG: u32 = 0x4000_0000;
 /// The tag bits of the blue channel.
 pub const TAG_MASK: u32 = 0xF000_0000;
 

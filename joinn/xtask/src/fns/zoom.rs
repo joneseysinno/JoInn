@@ -3,6 +3,8 @@
 
 mod cut_line;
 mod zoom_cmd;
+#[cfg(test)]
+mod zoom_script;
 mod zoom_text;
 mod zoom_views;
 

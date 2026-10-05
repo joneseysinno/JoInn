@@ -12,6 +12,9 @@ impl Tables {
             link: Vec::new(),
             incidence: Vec::new(),
             style: STYLE_TABLE.to_vec(),
+            chart: Vec::new(),
+            frame: Vec::new(),
+            stroke: Vec::new(),
         }
     }
 }

@@ -34,3 +34,35 @@ impl Scene {
         Verdict::Ok(scene)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use joinn_frame::Verdict;
+
+    use crate::fixtures::calculator;
+    use crate::scene::Scene;
+    use crate::tables::{CHART_BODY, ChartRow, LIVE};
+
+    #[test]
+    fn a_single_body_scene_has_one_chart_row_the_body_s_at_origin_0() {
+        let (body, cells) = calculator();
+        let scene = match Scene::grow("body", &body, &cells) {
+            Verdict::Ok(s) => s,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        assert_eq!(
+            scene.tables().chart,
+            [ChartRow {
+                origin_x: 0,
+                origin_y: 0,
+                parent: 0,
+                kind: CHART_BODY,
+                size: 40,
+                generation: 1,
+                flags: LIVE,
+            }]
+        );
+        assert!(scene.tables().frame.is_empty());
+        assert!(scene.tables().stroke.is_empty());
+    }
+}

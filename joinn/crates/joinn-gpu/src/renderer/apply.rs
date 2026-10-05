@@ -27,6 +27,7 @@ impl Renderer {
             Table::Port => 2,
             Table::Link => 3,
             Table::Incidence => 4,
+            Table::Chart | Table::Frame | Table::Stroke => usize::MAX,
         };
         let resized: Vec<usize> = (0..6).filter(|&i| lens[i] != self.rows[i]).collect();
         let whole = if resized.is_empty() {
@@ -38,7 +39,7 @@ impl Renderer {
         let mut rows: Vec<(Table, u32)> = delta
             .rows
             .iter()
-            .filter(|w| !resized.contains(&index(w.table)))
+            .filter(|w| index(w.table) != usize::MAX && !resized.contains(&index(w.table)))
             .map(|w| (w.table, w.slot))
             .collect();
         rows.sort();

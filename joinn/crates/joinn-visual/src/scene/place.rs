@@ -11,12 +11,14 @@ use super::Scene;
 use crate::layout::{CELL_RADIUS, Layout, PORT_RADIUS, SURFACE_RADIUS, WIRE_HALF_WIDTH_QUARTERS};
 use crate::refuse::refuse;
 use crate::tables::{
-    BodyRow, CellRow, Delta, LIVE, LinkRow, PortRow, Row, RowWrite, STYLE_CELL, Table, WIRE_KIND,
+    BodyRow, CHART_BODY, CellRow, ChartRow, Delta, LIVE, LinkRow, PortRow, Row, RowWrite,
+    STYLE_CELL, Table, WIRE_KIND,
 };
 
 impl Scene {
     /// Frees first: a freed row has `live` cleared and its generation incremented.
-    /// Then cells by name, each cell's ports by position, and wires in print
+    /// Then the body row and the scene's one chart row (the body's, at origin
+    /// 0, its own parent), then cells by name, each cell's ports by position, and wires in print
     /// order. A new row takes the lowest free slot and that slot's generation, or
     /// generation 1 on a slot never used. Freeing a link leaves its incidence
     /// entries alone; they are rewritten when the slot is reused.
@@ -144,6 +146,16 @@ impl Scene {
             flags: LIVE,
         };
         put_row!(0, Row::Body(body));
+        let chart = ChartRow {
+            origin_x: 0,
+            origin_y: 0,
+            parent: 0,
+            kind: CHART_BODY,
+            size: fit!(m.w.max(m.h)),
+            generation: self.tables.chart.first().map_or(1, |r| r.generation),
+            flags: LIVE,
+        };
+        put_row!(0, Row::Chart(chart));
 
         for c in &next.cells {
             let kept = self.cells.get(&c.instance).copied();

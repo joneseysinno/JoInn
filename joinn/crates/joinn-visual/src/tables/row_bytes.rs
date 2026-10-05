@@ -1,7 +1,8 @@
 //! One row's bytes: its fields little-endian in field order, padded with zeros.
 
 use super::{
-    BODY_ROW_BYTES, CELL_ROW_BYTES, INCIDENCE_BYTES, LINK_ROW_BYTES, PORT_ROW_BYTES, Table, Tables,
+    BODY_ROW_BYTES, CELL_ROW_BYTES, CHART_ROW_BYTES, FRAME_ROW_BYTES, INCIDENCE_BYTES,
+    LINK_ROW_BYTES, PORT_ROW_BYTES, STROKE_ROW_BYTES, Table, Tables,
 };
 
 /// `None` when the slot is past the end of the table.
@@ -75,6 +76,56 @@ pub fn row_bytes(tables: &Tables, table: Table, slot: u32) -> Option<Vec<u8>> {
             vec![tables.incidence.get(at)?.to_le_bytes()],
             INCIDENCE_BYTES,
         ),
+        Table::Chart => {
+            let r = tables.chart.get(at)?;
+            (
+                vec![
+                    r.origin_x.to_le_bytes(),
+                    r.origin_y.to_le_bytes(),
+                    r.parent.to_le_bytes(),
+                    r.kind.to_le_bytes(),
+                    r.size.to_le_bytes(),
+                    r.generation.to_le_bytes(),
+                    r.flags.to_le_bytes(),
+                ],
+                CHART_ROW_BYTES,
+            )
+        }
+        Table::Frame => {
+            let r = tables.frame.get(at)?;
+            (
+                vec![
+                    r.chart.to_le_bytes(),
+                    r.w.to_le_bytes(),
+                    r.h.to_le_bytes(),
+                    r.kind.to_le_bytes(),
+                    r.index.to_le_bytes(),
+                    r.generation.to_le_bytes(),
+                    r.flags.to_le_bytes(),
+                ],
+                FRAME_ROW_BYTES,
+            )
+        }
+        Table::Stroke => {
+            let r = tables.stroke.get(at)?;
+            (
+                vec![
+                    r.chart.to_le_bytes(),
+                    r.x0.to_le_bytes(),
+                    r.y0.to_le_bytes(),
+                    r.x1.to_le_bytes(),
+                    r.y1.to_le_bytes(),
+                    r.half_width.to_le_bytes(),
+                    r.owner[0].to_le_bytes(),
+                    r.owner[1].to_le_bytes(),
+                    r.owner[2].to_le_bytes(),
+                    r.style.to_le_bytes(),
+                    r.generation.to_le_bytes(),
+                    r.flags.to_le_bytes(),
+                ],
+                STROKE_ROW_BYTES,
+            )
+        }
     };
     let mut out: Vec<u8> = words.into_iter().flatten().collect();
     out.resize(size, 0);

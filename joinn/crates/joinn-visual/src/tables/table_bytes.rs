@@ -18,6 +18,9 @@ pub fn table_bytes(tables: &Tables) -> TableBytes {
         link: all(Table::Link, tables.link.len()),
         incidence: all(Table::Incidence, tables.incidence.len()),
         style: tables.style.iter().flat_map(|s| s.to_le_bytes()).collect(),
+        chart: all(Table::Chart, tables.chart.len()),
+        frame: all(Table::Frame, tables.frame.len()),
+        stroke: all(Table::Stroke, tables.stroke.len()),
     }
 }
 
@@ -25,7 +28,9 @@ pub fn table_bytes(tables: &Tables) -> TableBytes {
 mod tests {
     use super::table_bytes;
     use crate::tables::{
-        BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CellRow, LINK_ROW_BYTES, PORT_ROW_BYTES, Tables,
+        BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CHART_ROW_BYTES, CellRow, ChartRow,
+        FRAME_ROW_BYTES, FrameRow, LINK_ROW_BYTES, PORT_ROW_BYTES, STROKE_ROW_BYTES, StrokeRow,
+        Tables,
     };
 
     #[test]
@@ -69,6 +74,55 @@ mod tests {
             PORT_ROW_BYTES,
             LINK_ROW_BYTES,
         ] {
+            assert_eq!(size % 16, 0);
+        }
+    }
+
+    #[test]
+    fn chart_frame_and_stroke_rows_are_little_endian_in_field_order() {
+        let mut t = Tables::empty();
+        t.chart.push(ChartRow {
+            origin_x: -88,
+            origin_y: 112,
+            parent: 3073,
+            kind: 3,
+            size: 40,
+            generation: 1,
+            flags: 1,
+        });
+        t.frame.push(FrameRow {
+            chart: 3072,
+            w: 304,
+            h: 152,
+            kind: 2,
+            index: 5,
+            generation: 1,
+            flags: 1,
+        });
+        t.stroke.push(StrokeRow {
+            chart: 0,
+            x0: 400,
+            y0: 76,
+            x1: 412,
+            y1: 92,
+            half_width: 1,
+            owner: [1, 2, 0x1000_0002],
+            style: 10,
+            generation: 1,
+            flags: 1,
+        });
+        let b = table_bytes(&t);
+        assert_eq!(b.chart.len(), CHART_ROW_BYTES);
+        assert_eq!(&b.chart[..8], &[0xA8, 0xFF, 0xFF, 0xFF, 112, 0, 0, 0]);
+        assert_eq!(&b.chart[8..12], &3073u32.to_le_bytes());
+        assert_eq!(&b.chart[28..], &[0; 4]);
+        assert_eq!(b.frame.len(), FRAME_ROW_BYTES);
+        assert_eq!(&b.frame[16..20], &[5, 0, 0, 0]);
+        assert_eq!(b.stroke.len(), STROKE_ROW_BYTES);
+        assert_eq!(&b.stroke[32..36], &0x1000_0002u32.to_le_bytes());
+        assert_eq!(&b.stroke[36..48], &[10, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]);
+        assert_eq!(b.style.len(), 11 * 4, "styles 8, 9 and 10 are new");
+        for size in [CHART_ROW_BYTES, FRAME_ROW_BYTES, STROKE_ROW_BYTES] {
             assert_eq!(size % 16, 0);
         }
     }

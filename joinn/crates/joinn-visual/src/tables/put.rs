@@ -25,6 +25,9 @@ impl Tables {
             Row::Port(r) => (Table::Port, set!(self.port, r)),
             Row::Link(r) => (Table::Link, set!(self.link, r)),
             Row::Incidence(r) => (Table::Incidence, set!(self.incidence, r)),
+            Row::Chart(r) => (Table::Chart, set!(self.chart, r)),
+            Row::Frame(r) => (Table::Frame, set!(self.frame, r)),
+            Row::Stroke(r) => (Table::Stroke, set!(self.stroke, r)),
         };
         changed.then_some(table)
     }
