@@ -2,7 +2,7 @@
 
 This folder is the **running code** for JoInn: libraries (crates), the calculator demo, golden examples (`corpus/`), and build checks (`xtask`).
 
-JoInn is a **truth-first** platform for composing apps from small blocks called **cells**. The terminal calculator still refuses bad input and computes `2 + 3`. A desktop window now draws that one body: the picture is the tables, and every pixel names its owner. It does not draw text, a second body, or a zoom.
+JoInn is a **truth-first** platform for composing apps from small blocks called **cells**. The terminal calculator still refuses bad input and computes `2 + 3`. A desktop window draws a body or a whole universe: the picture is the tables, and every pixel names its owner. A universe zooms exactly from all its galaxies down to one letter of a cell's label (Phase 7.2). Links between bodies are not drawn yet, and there are no snapshots.
 
 The calculator now exists in two forms. `corpus/phase2/calculator.body` joins its cells with wires. `corpus/phase7/calculator.contact` is a **contact body**: its cells touch, and sum is a **force** (combine) with no wire inside. Both run the same transcript, give the same descriptions, and draw from the same kind of tables.
 
@@ -30,9 +30,15 @@ The contact form prints the same lines:
 cargo run -p joinn-cli -- run corpus/phase7/calculator.contact
 ```
 
+Open a universe in the window and zoom it (wheel or `+`/`-`, drag or arrows to pan, `F` to frame); it prints one `tick:` line per change and nothing when idle:
+
+```text
+cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe
+```
+
 ## Gates
 
-`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), gate 5.2 (a control sees a parsed value and flips on a mutant that still parses), gate 6 (one body drawn from its tables: every pixel has one owner and both pickers name it, the picture shows the row the engine computed, and a stale click is refused), and gate 7 (the contact calculator and the wired one are one truth, combine is order-blind and fits what it reaches, and the contact body is drawn as cells in contact with no link). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
+`cargo xtask gate all` runs the proof in order: phase 0 (the corpus verifies), gate 1 (admission), gate 2 (the calculator, opposed), gate 2.1 (seals), gate 2.2 (a reference allele is a body), gate 3 (two hosts, one body), gate 4 (the assay reads a known sample, a promise names its partner, a body that is two things is named, and a declaration refuses where an assay only reports), gate 5 (a typed link between two bodies), gate 5.1 (a value crosses), gate 5.2 (a control sees a parsed value and flips on a mutant that still parses), gate 6 (one body drawn from its tables: every pixel has one owner and both pickers name it, the picture shows the row the engine computed, and a stale click is refused), gate 7 (the contact calculator and the wired one are one truth, combine is order-blind and fits what it reaches, and the contact body is drawn as cells in contact with no link), and gate 7.2 (the zoom is exact and a rebase moves nothing, bands follow size and two pickers name every pixel, and a folded system is one node that a link touches once). Gate 4 was built after gate 5.2 and runs in its phase-number place. The lock records the score each gate returned. This file does not quote one.
 
 ## The assay
 
@@ -55,6 +61,11 @@ cargo run -p joinn-cli -- run corpus/phase7/calculator.contact
 | `cargo xtask forces` | The force register is order-blind and opposed; its plants are refused |
 | `cargo xtask contact` | Every `.contact` in the corpus is one truth with its wired twin |
 | `cargo xtask roles <path>` | The roles of a contact body's cells: protect, carry, store, respond |
+| `cargo xtask grove` | Grow the generated test universe (seed 7) and print its counts; never stored in the corpus |
+| `cargo xtask layout --universe <path\|grove>` | Every chart of a universe's lens on the fixed grid |
+| `cargo xtask zoom` | What the cut draws at each predicted view of the grove, and its touches (`--measure` times the cut) |
+| `cargo xtask pick` | The GPU's ID picture against the exact CPU pick, on every adapter |
+| `cargo xtask regrow` | Delta-built tables equal regrown ones, and a rebase moves no pixel |
 | `cargo xtask perf` | Performance measurements |
 
 Edition 2024, workspace resolver 3, `module.rs` layout (no `mod.rs`).

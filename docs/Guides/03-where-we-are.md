@@ -7,7 +7,7 @@ JoInn is being built in three big stages. Think of them as ladders: each one let
 | Stage | Nickname | What it means in plain words | Status (roughly) |
 |-------|----------|------------------------------|------------------|
 | **B0** | True but unseen | The universe is correct and checkable, and you can still meet it as text | **The truth core holds** |
-| **B1** | Seen and touched | Same universe drawn and picked; zoom comes next | **Started — one body is on screen, wired or as cells in contact** |
+| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly; links are drawn next** |
 | **B2** | Self-editing | You build JoInn *inside* JoInn; the visual creator and the text form match byte-for-byte | Future |
 
 The rule of the road: **pixels come after truth.** A gorgeous editor with a weak core would force the core to bend. So Bootstrap 0 comes first on purpose.
@@ -25,6 +25,23 @@ You can, from the `joinn` code folder:
 - Open one body in a window (`cargo run -p joinn-shell-desktop -- corpus/phase2/calculator.body`), described below
 - Run and open the calculator as **cells in contact** (`joinn run corpus/phase7/calculator.contact`, and the same path in the window), described below
 - Work five steel beams exactly (`cargo run --manifest-path spikes/s8-beam/Cargo.toml`), described below
+- Open a universe and zoom it (`cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe`), and print the generated test universe's counts (`cargo xtask grove`) and what each zoom draws (`cargo xtask zoom`), described below
+
+## The universe zooms (Phase 7.2)
+
+The window now opens a whole universe, not only one body. Galaxies hold systems, systems hold bodies, and each sits on a fixed grid, in its own coordinate system (a **chart**). You zoom with the wheel or `+` and `-`, pan by dragging or with the arrow keys, and `F` frames everything again. From the whole universe down to a single letter of a cell's label is a range of 8192 times (zoom level −4 to 9).
+
+What makes it trustworthy:
+
+- **An exact camera.** The scale is a power of two times a whole step out of 256, the point held still is kept in 2^-16 of a unit, and the pixel it sits on is a whole pixel. Eight notches in and eight out about the same pixel return the identical camera and the identical picture.
+- **Size decides how a body is drawn.** Below 4 px a body is a dot; then its surface; from 32 px its cells and surface ports; from 240 px everything, with text. Near each threshold the two looks crossfade, so you can see the dot become the body. A system too small to open is drawn as one node.
+- **Two cuts, one truth.** The CPU decides what is drawn under each camera (the **cut**); the GPU makes the same whole-number decisions for each thing it draws. On every adapter, the owners in the GPU's picture are exactly the ones the cut allows, and every pixel away from an edge has the owner the exact CPU pick names.
+- **Moving writes nothing.** A pan or zoom changes only the camera; no table row is written. When the centre moves into another chart, a **rebase** rewrites chart rows only, and not one pixel changes.
+- **JoInn's own letters.** Titles, cell labels and values are drawn in a 48-glyph stroke font, the same on every machine.
+
+It is measured on **the grove**, a universe JoInn generates from seed 7: 8 galaxies, 128 systems, 3072 bodies and 137 links. The CPU cut takes 19–66 µs per view. A link already knows which drawn bodies or nodes it touches (264 at the farthest zoom, 1182 when framed), but links are not drawn yet.
+
+Not built yet: links drawn as hyperedges (region, hub, bundle, spine) and rerouting them, and snapshots. Those are Phase 7.3. Findings: [phase-7.2-zoom.md](../Findings/phase-7.2-zoom.md).
 
 ## The beam, worked exactly (Phase 7.1, stage 1)
 
@@ -55,13 +72,13 @@ What makes that safe:
 
 In the window, the contact calculator is three cells touching: `cli_a` above `cli_b`, and `sum` beside both. There is no wire to draw, and a force owns no pixel. `sum` is drawn dim (*latent*) until it holds a value, and takes its normal color when the second number arrives.
 
-Not built yet: multiplication (R83), writing *separate* as a force, many members and chains of forces beyond one test fixture (R84), one port feeding two forces (R85), and wires between bodies as systems. Text on screen, zoom and charts are Phase 7.2. The steel beam (Phase 7.1) is above.
+Not built yet: multiplication (R83), writing *separate* as a force, many members and chains of forces beyond one test fixture (R84), one port feeding two forces (R85), and wires between bodies as systems. Text on screen, zoom and charts came in Phase 7.2, above. The steel beam (Phase 7.1) is above too.
 
 ## The picture (Phase 6)
 
 JoInn draws one body. The calculator appears as a surface holding three cells, their ports, and two wires. The picture is the tables: a pixel's color is the style of the row that owns it, so a refused cell and a filled port look different because those rows changed. A click prints that owner (`body.sum`, `body.cli_a@0`, `body wire cli_a@1 -> sum@0`). The GPU's ID for the same pixel names the same owner. Typing a number into an in-port on the surface runs the body, and the window changes because the run wrote rows.
 
-The window draws no text, no second body, and no zoom. Glyphs, images, and snapshots wait for Phase 7.2. A GPU that cannot read storage in the vertex stage is still an open question (R72).
+Phase 6's window drew no text, no second body, and no zoom; Phase 7.2 added all three (above). Images and snapshots are still ahead. A GPU that cannot read storage in the vertex stage is still an open question (R72).
 
 ## The assay (Phase 4)
 
@@ -79,7 +96,7 @@ C1 shows a missing promise, not a wrong number. A narrower check (does a round-t
 
 Under the hood, the project has already built the early “truth core”: frames and values, DNA plans, the gate, the floor of sealed basics, the live runner, and the start of **hosts** (a host is proved by there being two — CLI and a test host).
 
-The window is one body, not an editor. Building any app by clicking, zooming, and reading the screen aloud is still ahead in Bootstrap 1 and 2.
+The window shows a universe and zooms it, but it is not an editor. Building any app by clicking, zooming, and reading the screen aloud is still ahead in Bootstrap 1 and 2.
 
 ## What “Phase” language means
 
@@ -97,7 +114,7 @@ If an agent mentions “Phase 3,” it means: proving hosts properly (descriptio
 
 Because JoInn’s claim is **truth first**. The calculator transcript — including the refusal — is evidence that the system can say “no” and still compute when the input is honest.
 
-The window is that view: one body, drawn from the same tables the engine mutates.
+The window is that view: a universe, drawn from the same tables the engine mutates.
 
 ## Next
 

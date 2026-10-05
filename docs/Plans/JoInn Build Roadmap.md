@@ -410,6 +410,15 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 > (hyperedges drawn as region, hub, bundle and spine, rerouting, snapshots).
 > Every later phase keeps its number.
 
+> **5 Oct 2026 · Phase 7.2 is built.** The grove (seed 7: 8 galaxies, 128 systems,
+> 3072 bodies, 137 links) zooms from level −4 to 9 through an exact camera. Bands,
+> owners, the cut and the rebase are whole-number decisions, the same on CPU and
+> GPU; on every adapter the GPU's owners are exactly the cut's, a pan or zoom
+> writes no row, and a rebase moves no pixel. The CPU cut runs per view, not per
+> tick, in 19–66 µs, so the adversary below did not happen at this size. Gate 7.2
+> 3/3. Findings: [phase-7.2-zoom.md](../Findings/phase-7.2-zoom.md). Next is
+> Phase 7.3, the links.
+
 #### Phase 7.2 · Visual Host II: charts, zoom, bands
 
 **Goal.** The fractal, actually working: zoom from universe to a digit, and hyperedges drawn as hyperedges.

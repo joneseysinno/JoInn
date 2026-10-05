@@ -5,15 +5,18 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | Term | Plain meaning |
 |------|----------------|
 | **Allele** | One candidate way to *implement* a cell’s plan. The plan’s identity is the laws; the allele is a payload that must pass those laws. |
+| **Anchor** | The chart the camera's focus is measured in: the deepest chart under the window's centre pixel. Positions are kept relative to it, so the numbers stay small at any zoom. |
 | **Assay** | A measurement of a body or universe's shape without running it: the loops a value can travel, and which of them something closes. It reports; it never refuses on its own. |
+| **Band** | How a body is drawn, chosen by its size on screen: a dot below 4 px, a glyph (the surface) up to 32, a summary (cells and surface ports) up to 240, and full (everything, with text) above. Every band decision is a whole-number test, the same on the CPU and the GPU. |
 | **Blueprint** | A shareable cell design others can reuse — meant to be seen, not only read. |
 | **Body** | A cluster of cells that belong together, with one shared genome. The main “container” for a small machine or app piece. |
 | **Bootstrap** | One of the three big build stages (true-but-unseen → seen-and-touched → self-editing). |
 | **Bridge** | A law that crosses from the placement side to the source side and back, such as moment to curvature through E·I. It cannot be derived, so it is testimony, read from a pinned edition. Balance and moment need none; deflection needs one. |
 | **Bridge edition** | The small pinned file a bridge is read from, naming its source: the beam spike's is `bridges.edition` (AISC Manual 16th ed.: A992 E 29000 ksi, W12x26 Ix 204 in⁴). Every read of it is counted. |
-| **Camera** | How a layout fits a window: an integer scale, an origin, and a width and height. Phase 6 does not zoom or pan. Changing the camera writes the tick and no table row. |
+| **Camera** | How layout units become pixels. Since Phase 7.2 it is exact: a zoom level and step, a focus, a pin, and the window's size. A pan or zoom writes the tick and no table row. Phase 6's integer-scale camera converts to it exactly. |
 | **Cell** | The smallest visual building block. Something you can show and still use. |
 | **Chaos** | Only the scientific sense: behavior fully fixed by its laws and its starting state, which looks random only to someone who doesn't know that state exactly. Never "disorder" or "chance". JoInn has no randomness. |
+| **Chart** | A coordinate system with a whole-unit origin in its parent: the universe, then galaxies, systems and bodies. A body's cells, ports and text live in its chart. |
 | **Coding region** | The part of DNA that is hashed and gated: frame, contract, laws, witnesses — the cell’s true identity. |
 | **Combine** | The one force Phase 7 writes: put the values of its members together with the frame's answer (on integers, the sum). Its answer must not depend on member order. |
 | **Contact body** | A body whose cells touch, with no wires inside; its operations are forces. Written as a `.contact` file, which cannot express a wire. |
@@ -21,31 +24,39 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Declaration** | A sentence in a body's or universe's hashed part that the assay must satisfy. Today the only one is `assert H₁ = 0` (“no loop is open”); if it fails, the body or universe is refused at admission. |
 | **Delta** | The table rows one run changed. The picture updates by writing those rows. |
 | **Crate** | A Rust library or program package in the repo (for example `joinn-gate`). |
+| **Crossfade** | Near a band threshold T (from T up to 1.2·T) the lower band fades out while the higher fades in, so the dot you zoom into is seen to become the body. |
+| **Cut (the)** | What the CPU decides is drawn under one camera: which charts are visible, which galaxies and systems are open, and each body's band. The GPU makes the same whole-number decisions for each thing it draws, and the owners in its picture must be exactly the cut's. |
 | **DNA** | The building plan for a cell: what it is and what laws it obeys. |
 | **Edge pixel** | A pixel within 1/16 of a pixel of a shape's boundary. It is counted and never judged: the two pickers need not agree there. |
 | **Elevation plane** | The flat picture a beam lives in: x along the span, y up. A moment lives on the plane itself (x ∧ y), which is why a beam is not only a line. |
 | **Filling** | What closes a loop in the assay: a frame (the value keeps its kind all the way round), or one law that promises to undo a conversion, named by body, instance and law. Nothing else closes a loop. |
 | **Floor** | The sealed set of basic operations JoInn is written in. Admitted only if irreducible and opposed. Never “fixed” by renaming its size. |
+| **Focus** | The point of the anchor chart the camera holds still, kept in 2^-16 layout units. Zooming never moves it. Zooming about a different pixel moves it once (a refocus), the camera's only rounding. |
 | **Force** | An operation applied to a body's cells from outside, such as combine. It names its members (cell ports) and a response. A force owns no pixel. |
 | **Force register** | The short table of which forces a frame answers, and with which cell: combine on integers answers with the sum cell. A row is admitted only if the answer is order-blind and its opposite (a turn of the response) is on file. |
 | **Frame** | The context in which truth is judged (example: integers, or a text frame). |
 | **Gate** | The checker that admits good growth and refuses bad growth. |
 | **Genome** | The full set of DNA shared by the cells of one body. |
+| **Grove (the)** | JoInn's generated test universe: seed 7 gives 8 galaxies, 128 systems, 3072 bodies and 137 links, bound from corpus bodies by hash. It is grown wherever it is needed and never stored in the corpus or the docs. |
 | **Island** | In the assay, one connected piece of a universe once the outside world is removed. |
 | **Host** | Whatever presents the universe to the outside (terminal, test harness, desktop window). A host is proved by there being more than one. |
 | **ID target** | The second picture: one integer per pixel naming its owner. A click reads one texel of it. |
 | **Latent** | A response that holds no value yet. It is drawn dim, and takes its normal color once a value arrives. |
 | **Layout unit** | The integer length the tables use for positions. Pixels are what the camera makes of them. |
+| **Lens node** | A system or galaxy too small on screen to open (below the summary band), drawn as one node. Its bodies are not walked. |
 | **Live engine** | The runner that executes a body now, with an explicit step budget. |
 | **Lower** | The engine's own derivation of the deliveries a contact body needs to run. Its only inputs are the contact, its cells and the force register. It is never written to a file, described, or drawn. |
 | **Membrane** | The boundary of a cell — the only place it meets anything outside itself. A body has no membrane; its outline is its *surface*. |
 | **Order-blind** | A result that doesn't depend on the order its members were combined in, such as a sum. The order still happened, and JoInn records it. (Earlier documents said *order-free*.) |
 | **Order-bound** | A result that depends on order completely, so the order is part of its truth. |
 | **Order-signed** | A result whose order changes at most its sign: lever arm ∧ force is a moment, and force ∧ lever arm is the same moment with the opposite sign. |
-| **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve. Glyph, image, and snapshot are Phase 7.2. |
-| **Owner** | The one thing a pixel belongs to: the background, the surface, a cell, a port, or a wire. In a contact body there is no wire, and no force owns a pixel. |
+| **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve; Phase 7.2 adds frames, the dot and strokes. Images and snapshots are later. |
+| **Owner** | The one thing a pixel belongs to: the background, a galaxy or system frame, the surface, a cell, a port, or a wire. In a contact body there is no wire, and no force owns a pixel. |
+| **Owner band** | The band that owns a body's pixels in the ID picture: the higher band once 10·s ≥ 11·T, the middle of its fade window. The other band only fades, in colour. |
 | **Pair** | The two partners across one mirror, such as force and displacement. Multiplied, they give energy. Part of a quantity's tag. |
+| **Pin** | The whole pixel the focus sits on. Panning moves the pin; zooming does not. |
 | **Primitive** | A sealed basic piece below ordinary cells. Creators compose with them; they don’t invent new floor primitives casually. |
+| **Rebase** | Moving the camera's anchor to the chart now under the centre pixel. It writes chart rows only and moves no pixel. |
 | **Refinement** | Cutting a model into finer pieces (the beam into 1 ft lines) and checking that no answer at a shared point moves. An exact derivation cannot be changed by it; a sloppy one is caught. |
 | **Region** | In the assay, one connected piece of a body's inside (cells joined by wires). A body with two regions is two separate things sharing a container. |
 | **Refusal / Verdict** | A normal value meaning “no” (`Refused`), not a crash. Host IO errors are different. |
@@ -57,11 +68,15 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Surface port** | One port on a body's surface. In a contact body: every genome cell port that is not a force's member, and each response's out-port. The calculator's are `cli_a@0`, `cli_b@0` and `sum@2`. |
 | **Seal** | A locked pair: a reference body and checks (including a counterfeit that must be caught). |
 | **Side** | Which side of the mirror a quantity is on: placement (how things sit and move: lengths, deflection, rotation) or source (what pushes: loads, reactions, moment). Energy is their shared product. Part of a quantity's tag. |
+| **Step** | The fraction of a zoom level: k = 2^level·(256 + step)/256, with step 0 to 255. One notch is 32 steps, so eight notches double k. |
+| **Stroke font** | JoInn's own letters: 48 glyphs drawn as straight strokes on a 6 × 8 grid (digits, a–z and a few signs), used for titles, cell labels and values. A character outside the set is refused. |
 | **Tick** | One redraw. It carries the camera. An idle scene has nothing to draw, so the window waits. |
+| **Touch** | A link reaching a cut node: a member's body if it is drawn, otherwise the lens node that holds it. Each node is touched at most once per link. Touches are data; drawing links is Phase 7.3. |
 | **Where** | The piece a quantity lives on, with its orientation: a point, a line, or the plane, and which way it faces. Its dimension, as opposed to its unit. Part of a quantity's tag. |
 | **Witness** | A recorded true result that future versions must still satisfy — testimony the gate can replay. |
 | **Witness library** | A library that states formulas JoInn derives itself, such as AISC Table 3-23 or Roark Table 8.1. Compared exactly and never used to derive; a disagreement is a truth violation. |
 | **xtask** | Helper commands that measure and enforce project rules (`floor`, `agree`, `gate`, and so on). |
+| **Zoom level** | The whole doublings of the camera's scale, from −4 to 9; any other level is refused. With the step it gives k, the exact number of pixels per layout unit. |
 
 ## Quick analogies
 
@@ -79,3 +94,5 @@ Back to the start: [README.md](README.md).
 > **29 Sep 2026.** The theory moved ahead of the code: see *Theory/JoInn Cells, Bodies and Forces.md* (Part V). In the theory, a body has no wires inside (its cells touch), operations like sum are **forces** from outside (combine / separate, carry / release), and wires belong to systems.
 >
 > **30 Sep 2026.** Phase 7 builds the first of it: contact bodies with one force, combine. The wired form still runs beside it.
+>
+> **5 Oct 2026.** Phase 7.2 adds the zoom: charts, the exact camera, bands, the cut, lens nodes, touches and the stroke font, measured on the grove.

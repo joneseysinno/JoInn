@@ -130,10 +130,10 @@ line must name a file under `docs/Findings/`.
 | R102 | Hysteresis or fade | 7.2 | open | |
 | R103 | Text as cells | 7.2 | open | |
 | R104 | Layout of a lens | 7.2 | open | |
-| V141 | No float decides anything: bands, owners, the cut and the rebase are integer decisions, the same on CPU and GPU | 7.2 | open | |
-| V142 | A pan or zoom writes the tick uniform and no row; a rebase writes chart rows only | 7.2 | open | |
-| V143 | A rebase moves nothing: color and ID bytes identical before and after | 7.2 | open | |
-| V144 | Zoom about one pixel is reversible: n notches in and n out return the identical camera and bytes | 7.2 | open | |
-| V145 | Two cuts, one truth: the owners in the GPU image are exactly those the CPU cut allows | 7.2 | open | |
-| V146 | A link touches each cut node at most once | 7.2 | open | |
-| V147 | An idle window draws nothing, at any zoom (V12 extended) | 7.2 | open | |
+| V141 | No float decides anything: bands, owners, the cut and the rebase are integer decisions, the same on CPU and GPU | 7.2 | holds | gate 7.2 item 2: disagree 0 at every §2.12 view and one fade-window view per threshold, on all three adapters; the shader's tests are `u32`/`i32`. No grove body sits at `10·s = 11·T` exactly, so a `>` for `≥` plant in the shader is not caught ([findings](phase-7.2-zoom.md)) |
+| V142 | A pan or zoom writes the tick uniform and no row; a rebase writes chart rows only | 7.2 | holds | gate 7.2 item 1: 174 script steps, rows 0 except the rebase; the plant that writes chart rows on a plain zoom fails item 1 (`a pan or zoom at b0000 wrote 3209 row(s); acceptance is 0 (V142)`) |
+| V143 | A rebase moves nothing: color and ID bytes identical before and after | 7.2 | holds | `rebase universe -> b0000 …: color identical, ids identical` on all three adapters (P72-10, gate 7.2 item 1) |
+| V144 | Zoom about one pixel is reversible: n notches in and n out return the identical camera and bytes | 7.2 | holds | gate 7.2 item 1: 8 in and 8 out about (700, 300) return the camera, and the bytes on every adapter |
+| V145 | Two cuts, one truth: the owners in the GPU image are exactly those the CPU cut allows | 7.2 | holds | `cargo xtask pick`: `owners <n> (cut allows <n>)` equal at every grove view on every adapter; gate 7.2 item 2 |
+| V146 | A link touches each cut node at most once | 7.2 | holds | `cargo xtask zoom`: touches 264 at level −4 step 0 and 1182 framed, each node at most once per link; gate 7.2 item 3 |
+| V147 | An idle window draws nothing, at any zoom (V12 extended) | 7.2 | holds | the shell session test: after the script `take_tick` is `None` twice. The window itself was not observed from Cursor (rule 67); AJ's window check is the window evidence |
