@@ -15,7 +15,7 @@ impl Renderer {
         scoped(gpu, "building the renderer", || {
             let device = gpu.device();
             let layouts = layouts(device, TICK_BYTES, ROW_SIZES);
-            let (shape, curve) = pipelines(device, &layouts, format);
+            let pipelines = pipelines(device, &layouts, format);
             let uniform = |label: &str, size: usize| {
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some(label),
@@ -26,17 +26,18 @@ impl Renderer {
             };
             let tick = uniform("tick", TICK_BYTES);
             let pass = uniform("pass", PASS_BYTES);
-            let buffers = ROW_SIZES.map(|row| table_buffer(device, gpu.queue(), &[], row));
+            let buffers: [wgpu::Buffer; 9] =
+                std::array::from_fn(|i| table_buffer(device, gpu.queue(), i, &[], ROW_SIZES[i]));
             let groups = bind_groups(device, &layouts, &tick, &buffers, &pass);
             Renderer {
                 format,
                 layouts,
-                shape,
-                curve,
+                pipelines,
                 tick,
                 pass,
                 buffers,
-                rows: [0; 6],
+                rows: [0; 9],
+                extent: 0,
                 groups,
                 ids: None,
                 color: None,

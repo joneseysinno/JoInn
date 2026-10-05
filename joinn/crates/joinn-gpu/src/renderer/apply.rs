@@ -1,9 +1,11 @@
 //! Write only the rows a delta names.
 
 use joinn_frame::Verdict;
-use joinn_visual::{Delta, Table, Tables, row_bytes, table_bytes};
+use joinn_visual::{Delta, Table, Tables, row_bytes};
 
+use super::all_bytes::all_bytes;
 use super::bind_groups::bind_groups;
+use super::chart_extent::chart_extent;
 use super::table_buffer::table_buffer;
 use super::{ROW_SIZES, Renderer, Upload};
 use crate::gpu::{Gpu, scoped};
@@ -20,6 +22,9 @@ impl Renderer {
             tables.link.len(),
             tables.incidence.len(),
             tables.style.len(),
+            tables.chart.len(),
+            tables.frame.len(),
+            tables.stroke.len(),
         ];
         let index = |t: Table| match t {
             Table::Body => 0,
@@ -27,19 +32,20 @@ impl Renderer {
             Table::Port => 2,
             Table::Link => 3,
             Table::Incidence => 4,
-            Table::Chart | Table::Frame | Table::Stroke => usize::MAX,
+            Table::Chart => 6,
+            Table::Frame => 7,
+            Table::Stroke => 8,
         };
-        let resized: Vec<usize> = (0..6).filter(|&i| lens[i] != self.rows[i]).collect();
+        let resized: Vec<usize> = (0..9).filter(|&i| lens[i] != self.rows[i]).collect();
         let whole = if resized.is_empty() {
             None
         } else {
-            let b = table_bytes(tables);
-            Some([b.body, b.cell, b.port, b.link, b.incidence, b.style])
+            Some(all_bytes(tables))
         };
         let mut rows: Vec<(Table, u32)> = delta
             .rows
             .iter()
-            .filter(|w| index(w.table) != usize::MAX && !resized.contains(&index(w.table)))
+            .filter(|w| !resized.contains(&index(w.table)))
             .map(|w| (w.table, w.slot))
             .collect();
         rows.sort();
@@ -63,12 +69,13 @@ impl Renderer {
                 _ => runs.push((table, slot, bytes, 1)),
             }
         }
+        self.extent = chart_extent(tables);
         scoped(gpu, "applying a delta", || {
             let mut up = Upload::default();
             if let Some(whole) = &whole {
                 for &i in &resized {
                     self.buffers[i] =
-                        table_buffer(gpu.device(), gpu.queue(), &whole[i], ROW_SIZES[i]);
+                        table_buffer(gpu.device(), gpu.queue(), i, &whole[i], ROW_SIZES[i]);
                     self.rows[i] = lens[i];
                     up.rows += lens[i];
                     up.bytes += whole[i].len();

@@ -2,15 +2,16 @@
 
 use std::num::NonZeroU64;
 
-use super::PASS_BYTES;
+use super::{PASS_BYTES, STYLE, STYLE_UNIFORM_BYTES};
 
-/// Group 0 the tick uniform, group 1 the five universe tables, group 2 the
-/// style table, group 3 the pass uniform. `sizes` are the tables' row sizes in
-/// `ROW_SIZES` order, and each is its binding's `min_binding_size`.
+/// Group 0 the tick uniform, group 1 the eight universe tables, group 2 the
+/// style uniform, group 3 the pass uniform. `sizes` are the tables' row sizes
+/// in `ROW_SIZES` order, and each storage table's is its binding's
+/// `min_binding_size`; the style uniform's is its whole size.
 pub(crate) fn layouts(
     device: &wgpu::Device,
     tick: usize,
-    sizes: [usize; 6],
+    sizes: [usize; 9],
 ) -> [wgpu::BindGroupLayout; 4] {
     let min = |n: usize| NonZeroU64::new(n as u64);
     let entry =
@@ -32,7 +33,7 @@ pub(crate) fn layouts(
         })
     };
     let universe: Vec<wgpu::BindGroupLayoutEntry> = (0u32..)
-        .zip(&sizes[..5])
+        .zip(sizes[..STYLE].iter().chain(&sizes[STYLE + 1..]))
         .map(|(binding, size)| entry(binding, storage, *size))
         .collect();
     [
@@ -41,7 +42,14 @@ pub(crate) fn layouts(
             &[entry(0, wgpu::BufferBindingType::Uniform, tick)],
         ),
         layout("1 universe", &universe),
-        layout("2 genome", &[entry(0, storage, sizes[5])]),
+        layout(
+            "2 genome",
+            &[entry(
+                0,
+                wgpu::BufferBindingType::Uniform,
+                STYLE_UNIFORM_BYTES,
+            )],
+        ),
         layout(
             "3 pass",
             &[entry(0, wgpu::BufferBindingType::Uniform, PASS_BYTES)],
@@ -83,7 +91,7 @@ mod tests {
             }
             // Incidence and style rows are one u32: a smaller minimum is zero,
             // which a layout cannot state.
-            for table in 0..4 {
+            for table in [0, 1, 2, 3, 6, 7, 8] {
                 let mut short = ROW_SIZES;
                 short[table] -= 4;
                 let refused = scoped(&gpu, "pipelines one field short", || {
