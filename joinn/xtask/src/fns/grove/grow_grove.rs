@@ -11,8 +11,9 @@ use super::{GALAXIES, GroveKind, KINDS, SLOTS, SYSTEMS, splitmix64};
 
 /// Slots 0–2 are calc, 3–4 units, 5 bus; slots 6–23 draw their kind from
 /// SplitMix64 in (galaxy, system, slot) order. Links `sys_`, `gal_` and `uni`
-/// are `order none`, tail first. One lens, `function`. No grants, no
-/// regulatory region.
+/// are `order none`, tails first. A `sys_` link's tails are `listen@1` of every
+/// bus in the system and its head is `scale@1` of slot 3 (plan 7.2 Amendment
+/// 1). One lens, `function`. No grants, no regulatory region.
 pub(crate) fn grow_grove(seed: u64) -> Result<Universe, String> {
     let mut hashes = BTreeMap::new();
     for kind in KINDS {
@@ -63,12 +64,11 @@ pub(crate) fn grow_grove(seed: u64) -> Result<Universe, String> {
                 }
                 aliases.push(a);
             }
-            let mut members = vec![member(alias(g, s, 0), "sum", 2, Mark::Tail)];
-            members.extend(
-                buses
-                    .into_iter()
-                    .map(|b| member(b, "listen", 0, Mark::Head)),
-            );
+            let mut members: Vec<Member> = buses
+                .into_iter()
+                .map(|b| member(b, "listen", 1, Mark::Tail))
+                .collect();
+            members.push(member(alias(g, s, 3), "scale", 1, Mark::Head));
             links.push(Link {
                 id: format!("sys_{name}"),
                 order: Order::None,
