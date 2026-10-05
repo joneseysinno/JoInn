@@ -56,7 +56,10 @@ pub fn cpu_pick_at(shapes: &[Shape], camera: &Camera) -> Verdict<PickImage> {
     let mut pixels = Vec::with_capacity(width * height);
     for y in 0..height {
         for x in 0..width {
-            let p = (((x as i128) << 32) + (1 << 31), ((y as i128) << 32) + (1 << 31));
+            let p = (
+                ((x as i128) << 32) + (1 << 31),
+                ((y as i128) << 32) + (1 << 31),
+            );
             let mut pick = Pick::Background;
             let candidates = buckets
                 .get((y / BUCKET) * across + x / BUCKET)

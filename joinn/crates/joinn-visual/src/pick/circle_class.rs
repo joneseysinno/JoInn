@@ -26,18 +26,30 @@ mod tests {
 
     #[test]
     fn a_pixel_one_sixteenth_inside_is_inside() {
-        assert_eq!(circle_class((63 * S, 0), (0, 0), 64 * S), Some(Class::Inside));
-        assert_eq!(circle_class((65 * S, 0), (0, 0), 64 * S), Some(Class::Outside));
+        assert_eq!(
+            circle_class((63 * S, 0), (0, 0), 64 * S),
+            Some(Class::Inside)
+        );
+        assert_eq!(
+            circle_class((65 * S, 0), (0, 0), 64 * S),
+            Some(Class::Outside)
+        );
     }
 
     #[test]
     fn a_pixel_two_sixteenths_inside_is_inside() {
-        assert_eq!(circle_class((0, -62 * S), (0, 0), 64 * S), Some(Class::Inside));
+        assert_eq!(
+            circle_class((0, -62 * S), (0, 0), 64 * S),
+            Some(Class::Inside)
+        );
     }
 
     #[test]
     fn a_pixel_off_the_axes_between_the_bands_is_edge() {
-        assert_eq!(circle_class((45 * S, 45 * S), (0, 0), 64 * S), Some(Class::Edge));
+        assert_eq!(
+            circle_class((45 * S, 45 * S), (0, 0), 64 * S),
+            Some(Class::Edge)
+        );
     }
 
     #[test]

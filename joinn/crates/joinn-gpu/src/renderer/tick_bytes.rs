@@ -15,10 +15,9 @@ pub(super) fn tick_bytes(camera: &Camera, extent: i64) -> Verdict<[u32; 12]> {
     let whole = |p: i128| i32::try_from(p >> 32).ok();
     let frac = |p: i128| (p & 0xFFFF_FFFF) as u32;
     let level = camera.zoom.level;
-    let reach = i128::from(extent)
-        * i128::from(STEPS + camera.zoom.step)
-        * (1i128 << (level - 8).max(0))
-        + 2;
+    let reach =
+        i128::from(extent) * i128::from(STEPS + camera.zoom.step) * (1i128 << (level - 8).max(0))
+            + 2;
     let fits = |o: i32| i128::from(o).abs() + reach < 1i128 << 31;
     let fields = (
         whole(x),

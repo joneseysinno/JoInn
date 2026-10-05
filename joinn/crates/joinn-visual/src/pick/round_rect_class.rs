@@ -54,7 +54,10 @@ mod tests {
     #[test]
     fn a_pixel_one_sixteenth_inside_a_straight_edge_is_inside() {
         assert_eq!(round_rect_class((319 * S, 0), C, H, R), Some(Class::Inside));
-        assert_eq!(round_rect_class((321 * S, 0), C, H, R), Some(Class::Outside));
+        assert_eq!(
+            round_rect_class((321 * S, 0), C, H, R),
+            Some(Class::Outside)
+        );
     }
 
     #[test]

@@ -23,7 +23,17 @@ pub(super) fn bind_groups(
             entries: &entries,
         })
     };
-    let [body, cell, port, link, incidence, style, chart, frame, stroke] = buffers;
+    let [
+        body,
+        cell,
+        port,
+        link,
+        incidence,
+        style,
+        chart,
+        frame,
+        stroke,
+    ] = buffers;
     let [l0, l1, l2, l3] = layouts;
     [
         group("0 tick", l0, &[tick]),

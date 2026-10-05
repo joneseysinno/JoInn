@@ -58,25 +58,43 @@ mod tests {
 
     #[test]
     fn a_pixel_exactly_on_a_straight_edge_is_edge() {
-        assert_eq!(capsule_class((800 * S, 64 * S), A, B, 64 * S), Some(Class::Edge));
+        assert_eq!(
+            capsule_class((800 * S, 64 * S), A, B, 64 * S),
+            Some(Class::Edge)
+        );
     }
 
     #[test]
     fn a_pixel_one_sixteenth_inside_a_straight_edge_is_inside() {
-        assert_eq!(capsule_class((800 * S, 63 * S), A, B, 64 * S), Some(Class::Inside));
-        assert_eq!(capsule_class((800 * S, 65 * S), A, B, 64 * S), Some(Class::Outside));
+        assert_eq!(
+            capsule_class((800 * S, 63 * S), A, B, 64 * S),
+            Some(Class::Inside)
+        );
+        assert_eq!(
+            capsule_class((800 * S, 65 * S), A, B, 64 * S),
+            Some(Class::Outside)
+        );
     }
 
     #[test]
     fn a_pixel_two_sixteenths_inside_is_inside() {
-        assert_eq!(capsule_class((800 * S, -62 * S), A, B, 64 * S), Some(Class::Inside));
+        assert_eq!(
+            capsule_class((800 * S, -62 * S), A, B, 64 * S),
+            Some(Class::Inside)
+        );
     }
 
     #[test]
     fn past_an_end_the_capsule_is_a_circle() {
         assert_eq!(capsule_class((-64 * S, 0), A, B, 64 * S), Some(Class::Edge));
-        assert_eq!(capsule_class((1663 * S, 0), A, B, 64 * S), Some(Class::Inside));
-        assert_eq!(capsule_class((1665 * S, 0), A, B, 64 * S), Some(Class::Outside));
+        assert_eq!(
+            capsule_class((1663 * S, 0), A, B, 64 * S),
+            Some(Class::Inside)
+        );
+        assert_eq!(
+            capsule_class((1665 * S, 0), A, B, 64 * S),
+            Some(Class::Outside)
+        );
     }
 
     #[test]
@@ -86,9 +104,18 @@ mod tests {
         let a = (0, 0);
         let b = (300 * S, 400 * S);
         let w = 64 * S;
-        assert_eq!(capsule_class((202 * S, 161 * S), a, b, w), Some(Class::Outside));
-        assert_eq!(capsule_class((201 * S, 162 * S), a, b, w), Some(Class::Edge));
-        assert_eq!(capsule_class((198 * S, 164 * S), a, b, w), Some(Class::Inside));
+        assert_eq!(
+            capsule_class((202 * S, 161 * S), a, b, w),
+            Some(Class::Outside)
+        );
+        assert_eq!(
+            capsule_class((201 * S, 162 * S), a, b, w),
+            Some(Class::Edge)
+        );
+        assert_eq!(
+            capsule_class((198 * S, 164 * S), a, b, w),
+            Some(Class::Inside)
+        );
     }
 
     #[test]
@@ -97,7 +124,13 @@ mod tests {
         let a = (1 << 53, 1 << 53);
         let b = (a.0 + (1 << 52), a.1);
         let w = 64 * S;
-        assert_eq!(capsule_class((a.0 + (1 << 51), a.1 + 63 * S), a, b, w), Some(Class::Inside));
-        assert_eq!(capsule_class((a.0 + (1 << 51), a.1 + 65 * S), a, b, w), Some(Class::Outside));
+        assert_eq!(
+            capsule_class((a.0 + (1 << 51), a.1 + 63 * S), a, b, w),
+            Some(Class::Inside)
+        );
+        assert_eq!(
+            capsule_class((a.0 + (1 << 51), a.1 + 65 * S), a, b, w),
+            Some(Class::Outside)
+        );
     }
 }

@@ -232,7 +232,11 @@ mod tests {
                     _ => None,
                 })
                 .collect();
-            assert!(!owners.is_empty(), "{:?}: nothing owns a pixel", camera.zoom);
+            assert!(
+                !owners.is_empty(),
+                "{:?}: nothing owns a pixel",
+                camera.zoom
+            );
             seen += 1;
             if camera.zoom.level == LEVEL_MAX {
                 break;

@@ -6,9 +6,7 @@ use std::collections::btree_map::Entry;
 
 use joinn_frame::Verdict;
 use joinn_gpu::{GpuAdapter, OFFSCREEN_FORMAT, Renderer, open};
-use joinn_visual::{
-    Camera, ChartId, Delta, Table, TableBytes, Tables, UniverseScene, table_bytes,
-};
+use joinn_visual::{Camera, ChartId, Delta, Table, TableBytes, Tables, UniverseScene, table_bytes};
 
 use crate::fns::grove::grove_layout;
 use crate::fns::zoom::zoom_script;
