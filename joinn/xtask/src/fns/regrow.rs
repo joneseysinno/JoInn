@@ -5,6 +5,7 @@ mod cleared_elsewhere;
 mod contact_pass;
 mod drive;
 mod event;
+mod grove_pass;
 mod run;
 
 pub(crate) use cleared_elsewhere::cleared_elsewhere;

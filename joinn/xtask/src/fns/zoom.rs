@@ -3,13 +3,13 @@
 
 mod cut_line;
 mod zoom_cmd;
-#[cfg(test)]
 mod zoom_script;
 mod zoom_text;
 mod zoom_views;
 
 pub(crate) use cut_line::cut_line;
 pub(crate) use zoom_cmd::zoom;
+pub(crate) use zoom_script::zoom_script;
 pub(crate) use zoom_text::zoom_text;
 pub(crate) use zoom_views::zoom_views;
 
