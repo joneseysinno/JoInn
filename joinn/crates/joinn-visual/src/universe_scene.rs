@@ -7,6 +7,7 @@
 mod fit;
 mod grow;
 mod present;
+mod print_id;
 mod rebase;
 mod regrow;
 mod shapes_at;

@@ -6,4 +6,5 @@ mod load;
 mod session;
 mod window;
 
+pub use session::{Atlas, Key, Shell, Tick, View, tick_line};
 pub use window::run;

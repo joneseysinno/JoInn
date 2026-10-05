@@ -19,6 +19,9 @@ joinn-cli = { path = "../crates/joinn-cli" }
 joinn-visual = { path = "../crates/joinn-visual" }
 joinn-gpu = { path = "../crates/joinn-gpu" }
 
+[dev-dependencies]
+joinn-shell-desktop = { path = "../crates/joinn-shell-desktop" }
+
 [lints]
 workspace = true
 

@@ -20,14 +20,16 @@ impl ApplicationHandler for ShellApp {
                     window.request_redraw();
                 }
             }
-            WindowEvent::CursorMoved { position, .. } => {
-                self.cursor = Some((position.x, position.y));
-            }
+            WindowEvent::CursorMoved { position, .. } => self.on_moved(position.x, position.y),
             WindowEvent::MouseInput {
-                state: ElementState::Pressed,
+                state,
                 button: MouseButton::Left,
                 ..
-            } => self.on_click(),
+            } => match state {
+                ElementState::Pressed => self.on_press(),
+                ElementState::Released => self.on_release(),
+            },
+            WindowEvent::MouseWheel { delta, .. } => self.on_wheel(delta),
             WindowEvent::KeyboardInput { event, .. } => {
                 self.on_key(event.state, event.logical_key);
             }

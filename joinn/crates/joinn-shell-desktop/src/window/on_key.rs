@@ -1,43 +1,29 @@
-//! Keys: type into the selection, Enter runs, Escape clears.
+//! Keys: camera keys, or typing into the selection.
 
 use winit::event::ElementState;
-use winit::keyboard::{Key, NamedKey};
+use winit::keyboard::{Key as WinitKey, NamedKey};
 
 use super::ShellApp;
-use super::emit::emit;
-use crate::session::NOTHING_SENT;
+use crate::session::Key;
 
 impl ShellApp {
-    /// A character echoes. Enter runs the body and redraws. Moving nothing else does not.
-    pub(super) fn on_key(&mut self, state: ElementState, key: Key) {
+    /// A press is named without winit's types and handed to the shell.
+    pub(super) fn on_key(&mut self, state: ElementState, key: WinitKey) {
         if state != ElementState::Pressed {
             return;
         }
-        match key {
-            Key::Named(NamedKey::Escape) => self.desktop.escape(),
-            Key::Named(NamedKey::Enter) => {
-                let lines = self.desktop.enter();
-                let ran = lines.iter().any(|line| line != NOTHING_SENT);
-                for line in lines {
-                    emit(&line);
-                }
-                if ran {
-                    if let Some(window) = &self.window {
-                        window.request_redraw();
-                    }
-                }
-            }
-            Key::Named(NamedKey::Backspace) => {
-                if let Some(line) = self.desktop.backspace() {
-                    emit(&line);
-                }
-            }
-            Key::Character(text) => {
-                if let Some(line) = self.desktop.type_char(text.as_str()) {
-                    emit(&line);
-                }
-            }
-            _ => {}
-        }
+        let key = match key {
+            WinitKey::Named(NamedKey::Escape) => Key::Escape,
+            WinitKey::Named(NamedKey::Enter) => Key::Enter,
+            WinitKey::Named(NamedKey::Backspace) => Key::Backspace,
+            WinitKey::Named(NamedKey::ArrowLeft) => Key::Left,
+            WinitKey::Named(NamedKey::ArrowRight) => Key::Right,
+            WinitKey::Named(NamedKey::ArrowUp) => Key::Up,
+            WinitKey::Named(NamedKey::ArrowDown) => Key::Down,
+            WinitKey::Character(text) => Key::Text(text.to_string()),
+            _ => return,
+        };
+        let lines = self.shell.key(key);
+        self.after_input(lines);
     }
 }

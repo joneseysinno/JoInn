@@ -2966,6 +2966,7 @@ dependencies = [
  "joinn-link",
  "joinn-live",
  "joinn-prim",
+ "joinn-shell-desktop",
  "joinn-test-host",
  "joinn-visual",
 ]

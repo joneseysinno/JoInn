@@ -1,4 +1,5 @@
-//! A redraw requested by a resize, a click, a key that ran, or a lost surface.
+//! A redraw requested by a resize, a zoom, a pan, a click, a key that ran, or
+//! a lost surface. A redraw nothing asked for draws nothing (V147).
 
 use super::ShellApp;
 
@@ -14,7 +15,7 @@ impl ShellApp {
             }
             return;
         }
-        if !self.configured {
+        if !self.configured || !self.shell.dirty() {
             return;
         }
         let status = {

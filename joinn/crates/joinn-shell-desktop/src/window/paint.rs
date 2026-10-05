@@ -5,11 +5,15 @@ use joinn_gpu::{Upload, read_texel};
 
 use super::ShellApp;
 use super::emit::emit;
-use crate::session::gpu_agree;
+use crate::session::{gpu_agree, tick_line};
 
 impl ShellApp {
-    /// `tick <n>: rows <r>, bytes <b>`. A pending click then prints the GPU owner.
+    /// `tick: level <L> step <t> (k <fraction>), anchor <chart>, rows <n>`.
+    /// A pending click then prints the GPU owner.
     pub(super) fn paint(&mut self, frame: wgpu::SurfaceTexture) {
+        let Some(tick) = self.shell.take_tick() else {
+            return;
+        };
         let Some(mut renderer) = self.renderer.take() else {
             return;
         };
@@ -17,12 +21,12 @@ impl ShellApp {
             self.renderer = Some(renderer);
             return;
         };
-        let camera = self.desktop.camera();
-        let confirm = self.desktop.take_confirm();
+        let camera = self.shell.camera();
+        let confirm = self.shell.take_confirm();
         let upload = if let Some(upload) = self.forced.take() {
             upload
         } else if !self.uploaded {
-            match renderer.upload_all(&gpu, self.desktop.tables()) {
+            match renderer.upload_all(&gpu, self.shell.tables()) {
                 Verdict::Ok(upload) => {
                     self.uploaded = true;
                     upload
@@ -34,8 +38,8 @@ impl ShellApp {
                     return;
                 }
             }
-        } else if let Some(delta) = self.desktop.take_pending() {
-            match renderer.apply(&gpu, self.desktop.tables(), &delta) {
+        } else if let Some(delta) = &tick.delta {
+            match renderer.apply(&gpu, self.shell.tables(), delta) {
                 Verdict::Ok(upload) => upload,
                 Verdict::Refused(r) => {
                     eprintln!("joinn-desktop: {}", r.reason);
@@ -51,7 +55,7 @@ impl ShellApp {
             let view = frame
                 .texture
                 .create_view(&wgpu::TextureViewDescriptor::default());
-            renderer.draw(&gpu, &camera, &view)
+            renderer.draw_at(&gpu, &camera, &view)
         };
         if let Verdict::Refused(r) = drawn {
             eprintln!("joinn-desktop: {}", r.reason);
@@ -60,16 +64,11 @@ impl ShellApp {
             return;
         }
         gpu.queue().present(frame);
-        let n = self.tick;
-        self.tick += 1;
-        emit(&format!(
-            "tick {n}: rows {}, bytes {}",
-            upload.rows, upload.bytes
-        ));
+        emit(&tick_line(&tick, upload.rows));
         if let Some(click) = confirm {
             let gpu_owner = match renderer.id_texture() {
                 Some(ids) => match read_texel(&gpu, ids, click.x, click.y) {
-                    Verdict::Ok(id) => self.desktop.owner_line(id),
+                    Verdict::Ok(id) => self.shell.owner_line(id),
                     Verdict::Refused(r) => r.reason,
                 },
                 None => "no ID target".to_owned(),

@@ -1,9 +1,11 @@
 //! `Lost` and `Outdated` reconfigure the surface. A zero size does not.
 
 use super::ShellApp;
+use super::emit::emit;
 
 impl ShellApp {
-    /// Fit the camera to the new client size and configure the swapchain.
+    /// Configure the swapchain and hand the new client size to the shell: the
+    /// first size frames the scene, later sizes keep zoom, focus and pin.
     pub(super) fn reconfigure(&mut self) -> bool {
         let size = {
             let Some(window) = self.window.as_ref() else {
@@ -34,7 +36,10 @@ impl ShellApp {
             config.format = self.format;
             surface.configure(gpu.device(), &config);
         }
-        self.desktop.fit_viewport(size.width, size.height);
+        let lines = self.shell.resize(size.width, size.height);
+        for line in lines {
+            emit(&line);
+        }
         self.configured = true;
         true
     }

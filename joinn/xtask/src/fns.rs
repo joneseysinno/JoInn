@@ -225,6 +225,8 @@ mod run_calculator_bin;
 mod run_gate_table;
 mod run_legacy_table;
 mod scores_match;
+#[cfg(test)]
+mod shell_session;
 mod subject;
 mod surface_field;
 mod synthetic_fifty;

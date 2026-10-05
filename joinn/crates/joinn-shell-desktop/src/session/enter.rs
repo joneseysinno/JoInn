@@ -86,9 +86,9 @@ mod tests {
     use joinn_frame::Verdict;
     use joinn_visual::{Scene, table_bytes};
 
-    use super::super::Desktop;
     use super::super::contact_fixture::calculator_contact;
     use super::super::fixtures::calculator;
+    use super::super::{Desktop, View};
 
     /// The script at 1280×720: the pixel of the in-port, then the text typed there.
     const SCRIPT: [((u32, u32), &str); 3] =

@@ -28,7 +28,7 @@ impl ShellApp {
                 return false;
             }
         };
-        let upload = match renderer.upload_all(&gpu, self.desktop.tables()) {
+        let upload = match renderer.upload_all(&gpu, self.shell.tables()) {
             Verdict::Ok(upload) => upload,
             Verdict::Refused(r) => {
                 eprintln!("joinn-desktop: {}", r.reason);

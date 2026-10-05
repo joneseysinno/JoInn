@@ -2,7 +2,7 @@
 
 use joinn_dna::Direction;
 use joinn_frame::Verdict;
-use joinn_visual::{Owner, Pick, cpu_pick, shapes_of_tables};
+use joinn_visual::{Owner, Pick, cpu_pick_at, shapes_of_tables};
 
 use super::{Confirm, Desktop};
 
@@ -18,7 +18,7 @@ impl Desktop {
             return lines;
         }
         let shapes = shapes_of_tables(self.scene.tables());
-        let image = match cpu_pick(&shapes, &self.camera) {
+        let image = match cpu_pick_at(&shapes, &self.camera) {
             Verdict::Ok(image) => image,
             Verdict::Refused(r) => {
                 lines.push(format!("pick {x},{y}: refused: {}", r.reason));

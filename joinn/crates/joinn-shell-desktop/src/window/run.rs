@@ -1,4 +1,4 @@
-//! Load the body and run the window until it closes.
+//! Load the body, contact or universe and run the window until it closes.
 
 use std::path::Path;
 
@@ -9,18 +9,29 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use super::ShellApp;
 use super::emit::emit;
 use super::pick_adapter::pick_adapter;
-use crate::load::{find_corpus, load_body_file, load_cells, load_contact_file};
-use crate::session::Desktop;
+use crate::load::{
+    find_corpus, load_body_file, load_cells, load_contact_file, load_store, load_universe_file,
+};
+use crate::session::{Atlas, Desktop, Shell, View};
 
-/// `adapter: <line>`, then `surface: <format>`, then one tick per redraw.
-pub fn run(path: &str) -> Result<(), String> {
+/// `adapter: <line>`, then `surface: <format>`, then one tick per change. A
+/// `.universe` opens `lens`, or its first lens in canonical order.
+pub fn run(path: &str, lens: Option<&str>) -> Result<(), String> {
     let corpus = find_corpus()?;
     let cells = load_cells(&corpus)?;
-    let desktop = if path.ends_with(".contact") {
+    let view: Box<dyn View> = if path.ends_with(".universe") {
+        let universe = load_universe_file(Path::new(path))?;
+        let store = load_store(&corpus, &cells)?;
+        Box::new(Atlas::open(&universe, &store, lens, 1280, 720)?)
+    } else if path.ends_with(".contact") {
         let (contact, body) = load_contact_file(Path::new(path), &cells)?;
-        Desktop::open(body, cells, Some(&contact))?
+        Box::new(Desktop::open(body, cells, Some(&contact))?)
     } else {
-        Desktop::open(load_body_file(Path::new(path))?, cells, None)?
+        Box::new(Desktop::open(
+            load_body_file(Path::new(path))?,
+            cells,
+            None,
+        )?)
     };
     let list = match adapters() {
         Verdict::Ok(list) => list,
@@ -31,14 +42,13 @@ pub fn run(path: &str) -> Result<(), String> {
     let event_loop = EventLoop::new().map_err(|e| e.to_string())?;
     event_loop.set_control_flow(ControlFlow::Wait);
     let mut app = ShellApp {
-        desktop,
+        shell: Shell::new(view),
         adapter,
         gpu: None,
         renderer: None,
         window: None,
         surface: None,
         format: wgpu::TextureFormat::Rgba8Unorm,
-        tick: 0,
         uploaded: false,
         cursor: None,
         configured: false,

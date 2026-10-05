@@ -7,7 +7,7 @@ use joinn_frame::{Hash, Verdict};
 use joinn_host::{Signals, check_signals, intent_set};
 use joinn_live::BodyState;
 use joinn_prim::sealed_natives;
-use joinn_visual::{Scene, fit};
+use joinn_visual::{Camera, Scene, fit};
 
 use super::Desktop;
 
@@ -39,7 +39,10 @@ impl Desktop {
             Verdict::Refused(r) => return Err(r.reason),
         };
         let intents = intent_set(&body, &cells);
-        let camera = fit(scene.layout(), 1280, 720);
+        let camera = match Camera::from_fit(&fit(scene.layout(), 1280, 720)) {
+            Verdict::Ok(camera) => camera,
+            Verdict::Refused(r) => return Err(r.reason),
+        };
         Ok(Desktop {
             body,
             cells,
@@ -58,6 +61,7 @@ impl Desktop {
 
 #[cfg(test)]
 mod tests {
+    use super::super::View;
     use super::super::fixtures::calculator;
 
     #[test]
