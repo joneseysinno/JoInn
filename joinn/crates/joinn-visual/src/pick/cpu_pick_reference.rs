@@ -1,59 +1,15 @@
-//! The brute-force picker: every shape, every pixel. It exists to be agreed with.
+//! The brute-force picker through a Phase 6 camera.
 
 use joinn_frame::Verdict;
 
-use super::class_at::class_at;
-use super::geom16::geom16;
-use super::{Class, Pick, PickImage, Shape};
-use crate::camera::FitCamera;
-use crate::refuse::refuse;
+use super::cpu_pick_reference_at::cpu_pick_reference_at;
+use super::{PickImage, Shape};
+use crate::camera::{Camera, FitCamera};
 
-/// `shapes` are in draw order. Each pixel is walked in reverse draw order: the
-/// first shape that holds it inside owns it, the first that has it on its edge
-/// makes it an edge pixel, and a pixel every shape leaves outside is background.
+/// `cpu_pick_reference_at` through the exact camera the fit camera converts to.
 pub fn cpu_pick_reference(shapes: &[Shape], camera: &FitCamera) -> Verdict<PickImage> {
-    let mut geoms = Vec::with_capacity(shapes.len());
-    for shape in shapes {
-        match geom16(shape, camera) {
-            Some(g) => geoms.push(g),
-            None => {
-                return refuse(format!(
-                    "pick: shape {:?} overflows i128 under the camera; acceptance is a shape whose pixel geometry fits",
-                    shape.id
-                ));
-            }
-        }
+    match Camera::from_fit(camera) {
+        Verdict::Ok(c) => cpu_pick_reference_at(shapes, &c),
+        Verdict::Refused(r) => Verdict::Refused(r),
     }
-    let mut pixels = Vec::with_capacity(camera.width as usize * camera.height as usize);
-    for y in 0..i128::from(camera.height) {
-        for x in 0..i128::from(camera.width) {
-            let p = (16 * x + 8, 16 * y + 8);
-            let mut pick = Pick::Background;
-            for (shape, g) in shapes.iter().zip(&geoms).rev() {
-                match class_at(g, p) {
-                    Some(Class::Outside) => {}
-                    Some(Class::Inside) => {
-                        pick = Pick::Owned(shape.id);
-                        break;
-                    }
-                    Some(Class::Edge) => {
-                        pick = Pick::Edge;
-                        break;
-                    }
-                    None => {
-                        return refuse(format!(
-                            "pick: shape {:?} overflows i128 at pixel {x},{y}; acceptance is a shape whose pixel geometry fits",
-                            shape.id
-                        ));
-                    }
-                }
-            }
-            pixels.push(pick);
-        }
-    }
-    Verdict::Ok(PickImage {
-        width: camera.width,
-        height: camera.height,
-        pixels,
-    })
 }

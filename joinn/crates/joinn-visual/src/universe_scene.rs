@@ -9,6 +9,7 @@ mod grow;
 mod present;
 mod rebase;
 mod regrow;
+mod shapes_at;
 mod take_pending;
 mod write_charts;
 mod write_values;

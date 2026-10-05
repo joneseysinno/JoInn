@@ -42,7 +42,8 @@ pub use layout::{
 pub use lens_cut::{Cut, CutEntry, CutForm, cut, touches};
 pub use pick::{
     Class, GALAXY_TAG, Geom, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG, Shape, TAG_MASK,
-    WIRE_TAG, cpu_pick, cpu_pick_reference, owner_of_layout, print_owner, shapes_of_layout,
+    WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at, cpu_pick_sample,
+    owner_of_layout, print_owner, shapes_of_layout,
 };
 pub use scene::Scene;
 pub use tables::{

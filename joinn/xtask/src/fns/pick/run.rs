@@ -1,5 +1,5 @@
 //! `cargo xtask pick`: every adapter, every standard viewport, every corpus
-//! contact, every measured corpus body, then the plant.
+//! contact, every measured corpus body, the grove's views, then the plant.
 
 use joinn_frame::Verdict;
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
@@ -11,14 +11,17 @@ use super::compare::compare;
 use super::contact_lines::contact_lines;
 use super::contact_subjects::contact_subjects;
 use super::frame_median::frame_median;
+use super::grove_lines::grove_lines;
+use super::grove_subjects::grove_subjects;
 use super::measured::measured;
 use super::owner_name::owner_name;
 use super::plant::plant;
 use super::{Subject, Tally};
 
 /// The calculator at the four standard viewports, then each corpus body at
-/// 1280×720, on every adapter. Any disagreement, an owner that owns no pixel,
-/// a count that doesn't sum to the image, or an unrefused plant fails.
+/// 1280×720, then the grove at plan 7.2 §2.12's views, on every adapter. Any
+/// disagreement, an owner that owns no pixel, a count that doesn't sum to the
+/// image, grove owners other than the cut's, or an unrefused plant fails.
 pub(crate) fn pick() -> Result<(), String> {
     let calculator_rel = "phase2/calculator.body";
     let subjects = measured()?;
@@ -54,6 +57,7 @@ pub(crate) fn pick() -> Result<(), String> {
         bodies.push((rel, entry));
     }
     let contacts = contact_subjects()?;
+    let (grove_scenes, grove_views) = grove_subjects()?;
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -158,6 +162,13 @@ pub(crate) fn pick() -> Result<(), String> {
                 agreed += 1;
             }
         }
+        grove_lines(
+            &gpu,
+            adapter.line(),
+            &grove_scenes,
+            &grove_views,
+            &mut failures,
+        )?;
         measured_count = if n == 0 {
             agreed
         } else {

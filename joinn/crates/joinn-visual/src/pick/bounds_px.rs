@@ -1,23 +1,23 @@
-//! A shape's bounding box, in sixteenths of a pixel.
+//! A shape's bounding box, in 2^-32 px.
 
-use super::Geom16;
+use super::GeomPx;
 
 /// `(x0, y0, x1, y1)`, inclusive. `None` on overflow.
-pub(crate) fn bounds16(g: &Geom16) -> Option<(i128, i128, i128, i128)> {
+pub(crate) fn bounds_px(g: &GeomPx) -> Option<(i128, i128, i128, i128)> {
     Some(match *g {
-        Geom16::RoundRect { c, h, .. } => (
+        GeomPx::RoundRect { c, h, .. } => (
             c.0.checked_sub(h.0)?,
             c.1.checked_sub(h.1)?,
             c.0.checked_add(h.0)?,
             c.1.checked_add(h.1)?,
         ),
-        Geom16::Circle { c, r } => (
+        GeomPx::Circle { c, r } => (
             c.0.checked_sub(r)?,
             c.1.checked_sub(r)?,
             c.0.checked_add(r)?,
             c.1.checked_add(r)?,
         ),
-        Geom16::Capsule { a, b, w } => (
+        GeomPx::Capsule { a, b, w } => (
             a.0.min(b.0).checked_sub(w)?,
             a.1.min(b.1).checked_sub(w)?,
             a.0.max(b.0).checked_add(w)?,

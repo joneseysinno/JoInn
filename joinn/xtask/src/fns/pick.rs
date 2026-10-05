@@ -5,6 +5,8 @@ mod compare;
 mod contact_lines;
 mod contact_subjects;
 mod frame_median;
+mod grove_lines;
+mod grove_subjects;
 mod measured;
 mod owner_name;
 mod plant;
@@ -19,7 +21,24 @@ pub(crate) use run::pick;
 
 use std::collections::BTreeSet;
 
-use joinn_visual::{FitCamera, PickImage, Scene};
+use joinn_visual::{Camera, FitCamera, PickImage, Scene};
+
+/// Seeded pixels per grove view (plan 7.2 2.10).
+pub(crate) const GROVE_SAMPLE: usize = 4096;
+
+/// One plan 7.2 2.12 view of the grove: its camera, the scene grown at its
+/// anchor, the grid pick of the whole image, the sampled pixel indices, how
+/// many sampled pixels the brute-force walk names differently, and every owner
+/// of a pixel in the grid pick.
+pub(crate) struct GroveView {
+    pub(crate) label: String,
+    pub(crate) camera: Camera,
+    pub(crate) scene: usize,
+    pub(crate) cpu: PickImage,
+    pub(crate) sample: Vec<usize>,
+    pub(crate) differ: usize,
+    pub(crate) allows: BTreeSet<[u32; 4]>,
+}
 
 /// A measured corpus body at 1280×720 with its CPU pick, or why it isn't measured.
 pub(crate) type Subject = (String, Result<(Scene, FitCamera, PickImage), String>);
