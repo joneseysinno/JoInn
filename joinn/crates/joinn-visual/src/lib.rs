@@ -9,6 +9,7 @@ mod charts;
 mod dropped;
 #[cfg(test)]
 mod fixtures;
+mod font;
 mod layout;
 mod lens_cut;
 mod pick;
@@ -26,6 +27,11 @@ pub use camera::{
 pub use charts::{
     BODIES_MAX, BODY_MAX, Chart, ChartKind, GALAXIES_MAX, GALAXY_SIZE, SYSTEM_SIZE, SYSTEMS_MAX,
     UNIVERSE_SIZE, UniverseLayout, layout_universe,
+};
+pub use font::{
+    ADVANCE, GALAXY_TITLE_SIZE, GRID_DESCENT, GRID_H, GRID_W, GlyphStroke, LABEL_SIZE,
+    STROKE_SET, SYSTEM_TITLE_SIZE, TextSize, TextStroke, TitleOf, VALUE_GLYPHS, VALUE_SIZE,
+    cell_label, glyph, port_value, text_strokes, title, value_text,
 };
 pub use layout::{
     CELL_RADIUS, CELL_W, CellBox, GAP_X, GAP_Y, Layout, MARGIN, PITCH, PORT_INSET, PORT_RADIUS,
