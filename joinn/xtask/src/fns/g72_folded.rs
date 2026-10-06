@@ -9,13 +9,13 @@ use super::g72_layouts::g72_layouts;
 use super::grove::{grove_layout, load_universe_arg};
 use super::zoom::{VIEWPORT, zoom_views};
 
-/// The adversary universe: three systems, one link of three members.
-const ADVERSARY: &str = "phase5/adversary.universe";
+/// Two systems of one body each, one ordered link between them.
+const ORDERED: &str = "phase5/ordered.universe";
 
 /// On the grove at the `s`, level −4 step 0: 128 system nodes, no body drawn,
-/// 264 touches; framed: 1182 touches. On the adversary universe framed at
-/// level −4 step 0: each of its three systems is one node and link `bus`
-/// touches 3 nodes.
+/// 264 touches; framed: 1182 touches. On `ordered.universe` framed at level
+/// −4 step 0: each of its two systems is one node and link `path` touches 2
+/// nodes.
 pub(crate) fn g72_folded() -> bool {
     let mut failures = Vec::new();
     let total = |layout: &UniverseLayout, universe: &Universe, camera: &Camera| -> usize {
@@ -66,14 +66,14 @@ pub(crate) fn g72_folded() -> bool {
             ));
         }
     }
-    let adversary = load_universe_arg(ADVERSARY).and_then(|u| {
+    let ordered = load_universe_arg(ORDERED).and_then(|u| {
         let layouts = g72_layouts(&u)?;
         Ok((u, layouts))
     });
-    let (universe, layouts) = match adversary {
+    let (universe, layouts) = match ordered {
         Ok(a) => a,
         Err(e) => {
-            println!("{ADVERSARY}: {e}");
+            println!("{ORDERED}: {e}");
             return false;
         }
     };
@@ -110,19 +110,19 @@ pub(crate) fn g72_folded() -> bool {
                 (ch.name.clone(), form)
             })
             .collect();
-        if systems.len() != 3 || systems.iter().any(|(_, f)| *f != Some(CutForm::Node)) {
+        if systems.len() != 2 || systems.iter().any(|(_, f)| *f != Some(CutForm::Node)) {
             failures.push(format!(
-                "{ADVERSARY} lens {} at level −4: systems {systems:?}; acceptance is three, each one node",
+                "{ORDERED} lens {} at level −4: systems {systems:?}; acceptance is two, each one node",
                 layout.lens
             ));
         }
-        let bus = touches(layout, &c, &universe.coding.links)
+        let path = touches(layout, &c, &universe.coding.links)
             .into_iter()
-            .find(|(id, _)| id == "bus")
+            .find(|(id, _)| id == "path")
             .map_or(0, |(_, nodes)| nodes.len());
-        if bus != 3 {
+        if path != 2 {
             failures.push(format!(
-                "{ADVERSARY} lens {}: link bus touches {bus} nodes; acceptance is 3",
+                "{ORDERED} lens {}: link path touches {path} nodes; acceptance is 2",
                 layout.lens
             ));
         }

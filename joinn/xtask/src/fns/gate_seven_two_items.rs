@@ -19,15 +19,15 @@ const ITEMS: &[GateItem<Subject, Mutation>] = &[
         name: "Bands follow size, and two pickers name every pixel",
         check: g72_bands,
         control: g72_bands_control,
-        control_artifact: "corpus/phase5/adversary.universe",
+        control_artifact: "corpus/phase5/ordered.universe",
         opposes: Mutation::CopyMember("function", "units", "calculation"),
     },
     GateItem {
         name: "A folded system is one node, and a link touches it once",
         check: g72_folded,
         control: g72_folded_control,
-        control_artifact: "corpus/phase5/adversary.universe",
-        opposes: Mutation::ShiftPort("bus", "calc.sum@2", 9),
+        control_artifact: "corpus/phase5/ordered.universe",
+        opposes: Mutation::ShiftPort("path", "calc.sum@2", 9),
     },
 ];
 
