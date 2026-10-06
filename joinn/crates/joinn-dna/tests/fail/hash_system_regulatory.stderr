@@ -1,8 +1,8 @@
-error[E0277]: the trait bound `RegulatoryRegion: Genotype` is not satisfied
- --> tests/fail/hash_regulatory.rs:3:29
+error[E0277]: the trait bound `SystemRegulatory: Genotype` is not satisfied
+ --> tests/fail/hash_system_regulatory.rs:3:29
   |
 3 |     let _ = joinn_dna::hash(&r);
-  |             --------------- ^^ the trait `Genotype` is not implemented for `RegulatoryRegion`
+  |             --------------- ^^ the trait `Genotype` is not implemented for `SystemRegulatory`
   |             |
   |             required by a bound introduced by this call
   |

@@ -1,8 +1,8 @@
 //! Re-parse reprinted subject text as the same kind.
 
 use crate::fns::parse_lock_scores::parse_lock_scores;
-use crate::fns::subject::Subject;
-use joinn_dna::{parse_body, parse_contact};
+use crate::fns::subject::{Subject, SystemSubject};
+use joinn_dna::{parse_body, parse_contact, parse_system};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::parse_universe;
 
@@ -18,9 +18,13 @@ pub(crate) fn reparse(kind: &Subject, text: &str) -> Verdict<Subject> {
             Verdict::Ok(c) => Verdict::Ok(Subject::Contact(c)),
             Verdict::Refused(r) => Verdict::Refused(r),
         },
-        Subject::System(_) => Verdict::Refused(refuse(
-            "a system has no canonical text yet; acceptance is a body, contact or universe",
-        )),
+        Subject::System(s) => match parse_system(text) {
+            Verdict::Ok(system) => Verdict::Ok(Subject::System(SystemSubject {
+                system,
+                contacts: s.contacts.clone(),
+            })),
+            Verdict::Refused(r) => Verdict::Refused(r),
+        },
         Subject::Universe(_) => match parse_universe(text) {
             Verdict::Ok(u) => Verdict::Ok(Subject::Universe(u)),
             Verdict::Refused(r) => Verdict::Refused(r),

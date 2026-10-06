@@ -6,26 +6,12 @@ error[E0277]: the trait bound `BodyRegulatory: Genotype` is not satisfied
   |             |
   |             required by a bound introduced by this call
   |
-help: the following other types implement trait `Genotype`
- --> src/hash/allele.rs
-  |
-  | impl Genotype for Allele {
-  | ^^^^^^^^^^^^^^^^^^^^^^^^ `Allele`
-  |
- ::: src/hash/body_coding.rs
-  |
-  | impl Genotype for BodyCoding {
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `BodyCoding`
-  |
- ::: src/hash/coding_region.rs
-  |
-  | impl Genotype for CodingRegion {
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `CodingRegion`
-  |
- ::: src/hash/contact_coding.rs
-  |
-  | impl Genotype for ContactCoding {
-  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `ContactCoding`
+  = help: the following other types implement trait `Genotype`:
+            Allele
+            BodyCoding
+            CodingRegion
+            ContactCoding
+            SystemCoding
 note: required by a bound in `joinn_dna::hash`
  --> src/hash/hash_fn.rs
   |

@@ -1,11 +1,12 @@
 //! Parse a control artifact's text into a Subject by file kind.
 
-use joinn_dna::{parse_body, parse_contact};
+use joinn_dna::{parse_body, parse_contact, parse_system};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::parse_universe;
 
 use super::parse_lock_scores::parse_lock_scores;
 use super::subject::Subject;
+use super::system_subject::system_subject;
 
 /// Parse `text` from repo-relative `path` into a Subject.
 /// On refusal, returns the parser's reason (or an unknown-kind reason).
@@ -19,6 +20,12 @@ pub(crate) fn parse_subject(path: &str, text: &str) -> Result<Subject, String> {
     if path.ends_with(".contact") {
         return match parse_contact(text, &FrameRegistry::phase1()) {
             Verdict::Ok(contact) => Ok(Subject::Contact(contact)),
+            Verdict::Refused(r) => Err(r.reason),
+        };
+    }
+    if path.ends_with(".system") {
+        return match parse_system(text) {
+            Verdict::Ok(system) => system_subject(system).map(Subject::System),
             Verdict::Refused(r) => Err(r.reason),
         };
     }

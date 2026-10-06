@@ -8,6 +8,7 @@ use super::apply::apply;
 use super::coding_hash::coding_hash;
 use super::refuse::refuse;
 use super::reparse::reparse;
+use super::reparse_system::reparse_system;
 use super::reprint::reprint;
 
 /// Apply `m` to `s`, reprint with the kind's printer, and re-parse.
@@ -18,8 +19,11 @@ pub(crate) fn mutate(s: &Subject, m: &Mutation) -> Verdict<Subject> {
         Verdict::Ok(()) => {}
         Verdict::Refused(r) => return Verdict::Refused(r),
     }
-    let text = reprint(&next);
-    let parsed = match reparse(s, &text) {
+    let reparsed = match &next {
+        Subject::System(sys) => reparse_system(sys),
+        _ => reparse(s, &reprint(&next)),
+    };
+    let parsed = match reparsed {
         Verdict::Ok(p) => p,
         Verdict::Refused(r) => return Verdict::Refused(r),
     };

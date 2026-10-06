@@ -68,7 +68,17 @@ pub(crate) fn neutral(s: &Subject) -> Option<Subject> {
                 joinn_frame::Verdict::Refused(_) => None,
             }
         }
-        Subject::System(_) | Subject::Transcript(_) | Subject::Text(_) => None,
+        Subject::System(sys) => {
+            let mut next = sys.clone();
+            let (_, name) = next.system.regulatory.names.iter_mut().next()?;
+            name.push_str(" (neutral)");
+            let text = reprint(&Subject::System(next));
+            match reparse(s, &text) {
+                joinn_frame::Verdict::Ok(p) => Some(p),
+                joinn_frame::Verdict::Refused(_) => None,
+            }
+        }
+        Subject::Transcript(_) | Subject::Text(_) => None,
     }
 }
 

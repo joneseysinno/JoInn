@@ -18,6 +18,8 @@ pub const TAG_CONTACT: &[u8] = b"joinn.contact.v1";
 pub const TAG_DESCRIPTION: &[u8] = b"joinn.description.v1";
 /// Domain tag for a universe's coding region.
 pub const TAG_UNIVERSE: &[u8] = b"joinn.universe.v1";
+/// Domain tag for a system's coding region.
+pub const TAG_SYSTEM: &[u8] = b"joinn.system.v1";
 
 /// BLAKE3-256 digest. Never truncated in storage.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]

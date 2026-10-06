@@ -11,7 +11,6 @@ use super::parse_lock_scores::LockRow;
 pub(crate) enum Subject {
     Body(Body),
     Contact(Contact),
-    #[allow(dead_code)] // no file parses to a system yet; tests build one
     System(SystemSubject),
     Universe(Universe),
     Lock(Vec<LockRow>),

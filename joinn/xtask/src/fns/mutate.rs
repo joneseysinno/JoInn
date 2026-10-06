@@ -40,6 +40,7 @@ mod rename_alias;
 mod rename_contact_alias;
 mod rename_link;
 mod reparse;
+mod reparse_system;
 mod replace;
 mod reprint;
 mod reprint_regulatory;

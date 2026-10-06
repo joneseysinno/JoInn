@@ -18,7 +18,8 @@ pub use body::contact::{
     parse_contact, print_contact,
 };
 pub use body::system::{
-    self as system, System, SystemBody, SystemCoding, SystemForce, SystemRegulatory,
+    self as system, System, SystemBody, SystemCoding, SystemForce, SystemRegulatory, parse_system,
+    print_system,
 };
 pub use body::{
     Body, BodyCoding, BodyRegulatory, GenomeEntry, GenomeTarget, Wire, check_body, parse_body,
@@ -44,6 +45,7 @@ mod tests {
         let t = trybuild::TestCases::new();
         t.compile_fail("tests/fail/hash_regulatory.rs");
         t.compile_fail("tests/fail/hash_body_regulatory.rs");
+        t.compile_fail("tests/fail/hash_system_regulatory.rs");
     }
 
     #[test]

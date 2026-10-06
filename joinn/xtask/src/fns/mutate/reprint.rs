@@ -1,7 +1,7 @@
 //! Canonical text for a subject, ready to re-parse.
 
 use crate::fns::subject::Subject;
-use joinn_dna::{print_body, print_contact};
+use joinn_dna::{print_body, print_contact, print_system};
 use joinn_link::print_universe;
 use std::fmt::Write as _;
 
@@ -19,7 +19,29 @@ pub(crate) fn reprint(s: &Subject) -> String {
             out.push_str(&reprint_regulatory(&contact.regulatory));
             out
         }
-        Subject::System(_) => String::new(),
+        Subject::System(s) => {
+            let mut out = print_system(&s.system.coding);
+            let reg = &s.system.regulatory;
+            out.push_str("---\nregulatory {\n");
+            for (section, entries) in [("names", &reg.names), ("present", &reg.present)] {
+                if !entries.is_empty() {
+                    let _ = write!(out, "  {section} {{");
+                    for (k, v) in entries {
+                        let _ = write!(out, " {k} \"{v}\"");
+                    }
+                    out.push_str(" }\n");
+                }
+            }
+            if !reg.waiting.is_empty() {
+                out.push_str("  waiting {");
+                for (k, n) in &reg.waiting {
+                    let _ = write!(out, " {k} {n}");
+                }
+                out.push_str(" }\n");
+            }
+            out.push_str("}\n");
+            out
+        }
         Subject::Universe(u) => {
             let mut out = print_universe(&u.coding);
             if !u.regulatory.names.is_empty() || !u.regulatory.labels.is_empty() {
