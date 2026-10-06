@@ -6,14 +6,15 @@ use joinn_visual::{CutForm, THRESHOLDS, cut, owner_band};
 
 use super::g6_adapters::g6_adapters;
 use super::grove::grove_layout;
-use super::pick::{grove_lines, grove_subjects};
+use super::pick::{band_boundary, grove_lines, grove_subjects};
 use super::zoom::{ZOOM_BLOCK, fade_views, zoom_text, zoom_views};
 
 /// The CPU cut prints §2.12's block; each threshold has a fade-window view
 /// whose body the cut draws in its owner band, fading; and on every adapter,
 /// at every §2.12 view and every fade view, `cpu_pick` equals
 /// `cpu_pick_reference` on the seeded pixels, every non-edge pixel's GPU owner
-/// equals `cpu_pick`'s, and the GPU image's owners are the cut's (V145).
+/// equals `cpu_pick`'s, and the GPU image's owners are the cut's (V145); and
+/// the shader's `band()` at the 240 px boundary equals `owner_band`'s.
 pub(crate) fn g72_bands() -> bool {
     let Some(all) = g6_adapters() else {
         return false;
@@ -82,6 +83,16 @@ pub(crate) fn g72_bands() -> bool {
         if let Err(e) = judged {
             println!("{e}");
             return false;
+        }
+        match band_boundary(&gpu, adapter.line()) {
+            Ok((line, missed)) => {
+                println!("{line}");
+                failures.extend(missed);
+            }
+            Err(e) => {
+                println!("{e}");
+                return false;
+            }
         }
     }
     for f in &failures {

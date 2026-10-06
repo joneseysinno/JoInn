@@ -7,6 +7,7 @@ use joinn_visual::{
     FitCamera, PickImage, STANDARD_VIEWPORTS, Scene, cpu_pick, fit, shapes_of_tables,
 };
 
+use super::band_boundary::band_boundary;
 use super::compare::compare;
 use super::contact_lines::contact_lines;
 use super::contact_subjects::contact_subjects;
@@ -22,7 +23,7 @@ use crate::fns::zoom::{fade_views, zoom_views};
 
 /// The calculator at the four standard viewports, then each corpus body at
 /// 1280×720, then the grove at plan 7.2 §2.12's views and one fade-window view
-/// per threshold, on every adapter. Any
+/// per threshold, and the 240 px band boundary probe, on every adapter. Any
 /// disagreement, an owner that owns no pixel, a count that doesn't sum to the
 /// image, grove owners other than the cut's, or an unrefused plant fails.
 pub(crate) fn pick() -> Result<(), String> {
@@ -181,6 +182,9 @@ pub(crate) fn pick() -> Result<(), String> {
         for line in &lines {
             println!("{line}");
         }
+        let (boundary, missed) = band_boundary(&gpu, adapter.line())?;
+        println!("{boundary}");
+        failures.extend(missed);
         measured_count = if n == 0 {
             agreed
         } else {

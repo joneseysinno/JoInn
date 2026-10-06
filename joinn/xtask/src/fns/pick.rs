@@ -1,6 +1,7 @@
 //! `cargo xtask pick`: the GPU ID target against the exact CPU pick, on every
 //! pixel, on every adapter.
 
+mod band_boundary;
 mod compare;
 mod contact_lines;
 mod contact_subjects;
@@ -13,6 +14,7 @@ mod plant;
 mod port_slot;
 mod run;
 
+pub(crate) use band_boundary::band_boundary;
 pub(crate) use contact_lines::contact_lines;
 pub(crate) use contact_subjects::contact_subjects;
 pub(crate) use grove_lines::grove_lines;

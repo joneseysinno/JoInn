@@ -3,6 +3,7 @@
 
 mod all_bytes;
 mod apply;
+mod band_probe;
 mod bind_groups;
 mod chart_extent;
 mod draw;
@@ -20,6 +21,8 @@ mod table_buffer;
 mod target;
 mod tick_bytes;
 mod upload_all;
+
+pub use band_probe::band_probe;
 
 use joinn_visual::{
     BODY_ROW_BYTES, CELL_ROW_BYTES, CHART_ROW_BYTES, FRAME_ROW_BYTES, INCIDENCE_BYTES,
