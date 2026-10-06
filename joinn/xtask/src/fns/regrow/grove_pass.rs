@@ -22,9 +22,10 @@ struct Rebase {
 }
 
 /// Per step `grove step <i> <action>: rows <r>, <anchor>, tables equal
-/// regrow`; then per rebase and adapter `rebase <from> -> <to> <adapter>:
-/// color identical, ids identical`, the delta applied to the tables drawn
-/// before it. Tables that differ from a fresh grow at the step's anchor, a pan
+/// regrow, routes equal regrow` (the Route and Segment rows alone, V149); then
+/// per rebase and adapter `rebase <from> -> <to> <adapter>: color identical,
+/// ids identical`, the delta applied to the tables drawn before it. Tables or
+/// routes that differ from a fresh grow at the step's anchor, a pan
 /// or zoom that writes a row, a rebase that writes anything but chart rows, or
 /// a picture that moves fails. The lines go to `lines`.
 pub(crate) fn grove_pass(
@@ -61,16 +62,26 @@ pub(crate) fn grove_pass(
                 Verdict::Refused(r) => return Err(r.reason),
             },
         };
-        let equal = *want == table_bytes(scene.tables());
+        let now = table_bytes(scene.tables());
+        let equal = *want == now;
+        let routes = want.route == now.route && want.segment == now.segment;
+        let word = |same: bool| if same { "equal" } else { "differ from" };
         lines.push(format!(
-            "grove step {i} {action}: rows {}, {}, tables {} regrow",
+            "grove step {i} {action}: rows {}, {}, tables {} regrow, routes {} regrow",
             delta.rows.len(),
             name(to),
-            if equal { "equal" } else { "differ from" }
+            word(equal),
+            word(routes)
         ));
         if !equal {
             failures.push(format!(
                 "grove step {i} {action}: the tables differ from a fresh grow at {} (rule 58)",
+                name(to)
+            ));
+        }
+        if !routes {
+            failures.push(format!(
+                "grove step {i} {action}: the route or segment rows differ from a fresh grow at {} (V149)",
                 name(to)
             ));
         }
