@@ -63,6 +63,8 @@ fn main() -> ExitCode {
             _ => Err("usage: cargo xtask corpus verify|rebless".into()),
         },
         "gate" => fns::gate_cmd(args.collect()),
+        "check" => fns::check(args.collect()),
+        "stop-check" => fns::stop_check(args.collect()),
         "power" => fns::power(),
         "agree" => fns::agree(),
         "assay" => match args.next().as_deref() {
@@ -136,7 +138,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | gate 7 | gate 7.2 | gate <phase> --item <n> | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | gate 7 | gate 7.2 | gate <phase> --item <n> | check [--gates 6,7,7.2] | stop-check [--fresh] | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }
