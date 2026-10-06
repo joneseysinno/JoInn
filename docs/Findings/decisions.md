@@ -137,3 +137,12 @@ line must name a file under `docs/Findings/`.
 | V145 | Two cuts, one truth: the owners in the GPU image are exactly those the CPU cut allows | 7.2 | holds | `cargo xtask pick`: `owners <n> (cut allows <n>)` equal at every grove view on every adapter; gate 7.2 item 2 |
 | V146 | A link touches each cut node at most once | 7.2 | holds | `cargo xtask zoom`: touches 264 at level −4 step 0 and 1182 framed, each node at most once per link; gate 7.2 item 3 |
 | V147 | An idle window draws nothing, at any zoom (V12 extended) | 7.2 | holds | the shell session test: after the script `take_tick` is `None` twice. The window itself was not observed from Cursor (rule 67); AJ's window check is the window evidence |
+| R105 | Snapshots | 7.3 | open | |
+| R106 | Streets as structure | 7.3 | open | |
+| R107 | The knot as a place | 7.3 | open | |
+| R108 | The engine's cost per fire | 7.3 | open | |
+| V148 | A hyperedge touches; it never crosses: §2.6's four checks hold for every route in every fold state | 7.3 | open | |
+| V149 | Routes live in gutters and are grown once per fold state; a zoom writes no row | 7.3 | open | |
+| V150 | Order is drawn only when declared: no spine and no arrowhead along an unordered link | 7.3 | open | |
+| V151 | A folded node is touched once per link: one touch point, one leg | 7.3 | open | |
+| V152 | Two pickers name every link pixel: CPU and GPU agree on link owners at every view | 7.3 | open | |

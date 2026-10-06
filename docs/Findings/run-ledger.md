@@ -1,4 +1,5 @@
-# JoInn run 7.2B–9 ledger. One line per stop. Written by the agent from command output.
+# JoInn run ledger (Run 7.2B–9, then Run 7.3–9).
+One line per stop. Written by the agent from command output.
 Run start: 415ea22da5220d8f6c93ec88615f545fdb1da802
 
 | # | Chunk | HEAD | gate all | suite | snags | pushed | tripwire |

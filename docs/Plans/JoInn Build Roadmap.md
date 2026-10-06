@@ -440,6 +440,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 #### Phase 7.3 · Visual Host II: links
 
+> **3 Oct 2026.** Planned in Plans/JoInn Phase 7.3 Implementation Plan.md: routes in the gutters, one path at three widths, two fold states grown once. Snapshots wait (R105).
+
 **Deliverables**
 
 - **Snapshots** keyed by (DNA hash, state hash, band, scale bucket), with a per-tick re-render budget — the first real use of R10.

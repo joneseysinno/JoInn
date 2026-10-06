@@ -471,3 +471,21 @@ Labels and values are strokes owned by a cell or port. When a label is edited in
 ## R104 — Layout of a lens  ·  status: open
 
 The grove's grid is fixed (6 / 4 / 4). Is a lens's layout a body of its own (a layout system), so other lenses can lay out differently?
+
+> **3 Oct 2026 · Phase 7.3.** R105–R108 come from the links plan and the 7.2 review.
+
+## R105 — Snapshots  ·  status: open
+
+What measurement would make them necessary? Draw-time and instance counts are in `phase-7.3-links.md`. Until something is slow, they wait.
+
+## R106 — Streets as structure  ·  status: open
+
+The gutters come from the grid. If a lens's layout becomes a body of its own (R104), are its gutters part of its contract?
+
+## R107 — The knot as a place  ·  status: open
+
+A hub's knot is a 1-median on the streets. Does it mean anything (a junction, a bus, a shear tab), or is it presentation only?
+
+## R108 — The engine's cost per fire  ·  status: open
+
+`agree` (Phase 2.1/2.2's gates and CI's `agree` step) spends about 100 s cloning cells per delivery and re-hashing coding regions per fire. Should a cell's hash be computed once at admission and carried, and deliveries share cells instead of cloning them? A truth-core change: planned on its own, with `agree`'s output byte-identical as its gate.

@@ -1,14 +1,14 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 7.2 is Visual Host II, part 1: the zoom. A universe
-on screen, zoomed exactly from all of it to one letter, with charts, bands, the
-cut and JoInn's own stroke font. Its one idea is NO FLOAT DECIDES ANYTHING. The
-build plan is docs/Plans/JoInn Phase 7.2 Implementation Plan.md. Work one CHUNK
-at a time (A, B or C), one git commit per numbered step, and stop at the chunk's
-stop report. Every decision is in the plan. Never stop to ask; follow the plan's
-Snags section instead.
+This repo is JoInn. Phase 7.3 is Visual Host II, part 2: the links. Hyperedges
+are routed through the gutters of the grid, drawn as region, hub, bundle or
+spine, and touch a folded system once. Its one idea is A LINK TOUCHES; IT NEVER
+CROSSES. The build plan is docs/Plans/JoInn Phase 7.3 Implementation Plan.md,
+run inside docs/Plans/JoInn Run 7.3-9.md. Work the phase's commits in order, one
+git commit per numbered step, check each by tier, and stop once at the phase's
+end. Never stop to ask; follow the plan's Snags section instead.
 
-No new grammar in this phase. Hyperedges are counted, not drawn (Phase 7.3).
+No new grammar in this phase. Snapshots are not built (R105).
 
 ## Hard rules
 
@@ -233,6 +233,13 @@ No new grammar in this phase. Hyperedges are counted, not drawn (Phase 7.3).
     are the same set of owners. A difference is a truth violation.
 73. GENERATED IS NOT STORED. The grove is grown from its seed wherever it is
     needed and never written under corpus/ or docs/.
+74. A LINK TOUCHES; IT NEVER CROSSES. Route geometry is checked in layout units
+    against every cell rectangle and every non-member surface. A crossing is a
+    truth violation, never a style problem.
+75. ROUTES LIVE IN GUTTERS AND ARE GROWN ONCE. Every fold state's routes are
+    computed at grow. A zoom chooses among them in the shader and writes no row.
+76. ORDER IS DRAWN ONLY WHEN DECLARED. A spine or a mid-path arrowhead appears
+    only on an ordered link; a tail's stub arrow only on a tail.
 
 ## Definition of done
 
@@ -243,3 +250,16 @@ printed it also chose it. A refusal is not done if nothing was ever shown to it.
 A control is not done if a reviewer cannot read it — OR IF THE BUILD CANNOT
 RESOLVE IT. And a rule is not done while it lives only in this file: if it can
 be a type, make it a type.
+
+## How checks run (Run 7.3–9 §3)
+
+S1. EVERY COMMIT: its done-when, `cargo xtask check`, and the gates scoped to
+    the files it changed (the run plan's table). A foundation crate, xtask's
+    shared harness, Cargo files or corpus/ mean `gate all`.
+S2. A DEMO RUNS ITS ITEM. "Shown then reverted" uses `cargo xtask gate <phase>
+    --item <n>`, then runs it again after the revert.
+S3. ONE STOP PER PHASE: `cargo xtask stop-check --fresh`, the short stop
+    report, push, stop. CI is read once and never waited for.
+S4. SPEED NEVER CHANGES AN ANSWER. A check never runs with `--release`. The
+    dev profile keeps overflow-checks and debug-assertions. A speed change that
+    alters any line of `gate all` other than a timing line is a tripwire.
