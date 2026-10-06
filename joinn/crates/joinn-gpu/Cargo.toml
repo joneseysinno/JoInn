@@ -9,7 +9,8 @@ publish.workspace = true
 joinn-frame = { path = "../joinn-frame" }
 joinn-visual = { path = "../joinn-visual" }
 wgpu = "30"
-bytemuck = { version = "1", features = ["derive"] }
+# aarch64_simd pinned so the workspace builds once (winit turns it on, on Linux).
+bytemuck = { version = "1", features = ["derive", "aarch64_simd"] }
 pollster = "0.4"
 
 [dev-dependencies]

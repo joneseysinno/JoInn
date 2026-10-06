@@ -18,6 +18,10 @@ joinn-test-host = { path = "../crates/joinn-test-host" }
 joinn-cli = { path = "../crates/joinn-cli" }
 joinn-visual = { path = "../crates/joinn-visual" }
 joinn-gpu = { path = "../crates/joinn-gpu" }
+# Features pinned so the workspace builds once: winit turns these on in the
+# workspace build (on Linux); `cargo run -p xtask` resolves xtask's tree alone.
+bitflags = { version = "2", features = ["std"] }
+smallvec = { version = "1", features = ["const_generics", "const_new", "union"] }
 
 [dev-dependencies]
 joinn-shell-desktop = { path = "../crates/joinn-shell-desktop" }
