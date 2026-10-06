@@ -2,11 +2,116 @@
 //! layout, the empty lanes between bodies, systems and galaxies. Every
 //! coordinate is an integer in layout units, in the root chart unless named.
 
+mod distances;
 mod grid_lines;
+mod knot;
+mod route_link;
+mod routes_of;
 mod routing_graph;
+mod side;
+mod stub;
+mod walk;
 
 pub use grid_lines::grid_lines;
+pub use routes_of::routes;
 pub use routing_graph::routing_graph;
+pub use side::side;
+
+use crate::camera::ChartId;
+
+/// Sixteenths per layout unit: route pieces are placed in sixteenths, so a
+/// path's midpoint and every half-width are whole numbers.
+pub const SIXTEENTHS: i64 = 16;
+
+/// What a route piece is.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum PieceKind {
+    /// Street, from the knot toward a touch point, or a spine's path.
+    Leg,
+    /// From a port's centre out to its gutter.
+    Stub,
+    /// The knot: `a == b`.
+    Knot,
+    /// An arrowhead from its base centre `a` to its tip `b`.
+    Arrow,
+}
+
+impl PieceKind {
+    /// The Segment table's number: 0 leg, 1 stub, 2 knot, 3 arrow.
+    pub fn number(self) -> u32 {
+        match self {
+            PieceKind::Leg => 0,
+            PieceKind::Stub => 1,
+            PieceKind::Knot => 2,
+            PieceKind::Arrow => 3,
+        }
+    }
+}
+
+/// One drawn piece of a route, from `a` to `b` in root sixteenths.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub struct Piece {
+    /// One end (an arrow's base centre).
+    pub a: (i64, i64),
+    /// The other end (an arrow's tip).
+    pub b: (i64, i64),
+    /// What it is.
+    pub kind: PieceKind,
+    /// The member it serves, index + 1, or 0 for trunk, knot and spine.
+    pub member: u32,
+    /// How many legs share it (1 for stubs, arrows and spines, 0 for a knot).
+    pub legs: u32,
+}
+
+/// Where a link touches one node of a fold state.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Touch {
+    /// The body (open) or the folded system or galaxy.
+    pub chart: ChartId,
+    /// Its touch point, root layout units: a port's centre, or the side of a
+    /// folded node that faces the knot.
+    pub point: (i64, i64),
+    /// The link's members it stands for, by index in the link.
+    pub members: Vec<usize>,
+    /// The graph node a leg ends at: the stub's end on its gutter, or the
+    /// touch point itself.
+    pub node: (i64, i64),
+}
+
+/// One link's route in one fold state.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Route {
+    /// The link's index in the universe's links.
+    pub link: usize,
+    /// The fold state.
+    pub fold: Fold,
+    /// Declared order: drawn as a spine.
+    pub ordered: bool,
+    /// One per node touched, in member order (V151).
+    pub touches: Vec<Touch>,
+    /// The knot of an unordered link with two touch points or more.
+    pub knot: Option<(i64, i64)>,
+    /// Legs drawn: one per touch when there is a knot, else none.
+    pub legs: usize,
+    /// Stubs drawn: one per member whose body is drawn.
+    pub stubs: usize,
+    /// `max(w, h)` of the box of its touch points and knot, layout units.
+    pub size: i64,
+    /// Every piece, legs and spine first, then stubs, arrows and the knot.
+    pub pieces: Vec<Piece>,
+}
+
+/// Every link's route in every fold state the zoom range reaches, and each
+/// fold state's routing graph (stub ends included).
+#[derive(Clone, PartialEq, Eq, Debug, Default)]
+pub struct Routes {
+    /// Fold states, open first.
+    pub folds: Vec<Fold>,
+    /// Each fold state's graph, in `folds` order.
+    pub graphs: Vec<Graph>,
+    /// Routes by fold state, then link.
+    pub routes: Vec<Route>,
+}
 
 /// Which charts are folded into lens nodes. Every system has one size and
 /// every galaxy another, so all of a kind fold at one zoom.

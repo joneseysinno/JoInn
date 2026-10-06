@@ -19,3 +19,42 @@ pub(crate) fn links(args: Vec<String>) -> Result<(), String> {
     );
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeSet;
+
+    use joinn_frame::Verdict;
+    use joinn_visual::{Fold, routes};
+
+    use crate::fns::grove::grove_layout;
+
+    #[test]
+    fn every_grove_link_folded_touches_each_node_once() {
+        let (grove, layout) = grove_layout().unwrap_or_else(|e| panic!("{e}"));
+        let all = match routes(&layout, &grove.coding.links) {
+            Verdict::Ok(r) => r,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let folded: Vec<_> = all
+            .routes
+            .iter()
+            .filter(|r| r.fold == Fold::Systems)
+            .collect();
+        assert_eq!(folded.len(), grove.coding.links.len());
+        let mut touches = 0;
+        for r in &folded {
+            let charts: BTreeSet<_> = r.touches.iter().map(|t| t.chart).collect();
+            assert_eq!(
+                charts.len(),
+                r.touches.len(),
+                "link {} touches a node twice",
+                r.link
+            );
+            let members: usize = r.touches.iter().map(|t| t.members.len()).sum();
+            assert_eq!(members, grove.coding.links[r.link].members.len());
+            touches += r.touches.len();
+        }
+        assert_eq!(touches, 264);
+    }
+}

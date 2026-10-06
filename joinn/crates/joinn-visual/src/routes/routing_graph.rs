@@ -6,8 +6,8 @@ use super::{Graph, Line};
 
 /// Every end of every line, and every point where a line meets another
 /// (crossing, T, or collinear touch), is a node; consecutive nodes along a
-/// line are joined by a segment weighted by its length. Lines of no length
-/// add only their point.
+/// line are joined by a segment weighted by its length. A line of no length
+/// is a point: it splits every line it lies on.
 pub fn routing_graph(lines: &[Line]) -> Graph {
     let mut verticals: BTreeMap<i64, Vec<(i64, i64)>> = BTreeMap::new();
     let mut horizontals: BTreeMap<i64, Vec<(i64, i64)>> = BTreeMap::new();
@@ -53,11 +53,6 @@ pub fn routing_graph(lines: &[Line]) -> Graph {
                 on.extend([a, b].into_iter().filter(|y| y0 <= *y && *y <= y1));
             }
             pieces.push(on.into_iter().map(|y| (x, y)).collect());
-        }
-    }
-    for l in lines {
-        if l.a == l.b {
-            points.insert(l.a);
         }
     }
     for piece in &pieces {
@@ -157,5 +152,18 @@ mod tests {
         assert_eq!(g.adjacent[1], [(0, 4), (2, 6), (4, 6)]);
         assert_eq!(g.node_at((4, 6)), Some(4));
         assert_eq!(g.node_at((5, 6)), None);
+        // A point on a line splits it.
+        let g = routing_graph(&[
+            Line {
+                a: (0, 0),
+                b: (0, 8),
+            },
+            Line {
+                a: (0, 3),
+                b: (0, 3),
+            },
+        ]);
+        assert_eq!(g.nodes, [(0, 0), (0, 3), (0, 8)]);
+        assert_eq!(g.edges, [(0, 1), (1, 2)]);
     }
 }
