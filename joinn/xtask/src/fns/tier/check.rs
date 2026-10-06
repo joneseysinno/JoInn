@@ -6,7 +6,7 @@ use super::test_counts::test_counts;
 use crate::fns::{say, workspace_root};
 use std::path::PathBuf;
 
-/// Run the suite, fmt, clippy, the scans and zoom (and the named gates), every
+/// Run fmt, clippy, the suite, the scans, zoom and links (and the named gates), every
 /// one even after a failure, and print the commit's Check lines from their
 /// output. Any failure names the steps and the failing tests and exits 1.
 pub(crate) fn check(args: Vec<String>) -> Result<(), String> {
@@ -23,7 +23,6 @@ pub(crate) fn check(args: Vec<String>) -> Result<(), String> {
     let cargo_step = |args: &[&str]| run_step(&cargo, args, &root, &[]);
     let xtask_step = |args: &[&str]| run_step(&xtask, args, &root, &[]);
 
-    let test = cargo_step(&["test", "--workspace", "--no-fail-fast"]);
     let fmt = cargo_step(&["fmt", "--all", "--", "--check"]);
     let clippy = cargo_step(&[
         "clippy",
@@ -33,11 +32,13 @@ pub(crate) fn check(args: Vec<String>) -> Result<(), String> {
         "-D",
         "warnings",
     ]);
+    let test = cargo_step(&["test", "--workspace", "--no-fail-fast"]);
     let scans: Vec<(&str, Step)> = ["vocab", "modules", "layers"]
         .into_iter()
         .map(|scan| (scan, xtask_step(&[scan])))
         .collect();
     let zoom = xtask_step(&["zoom"]);
+    let links = xtask_step(&["links"]);
     let gate_steps: Vec<(&str, Step)> = gates
         .iter()
         .map(|g| (g.as_str(), xtask_step(&["gate", g])))
@@ -61,6 +62,10 @@ pub(crate) fn check(args: Vec<String>) -> Result<(), String> {
         "Zoom:       cargo xtask zoom → {}",
         zoom.last_line()
     ));
+    say(&format!(
+        "Links:      cargo xtask links → {}",
+        links.last_line()
+    ));
     if !gate_steps.is_empty() {
         let gate_line: Vec<String> = gate_steps
             .iter()
@@ -70,12 +75,13 @@ pub(crate) fn check(args: Vec<String>) -> Result<(), String> {
     }
 
     let mut named: Vec<(String, &Step)> = vec![
-        ("test".to_owned(), &test),
         ("fmt".to_owned(), &fmt),
         ("clippy".to_owned(), &clippy),
+        ("test".to_owned(), &test),
     ];
     named.extend(scans.iter().map(|(scan, step)| ((*scan).to_owned(), step)));
     named.push(("zoom".to_owned(), &zoom));
+    named.push(("links".to_owned(), &links));
     named.extend(
         gate_steps
             .iter()

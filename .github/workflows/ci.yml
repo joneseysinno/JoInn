@@ -49,7 +49,7 @@ jobs:
       - name: contact
         run: cargo xtask contact
       - name: zoom
-        run: cargo xtask grove && cargo xtask zoom
+        run: cargo xtask grove && cargo xtask zoom && cargo xtask links
       - name: spike s8
         run: cargo test --manifest-path spikes/s8-beam/Cargo.toml
       - name: power

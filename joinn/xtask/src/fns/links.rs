@@ -1,24 +1,19 @@
 //! `cargo xtask links`: the routing graph and the routes of plan 7.3 §2.2–2.6.
 
-use joinn_visual::{Fold, grid_lines, routing_graph};
+mod fold_line;
+mod laid_universe;
+mod run;
 
-use super::grove::grove_layout;
+pub(crate) use fold_line::fold_line;
+pub(crate) use laid_universe::laid_universe;
+pub(crate) use run::links;
 
-/// The grove's open routing graph: `graph grove: <nodes> nodes, <segments>
-/// segments` (grid lines and extensions, before any stub).
-pub(crate) fn links(args: Vec<String>) -> Result<(), String> {
-    if !args.is_empty() {
-        return Err("usage: cargo xtask links".into());
-    }
-    let (_, layout) = grove_layout()?;
-    let graph = routing_graph(&grid_lines(&layout, Fold::Open));
-    println!(
-        "graph grove: {} nodes, {} segments",
-        graph.nodes.len(),
-        graph.edges.len()
-    );
-    Ok(())
-}
+/// The universes `links` reports by default, in order.
+pub(crate) const LINK_UNIVERSES: [&str; 3] = [
+    "phase5/universe.universe",
+    "phase5/ordered.universe",
+    "grove",
+];
 
 #[cfg(test)]
 mod tests {

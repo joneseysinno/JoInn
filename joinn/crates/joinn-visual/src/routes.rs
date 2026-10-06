@@ -2,6 +2,7 @@
 //! layout, the empty lanes between bodies, systems and galaxies. Every
 //! coordinate is an integer in layout units, in the root chart unless named.
 
+mod crossings;
 mod distances;
 mod grid_lines;
 mod knot;
@@ -12,6 +13,7 @@ mod side;
 mod stub;
 mod walk;
 
+pub use crossings::crossings;
 pub use grid_lines::grid_lines;
 pub use routes_of::routes;
 pub use routing_graph::routing_graph;
