@@ -146,3 +146,37 @@ line must name a file under `docs/Findings/`.
 | V150 | Order is drawn only when declared: no spine and no arrowhead along an unordered link | 7.3 | holds | gate 7.3 item 2: grove `ordered 0, mid-path arrowheads 0, spines at 15 views 0`; ordered.universe's `path` a spine at its frame and at level −4; a mid-path arrowhead on unordered links fails it (146) |
 | V151 | A folded node is touched once per link: one touch point, one leg | 7.3 | holds | gate 7.3 item 3: `systems folded 264 touches, 136 legs; open 1182 stubs`, each node touched once per link and every member stood for |
 | V152 | Two pickers name every link pixel: CPU and GPU agree on link owners at every view | 7.3 | holds | `cargo xtask pick`: disagree 0 and `link owners n (cut allows n)` equal at every grove view and ordered.universe's galaxy, all three adapters (P73-08); gate 7.3 item 3: a leg pick `link sys_g0s00 member 3`, GPU equal on every adapter |
+| G1 | The running example is a child's counting app with three systems: counting, UI, saves | Part VII | decided | |
+| G2 | Adding addition adds to the counting system; it doesn't make a new one | Part VII | decided | |
+| G3 | New systems are warranted as things progress, when the existing ones can't do what is needed | Part VII | decided | |
+| G4 | The calculator is a system. A system holds forces, and may hold several | Part VII | decided | |
+| G5 | A system is the bodies its forces reach | Part VII | decided | |
+| G6 | A force is a directed hyperedge: it surrounds what it acts on and points to what it produces | Part VII | decided | |
+| G7 | A force is drawn as a lasso hugging its tails, cinched to an arrow at its head | Part VII | decided | |
+| G8 | A system starts as a seed; its DNA controls how its bodies grow when inputs are put in | Part VII | decided | |
+| G9 | Two cells is the adding seed's starting shape, not a law; every size, 0 included, is true | Part VII | decided | |
+| G10 | A body can grow to as many cells as it needs | Part VII | decided | |
+| G11 | Growth is a fourth change, beside edit, edition and evolution | Part VII | decided | |
+| G12 | Identity follows the DNA and forces; grown cells are state | Part VII | decided | |
+| G13 | The basic math operations are all ways of counting, so they stay in one system | Part VII | decided | |
+| G14 | Counting is the witness: every answer must agree with the counting it stands for | Part VII | decided | |
+| G15 | The response is a cell at the lasso's point, and the inputs stay | Part VII | decided | |
+| G16 | A new system is warranted exactly when what is needed can't be derived from an existing one | Part VII | decided | |
+| G17 | A lens is the view | Part VII | decided | wording from the 7.4 plan; Part VII Draft 0.2 on disk lists G1–G16 |
+| G18 | Links transfer data while forces stimulate | Part VII | decided | wording from the 7.4 plan; Part VII Draft 0.2 on disk lists G1–G16 |
+| G19 | Things must be visually clear: a link and a force never look alike | Part VII | decided | wording from the 7.4 plan; Part VII Draft 0.2 on disk lists G1–G16 |
+| R109 | Systems and lenses | 7.4 | answered | G17 |
+| R110 | Links as carry | 7.4 | answered | G18 |
+| R110a | Carry, the force | 7.4 | open | |
+| R111 | What is consumed | 7.4 | open | |
+| R112 | Counting and measuring | 7.4 | open | |
+| R113 | The app as a cell | 7.4 | open | |
+| R114 | Lineage as learning | 7.4 | open | |
+| R115 | Removing a number | 7.4 | open | |
+| R116 | Where state lives | 7.4 | open | |
+| R117 | Systems of several bodies | 7.4 | open | |
+| V160 | A body grows by its DNA, and every size is true: identity at 0, the input at 1, the combine at n | 7.4 | open | |
+| V161 | Counting is the witness: after every growth step the response equals `count_witness` | 7.4 | open | |
+| V162 | Growth is not evolution: the system's hash is unchanged by growth; grown state is never hashed or stored | 7.4 | open | |
+| V163 | Evolution keeps every old witness and gains an ability | 7.4 | open | |
+| V164 | A force is seen as a lasso: it surrounds what it reaches, never meets a cell, and points to its response; CPU and GPU name its pixels alike | 7.4 | open | |

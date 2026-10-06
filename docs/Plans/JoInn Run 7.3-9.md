@@ -2,9 +2,9 @@
 
 **One phase at a time, one stop per phase, checked by tier**
 
-Author: AJ, with Claude · Draft 0.2 · October 5, 2026
+Author: AJ, with Claude · Draft 0.3 · October 6, 2026
 
-> **This plan replaces `JoInn Run 7.2B-9.md` from its chunk 3 on.** Phase 7.2 is closed by Claude's review (`docs/Findings/phase-7.2-review.md`). Phases 7.3, 8 and 9 each run as **one unit**: every commit in order, one stop at the end, then Claude reviews before the next phase opens. Every decision is in the plans. Cursor never stops to ask; it follows each plan's Snags section.
+> **This plan replaces `JoInn Run 7.2B-9.md` from its chunk 3 on.** Phase 7.2 is closed by Claude's review (`docs/Findings/phase-7.2-review.md`). Phases 7.3, 7.4, 7.5, 8 and 9 each run as **one unit**: every commit in order, one stop at the end, then Claude reviews before the next phase opens. Every decision is in the plans. Cursor never stops to ask; it follows each plan's Snags section.
 
 ---
 
@@ -57,8 +57,12 @@ Continue the run in docs/Plans/JoInn Run 7.3-9.md from docs/Findings/run-ledger.
 |---|---|---|---|
 | 0 | **Close Phase 7.2** (no code) | this plan, §2 | `P72-stop-c` commit, ledger line 2, push |
 | 1 | **Phase 7.3** | `JoInn Phase 7.3 Implementation Plan.md` (Draft 0.2) | `docs/Findings/phase-7.3-stop.md`; Claude reviews |
-| 2 | **Phase 8** | `JoInn Phase 8 Implementation Plan.md`, read with §5 below | `docs/Findings/phase-8-stop.md`; Claude reviews |
-| 3 | **Phase 9** | `JoInn Phase 9 Implementation Plan.md`, read with §5 below | `docs/Findings/phase-9-stop.md`; Claude reviews; AJ's first-grader test |
+| 2 | **Phase 7.4** | `JoInn Phase 7.4 Implementation Plan.md` (Draft 0.1): her counting app, part 1 | `docs/Findings/phase-7.4-stop.md`; Claude reviews; AJ's window check |
+| 3 | **Phase 7.5** | `JoInn Phase 7.5 Implementation Plan.md`, **written after Phase 7.4's review**: systems in universes, the lens as the view, links that show their ends, each level's own look | `docs/Findings/phase-7.5-stop.md`; Claude reviews |
+| 4 | **Phase 8** | `JoInn Phase 8 Implementation Plan.md`, read with §5 below | `docs/Findings/phase-8-stop.md`; Claude reviews |
+| 5 | **Phase 9** | `JoInn Phase 9 Implementation Plan.md`, read with §5 below | `docs/Findings/phase-9-stop.md`; Claude reviews; AJ's first-grader test |
+
+**Added 6 Oct (Draft 0.3).** Phase 7.3's window check showed that a body, a system and a cell were hard to tell apart, that links never showed what they connect, and that the grove still drew wires inside bodies: Phase 7's forces never reached a universe. AJ's answer is Part VII (*Systems, Forces and Growth*). Phases 7.4 and 7.5 build it before Phase 8. Row 3 has no plan yet: **Cursor stops after Phase 7.4 even if AJ wrote "chain the phases"**, because Phase 7.5's plan is written from 7.4's review.
 
 **Each unit stops.** After a phase's stop commit and push, Cursor prints `phase <n>: stopped for review` and does nothing else. The next phase opens only on AJ's prompt after Claude's review. (If AJ is away, AJ may write "chain the phases" in the prompt: then a phase stop with no tripwire continues into the next phase, exactly as Run 7.2B–9 did.)
 
@@ -84,15 +88,15 @@ These replace "Suite" and "Scans" after every commit and the three full stops. P
 ### 3.1 Tier 1: every commit
 
 1. The commit's **done-when**, exactly as the plan writes it.
-2. **`cargo xtask check`**: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace --no-fail-fast`, `vocab`, `modules`, `layers`, and the phase's own commands (7.3: `zoom`, and `links` from P73-04). It prints the commit report's `Check:` block.
+2. **`cargo xtask check`**: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace --no-fail-fast`, `vocab`, `modules`, `layers`, and the phase's own commands (7.3: `zoom`, and `links` from P73-04; 7.4: `grow` from P74-08). It prints the commit report's `Check:` block.
 3. **The scoped gates** for the files the commit changed (`git diff --name-only HEAD~1`), from this table. Run the widest row that applies.
 
 | The commit changes | Also run |
 |---|---|
 | only files under `docs/` | nothing, not even `check` (write `Check: docs only`) |
 | files it **adds** in `joinn-visual`, `joinn-gpu` or `joinn-shell-desktop`, plus only `mod` / `pub use` lines in existing files | nothing more |
-| any **existing** file in `joinn-visual`, `joinn-gpu` (the shader included), `joinn-shell-desktop` or `joinn-test-host` | `gate 6`, `gate 7`, `gate 7.2`, and every later picture gate that exists (`7.3`, `8`, `9`) |
-| a gate leaf or gate table of the current phase (`xtask/src/fns/g73_*`, `gate_seven_three*`, and so on) | that phase's gate |
+| any **existing** file in `joinn-visual`, `joinn-gpu` (the shader included), `joinn-shell-desktop` or `joinn-test-host` | `gate 6`, `gate 7`, `gate 7.2`, and every later picture gate that exists (`7.3`, `7.4`, `7.5`, `8`, `9`) |
+| a gate leaf or gate table of the current phase (`xtask/src/fns/g73_*`, `gate_seven_three*`, `g74_*`, `gate_seven_four*`, and so on) | that phase's gate |
 | anything else under `joinn/`: `joinn-frame`, `-dna`, `-prim`, `-live`, `-gate`, `-link`, `-host`, `-assay`, `-cli`, `-creator`; xtask's shared harness (`mutate*`, `subject*`, `harness_fixtures*`, `run_gate_table`, `grade_opposed`, `gate_all`, `corpus_*`, `pick*`, `regrow*`, `grove*`); `Cargo.toml`, `Cargo.lock`, `.cargo/`, `rust-toolchain.toml`; anything under `corpus/` | `gate all` |
 
 A plan's done-when that names a gate (for example P73-07's "gate 6, gate 7, gate 7.2 each full") always runs it, whatever the table says.
@@ -138,6 +142,12 @@ Their plans were written for Run 7.2B–9. Read them with these changes, which o
 - **Freeze commits** (P8-13, P9-14): "`gate all` from a fresh clone" is `stop-check --fresh`, run once at the stop and pasted there; the commit itself runs tier 1.
 - **AGENTS.md:** each phase's Appendix A header replaces "Work one CHUNK at a time … continue unless a tripwire fires" with "Work the phase's commits in order, one git commit per numbered step, check each by tier, and stop once at the phase's end."
 
+- **After Phases 7.4 and 7.5** (added in Draft 0.3):
+  - Phase 8's gate goes after the last 7.x gate in `PHASE_LABELS` (`phase 8` after `phase 7.5`), and every "phases 0 … 7.3" in Phases 8 and 9 reads "phases 0 … 7.5".
+  - Phase 7.4 adds four corpus files. Every `corpus verify` count Phase 8 predicts rises by 4 (**53 becomes 57**), plus whatever Phase 7.5 adds, which its plan states. Phase 9's counts rise the same way.
+  - Phase 8's and 9's open AGENTS rule numbers (77 … 86) stay theirs; Phase 7.4 uses 87 … 93.
+  - The three fixes the 7.3 review proposed for Phase 8 are done in Phase 7.4 (P74-F1 … F3). Phase 8 adds nothing for them.
+
 Phase 8's and 9's own decisions, commits and gates do not change.
 
 ---
@@ -160,7 +170,7 @@ A tripwire stops the phase at once: Cursor writes the stop report as far as it g
 
 | # | Fires when |
 |---|---|
-| **T1** | Any file under `joinn/corpus/` that existed before the phase changes (Phase 8's nine new witness files and appended `hashes.txt` lines are not changes) |
+| **T1** | Any file under `joinn/corpus/` that existed before the phase changes (Phase 7.4's four new files under `corpus/phase74/`, Phase 8's nine new witness files, and appended `hashes.txt` lines are not changes) |
 | **T2** | `gate all` (scoped or at the stop) does not exit 0, or prints any earlier phase's line with a different score than `gates.lock` |
 | **T3** | At the stop, `cargo test --workspace --no-fail-fast` has any failure |
 | **T4** | A phase's gate commit is `skipped: depends on …` |
@@ -171,4 +181,4 @@ A tripwire is never avoided by weakening a test, editing `gates.lock`, reblessin
 
 ---
 
-*JoInn Run 7.3–9, Draft 0.2 (5 Oct 2026). AJ asked on 5 Oct, after Phase 7.2 finished: run each phase as one unit, with every speed improvement for Cursor's checks. Claude decided, open to AJ's veto: one stop per phase with a review between phases; tier-1 checks per commit with gates scoped by the files changed; the full gate once per phase from a fresh clone; demos by item; an optimized debug profile with overflow checks kept; one feature set for the whole workspace; CI read once and never waited for.*
+*JoInn Run 7.3–9, Draft 0.2 (5 Oct 2026). AJ asked on 5 Oct, after Phase 7.2 finished: run each phase as one unit, with every speed improvement for Cursor's checks. Claude decided, open to AJ's veto: one stop per phase with a review between phases; tier-1 checks per commit with gates scoped by the files changed; the full gate once per phase from a fresh clone; demos by item; an optimized debug profile with overflow checks kept; one feature set for the whole workspace; CI read once and never waited for. Draft 0.3 (6 Oct 2026): Phases 7.4 and 7.5 inserted before Phase 8 after Part VII; §1, §3.1, §5 and T1 changed.*

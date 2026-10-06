@@ -1,14 +1,15 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 7.3 is Visual Host II, part 2: the links. Hyperedges
-are routed through the gutters of the grid, drawn as region, hub, bundle or
-spine, and touch a folded system once. Its one idea is A LINK TOUCHES; IT NEVER
-CROSSES. The build plan is docs/Plans/JoInn Phase 7.3 Implementation Plan.md,
-run inside docs/Plans/JoInn Run 7.3-9.md. Work the phase's commits in order, one
-git commit per numbered step, check each by tier, and stop once at the phase's
-end. Never stop to ask; follow the plan's Snags section instead.
+This repo is JoInn. Phase 7.4 is her counting app, part 1: one counting system
+that grows by its DNA, witnessed by counting, evolved into adding, with its force
+drawn as a lasso. Its one idea is A BODY GROWS BY ITS DNA, AND EVERY SIZE IS
+TRUE. The build plan is docs/Plans/JoInn Phase 7.4 Implementation Plan.md, run
+inside docs/Plans/JoInn Run 7.3-9.md. Work the phase's commits in order, one git
+commit per numbered step, check each by tier, and stop once at the phase's end.
+Never stop to ask; follow the plan's Snags section instead.
 
-No new grammar in this phase. Snapshots are not built (R105).
+New grammar in this phase: `grows` in .contact, and the .system file kind. Their
+mutants ship first (rule 52). Universes do not change (Phase 7.5).
 
 ## Hard rules
 
@@ -205,8 +206,9 @@ No new grammar in this phase. Snapshots are not built (R105).
     recorded; a registered combine's result does not depend on it (order-blind),
     which the order sample checks. Every registered combine has a registered
     separate that is a turn of its response. Member order is never hashed.
-64. A FORCE OWNS NO PIXEL. It is seen only through its response. Interior ports
-    are not drawn; a contact picture has no link rows.
+64. A FORCE IS SEEN AS A LASSO. It owns the pixels of its lasso and nothing
+    else: no cell, port or body pixel. Interior ports are not drawn; a contact
+    picture has no link rows. A link and a force never look alike (Part VII G19).
 65. ROLES ARE DERIVED, NEVER WRITTEN. A role is (faces out | in) × (holds |
     reacts): protect, carry, store, respond. There is no role list and no
     four-variant role enum. joinn-host's Role is the accessibility role and is
@@ -240,6 +242,21 @@ No new grammar in this phase. Snapshots are not built (R105).
     computed at grow. A zoom chooses among them in the shader and writes no row.
 76. ORDER IS DRAWN ONLY WHEN DECLARED. A spine or a mid-path arrowhead appears
     only on an ordered link; a tail's stub arrow only on a tail.
+87. A BODY GROWS BY ITS DNA, AND EVERY SIZE IS TRUE. A growing body's `grows`
+    section says what it grows and what it accepts. Size 0 is the force's
+    identity, size 1 the input, size n the combine.
+88. GROWTH IS NOT EVOLUTION. A system's hash covers its DNA and forces, never
+    what grew. A grown state is never hashed and never written under corpus/.
+89. EVOLUTION KEEPS EVERY OLD WITNESS, AND GAINS. A child names its parent; every
+    parent transcript gives the same answers on the child; the child accepts
+    something the parent refuses.
+90. COUNTING IS THE WITNESS. After every growth step the response equals the
+    count taken one step at a time. A difference is a truth violation.
+91. FORCES BELONG TO SYSTEMS. A growing contact has no forces section; its
+    system holds them.
+92. A SYSTEM IS THE BODIES ITS FORCES REACH. A system with no force is refused.
+93. A TRUTH BY CONSTRUCTION GETS A STANDING PLANT. When no admitted artifact can
+    break a truth, its command plants the fault on every run and must refuse it.
 
 ## Definition of done
 

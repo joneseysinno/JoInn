@@ -451,6 +451,10 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 **Exit gate.** Collapse a system and watch a hyperedge reroute to the lens node and touch it exactly once however many members are inside.
 
+#### Phase 7.4 · Her counting app, part 1
+
+> **6 Oct 2026.** Planned in Plans/JoInn Phase 7.4 Implementation Plan.md after Part VII: a counting system grows by its DNA, counting witnesses every step, adding evolves from counting, and the force is drawn as a lasso. Phase 7.5 (systems in universes, the lens as the view, links that show their ends, each level's own look) follows; Phases 8 and 9 keep their numbers.
+
 ---
 
 #### Phase 8 · Visual truth

@@ -489,3 +489,45 @@ A hub's knot is a 1-median on the streets. Does it mean anything (a junction, a 
 ## R108 — The engine's cost per fire  ·  status: open
 
 `agree` (Phase 2.1/2.2's gates and CI's `agree` step) spends about 100 s cloning cells per delivery and re-hashing coding regions per fire. Should a cell's hash be computed once at admission and carried, and deliveries share cells instead of cloning them? A truth-core change: planned on its own, with `agree`'s output byte-identical as its gate.
+
+> **6 Oct 2026 · Part VII and Phase 7.4.** R109–R117 come from *Systems, Forces and Growth* (Part VII) and the 7.4 plan.
+
+## R109 — Systems and lenses  ·  status: answered (G17)
+
+If a system is the bodies its forces reach, what is a lens's system? Proposal: the force system is the one real grouping, and lenses group systems, never bodies. Answered by G17: the lens is the view.
+
+## R110 — Links as carry  ·  status: answered (G18)
+
+Is a link a lasso of kind carry? Test: write Phase 5's link checks as carry's laws and see what is left over. Answered by G18: links transfer data while forces stimulate.
+
+## R110a — Carry, the force  ·  status: open
+
+From Part VII: is *bears on* a link or a force? Not needed until the beam.
+
+## R111 — What is consumed  ·  status: open
+
+If combine keeps its inputs (G15), is "consumed" a property of carry instead?
+
+## R112 — Counting and measuring  ·  status: open
+
+Where exactly does counting end? Exact rationals are counting; √2 is not. Is "measuring" one new system, or the edge Part VI's continuum (R92) already names?
+
+## R113 — The app as a cell  ·  status: open
+
+Is "an app has the shape of a cell" a law the gate checks, or a habit?
+
+## R114 — Lineage as learning  ·  status: open
+
+Can the saves system show an app's evolution as a learning record, and who may see it?
+
+## R115 — Removing a number  ·  status: open
+
+Growth only adds. Can a body shrink (she erases a number), and is that growth backwards, or an edit?
+
+## R116 — Where state lives  ·  status: open
+
+A grown state is the input list. When the saves system exists, it stores that list. Is the list itself testimony with lineage (her teacher sees *what* she counted and *when*, R114)?
+
+## R117 — Systems of several bodies  ·  status: open
+
+A system holds one body here. With two (the beam and its column), does one lasso hold both, or one lasso per body?
