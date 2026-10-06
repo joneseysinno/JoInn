@@ -649,3 +649,23 @@ Chunk A is accepted. One prediction in §2.4 was Claude's error, not Cursor's: t
 **Pushing.** Cursor's auto-review blocked `git push origin main`. From now on AJ's prompt carries the authorization. If a push is still blocked, it is a snag: record it, keep the commits local, and continue.
 
 **Stops in this run.** This phase now runs inside `docs/Plans/JoInn Run 7.2B-9.md`. Stops B and C still write their reports and push, but Cursor does not wait for Claude: it continues with the next chunk unless a tripwire in the run plan fires. §6.1's conditions for opening Phase 7.3 are replaced by the run plan's tripwires; Claude reviews every stop after the run. AJ's window check (§6.2) moves to the end of the run.
+
+---
+
+## Amendment 2 · 5 Oct 2026 · Phase 7.2 review (Claude)
+
+Phase 7.2 is **accepted** (`docs/Findings/phase-7.2-review.md`). Two of P72-14's snags were Claude's errors in §2.13, and both are fixed in Phase 7.3's first commits, not here:
+
+**§2.13, items 2 and 3, now read:**
+
+| # | Item | `control_artifact` | `opposes` | Control answers `true` when |
+|---|---|---|---|---|
+| 2 | **Bands follow size, and two pickers name every pixel** | `corpus/phase5/ordered.universe` | `CopyMember("function", "units", "calculation")` | the subject is refused at admission, or some body would be drawn twice in one lens |
+| 3 | **A folded system is one node, and a link touches it once** | `corpus/phase5/ordered.universe` | `ShiftPort("path", "calc.sum@2", 9)` | the subject is refused at admission, or some link's touch count differs from the number of distinct cut nodes its members map to |
+
+- `adversary.universe` was the wrong artifact: full admission has refused it since P51-09 (`link bus member units.scale@1 is head but direction is Out; acceptance is In`). Every gate 7.2 check and control admits through `admit_universe`; there is no second admission path.
+- Check 3's last bullet becomes: *`ordered.universe` framed at level −4: each of its two systems is one node, and link `path` touches 2 nodes.*
+- **Check 2 gains the band-boundary probe** (Phase 7.3 plan §2.12 F2): `≥` and `>` differ only where `10·s = 11·T`; for T = 4 and 32 that never happens for any integers, and for T = 240 it needs sizes such as 33 or 48, which the grove never draws. The probe evaluates the shader's `band()` at `size 48, level 2, step 96` (full) and `step 95` (summary), and `size 33, level 3, step 0` (full) and `level 2, step 255` (summary), on every adapter, against the CPU's `owner_band`.
+- `gates.lock` is unchanged: `phase 7.2: 3/3`.
+
+Commits: **P73-F1** (the controls) and **P73-F2** (the probe), in the Phase 7.3 plan, Draft 0.2. From now on this phase is closed: its gate is changed only by an amendment like this one.

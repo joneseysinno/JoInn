@@ -4,6 +4,8 @@
 
 Author: AJ, with Claude · Draft 0.1 · October 3, 2026
 
+> **Superseded on 5 Oct 2026 from chunk 3 on** by `docs/Plans/JoInn Run 7.3-9.md` (one stop per phase, checks by tier). Chunks 1 and 2 (Phase 7.2 B and C) were run under this plan; Claude's review is `docs/Findings/phase-7.2-review.md`.
+
 > **Every decision in this run is final.** Nothing waits on AJ or on Claude. Cursor works the chunks below in order, writes every stop report, pushes, and keeps going. It stops only when a **tripwire** (§3) fires or the run is done.
 
 ---

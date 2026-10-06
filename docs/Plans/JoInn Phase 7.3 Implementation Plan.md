@@ -2,9 +2,9 @@
 
 **Visual Host II, part 2: the links · routes in the gutters · region, hub, bundle, spine · a folded system touched once**
 
-Author: AJ, with Claude · Draft 0.1 · October 3, 2026
+Author: AJ, with Claude · Draft 0.2 · October 5, 2026 (Draft 0.1, 3 Oct, planned it as three chunks inside Run 7.2B–9)
 
-> **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going. This phase runs inside `docs/Plans/JoInn Run 7.2B-9.md`; its tripwires apply.
+> **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going. This phase runs inside `docs/Plans/JoInn Run 7.3-9.md` as **one unit with one stop**; that run's checks (§3), stop report (§4) and tripwires (§7) apply.
 
 ---
 
@@ -33,6 +33,13 @@ Tails (senders) have filled ports with an arrowhead leaving them; heads are holl
 
 **What you do at the end** (about three minutes, §6.2): open the grove, zoom into one system and watch its link become a hub, then fold it by zooming out.
 
+**What changed on 5 Oct (Draft 0.2).** Two things come first, before any link is drawn:
+
+- **Speed (P73-S1 … S4).** Phase 7.2 spent most of its time re-running checks. These four commits make the build faster without changing a single answer, build the GPU stack once instead of twice, let a demo run one gate item instead of a whole gate, and give Cursor one command per commit (`cargo xtask check`) and one per phase (`cargo xtask stop-check`). The gate's output must be byte-identical before and after, apart from the lines that print times; if it isn't, the phase stops (T6).
+- **Two fixes to gate 7.2 (P73-F1, F2)** from Claude's 7.2 review. Two of its controls used a universe that full admission refuses, so the gate admitted it a weaker way; they move to one that is admitted. And the one place where the shader's `≥` and `>` differ (a band boundary only the 240 px threshold can reach) is tested on the GPU at last.
+
+Then the phase runs straight through with **one stop at the end**, not three.
+
 ---
 
 ## 0. How Cursor Works This Plan
@@ -42,19 +49,30 @@ Tails (senders) have filled ports with an arrowhead leaving them; heads are holl
 | **Plan file** | `D:\JoInn\docs\Plans\JoInn Phase 7.3 Implementation Plan.md` |
 | **Code** | `D:\JoInn\joinn\`. No new crate. No new external dependency |
 | **Standing rules** | `AGENTS.md` as updated by P73-01 (Appendix A) |
-| **Unit of work** | a **chunk** (A, B or C), commits in order, each its own git commit whose message starts with its id (`P73-04: …`) |
-| **End of a chunk** | the stop report (§0.2), commit, push, ledger line, tripwires, then continue per the run plan |
+| **Unit of work** | **the phase**: every commit of §4 in order, each its own git commit whose message starts with its id (`P73-04: …`). Parts 0, S, F, A, B and C in §4 group the work; **they are not stops** |
+| **End of the phase** | one stop: `cargo xtask stop-check --fresh`, the stop report (§0.2), commit, push, ledger line, then print `phase 7.3: stopped for review` and stop |
 | **Who decides** | every decision is in §2. Cursor decides only module layout, function bodies, private representations, the routing graph's internal storage, tie-break implementation (not the rule), and error wording where §2 gives none |
-| **Who checks** | Claude, after the run, from a fresh clone. CI on every push. AJ runs the window at the end of the run |
+| **How each commit is checked** | Run 7.3–9 §3: the done-when, `cargo xtask check`, and the gates scoped to the files changed. Demos run `gate <phase> --item <n>` only |
+| **Who checks** | Claude, at the phase stop, from a fresh clone of what was pushed. CI on the push (read once, never waited for). AJ runs the window (§6.2) at the stop |
 | **Input** | Never move the system mouse, click, or type outside a window Cursor started (rule 67) |
 
 ### 0.1 The commit report
 
-As Phase 7.2's §0.1, plus from P73-04 on: `Links:      cargo xtask links → <last line>`.
+Every commit ends with this block in its commit message. Every value is copied from the terminal.
+
+```
+Commit:     P73-NN (hash in git log)
+Done-when:  <the command> → <the line it printed>          MET | NOT MET
+Check:      <the block cargo xtask check prints, whole>  |  docs only
+Gates:      <each scoped gate run (Run 7.3–9 §3.1) → its phase line>  |  none
+Snags:      none | <each thing that went differently from the plan, with the printed line>
+```
+
+Until `cargo xtask check` exists (P73-01 … P73-S3), the `Check:` block is written by hand: `Suite:` (`cargo test --workspace --no-fail-fast → N passed, M failed`), `Fmt/Clippy:` (two exit codes), `Scans:` (vocab, modules, layers last lines) and `Zoom:` (`cargo xtask zoom` last line). From P73-04 on, `check` also prints `Links:`.
 
 ### 0.2 The stop report
 
-As Phase 7.2's §0.2, at `docs/Findings/phase-7.3-stop-<letter>.md`, with these additions to item 3: `cargo xtask grove`, `cargo xtask zoom`, and from P73-04 on `cargo xtask links`. Then the run plan's §5 lines.
+Run 7.3–9 §4, the short form, at `docs/Findings/phase-7.3-stop.md`. Commit it as `P73-stop: stop report`.
 
 ### 0.3 Snags
 
@@ -186,6 +204,8 @@ Phase 6's Link and Incidence rows keep their layouts byte for byte. New tables (
 
 A segment lives in the deepest chart that contains both its ends (system, else galaxy, else universe), so a rebase moves it exactly as 7.2's chart rows do. **A zoom writes no row** (V142 still holds): the shader chooses the fold state and the form from the tick uniform and the Route row, in integers.
 
+**Binding (added in Draft 0.2).** Phase 7.2's vertex stage already binds eight storage tables, the most WebGPU's default limits allow (P72-08 moved the style table to a uniform for that reason). The Route and Segment tables are therefore bound **only by the segment pipeline**, whose layout holds at most eight storage tables (Segment, Route, Chart, Link and whatever else it reads); the existing pipelines' layouts do not change. Raising a device limit is not allowed (rule 60: every adapter). If eight is still too few, that is a snag with the binding list printed, never a float or a CPU-side draw.
+
 **IDs.** `LINK_TAG = 0x5000_0000` in blue. A link pixel's ID is `[route's link slot + 1, member, LINK_TAG | form, generation]`. Owners print `link <id>` (trunk, knot, spine, region) or `link <id> member <i>` (a leg or stub serving one member, `i` from 0 in incidence order).
 
 ### 2.8 Picking
@@ -205,6 +225,74 @@ Links appear in the shell for any `.universe`. No new input. A pick on a link pr
 | **V150** | Order is drawn only when declared: no spine and no arrowhead along an unordered link | P73-05 |
 | **V151** | A folded node is touched once per link: one touch point, one leg | P73-03 |
 | **V152** | Two pickers name every link pixel: CPU and GPU agree on link owners at every view | P73-08 |
+
+### 2.11 Speed (P73-S1 … S4)
+
+**Why.** At P72-14, `cargo xtask gate all` took **1 237 857 ms** (20.6 min) on AJ's machine, against 571 431 ms at Stop B: gate 7.2 alone doubled it. P72-14 took 72 minutes, mostly re-running gate 7.2 whole for each of its three demos. Claude measured the tree at `17e5160` on Linux (2 cores, one lavapipe adapter, the default debug profile): `cargo test --workspace` **80 s**; per phase, gates 2.1, 2.2 and 7.2 take **220 s, 219 s and 223 s**, and every other gate together 62 s. With (a) below and nothing else changed: 46 s, and 107 s, 107 s, 36 s, rest 16 s. Every gate's output was identical line for line apart from timing lines, and the suite printed 412 passed both times. In all, the gates went from **724 s to 267 s**; gate 7.2 from 223 s to 36 s.
+
+Gates 2.1 and 2.2 barely moved because both run the same `agree` sweep (about 100 s even optimized, and CI runs it a third time as its own step). Sampled with a debugger, `agree` spends its time in the live engine: cloning cells in `enqueue_outs` on every delivery and re-hashing a cell's coding region (`print_coding` then `hash`) on every `fire`. (c) below runs it once per process, which removes one of the two. The engine itself is **not** changed in this phase: it is the truth core, and its speed is R108.
+
+All four commits are **pure speed**: no check is removed, no answer changes. T6 (the run plan) stops the phase if any line of `gate all`'s output changes other than a line containing `milliseconds` or `(information`.
+
+**(a) The dev profile.** In the workspace `Cargo.toml`, exactly:
+
+```toml
+[profile.dev]
+opt-level = 1
+debug = "line-tables-only"
+overflow-checks = true
+debug-assertions = true
+
+[profile.dev.package."*"]
+opt-level = 3
+```
+
+`overflow-checks` and `debug-assertions` are written out, though they are the dev defaults, so nobody later "optimizes" them away: they guard the arithmetic the gates exist for. A check never uses `--release`, which turns both off. `--release` stays only where a plan says so for a measurement (`--measure`).
+
+**(b) One build, not two.** Measured by Claude: after `cargo build --workspace --all-targets`, the first `cargo xtask gate 1` recompiled **15 crates** in 38.6 s (`bitflags`, `bytemuck`, `spirv`, `smallvec`, `wgpu-types`, `naga`, `parking_lot_core`, `parking_lot`, `wgpu-naga-bridge`, `wgpu-hal`, `wgpu-core-deps-…`, `wgpu-core`, `wgpu`, `joinn-gpu`, `xtask`). `cargo run -p xtask` resolves features for xtask's tree alone; `cargo test --workspace` also has `joinn-shell-desktop`'s `winit`, which turns on more features in shared dependencies. Cargo keeps both builds, so every edit to `joinn-gpu` or below compiles the GPU stack twice. The same may hold for the gates' nested `cargo run -p joinn-cli` (`joinn-prim` without the `mutants` feature). Cursor finds every difference (`cargo tree -e features -i <crate>` for each crate the second build compiles) and declares the union where the trees diverge, so all three resolve identically. **No new crate enters `Cargo.lock`.** A direct dependency added only to pin features gets its line in `docs/Findings/dependencies.md` ("features pinned so the workspace builds once").
+
+**(c) The gate harness.**
+
+1. **Time per phase.** After the lock is printed, `gate all` prints one line per phase, `phase <label> ms <n> (information)`, then its existing total. No time reaches a decision (rule 4).
+2. **Pure work once per process.** Work that takes no input and is deterministic is computed once per `xtask` process and reused: the harness fixtures, `corpus verify`, the `agree` sweeps, the grove's growth and layout, the adapter list, and the gate 6 and 7 pictures that gate 7.2 item 1 re-checks. A memoized function returns its lines; **the caller prints them every time**, so `gate all` prints exactly what it printed before. Nothing is cached across processes or on disk.
+3. **One item.** `cargo xtask gate <phase> --item <n>` grades that item's opposition (as `run_gate_table` does), runs its check, prints its row and `phase <label>: item <n> ok | fail`, exits 1 on `fail`, and **never writes `gates.lock`**. An `n` outside the table is refused naming the table's size.
+
+**(d) One command per tier.**
+
+- **`cargo xtask check`** runs, in order: `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace --no-fail-fast`, `vocab`, `modules`, `layers`, `zoom`, and from P73-04 `links`. It prints the commit report's block:
+
+  ```
+  Suite:      cargo test --workspace --no-fail-fast → <N> passed, <M> failed
+  Fmt/Clippy: exit 0 · exit 0
+  Scans:      vocab → <last line> · modules → <last line> · layers → <last line>
+  Zoom:       cargo xtask zoom → <last line>
+  Links:      cargo xtask links → <last line>
+  check: ok (<ms> ms, information)
+  ```
+
+  It runs every step even after one fails, then prints `check: failed: <step names>` and every failing test name, and exits 1. `--gates 6,7,7.2` runs those gates afterwards and adds their phase lines. Its passed and failed counts are summed from every `test result:` line, never chosen.
+- **`cargo xtask stop-check`** runs the whole CI list of `.github/workflows/ci.yml`, in its order, and prints each command's last line, every line containing `fail`, every failing test name, each step's ms and the total; exit 1 if any step fails. **`--fresh`** first clones HEAD into `target/fresh` (`git clone --no-hardlinks . target/fresh`) and runs there. It reads the step list from `ci.yml`, so CI and the stop can never drift apart.
+- If Windows refuses to rebuild a binary that is running (xtask testing itself), that is a snag: paste the error, and run the steps by hand for that commit.
+
+### 2.12 Carried from Phase 7.2 (the 7.2 plan's Amendment 2)
+
+**F1 · Gate 7.2's controls are fully admitted.** Items 2 and 3 used `corpus/phase5/adversary.universe` as their control artifact. That universe is refused by full admission (`link bus member units.scale@1 is head but direction is Out; acceptance is In`) and has been since P51-09, which kept it as a record of the Phase 5 attempt. So P72-14 graded them through `g72_layouts`, a second admission path without `check_link_types`. **That was Claude's error in the 7.2 plan's §2.13**, and Cursor's workaround was honest and recorded. The fix removes the second path:
+
+| # | `control_artifact` | `opposes` | Control answers `true` when |
+|---|---|---|---|
+| 2 | `corpus/phase5/ordered.universe` | `CopyMember("function", "units", "calculation")` | the subject is refused at admission, or some body would be drawn twice in one lens |
+| 3 | `corpus/phase5/ordered.universe` | `ShiftPort("path", "calc.sum@2", 9)` | the subject is refused at admission, or some link's touch count differs from the number of distinct cut nodes its members map to |
+
+- Every gate 7.2 check and control admits through the **same** `admit_universe` the rest of the repo uses. `g72_layouts` keeps only the layout half, or goes.
+- Item 3's last check becomes: *`ordered.universe` framed at level −4: each of its two systems is one node, and link `path` touches 2 nodes.* The grove's 264 and 1182 touches are unchanged.
+- Rule 41: the new pairs are distinct from every other gate's, including Phase 7.3's (`WireAcross("path")`, `FlipMark("path", "calc.sum@2")` on the same file).
+- `gates.lock` does not change (`phase 7.2: 3/3`).
+
+**F2 · The band boundary on the GPU.** P72-14's demo (b), the shader's owner test `≥` changed to `>`, was **not caught**, and Cursor's snag explained why exactly: `≥` and `>` differ only when `10·s = 11·T`, i.e. `10·(256 + step)·size·2^level = 11·T·256`. For T = 4 and T = 32 the right side divided by 10 is not an integer (1126.4, 9011.2), so **the two operators are the same function** for those thresholds; there is nothing to test. For T = 240 it is `67584 = 2^11·33`, reachable only at sizes such as 33 and 48, and the grove's bodies (40, 20) and frames (304, 1296) never reach it. So the GPU half of rule 70 at the one reachable boundary was never exercised.
+
+- Gate 7.2 item 2 gains a **boundary probe**: on every adapter, the shader's own `band()` (the `common.wgsl` that ships, not a copy) is evaluated for `size 48, level 2, step 96` (exactly `10·s = 11·240`: must be **full**, 3) and `size 48, level 2, step 95` (must be **summary**, 2), and for `size 33, level 3, step 0` (full) and `size 33, level 2, step 255` (summary). The results come back as bytes and are compared with `owner_band` on the CPU. Cursor chooses the mechanism (a one-row draw into an `R32Uint` target is enough); a compute pass is allowed here, for the probe only.
+- `cargo xtask pick` prints one more line per adapter: `band boundary <adapter>: 48 at level 2 step 96 full, step 95 summary; 33 at level 3 step 0 full, level 2 step 255 summary; cpu agrees`.
+- The probe takes `(size, level, step)` as data, so Phase 7.3's form thresholds use it too (§6, item 2): for T = 1920 the reachable boundaries include `size 33, level 6, step 0` and `size 48, level 5, step 96`.
 
 ---
 
@@ -229,18 +317,38 @@ Links appear in the shell for any `.universe`. No new input. A pick on a link pr
 
 ## 4. The Commits
 
-### Chunk A: the routes (CPU only)
+### Part 0: the plan
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
-| **P73-01** | **Plan, rules, docs** | Commit this plan. `AGENTS.md` per Appendix A. Appendix B. No code | `git show --stat HEAD` lists this plan, `AGENTS.md`, the backlog, `decisions.md`, the roadmap |
+| **P73-01** | **Plan, rules, docs** | Commit this plan (Draft 0.2), `docs/Plans/JoInn Run 7.3-9.md`, the 7.2 plan with Amendment 2, and `docs/Findings/phase-7.2-review.md`. `AGENTS.md` per Appendix A. Appendix B. No code | `git show --stat HEAD` lists this plan, the run plan, the 7.2 plan, the 7.2 review, `AGENTS.md`, the backlog, `decisions.md`, the roadmap. `Check: docs only` |
+
+### Part S: speed (§2.11). No answer changes
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P73-S1** | **The dev profile** | §2.11 (a) | `cargo xtask gate all > target/gate-all-s1.txt`; then compare with `target/gate-all-7.2.txt` (Run 7.3–9 row 0) after dropping, from both, every line containing `milliseconds`, `(information`, `Compiling`, `Finished`, `Running` or `Blocking`: **the comparison prints nothing** (paste the PowerShell `Compare-Object` and its empty output). Paste both `gate all wall milliseconds` lines. `cargo test --workspace --no-fail-fast` → the same count as at P72-15 (412 passed, 0 failed) |
+| **P73-S2** | **One build** | §2.11 (b) | In this order, each pasted: `cargo test --workspace --no-run` (anything may compile), then `cargo xtask vocab` → **no `Compiling` line**, then `cargo build -p joinn-cli` → no `Compiling` line except `joinn-cli` itself. `git diff HEAD~1 -- Cargo.lock` adds no `[[package]]`. `gate all` compared with `target/gate-all-s1.txt` as in S1: prints nothing |
+| **P73-S3** | **The gate harness** | §2.11 (c) | `gate all` compared with `target/gate-all-s1.txt` as in S1: prints nothing. The thirteen `phase … ms … (information)` lines and the total pasted. `cargo xtask gate 7.2 --item 2` prints row 2 and `phase 7.2: item 2 ok`; `git status --short gates.lock` then prints nothing; `cargo xtask gate 7.2 --item 4` is refused naming 3 items (paste). A test asserts that `--item n`'s row text equals row n of the full gate's output |
+| **P73-S4** | **One command per tier** | §2.11 (d); CI unchanged | `cargo xtask check` printed whole (paste). **Shown then reverted:** a test asserting `1 == 2` added to `joinn-visual`: `check` exits 1 and names the test, and still prints the Scans and Zoom lines. `cargo xtask stop-check` printed whole (no `--fresh` here), its step list equal to `ci.yml`'s `run:` lines in order (a test reads both) |
+
+### Part F: carried from Phase 7.2 (§2.12)
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
+| **P73-F1** | **Gate 7.2's controls fully admitted** | §2.12 F1 | `cargo xtask gate 7.2` → `phase 7.2: 3/3`. `git grep -n "adversary.universe" -- joinn/xtask/src` prints nothing (paste). Every gate 7.2 check and control reaches a universe through `admit_universe` (paste the `git grep -n admit_universe -- joinn/xtask/src/fns/g72_*` lines). Uniqueness through gate 7.2 passes. **Shown then reverted:** item 3's control artifact set back to `adversary.universe`: `gate 7.2 --item 3` is refused at grading (`control answered true on real subject`); paste it |
+| **P73-F2** | **The band boundary on the GPU** | §2.12 F2 | `cargo xtask pick` → the `band boundary` line on every adapter (paste). `cargo xtask gate 7.2` → `3/3`. **Shown then reverted:** P72-14's demo (b), `>` for `>=` in `past()`: `gate 7.2 --item 2` now **fails**, naming the boundary probe (paste the line) |
+
+### Part A: the routes (CPU only)
+
+| # | Commit | Delivers | Done when |
+|---|---|---|---|
 | **P73-02** | **The routing graph** | §2.2 | Tests: every grid line misses every slot of its level (all slots, all levels); every extension ends on a parent line; node counts per system 35, galaxy 25, universe 15; the grove's graph line printed (paste it) |
 | **P73-03** | **Touch points and routes** | §2.3, §2.4; V151 | Tests: the knot rule on a hand-made 3-member example with a tie (smallest `y` then `x`); the side rule for each of the four sides; a link with three members in one folded system has one touch point and one leg; every grove link in fold *systems folded* touches each node once |
 | **P73-04** | **V16, exactly** | §2.6; `cargo xtask links` | `cargo xtask links` printed whole (paste it); `crossings 0` everywhere. **Shown then reverted:** move one system gutter line 4 units into its bodies; paste the crossing it prints |
 | **P73-05** | **Forms** | §2.5; V150; `links --forms` | Tests: the owner rule at `10s = 11T` for both thresholds; an unordered link never yields a spine or a mid-path arrowhead; an ordered link is a spine at every view. `links --forms` printed whole (paste it) |
-| — | **Stop A** | `phase-7.3-stop-a.md`, push, ledger, continue | — |
 
-### Chunk B: tables, shader, picking
+### Part B: tables, shader, picking
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
@@ -248,22 +356,21 @@ Links appear in the shell for any `.universe`. No new input. A pick on a link pr
 | **P73-07** | **The shader draws links** | the segment pipeline: capsules, knot discs, arrowheads; integer fold and form tests | `cargo xtask gate 6`, `gate 7`, `gate 7.2` each full. `cargo xtask pick` and `regrow` print every earlier line unchanged (paste a `Compare-Object` that prints nothing) |
 | **P73-08** | **Picking links** | §2.8; V152; `pick` gains link owners | Whole `pick` output pasted; every line `disagree 0`, and `link owners n (cut allows n)` equal |
 | **P73-09** | **Regrow with links** | `regrow` gains `routes equal regrow` | Whole `regrow` output pasted. **Shown then reverted:** recompute routes on a zoom (instead of at grow); paste the `rows` line that fails |
-| — | **Stop B** | `phase-7.3-stop-b.md`, push, ledger, continue | — |
 
-### Chunk C: the shell, measurement, gate 7.3, freeze
+### Part C: the shell, measurement, gate 7.3, freeze
 
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
 | **P73-10** | **The shell draws links** | §2.9 | The session test (no window) of P72-11 extended: a pick at a known leg pixel prints `link sys_g0s00 member <i>`; every pan/zoom `rows 0`. Cursor runs the window once and pastes one link pick line, or writes `no display` |
 | **P73-11** | **The measurement** | `links --measure`, `zoom --measure` | Output pasted; numbers go to the findings |
 | **P73-12** | **Findings** | `docs/Findings/phase-7.3-links.md`: every command's output from P73-02 on; *Predictions* marked `as predicted` / `differs`; **The adversary** (§7) answered with the measured µs; **What snapshots would need** (R105) | Every prediction marked |
-| **P73-13** | **Gate 7.3** | §6 items; `phase 7.3` after `phase 7.2` in `PHASE_LABELS`; lock row | `cargo xtask gate all` exits 0, prints `phase 7.3: 3/3`. **Shown then reverted**, pasting each failure: (a) give item 2 item 3's `opposes`; (b) draw links over bodies (item 1 must fail on a body pixel owned by a link); (c) draw an arrowhead mid-path on an unordered link (item 2 must fail) |
-| **P73-14** | **Docs and freeze** | README, `Guides/03-where-we-are.md` (links drawn; snapshots not built); glossary: *gutter, routing graph, touch point, stub, knot, leg, trunk, fold state, region, hub, bundle, spine, arrowhead*; `decisions.md` V148–V152 with status; roadmap 7.3 note points at the findings | `gate all` from a fresh clone prints phases 0 … 7.3 and exits 0; `corpus verify` 44; `git diff --stat <P73-01>..HEAD -- joinn/corpus` prints nothing |
-| — | **Stop C** | `phase-7.3-stop-c.md` with CI, push, ledger, tripwires, continue | — |
+| **P73-13** | **Gate 7.3** | §6 items; `phase 7.3` after `phase 7.2` in `PHASE_LABELS`; lock row | `cargo xtask gate all` exits 0, prints `phase 7.3: 3/3`. **Shown then reverted** with `gate 7.3 --item <n>` only, pasting each failure: (a) give item 2 item 3's `opposes`; (b) draw links over bodies (item 1 must fail on a body pixel owned by a link); (c) draw an arrowhead mid-path on an unordered link (item 2 must fail); (d) the form test's `>=` changed to `>` (item 2 must fail at its boundary probe) |
+| **P73-14** | **Docs and freeze** | README, `Guides/03-where-we-are.md` (links drawn; snapshots not built); glossary: *gutter, routing graph, touch point, stub, knot, leg, trunk, fold state, region, hub, bundle, spine, arrowhead*; `decisions.md` V148–V152 with status; roadmap 7.3 note points at the findings | Tier 1. `corpus verify` 44; `git diff --stat <P73-01>..HEAD -- joinn/corpus` prints nothing. (`gate all` from a fresh clone is the stop's `stop-check --fresh`) |
+| — | **The phase stop** | `cargo xtask stop-check --fresh` (prints phases 0 … 7.3, exits 0); `phase-7.3-stop.md` (Run 7.3–9 §4); commit `P73-stop`, push, ledger; print `phase 7.3: stopped for review`; stop | — |
 
-Dependencies: in order. P73-06 depends on P73-03; P73-07 on P73-06; P73-08 and P73-09 on P73-07; P73-13 on P73-04, P73-08, P73-09.
+Dependencies: in order. P73-S2, S3 and S4 depend on P73-S1 (its saved transcript); P73-S4 on P73-S3 (`--item`); P73-F2 on P73-F1. P73-06 depends on P73-03; P73-07 on P73-06; P73-08 and P73-09 on P73-07; P73-13 on P73-04, P73-08, P73-09.
 
-**If something has to be cut for time:** cut bundle first (draw it as hub, say so), then `--measure`. Never cut V148, V149, V150, V152.
+**If something has to be cut for time:** cut bundle first (draw it as hub, say so), then `--measure`, then P73-S4's `stop-check` (run the CI list by hand at the stop). Never cut V148, V149, V150, V152, P73-S1, P73-F1 or P73-F2.
 
 ---
 
@@ -286,16 +393,19 @@ Three items in `xtask/src/fns/gate_seven_three_items.rs`, built like gate 7.2's.
 **Checks:**
 
 1. On `universe.universe`, `ordered.universe` and the grove (seed 7), every fold state: `crossings 0`. On every adapter at every Phase 7.2 §2.12 view: no body or cell pixel's GPU owner is a link.
-2. Every grove link is unordered and draws no spine and no mid-path arrowhead at any view; `ordered.universe`'s `path` is a spine at its frame and at level −4; form counts at each view equal `links --forms`; a link in a form fade window is owned by its owner form (Cursor picks one zoom per threshold, printed).
+2. Every grove link is unordered and draws no spine and no mid-path arrowhead at any view; `ordered.universe`'s `path` is a spine at its frame and at level −4; form counts at each view equal `links --forms`; a link in a form fade window is owned by its owner form (Cursor picks one zoom per threshold, printed); and the boundary probe of §2.12 F2, on every adapter, gives the higher form exactly at `10·s = 11·T` and the lower one a notch below, for T = 240 and T = 1920.
 3. At level −4: 264 touches and 136 legs, each folded node touched once per link; at the frame, 1182 stubs; a pick on a leg pixel returns `link <id> member <i>` on every adapter, equal to `cpu_pick`.
 
 Rule 41 holds: the three pairs are new. If the uniqueness test refuses one, Cursor uses the next unused mutation of the same artifact from the closed catalogue, prints it, and records a snag.
 
 ### 6.1 Conditions for opening Phase 8
 
-The run plan's tripwires. Claude's review comes after the run.
+1. `stop-check --fresh` exits 0 with `phase 7.3: 3/3` and every earlier line as `gates.lock`; no tripwire fired.
+2. `phase-7.3-links.md` exists with every prediction marked and the adversary answered.
+3. Claude's review of the phase stop lists no open snag, or AJ has chosen to carry each one forward.
+4. AJ has run the window (§6.2), or each thing that looked wrong is a snag Claude has settled.
 
-### 6.2 AJ's window check (end of run, about three minutes)
+### 6.2 AJ's window check (at the phase stop, about three minutes)
 
 ```
 cd D:\JoInn\joinn
@@ -331,6 +441,7 @@ cargo run --release -p joinn-shell-desktop -- target/grove.universe
 | **R105** | Snapshots | What measurement would make them necessary? Draw-time and instance counts are in `phase-7.3-links.md`. Until something is slow, they wait |
 | **R106** | Streets as structure | The gutters come from the grid. If a lens's layout becomes a body of its own (R104), are its gutters part of its contract? |
 | **R107** | The knot as a place | A hub's knot is a 1-median on the streets. Does it mean anything (a junction, a bus, a shear tab), or is it presentation only? |
+| **R108** | The engine's cost per fire | `agree` (Phase 2.1/2.2's gates and CI's `agree` step) spends about 100 s cloning cells per delivery and re-hashing coding regions per fire. Should a cell's hash be computed once at admission and carried, and deliveries share cells instead of cloning them? A truth-core change: planned on its own, with `agree`'s output byte-identical as its gate |
 
 ---
 
@@ -345,9 +456,9 @@ This repo is JoInn. Phase 7.3 is Visual Host II, part 2: the links. Hyperedges
 are routed through the gutters of the grid, drawn as region, hub, bundle or
 spine, and touch a folded system once. Its one idea is A LINK TOUCHES; IT NEVER
 CROSSES. The build plan is docs/Plans/JoInn Phase 7.3 Implementation Plan.md,
-run inside docs/Plans/JoInn Run 7.2B-9.md. Work one CHUNK at a time, one git
-commit per numbered step, write each stop report, and continue unless a
-tripwire fires. Never stop to ask; follow the plan's Snags section instead.
+run inside docs/Plans/JoInn Run 7.3-9.md. Work the phase's commits in order, one
+git commit per numbered step, check each by tier, and stop once at the phase's
+end. Never stop to ask; follow the plan's Snags section instead.
 
 No new grammar in this phase. Snapshots are not built (R105).
 ```
@@ -364,12 +475,31 @@ Keep every rule. Append:
     only on an ordered link; a tail's stub arrow only on a tail.
 ```
 
+Then add this section after `## Definition of done`. Its items are lettered, not numbered, because rules 77 … 86 are reserved by Phases 8 and 9:
+
+```markdown
+## How checks run (Run 7.3–9 §3)
+
+S1. EVERY COMMIT: its done-when, `cargo xtask check`, and the gates scoped to
+    the files it changed (the run plan's table). A foundation crate, xtask's
+    shared harness, Cargo files or corpus/ mean `gate all`.
+S2. A DEMO RUNS ITS ITEM. "Shown then reverted" uses `cargo xtask gate <phase>
+    --item <n>`, then runs it again after the revert.
+S3. ONE STOP PER PHASE: `cargo xtask stop-check --fresh`, the short stop
+    report, push, stop. CI is read once and never waited for.
+S4. SPEED NEVER CHANGES AN ANSWER. A check never runs with `--release`. The
+    dev profile keeps overflow-checks and debug-assertions. A speed change that
+    alters any line of `gate all` other than a timing line is a tripwire.
+```
+
 ## Appendix B · Documents
 
-- **Backlog** (`docs/Theory/JoInn Research Backlog.md`): after R104, `> **3 Oct 2026 · Phase 7.3.** R105–R107 come from the links plan.` then R105–R107 with status `open` and their questions from §8.
-- **`docs/Findings/decisions.md`**: rows R105–R107 (phase `7.3`, `open`) and V148–V152 (`open`; P73-14 sets them).
+- **Backlog** (`docs/Theory/JoInn Research Backlog.md`): after R104, `> **3 Oct 2026 · Phase 7.3.** R105–R108 come from the links plan and the 7.2 review.` then R105–R108 with status `open` and their questions from §8.
+- **`docs/Findings/decisions.md`**: rows R105–R108 (phase `7.3`, `open`) and V148–V152 (`open`; P73-14 sets them).
 - **Roadmap**: under `#### Phase 7.3 · Visual Host II: links`, add: `> **3 Oct 2026.** Planned in Plans/JoInn Phase 7.3 Implementation Plan.md: routes in the gutters, one path at three widths, two fold states grown once. Snapshots wait (R105).`
 
 ---
+
+*Draft 0.2 (5 Oct 2026): one unit with one stop inside Run 7.3–9; Parts 0, S (speed) and F (gate 7.2's carried fixes, Amendment 2 of the 7.2 plan) before Part A; §0, §2.11, §2.12, §4, §6 and Appendix A changed. Every decision of Draft 0.1 stands.*
 
 *JoInn Phase 7.3 Implementation Plan, Draft 0.1 (3 Oct 2026). Written with the run plan while AJ was away. AJ decided earlier: Visual Host II split into 7.2 and 7.3; exact all the way. Claude decided, open to AJ's veto at the run review: gutter routing; region, hub and bundle as one path at three widths; links under bodies; fold states grown once; snapshots deferred.*
