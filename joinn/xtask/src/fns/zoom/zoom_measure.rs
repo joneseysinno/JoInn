@@ -12,8 +12,10 @@ const RUNS: usize = 5;
 
 /// Per §2.12 view, `measure <view> <zoom>: cut cpu <µs> µs, draw instances <n>`:
 /// the least of five CPU cuts, and the instances one GPU draw issues (every
-/// row of every drawn kind, through the owner and the ghost pipelines; the
-/// shader decides per instance, so this does not depend on the view). Wall
+/// row of every drawn kind, through the owner and the ghost pipelines: frame
+/// rows twice, as open frames and as lens nodes, then segments, bodies twice,
+/// cells, wires, ports, strokes; the shader decides per instance, so this does
+/// not depend on the view). Wall
 /// time is printed and decides nothing (rule 4).
 // Rule 4: xtask MAY measure wall time.
 #[allow(clippy::disallowed_methods)]
@@ -24,7 +26,8 @@ pub(crate) fn zoom_measure() -> Result<String, String> {
         joinn_frame::Verdict::Refused(r) => return Err(r.reason),
     };
     let t = scene.tables();
-    let per_pass = t.frame.len()
+    let per_pass = 2 * t.frame.len()
+        + t.segment.len()
         + 2 * t.body.len()
         + t.cell.len()
         + t.link.len()
@@ -50,14 +53,16 @@ pub(crate) fn zoom_measure() -> Result<String, String> {
     }
     let _ = writeln!(
         out,
-        "zoom --measure: {} views; tables frame {}, body {}, cell {}, link {}, port {}, stroke {}",
+        "zoom --measure: {} views; tables frame {}, body {}, cell {}, link {}, port {}, stroke {}, route {}, segment {}",
         zoom_views(&layout).len(),
         t.frame.len(),
         t.body.len(),
         t.cell.len(),
         t.link.len(),
         t.port.len(),
-        t.stroke.len()
+        t.stroke.len(),
+        t.route.len(),
+        t.segment.len()
     );
     Ok(out)
 }

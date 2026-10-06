@@ -3,11 +3,13 @@
 mod fold_line;
 mod forms_text;
 mod laid_universe;
+mod measure_text;
 mod run;
 
 pub(crate) use fold_line::fold_line;
 pub(crate) use forms_text::forms_text;
 pub(crate) use laid_universe::laid_universe;
+pub(crate) use measure_text::measure_text;
 pub(crate) use run::links;
 
 /// The universes `links` reports by default, in order.
