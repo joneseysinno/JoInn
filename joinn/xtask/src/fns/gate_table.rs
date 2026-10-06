@@ -7,9 +7,9 @@ use super::subject::Subject;
 use super::{
     PHASE_LABELS, gate_five, gate_five_items, gate_five_one, gate_five_one_items, gate_five_two,
     gate_five_two_items, gate_four, gate_four_items, gate_one, gate_one_items, gate_seven,
-    gate_seven_items, gate_seven_two, gate_seven_two_items, gate_six, gate_six_items, gate_three,
-    gate_three_items, gate_two, gate_two_items, gate_two_one, gate_two_one_items, gate_two_two,
-    gate_two_two_items,
+    gate_seven_items, gate_seven_three, gate_seven_three_items, gate_seven_two,
+    gate_seven_two_items, gate_six, gate_six_items, gate_three, gate_three_items, gate_two,
+    gate_two_items, gate_two_one, gate_two_one_items, gate_two_two, gate_two_two_items,
 };
 
 /// A legacy table's checks must pass and its controls are not graded; an
@@ -35,7 +35,7 @@ pub(crate) struct PhaseGate {
 /// Phases 1 onward, in `PHASE_LABELS` order (phase 0 is the corpus).
 pub(crate) fn phase_gates() -> Vec<PhaseGate> {
     use GateTable::{Legacy, Opposed};
-    let rows: [(&str, GateRun, GateTable); 12] = [
+    let rows: [(&str, GateRun, GateTable); 13] = [
         ("1", gate_one, Legacy(gate_one_items())),
         ("2", gate_two, Legacy(gate_two_items())),
         ("2.1", gate_two_one, Legacy(gate_two_one_items())),
@@ -48,6 +48,7 @@ pub(crate) fn phase_gates() -> Vec<PhaseGate> {
         ("6", gate_six, Opposed(gate_six_items())),
         ("7", gate_seven, Opposed(gate_seven_items())),
         ("7.2", gate_seven_two, Opposed(gate_seven_two_items())),
+        ("7.3", gate_seven_three, Opposed(gate_seven_three_items())),
     ];
     rows.into_iter()
         .zip(PHASE_LABELS.iter().skip(1))

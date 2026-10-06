@@ -19,6 +19,26 @@ pub(crate) const LINK_UNIVERSES: [&str; 3] = [
     "grove",
 ];
 
+/// `cargo xtask links --forms`, the grove's form counts at each §2.12 view
+/// as `docs/Findings/phase-7.3-links.md` records them.
+pub(crate) const FORMS_BLOCK: &str = "\
+forms frame level -2 step 95 (k 351/1024) (open): region 128, hub 9, bundle 0, spine 0, fading 0
+forms at s level -4 step 0 (k 1/16) (systems folded): region 9, hub 0, bundle 0, spine 0, fading 0
+forms at s level -3 step 0 (k 1/8) (open): region 136, hub 1, bundle 0, spine 0, fading 0
+forms at s level -2 step 0 (k 1/4) (open): region 136, hub 1, bundle 0, spine 0, fading 8
+forms at s level -1 step 0 (k 1/2) (open): region 128, hub 9, bundle 0, spine 0, fading 1
+forms at s level 0 step 0 (k 1) (open): region 127, hub 9, bundle 1, spine 0, fading 89
+forms at s level 1 step 0 (k 2) (open): region 2, hub 134, bundle 1, spine 0, fading 8
+forms at s level 2 step 0 (k 4) (open): region 0, hub 128, bundle 9, spine 0, fading 0
+forms at s level 3 step 0 (k 8) (open): region 0, hub 127, bundle 10, spine 0, fading 89
+forms at s level 4 step 0 (k 16) (open): region 0, hub 2, bundle 135, spine 0, fading 0
+forms at s level 5 step 0 (k 32) (open): region 0, hub 0, bundle 137, spine 0, fading 0
+forms at s level 6 step 0 (k 64) (open): region 0, hub 0, bundle 137, spine 0, fading 0
+forms at s level 7 step 0 (k 128) (open): region 0, hub 0, bundle 137, spine 0, fading 0
+forms at s level 8 step 0 (k 256) (open): region 0, hub 0, bundle 137, spine 0, fading 0
+forms at s level 9 step 0 (k 512) (open): region 0, hub 0, bundle 137, spine 0, fading 0
+";
+
 #[cfg(test)]
 mod tests {
     use std::collections::BTreeSet;

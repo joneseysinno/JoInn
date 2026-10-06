@@ -40,7 +40,7 @@ mod tests {
     use std::path::PathBuf;
 
     #[test]
-    fn only_gate_seven_two_s_items_name_the_grove() {
+    fn only_gate_seven_two_s_and_seven_three_s_items_name_the_grove() {
         let fns = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("src")
             .join("fns");
@@ -67,6 +67,10 @@ mod tests {
                 "g72_layouts.rs",
                 "g72_reversible.rs",
                 "g72_zoom.rs",
+                "g73_folded.rs",
+                "g73_form_fade.rs",
+                "g73_order.rs",
+                "g73_touch.rs",
             ]
         );
     }

@@ -55,8 +55,16 @@ mod tests {
     use joinn_frame::Verdict;
     use joinn_visual::{Form, PieceKind, form_of, routes};
 
+    use super::forms_text;
     use crate::fns::grove::grove_layout;
+    use crate::fns::links::FORMS_BLOCK;
     use crate::fns::zoom::zoom_views;
+
+    #[test]
+    fn the_forms_are_the_findings_block() {
+        let got = forms_text().unwrap_or_else(|e| panic!("{e}"));
+        assert_eq!(got, FORMS_BLOCK);
+    }
 
     #[test]
     fn no_grove_link_is_a_spine_or_has_a_mid_path_arrowhead_at_any_view() {

@@ -24,6 +24,7 @@ pub(crate) const PHASE_LABELS: &[&str] = &[
     "phase 6",
     "phase 7",
     "phase 7.2",
+    "phase 7.3",
 ];
 
 /// Phase 0 (harness fixtures and the corpus), then each phase gate in lock
