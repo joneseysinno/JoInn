@@ -2,7 +2,8 @@
 
 use super::{
     BODY_ROW_BYTES, CELL_ROW_BYTES, CHART_ROW_BYTES, FRAME_ROW_BYTES, INCIDENCE_BYTES,
-    LINK_ROW_BYTES, PORT_ROW_BYTES, STROKE_ROW_BYTES, Table, Tables,
+    LINK_ROW_BYTES, PORT_ROW_BYTES, ROUTE_ROW_BYTES, SEGMENT_ROW_BYTES, STROKE_ROW_BYTES, Table,
+    Tables,
 };
 
 /// `None` when the slot is past the end of the table.
@@ -124,6 +125,42 @@ pub fn row_bytes(tables: &Tables, table: Table, slot: u32) -> Option<Vec<u8>> {
                     r.flags.to_le_bytes(),
                 ],
                 STROKE_ROW_BYTES,
+            )
+        }
+        Table::Route => {
+            let r = tables.route.get(at)?;
+            (
+                vec![
+                    r.link.to_le_bytes(),
+                    r.fold.to_le_bytes(),
+                    r.size.to_le_bytes(),
+                    r.ordered.to_le_bytes(),
+                    r.segment_first.to_le_bytes(),
+                    r.segment_count.to_le_bytes(),
+                    r.generation.to_le_bytes(),
+                    r.flags.to_le_bytes(),
+                ],
+                ROUTE_ROW_BYTES,
+            )
+        }
+        Table::Segment => {
+            let r = tables.segment.get(at)?;
+            (
+                vec![
+                    r.chart.to_le_bytes(),
+                    r.x0.to_le_bytes(),
+                    r.y0.to_le_bytes(),
+                    r.x1.to_le_bytes(),
+                    r.y1.to_le_bytes(),
+                    r.route.to_le_bytes(),
+                    r.member.to_le_bytes(),
+                    r.kind.to_le_bytes(),
+                    r.legs.to_le_bytes(),
+                    r.style.to_le_bytes(),
+                    r.generation.to_le_bytes(),
+                    r.flags.to_le_bytes(),
+                ],
+                SEGMENT_ROW_BYTES,
             )
         }
     };

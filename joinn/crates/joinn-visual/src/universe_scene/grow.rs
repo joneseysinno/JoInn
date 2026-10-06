@@ -31,8 +31,8 @@ impl UniverseScene {
     /// Charts relative to `anchor`; then per body in body order its surface,
     /// its cells by name, their ports by position (surface ports flagged), and
     /// its wires; then frames in chart order; then strokes: each frame's
-    /// title, then each body's cell labels. Values come later, from `present`.
-    /// Nothing is pending.
+    /// title, then each body's cell labels; then routes and their segments.
+    /// Values come later, from `present`. Nothing is pending.
     pub fn grow(layout: UniverseLayout, anchor: ChartId) -> Verdict<UniverseScene> {
         let count = |k: ChartKind| layout.charts.iter().filter(|c| c.kind == k).count();
         let (bodies, systems, galaxies) = (
@@ -230,6 +230,7 @@ impl UniverseScene {
             scene.tables.put(slot, Row::Stroke(row));
         }
         scene.value_start = take!(fit(i64::try_from(scene.tables.stroke.len()).unwrap_or(-1)));
+        take!(scene.write_routes());
         scene.pending.clear();
         Verdict::Ok(scene)
     }

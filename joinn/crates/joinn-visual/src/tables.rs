@@ -58,9 +58,16 @@ pub const STYLE_FRAME: u32 = 8;
 pub const STYLE_NODE: u32 = 9;
 /// Text: labels, values and titles.
 pub const STYLE_TEXT: u32 = 10;
+/// A link drawn as a region (plan 7.3 §2.5).
+pub const STYLE_REGION: u32 = 12;
+/// A link drawn as a hub or a bundle, and every stub.
+pub const STYLE_HUB: u32 = 13;
+/// A link drawn as a spine, with its arrowheads.
+pub const STYLE_SPINE: u32 = 14;
 
 /// One RGBA8 `u32` per style id: bytes R, G, B, A in little-endian order.
-pub const STYLE_TABLE: [u32; 11] = [
+/// Id 11 is not assigned: transparent.
+pub const STYLE_TABLE: [u32; 15] = [
     u32::from_le_bytes([0x15, 0x17, 0x1C, 0xFF]),
     u32::from_le_bytes([0x22, 0x26, 0x2E, 0xFF]),
     u32::from_le_bytes([0x2F, 0x5D, 0x8A, 0xFF]),
@@ -72,6 +79,10 @@ pub const STYLE_TABLE: [u32; 11] = [
     u32::from_le_bytes([0x1D, 0x21, 0x29, 0xFF]),
     u32::from_le_bytes([0x3B, 0x4C, 0x61, 0xFF]),
     u32::from_le_bytes([0xE8, 0xEA, 0xED, 0xFF]),
+    0,
+    u32::from_le_bytes([0x2C, 0x3A, 0x4A, 0xFF]),
+    u32::from_le_bytes([0x6F, 0xA8, 0xD8, 0xFF]),
+    u32::from_le_bytes([0xE0, 0x8A, 0x3C, 0xFF]),
 ];
 
 /// Bytes per body row: 7 fields, padded.
@@ -92,6 +103,10 @@ pub const CHART_ROW_BYTES: usize = 32;
 pub const FRAME_ROW_BYTES: usize = 32;
 /// Bytes per stroke row: 12 fields.
 pub const STROKE_ROW_BYTES: usize = 48;
+/// Bytes per route row: 8 fields.
+pub const ROUTE_ROW_BYTES: usize = 32;
+/// Bytes per segment row: 12 fields.
+pub const SEGMENT_ROW_BYTES: usize = 48;
 
 /// Which table a row lives in.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
@@ -112,6 +127,61 @@ pub enum Table {
     Frame,
     /// Group 1 binding 7.
     Stroke,
+    /// A link's route in one fold state (plan 7.3 §2.7).
+    Route,
+    /// One piece of a route.
+    Segment,
+}
+
+/// A link's route in one fold state.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub struct RouteRow {
+    /// The link's slot: its index in the universe's links.
+    pub link: u32,
+    /// 0 open, 1 systems folded, 2 galaxies folded.
+    pub fold: u32,
+    /// `max(w, h)` of its touch points and knot, layout units.
+    pub size: u32,
+    /// 1 when its order is declared (a spine).
+    pub ordered: u32,
+    /// Its first segment slot.
+    pub segment_first: u32,
+    /// Its segments.
+    pub segment_count: u32,
+    /// Slot generation, from 1.
+    pub generation: u32,
+    /// Bit 0 live.
+    pub flags: u32,
+}
+
+/// One piece of a route, in sixteenths of the deepest system, galaxy or
+/// universe chart holding both its ends.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub struct SegmentRow {
+    /// Chart slot.
+    pub chart: u32,
+    /// One end x, sixteenths (an arrowhead's base centre).
+    pub x0: i32,
+    /// One end y.
+    pub y0: i32,
+    /// The other end x (an arrowhead's tip).
+    pub x1: i32,
+    /// The other end y.
+    pub y1: i32,
+    /// Its route slot.
+    pub route: u32,
+    /// The member it serves, index + 1, or 0 for trunk, knot and spine.
+    pub member: u32,
+    /// 0 leg, 1 stub, 2 knot, 3 arrowhead.
+    pub kind: u32,
+    /// How many legs share it.
+    pub legs: u32,
+    /// Style id: hub, or spine for a declared order.
+    pub style: u32,
+    /// Slot generation, from 1.
+    pub generation: u32,
+    /// Bit 0 live.
+    pub flags: u32,
 }
 
 /// A chart (plan 7.2 §2.9). A body's chart slot is its body slot; a single-body
@@ -282,6 +352,10 @@ pub struct Tables {
     pub frame: Vec<FrameRow>,
     /// Group 1 binding 7.
     pub stroke: Vec<StrokeRow>,
+    /// Routes, by fold state then link.
+    pub route: Vec<RouteRow>,
+    /// Segments, by route then piece.
+    pub segment: Vec<SegmentRow>,
 }
 
 /// One row to write.
@@ -295,6 +369,8 @@ pub(crate) enum Row {
     Chart(ChartRow),
     Frame(FrameRow),
     Stroke(StrokeRow),
+    Route(RouteRow),
+    Segment(SegmentRow),
 }
 
 /// The tables as the GPU uploads them and as regrow compares them.
@@ -318,6 +394,10 @@ pub struct TableBytes {
     pub frame: Vec<u8>,
     /// Stroke rows.
     pub stroke: Vec<u8>,
+    /// Route rows.
+    pub route: Vec<u8>,
+    /// Segment rows.
+    pub segment: Vec<u8>,
 }
 
 /// A changed row: `(table, slot)`.

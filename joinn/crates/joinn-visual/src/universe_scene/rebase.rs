@@ -38,6 +38,10 @@ mod tests {
             Verdict::Ok(s) => s,
             Verdict::Refused(r) => panic!("{}", r.reason),
         };
+        assert!(
+            !scene.tables().route.is_empty() && !scene.tables().segment.is_empty(),
+            "the phase 5 link's routes are present"
+        );
         let far = Camera {
             zoom: Zoom { level: -2, step: 0 },
             anchor: ChartId(0),

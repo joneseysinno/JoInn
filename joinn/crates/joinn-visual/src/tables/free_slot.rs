@@ -13,6 +13,8 @@ impl Tables {
             Table::Chart => self.chart.iter().map(|r| r.flags).collect(),
             Table::Frame => self.frame.iter().map(|r| r.flags).collect(),
             Table::Stroke => self.stroke.iter().map(|r| r.flags).collect(),
+            Table::Route => self.route.iter().map(|r| r.flags).collect(),
+            Table::Segment => self.segment.iter().map(|r| r.flags).collect(),
             Table::Incidence => Vec::new(),
         };
         let free = flags

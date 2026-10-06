@@ -28,6 +28,8 @@ impl Tables {
             Row::Chart(r) => (Table::Chart, set!(self.chart, r)),
             Row::Frame(r) => (Table::Frame, set!(self.frame, r)),
             Row::Stroke(r) => (Table::Stroke, set!(self.stroke, r)),
+            Row::Route(r) => (Table::Route, set!(self.route, r)),
+            Row::Segment(r) => (Table::Segment, set!(self.segment, r)),
         };
         changed.then_some(table)
     }

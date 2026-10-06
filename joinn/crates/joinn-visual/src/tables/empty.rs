@@ -15,6 +15,8 @@ impl Tables {
             chart: Vec::new(),
             frame: Vec::new(),
             stroke: Vec::new(),
+            route: Vec::new(),
+            segment: Vec::new(),
         }
     }
 }

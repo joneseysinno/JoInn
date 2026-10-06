@@ -119,6 +119,8 @@ pub struct Routes {
     pub graphs: Vec<Graph>,
     /// Routes by fold state, then link.
     pub routes: Vec<Route>,
+    /// Each link's id, by its index in the universe's links.
+    pub ids: Vec<String>,
 }
 
 /// Which charts are folded into lens nodes. Every system has one size and

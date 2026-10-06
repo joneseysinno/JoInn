@@ -13,6 +13,7 @@ mod regrow;
 mod shapes_at;
 mod take_pending;
 mod write_charts;
+mod write_routes;
 mod write_values;
 
 use std::collections::{BTreeMap, BTreeSet};

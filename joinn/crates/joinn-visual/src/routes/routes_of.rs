@@ -33,6 +33,7 @@ pub fn routes(layout: &UniverseLayout, links: &[Link]) -> Verdict<Routes> {
     }
     let mut out = Routes {
         folds: folds.clone(),
+        ids: links.iter().map(|l| l.id.clone()).collect(),
         ..Routes::default()
     };
     for fold in folds {

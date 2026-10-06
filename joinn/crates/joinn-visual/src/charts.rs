@@ -14,6 +14,7 @@ use joinn_frame::Hash;
 
 use crate::camera::ChartId;
 use crate::layout::Layout;
+use crate::routes::Routes;
 
 /// The universe chart's size.
 pub const UNIVERSE_SIZE: (i64, i64) = (5504, 1600);
@@ -74,6 +75,8 @@ pub struct UniverseLayout {
     pub charts: Vec<Chart>,
     /// One layout per distinct body coding.
     pub layouts: Vec<Layout>,
+    /// Every link's route in every fold state, grown with the layout.
+    pub routes: Routes,
 }
 
 impl UniverseLayout {

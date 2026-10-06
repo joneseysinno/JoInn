@@ -21,6 +21,8 @@ pub fn table_bytes(tables: &Tables) -> TableBytes {
         chart: all(Table::Chart, tables.chart.len()),
         frame: all(Table::Frame, tables.frame.len()),
         stroke: all(Table::Stroke, tables.stroke.len()),
+        route: all(Table::Route, tables.route.len()),
+        segment: all(Table::Segment, tables.segment.len()),
     }
 }
 
@@ -29,8 +31,8 @@ mod tests {
     use super::table_bytes;
     use crate::tables::{
         BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CHART_ROW_BYTES, CellRow, ChartRow,
-        FRAME_ROW_BYTES, FrameRow, LINK_ROW_BYTES, PORT_ROW_BYTES, STROKE_ROW_BYTES, StrokeRow,
-        Tables,
+        FRAME_ROW_BYTES, FrameRow, LINK_ROW_BYTES, PORT_ROW_BYTES, ROUTE_ROW_BYTES, RouteRow,
+        SEGMENT_ROW_BYTES, STROKE_ROW_BYTES, SegmentRow, StrokeRow, Tables,
     };
 
     #[test]
@@ -121,9 +123,64 @@ mod tests {
         assert_eq!(b.stroke.len(), STROKE_ROW_BYTES);
         assert_eq!(&b.stroke[32..36], &0x1000_0002u32.to_le_bytes());
         assert_eq!(&b.stroke[36..48], &[10, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]);
-        assert_eq!(b.style.len(), 11 * 4, "styles 8, 9 and 10 are new");
+        assert_eq!(
+            b.style.len(),
+            15 * 4,
+            "styles 8, 9 and 10 came in 7.2; 12, 13 and 14 in 7.3; 11 is unassigned"
+        );
         for size in [CHART_ROW_BYTES, FRAME_ROW_BYTES, STROKE_ROW_BYTES] {
             assert_eq!(size % 16, 0);
         }
+    }
+
+    #[test]
+    fn route_and_segment_rows_are_little_endian_in_field_order_and_old_rows_keep_their_sizes() {
+        let mut t = Tables::empty();
+        t.route.push(RouteRow {
+            link: 7,
+            fold: 1,
+            size: 1296,
+            ordered: 0,
+            segment_first: 40,
+            segment_count: 17,
+            generation: 1,
+            flags: 1,
+        });
+        t.segment.push(SegmentRow {
+            chart: 3072,
+            x0: -128,
+            y0: 1216,
+            x1: 4672,
+            y1: 1216,
+            route: 137,
+            member: 3,
+            kind: 0,
+            legs: 2,
+            style: 13,
+            generation: 1,
+            flags: 1,
+        });
+        let b = table_bytes(&t);
+        assert_eq!(b.route.len(), ROUTE_ROW_BYTES);
+        assert_eq!(&b.route[..12], &[7, 0, 0, 0, 1, 0, 0, 0, 0x10, 0x05, 0, 0]);
+        assert_eq!(&b.route[16..24], &[40, 0, 0, 0, 17, 0, 0, 0]);
+        assert_eq!(b.segment.len(), SEGMENT_ROW_BYTES);
+        assert_eq!(&b.segment[4..8], &(-128i32).to_le_bytes());
+        assert_eq!(&b.segment[20..24], &137u32.to_le_bytes());
+        assert_eq!(&b.segment[36..48], &[13, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]);
+        assert_eq!(
+            [
+                BODY_ROW_BYTES,
+                CELL_ROW_BYTES,
+                PORT_ROW_BYTES,
+                LINK_ROW_BYTES,
+                CHART_ROW_BYTES,
+                FRAME_ROW_BYTES,
+                STROKE_ROW_BYTES,
+                ROUTE_ROW_BYTES,
+                SEGMENT_ROW_BYTES
+            ],
+            [32, 48, 32, 32, 32, 32, 48, 32, 48]
+        );
     }
 }

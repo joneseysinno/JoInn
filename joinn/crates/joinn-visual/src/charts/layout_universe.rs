@@ -11,11 +11,13 @@ use super::{
 use crate::camera::ChartId;
 use crate::layout::layout;
 use crate::refuse::refuse;
+use crate::routes::{Routes, routes};
 
 /// Galaxy `g` at `(64 + 1360·(g mod 4), 64 + 768·(g div 4))`, system `j` of its
 /// galaxy at `(16 + 320·(j mod 4), 32 + 168·(j div 4))`, body `i` of its system
 /// at `(8 + 48·(i mod 6), 16 + 32·(i div 6))`, each in its parent chart and in
-/// canonical (name) order. Bodies bind by hash from `store`.
+/// canonical (name) order. Bodies bind by hash from `store`. Then every link's
+/// route in every fold state (plan 7.3 §2.4), once.
 pub fn layout_universe(
     universe: &Universe,
     store: &BodyStore,
@@ -151,11 +153,17 @@ pub fn layout_universe(
             }
         }
     }
-    Verdict::Ok(UniverseLayout {
+    let mut laid = UniverseLayout {
         lens: lens.to_owned(),
         charts,
         layouts,
-    })
+        routes: Routes::default(),
+    };
+    laid.routes = match routes(&laid, &universe.coding.links) {
+        Verdict::Ok(r) => r,
+        Verdict::Refused(r) => return Verdict::Refused(r),
+    };
+    Verdict::Ok(laid)
 }
 
 #[cfg(test)]
