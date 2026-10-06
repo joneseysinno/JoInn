@@ -1,13 +1,16 @@
 //! One organelle's WGSL, with the constants it shares with joinn-visual.
 
 use joinn_visual::{
-    CHART_BODY, CHART_GALAXY, CHART_SYSTEM, CHART_UNIVERSE, FILLED, GALAXY_SIZE, GALAXY_TAG,
-    LATENT, LIVE, PORT_TAG, REFUSED, STYLE_CELL_REFUSED, STYLE_FRAME, STYLE_NODE, STYLE_PORT_EMPTY,
-    STYLE_PORT_FILLED, STYLE_RESPONSE_LATENT, STYLE_SURFACE, STYLE_WIRE, SURFACE_PORT, SYSTEM_SIZE,
-    SYSTEM_TAG, THRESHOLDS, UNIVERSE_SIZE, WIRE_TAG,
+    CHART_BODY, CHART_GALAXY, CHART_SYSTEM, CHART_UNIVERSE, FILLED, FORM_THRESHOLDS, Form,
+    GALAXY_SIZE, GALAXY_TAG, LATENT, LINK_TAG, LIVE, PORT_TAG, PieceKind, REFUSED,
+    STYLE_CELL_REFUSED, STYLE_FRAME, STYLE_NODE, STYLE_PORT_EMPTY, STYLE_PORT_FILLED, STYLE_REGION,
+    STYLE_RESPONSE_LATENT, STYLE_SURFACE, STYLE_WIRE, SURFACE_PORT, SYSTEM_SIZE, SYSTEM_TAG,
+    THRESHOLDS, UNIVERSE_SIZE, WIRE_TAG,
 };
 
-use super::{KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LINK, KIND_PORT, KIND_SHIFT};
+use super::{
+    KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LINK, KIND_NODE, KIND_PORT, KIND_SHIFT,
+};
 
 const COMMON: &str = include_str!("../wgsl/common.wgsl");
 
@@ -49,7 +52,18 @@ pub(super) fn shader_source(organelle: &str, ghost: bool) -> String {
         ("KIND_PORT", KIND_PORT),
         ("KIND_FRAME", KIND_FRAME),
         ("KIND_DOT", KIND_DOT),
+        ("KIND_NODE", KIND_NODE),
         ("KIND_LINK", KIND_LINK),
+        ("LINK_TAG", LINK_TAG),
+        ("STYLE_REGION", STYLE_REGION),
+        ("FORM_REGION", Form::Region.number()),
+        ("FORM_HUB", Form::Hub.number()),
+        ("FORM_BUNDLE", Form::Bundle.number()),
+        ("FORM_SPINE", Form::Spine.number()),
+        ("SEG_LEG", PieceKind::Leg.number()),
+        ("SEG_STUB", PieceKind::Stub.number()),
+        ("SEG_KNOT", PieceKind::Knot.number()),
+        ("SEG_ARROW", PieceKind::Arrow.number()),
         ("MASK_DOT", MASK_DOT),
         ("MASK_SURFACE", MASK_SURFACE),
         ("MASK_CELL", MASK_CELL),
@@ -59,6 +73,8 @@ pub(super) fn shader_source(organelle: &str, ghost: bool) -> String {
         ("T0", THRESHOLDS[0]),
         ("T1", THRESHOLDS[1]),
         ("T2", THRESHOLDS[2]),
+        ("F0", FORM_THRESHOLDS[0]),
+        ("F1", FORM_THRESHOLDS[1]),
     ];
     let ints = [
         ("SYSTEM_W", SYSTEM_SIZE.0),

@@ -6,18 +6,19 @@ use joinn_visual::{Camera, STYLE_BACKGROUND, STYLE_TABLE};
 use super::target::target;
 use super::tick_bytes::tick_bytes;
 use super::{
-    ID_FORMAT, KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LINK, KIND_PORT, KIND_SHIFT,
-    KIND_STROKE, Renderer, STYLE,
+    ID_FORMAT, KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LINK, KIND_NODE, KIND_PORT,
+    KIND_SHIFT, KIND_STROKE, Renderer, SEGMENT, STYLE,
 };
 use crate::gpu::{Gpu, scoped};
 use crate::refuse::refuse;
 
 impl Renderer {
-    /// Writes the tick uniform, then one pass by slot: frames, dots, surfaces,
-    /// cells, wires, ports, strokes (§2.5's draw order, with the charts' frames
-    /// beneath and text above). Each kind is drawn by its owner pipeline, then
-    /// its ghost. The color view must match the camera's viewport and this
-    /// renderer's format. Submits and returns without waiting.
+    /// Writes the tick uniform, then one pass by slot: open frames, link
+    /// segments, lens nodes, dots, surfaces, cells, wires, ports, strokes
+    /// (plan 7.3 §2.5's draw order: links under every node and body, text
+    /// above). Each kind is drawn by its owner pipeline, then its ghost. The
+    /// color view must match the camera's viewport and this renderer's format.
+    /// Submits and returns without waiting.
     pub fn draw_at(
         &mut self,
         gpu: &Gpu,
@@ -50,11 +51,12 @@ impl Renderer {
         let (width, height) = (camera.width, camera.height);
         let p = &self.pipelines;
         let shapes = [
-            (KIND_FRAME, self.rows[7]),
+            (KIND_NODE, self.rows[7]),
             (KIND_DOT, self.rows[0]),
             (KIND_BODY, self.rows[0]),
             (KIND_CELL, self.rows[1]),
         ];
+        let segments = u32::try_from(self.rows[SEGMENT]).unwrap_or(u32::MAX);
         scoped(gpu, "drawing", || {
             let resize = self
                 .ids
@@ -97,9 +99,20 @@ impl Renderer {
                     occlusion_query_set: None,
                     multiview_mask: None,
                 });
-                for (i, group) in (0u32..).zip(&self.groups) {
+                let [g0, g1, g2, g3, links] = &self.groups;
+                for (i, group) in (0u32..).zip([g0, g1, g2, g3]) {
                     pass.set_bind_group(i, group, &[]);
                 }
+                for pipeline in [&p.shape, &p.shape_ghost] {
+                    pass.set_pipeline(pipeline);
+                    pass.draw(0..6, span(KIND_FRAME, self.rows[7]));
+                }
+                pass.set_bind_group(1, links, &[]);
+                for pipeline in [&p.segment, &p.segment_ghost] {
+                    pass.set_pipeline(pipeline);
+                    pass.draw(0..6, 0..segments);
+                }
+                pass.set_bind_group(1, g1, &[]);
                 let mut both = |owner, ghost, kind, rows| {
                     for pipeline in [owner, ghost] {
                         pass.set_pipeline(pipeline);

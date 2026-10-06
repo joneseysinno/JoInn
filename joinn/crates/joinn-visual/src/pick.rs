@@ -45,6 +45,8 @@ pub const WIRE_TAG: u32 = 0x2000_0000;
 pub const SYSTEM_TAG: u32 = 0x3000_0000;
 /// Blue channel of a galaxy's frame or lens node: `GALAXY_TAG | galaxy index`.
 pub const GALAXY_TAG: u32 = 0x4000_0000;
+/// Blue channel of a link's pixel: `LINK_TAG | form` (plan 7.3 §2.7).
+pub const LINK_TAG: u32 = 0x5000_0000;
 /// The tag bits of the blue channel.
 pub const TAG_MASK: u32 = 0xF000_0000;
 

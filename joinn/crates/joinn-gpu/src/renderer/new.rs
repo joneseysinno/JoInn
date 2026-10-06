@@ -26,7 +26,7 @@ impl Renderer {
             };
             let tick = uniform("tick", TICK_BYTES);
             let pass = uniform("pass", PASS_BYTES);
-            let buffers: [wgpu::Buffer; 9] =
+            let buffers: [wgpu::Buffer; 11] =
                 std::array::from_fn(|i| table_buffer(device, gpu.queue(), i, &[], ROW_SIZES[i]));
             let groups = bind_groups(device, &layouts, &tick, &buffers, &pass);
             Renderer {
@@ -36,7 +36,7 @@ impl Renderer {
                 tick,
                 pass,
                 buffers,
-                rows: [0; 9],
+                rows: [0; 11],
                 extent: 0,
                 groups,
                 ids: None,

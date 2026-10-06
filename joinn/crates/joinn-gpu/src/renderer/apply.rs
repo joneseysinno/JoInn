@@ -25,19 +25,22 @@ impl Renderer {
             tables.chart.len(),
             tables.frame.len(),
             tables.stroke.len(),
+            tables.route.len(),
+            tables.segment.len(),
         ];
         let index = |t: Table| match t {
-            Table::Body => Some(0),
-            Table::Cell => Some(1),
-            Table::Port => Some(2),
-            Table::Link => Some(3),
-            Table::Incidence => Some(4),
-            Table::Chart => Some(6),
-            Table::Frame => Some(7),
-            Table::Stroke => Some(8),
-            Table::Route | Table::Segment => None,
+            Table::Body => 0,
+            Table::Cell => 1,
+            Table::Port => 2,
+            Table::Link => 3,
+            Table::Incidence => 4,
+            Table::Chart => 6,
+            Table::Frame => 7,
+            Table::Stroke => 8,
+            Table::Route => 9,
+            Table::Segment => 10,
         };
-        let resized: Vec<usize> = (0..9).filter(|&i| lens[i] != self.rows[i]).collect();
+        let resized: Vec<usize> = (0..11).filter(|&i| lens[i] != self.rows[i]).collect();
         let whole = if resized.is_empty() {
             None
         } else {
@@ -46,7 +49,7 @@ impl Renderer {
         let mut rows: Vec<(Table, u32)> = delta
             .rows
             .iter()
-            .filter(|w| index(w.table).is_some_and(|i| !resized.contains(&i)))
+            .filter(|w| !resized.contains(&index(w.table)))
             .map(|w| (w.table, w.slot))
             .collect();
         rows.sort();
@@ -90,9 +93,7 @@ impl Renderer {
                 );
             }
             for (table, first, bytes, n) in &runs {
-                let Some(i) = index(*table) else {
-                    continue;
-                };
+                let i = index(*table);
                 let offset = u64::from(*first) * ROW_SIZES[i] as u64;
                 gpu.queue().write_buffer(&self.buffers[i], offset, bytes);
                 up.rows += n;

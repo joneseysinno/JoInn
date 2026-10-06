@@ -1,4 +1,4 @@
-// The shape organelle: frames, dots, surfaces, cells and ports as rounded
+// The shape organelle: frames, lens nodes, dots, surfaces, cells and ports as rounded
 // rectangles (a port or a dot is a rectangle whose radius is its half-extent,
 // which is a circle). The instance index carries the table in its top bits and
 // the slot below.
@@ -12,9 +12,11 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> Out {
     var lo: vec2<f32>;
     var hi: vec2<f32>;
     var r: f32;
-    if kind == KIND_FRAME {
+    if kind == KIND_FRAME || kind == KIND_NODE {
+        // Open frames draw beneath links, lens nodes above them (plan 7.3
+        // §2.5): the same rows, in two passes.
         let f = frames[slot];
-        if GHOST || (f.flags & LIVE) == 0u || !shown(f.chart) {
+        if GHOST || (f.flags & LIVE) == 0u || !shown(f.chart) || open(f.chart) != (kind == KIND_FRAME) {
             return nothing();
         }
         let ch = charts[f.chart];

@@ -179,6 +179,52 @@ fn open(c: u32) -> bool {
     return band(charts[c].size) >= 2u;
 }
 
+// The fold state the zoom shows (plan 7.3 §2.4), by the cut's rule for a lens
+// node: 2 galaxies folded, else 1 systems folded, else 0 open.
+fn fold_now() -> u32 {
+    if band(u32(max(GALAXY_W, GALAXY_H))) < 2u {
+        return 2u;
+    }
+    if band(u32(max(SYSTEM_W, SYSTEM_H))) < 2u {
+        return 1u;
+    }
+    return 0u;
+}
+
+// An unordered link's owner form over its size (§2.5): bundle when
+// 10·s ≥ 11·F1, hub when 10·s ≥ 11·F0, else region.
+fn form_owner(size: u32) -> u32 {
+    if past(size, F1) {
+        return FORM_BUNDLE;
+    }
+    if past(size, F0) {
+        return FORM_HUB;
+    }
+    return FORM_REGION;
+}
+
+// F ≤ s < 1.2·F for a form threshold: 1 + its index, or 0 outside both.
+fn form_window(size: u32) -> u32 {
+    let a = (256u + tick.step) * size;
+    var ts = array<u32, 2>(F0, F1);
+    for (var i = 0u; i < 2u; i++) {
+        let t = ts[i];
+        var lo: u32;
+        var hi: u32;
+        if tick.level >= 0 {
+            lo = (t * 256u) >> u32(tick.level);
+            hi = (6u * t * 256u) >> u32(tick.level);
+        } else {
+            lo = (t * 256u) << u32(-tick.level);
+            hi = (6u * t * 256u) << u32(-tick.level);
+        }
+        if a >= lo && 5u * a < hi {
+            return i + 1u;
+        }
+    }
+    return 0u;
+}
+
 // Visible, and every system and galaxy above it visible and open.
 fn shown(c: u32) -> bool {
     if !live_chart(c) || !visible(c) {

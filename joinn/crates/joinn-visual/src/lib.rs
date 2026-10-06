@@ -42,9 +42,9 @@ pub use layout::{
 };
 pub use lens_cut::{Cut, CutEntry, CutForm, cut, touches};
 pub use pick::{
-    Class, GALAXY_TAG, Geom, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG, Shape, TAG_MASK,
-    WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at, cpu_pick_sample,
-    owner_of_layout, print_owner, shapes_of_layout,
+    Class, GALAXY_TAG, Geom, LINK_TAG, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG, Shape,
+    TAG_MASK, WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at,
+    cpu_pick_sample, owner_of_layout, print_owner, shapes_of_layout,
 };
 pub use routes::{
     FORM_THRESHOLDS, Fold, Form, GALAXY_GUTTER_X, GALAXY_GUTTER_Y, GALAXY_REACH, GALAXY_SIDES,

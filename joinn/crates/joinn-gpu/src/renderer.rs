@@ -11,10 +11,12 @@ mod draw_at;
 mod frame;
 mod frame_at;
 mod layouts;
+mod link_probe;
 mod new;
 mod picture;
 mod picture_at;
 mod pipelines;
+mod probe;
 mod read_target;
 mod shader_source;
 mod table_buffer;
@@ -23,10 +25,12 @@ mod tick_bytes;
 mod upload_all;
 
 pub use band_probe::band_probe;
+pub use link_probe::link_probe;
 
 use joinn_visual::{
     BODY_ROW_BYTES, CELL_ROW_BYTES, CHART_ROW_BYTES, FRAME_ROW_BYTES, INCIDENCE_BYTES,
-    LINK_ROW_BYTES, PORT_ROW_BYTES, STROKE_ROW_BYTES, STYLE_BYTES,
+    LINK_ROW_BYTES, PORT_ROW_BYTES, ROUTE_ROW_BYTES, SEGMENT_ROW_BYTES, STROKE_ROW_BYTES,
+    STYLE_BYTES,
 };
 
 /// The ID target (§13.1): R body + 1, G cell + 1, B tag | n, A generation.
@@ -34,9 +38,9 @@ pub const ID_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba32Uint;
 /// The color target of an offscreen render.
 pub const OFFSCREEN_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
 
-/// Bytes per row of body, cell, port, link, incidence, style, chart, frame and
-/// stroke, in that order.
-pub(crate) const ROW_SIZES: [usize; 9] = [
+/// Bytes per row of body, cell, port, link, incidence, style, chart, frame,
+/// stroke, route and segment, in that order.
+pub(crate) const ROW_SIZES: [usize; 11] = [
     BODY_ROW_BYTES,
     CELL_ROW_BYTES,
     PORT_ROW_BYTES,
@@ -46,10 +50,18 @@ pub(crate) const ROW_SIZES: [usize; 9] = [
     CHART_ROW_BYTES,
     FRAME_ROW_BYTES,
     STROKE_ROW_BYTES,
+    ROUTE_ROW_BYTES,
+    SEGMENT_ROW_BYTES,
 ];
 /// The style table's index in `ROW_SIZES`. It is bound as a uniform: the
 /// vertex stage has room for eight storage buffers, and the universe uses them.
 pub(crate) const STYLE: usize = 5;
+/// The chart table's index in `ROW_SIZES`.
+pub(crate) const CHART: usize = 6;
+/// The route table's index in `ROW_SIZES`: bound only by the segment pipeline.
+pub(crate) const ROUTE: usize = 9;
+/// The segment table's index in `ROW_SIZES`: bound only by the segment pipeline.
+pub(crate) const SEGMENT: usize = 10;
 /// Bytes of the style uniform: sixteen styles, as four `vec4<u32>`.
 pub(crate) const STYLE_UNIFORM_BYTES: usize = 64;
 /// Bytes of the tick uniform: `level step pin_x pin_y ox oy fx fy width
@@ -69,6 +81,8 @@ pub(crate) const KIND_PORT: u32 = 2;
 pub(crate) const KIND_FRAME: u32 = 3;
 /// Shape instances of the surface table drawn as a dot.
 pub(crate) const KIND_DOT: u32 = 4;
+/// Shape instances of the frame table drawn as lens nodes, above the links.
+pub(crate) const KIND_NODE: u32 = 5;
 /// Curve instances of the link table.
 pub(crate) const KIND_LINK: u32 = 0;
 /// Curve instances of the stroke table.
@@ -100,20 +114,24 @@ pub(crate) struct Pipelines {
     shape_ghost: wgpu::RenderPipeline,
     curve: wgpu::RenderPipeline,
     curve_ghost: wgpu::RenderPipeline,
+    segment: wgpu::RenderPipeline,
+    segment_ghost: wgpu::RenderPipeline,
 }
 
 /// The pipelines, the table buffers as last uploaded, and the ID target.
+/// Layouts and groups 0 … 3 are §7.2's; the fifth is group 1 of the segment
+/// pipeline (chart, route, segment).
 #[derive(Debug)]
 pub struct Renderer {
     format: wgpu::TextureFormat,
-    layouts: [wgpu::BindGroupLayout; 4],
+    layouts: [wgpu::BindGroupLayout; 5],
     pipelines: Pipelines,
     tick: wgpu::Buffer,
     pass: wgpu::Buffer,
-    buffers: [wgpu::Buffer; 9],
-    rows: [usize; 9],
+    buffers: [wgpu::Buffer; 11],
+    rows: [usize; 11],
     extent: i64,
-    groups: [wgpu::BindGroup; 4],
+    groups: [wgpu::BindGroup; 5],
     ids: Option<wgpu::Texture>,
     color: Option<wgpu::Texture>,
 }

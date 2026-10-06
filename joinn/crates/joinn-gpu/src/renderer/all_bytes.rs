@@ -2,8 +2,9 @@
 
 use joinn_visual::{Tables, table_bytes};
 
-/// Body, cell, port, link, incidence, style, chart, frame, stroke.
-pub(super) fn all_bytes(tables: &Tables) -> [Vec<u8>; 9] {
+/// Body, cell, port, link, incidence, style, chart, frame, stroke, route,
+/// segment.
+pub(super) fn all_bytes(tables: &Tables) -> [Vec<u8>; 11] {
     let b = table_bytes(tables);
     [
         b.body,
@@ -15,5 +16,7 @@ pub(super) fn all_bytes(tables: &Tables) -> [Vec<u8>; 9] {
         b.chart,
         b.frame,
         b.stroke,
+        b.route,
+        b.segment,
     ]
 }
