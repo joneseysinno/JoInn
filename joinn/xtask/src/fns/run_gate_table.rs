@@ -2,6 +2,7 @@
 
 use joinn_gate::GateItem;
 
+use super::answered_by::answered_by;
 use super::gate_row::gate_row;
 use super::grade_opposed::grade_opposed;
 use super::harness_fixtures::harness_fixtures;
@@ -16,10 +17,14 @@ pub(crate) fn run_gate_table(
     harness_fixtures()?;
     let mut failures = Vec::new();
     let mut rows = Vec::new();
+    let mut answered = Vec::new();
     for (i, item) in items.iter().enumerate() {
         let n = i + 1;
         match grade_opposed(n, item) {
-            Ok(()) => rows.push((n, item.name, (item.check)())),
+            Ok(half) => {
+                answered.push(answered_by(n, half));
+                rows.push((n, item.name, (item.check)()));
+            }
             Err(e) => failures.push(e),
         }
     }
@@ -33,6 +38,9 @@ pub(crate) fn run_gate_table(
         if ok {
             n_ok += 1;
         }
+    }
+    for line in &answered {
+        say(line);
     }
     say(&format!("{phase}: {n_ok}/{total}"));
     Ok((n_ok, total))

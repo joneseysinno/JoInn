@@ -24,7 +24,7 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     };
     match grade_opposed(1, &ignores) {
         Err(msg) if msg.contains("ignores its subject") => {}
-        Ok(()) => {
+        Ok(_) => {
             return Err(
                 "harness fixture 1: a control that ignores its subject must be refused".into(),
             );
@@ -47,7 +47,7 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     };
     match grade_opposed(2, &any_change) {
         Err(msg) if msg.contains("true on any change") && msg.contains("neutral") => {}
-        Ok(()) => {
+        Ok(_) => {
             return Err(
                 "harness fixture 2: a control that answers true on the neutral edit must be refused"
                     .into(),
@@ -71,7 +71,7 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     };
     match grade_opposed(3, &missing) {
         Err(msg) if msg.contains(MISSING) => {}
-        Ok(()) => {
+        Ok(_) => {
             return Err(format!(
                 "harness fixture 3: a missing mutation target must be refused naming {MISSING}"
             ));
@@ -93,7 +93,7 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
         opposes: Mutation::DropLink("e0"),
     };
     match grade_opposed(4, &honest) {
-        Ok(()) => {}
+        Ok(_) => {}
         Err(msg) => {
             return Err(format!(
                 "harness fixture 4: an honest control must be admitted, got {msg}"

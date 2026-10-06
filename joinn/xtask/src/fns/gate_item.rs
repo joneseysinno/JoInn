@@ -1,5 +1,6 @@
 //! `cargo xtask gate <phase> --item <n>`: one item, graded and checked.
 
+use super::answered_by::answered_by;
 use super::gate_row::gate_row;
 use super::gate_table::GateTable;
 use super::grade_opposed::grade_opposed;
@@ -20,19 +21,22 @@ pub(crate) fn gate_item(label: &str, table: GateTable, n: usize) -> Result<bool,
             "{label}: item {n} is not in the table; acceptance is an item from 1 to {size} ({size} items)"
         ));
     }
-    let (name, ok) = match table {
+    let (name, ok, half) = match table {
         GateTable::Legacy(items) => {
             let item = &items[n - 1];
-            (item.name, (item.check)())
+            (item.name, (item.check)(), None)
         }
         GateTable::Opposed(items) => {
             harness_fixtures()?;
             let item = &items[n - 1];
-            grade_opposed(n, item)?;
-            (item.name, (item.check)())
+            let half = grade_opposed(n, item)?;
+            (item.name, (item.check)(), Some(half))
         }
     };
     say(&gate_row(n, name, ok));
+    if let Some(half) = half {
+        say(&answered_by(n, half));
+    }
     let word = if ok { "ok" } else { "fail" };
     say(&format!("{label}: item {n} {word}"));
     Ok(ok)
@@ -105,8 +109,13 @@ mod tests {
             let word = if verdict { "ok" } else { "fail" };
             assert_eq!(
                 lines,
-                [rows[n - 1].clone(), format!("phase test: item {n} {word}")]
+                [
+                    rows[n - 1].clone(),
+                    rows[n + 1].clone(),
+                    format!("phase test: item {n} {word}")
+                ]
             );
+            assert_eq!(rows[n + 1], format!("item {n} control answered by check"));
         }
     }
 
