@@ -1,23 +1,13 @@
-//! Auto-split leaf.
-#![allow(unused_imports)]
+//! `cargo xtask gate all`: every phase gate, the lock, and the time per phase.
 
-use joinn_dna::{
-    AlleleBody, NativeId, hash, parse_body, parse_cell, print_body, print_coding, sum_cell,
-};
-use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, TextFrame, Value, Verdict};
-use joinn_gate::{Budget, Gate, GateItem, demos, run_opposed};
-use joinn_live::{BodyState, LiveDna};
-use joinn_prim::{BodyRef, DnaFire, Drive, Seal};
-use std::collections::{BTreeMap, BTreeSet};
-use std::env;
 use std::fs;
 use std::io::{self, Write};
-use std::num::NonZeroU32;
-use std::path::{Path, PathBuf};
-use std::process::{Command, ExitCode, Stdio};
 use std::time::Instant;
 
-use super::*;
+use super::gate_table::{GateTable, phase_gates};
+use super::{
+    corpus_verify, harness_fixtures, parse_lock_scores, scores_match, workspace_root, write_lock,
+};
 
 /// Every phase label the lock and gate tables print. One place only.
 pub(crate) const PHASE_LABELS: &[&str] = &[
@@ -36,6 +26,9 @@ pub(crate) const PHASE_LABELS: &[&str] = &[
     "phase 7.2",
 ];
 
+/// Phase 0 (harness fixtures and the corpus), then each phase gate in lock
+/// order. After the lock, one `<label> ms <n> (information)` line per phase and
+/// the total. No time reaches a decision (rule 4).
 // Rule 4: xtask MAY measure wall time.
 #[allow(clippy::disallowed_methods)]
 pub(crate) fn gate_all() -> Result<(), String> {
@@ -45,73 +38,36 @@ pub(crate) fn gate_all() -> Result<(), String> {
     if !p0 {
         corpus_verify()?;
     }
-    let p1 = gate_one(PHASE_LABELS[1]);
-    let p2 = gate_two(PHASE_LABELS[2]);
-    let p21 = gate_two_one(PHASE_LABELS[3]);
-    let p22 = gate_two_two(PHASE_LABELS[4]);
-    let p3 = gate_three(PHASE_LABELS[5]);
-    let p4 = gate_four(PHASE_LABELS[6]);
-    let p5 = gate_five(PHASE_LABELS[7]);
-    let p51 = gate_five_one(PHASE_LABELS[8]);
-    let p52 = gate_five_two(PHASE_LABELS[9]);
-    let p6 = gate_six(PHASE_LABELS[10]);
-    let p7 = gate_seven(PHASE_LABELS[11]);
-    let p72 = gate_seven_two(PHASE_LABELS[12]);
-    let score = |label: &str, result: Result<(u32, u32), String>| match result {
-        Ok((n, total)) => (n == total, n, total),
-        Err(e) => {
-            let _ = writeln!(io::stderr(), "{label}: {e}");
-            (false, 0, 0)
-        }
-    };
-    let (p1_ok, p1_n, p1_t) = score(PHASE_LABELS[1], p1);
-    let (p2_ok, p2_n, p2_t) = score(PHASE_LABELS[2], p2);
-    let (p21_ok, p21_n, p21_t) = score(PHASE_LABELS[3], p21);
-    let (p22_ok, p22_n, p22_t) = score(PHASE_LABELS[4], p22);
-    let (p3_ok, p3_n, p3_t) = score(PHASE_LABELS[5], p3);
-    let (p4_ok, p4_n, p4_t) = score(PHASE_LABELS[6], p4);
-    let (p5_ok, p5_n, p5_t) = score(PHASE_LABELS[7], p5);
-    let (p51_ok, p51_n, p51_t) = score(PHASE_LABELS[8], p51);
-    let (p52_ok, p52_n, p52_t) = score(PHASE_LABELS[9], p52);
-    let (p6_ok, p6_n, p6_t) = score(PHASE_LABELS[10], p6);
-    let (p7_ok, p7_n, p7_t) = score(PHASE_LABELS[11], p7);
-    let (p72_ok, p72_n, p72_t) = score(PHASE_LABELS[12], p72);
-    let outcomes = [
-        (PHASE_LABELS[0], p0, 1, 1, false),
-        (PHASE_LABELS[1], p1_ok, p1_n, p1_t, true),
-        (PHASE_LABELS[2], p2_ok, p2_n, p2_t, true),
-        (PHASE_LABELS[3], p21_ok, p21_n, p21_t, true),
-        (PHASE_LABELS[4], p22_ok, p22_n, p22_t, true),
-        (PHASE_LABELS[5], p3_ok, p3_n, p3_t, true),
-        (PHASE_LABELS[6], p4_ok, p4_n, p4_t, false),
-        (PHASE_LABELS[7], p5_ok, p5_n, p5_t, false),
-        (PHASE_LABELS[8], p51_ok, p51_n, p51_t, false),
-        (PHASE_LABELS[9], p52_ok, p52_n, p52_t, false),
-        (PHASE_LABELS[10], p6_ok, p6_n, p6_t, false),
-        (PHASE_LABELS[11], p7_ok, p7_n, p7_t, false),
-        (PHASE_LABELS[12], p72_ok, p72_n, p72_t, false),
-    ];
+    let mut times = vec![(PHASE_LABELS[0], t0.elapsed().as_millis())];
+    let mut results = Vec::new();
+    for gate in phase_gates() {
+        let t = Instant::now();
+        let legacy = matches!(gate.table, GateTable::Legacy(_));
+        results.push((gate.label, legacy, (gate.run)(gate.label)));
+        times.push((gate.label, t.elapsed().as_millis()));
+    }
+    let mut outcomes = vec![(PHASE_LABELS[0], p0, 1, 1, false)];
+    for (label, legacy, result) in results {
+        let (ok, n, total) = match result {
+            Ok((n, total)) => (n == total, n, total),
+            Err(e) => {
+                let _ = writeln!(io::stderr(), "{label}: {e}");
+                (false, 0, 0)
+            }
+        };
+        outcomes.push((label, ok, n, total, legacy));
+    }
     let lock = workspace_root()?.join("gates.lock");
     write_lock(&lock, &outcomes)?;
     let text = fs::read_to_string(&lock).map_err(|e| e.to_string())?;
     let rows = parse_lock_scores(&text)?;
     scores_match(&outcomes, &rows)?;
     println!("{}", text.trim());
+    for (label, ms) in &times {
+        println!("{label} ms {ms} (information)");
+    }
     println!("gate all wall milliseconds: {}", t0.elapsed().as_millis());
-    if !p0
-        || !p1_ok
-        || !p2_ok
-        || !p21_ok
-        || !p22_ok
-        || !p3_ok
-        || !p4_ok
-        || !p5_ok
-        || !p51_ok
-        || !p52_ok
-        || !p6_ok
-        || !p7_ok
-        || !p72_ok
-    {
+    if outcomes.iter().any(|(_, ok, _, _, _)| !ok) {
         return Err("gate all: a phase failed".into());
     }
     Ok(())

@@ -2,9 +2,11 @@
 
 use joinn_gate::GateItem;
 
+use super::gate_row::gate_row;
 use super::grade_opposed::grade_opposed;
 use super::harness_fixtures::harness_fixtures;
 use super::mutate::Mutation;
+use super::once::say;
 use super::subject::Subject;
 
 pub(crate) fn run_gate_table(
@@ -27,14 +29,12 @@ pub(crate) fn run_gate_table(
     let mut n_ok = 0u32;
     let total = rows.len() as u32;
     for (i, name, ok) in rows {
+        say(&gate_row(i, name, ok));
         if ok {
-            println!("{i} ok  {name}");
             n_ok += 1;
-        } else {
-            println!("{i} fail  {name}");
         }
     }
-    println!("{phase}: {n_ok}/{total}");
+    say(&format!("{phase}: {n_ok}/{total}"));
     Ok((n_ok, total))
 }
 

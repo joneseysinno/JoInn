@@ -40,6 +40,6 @@ pub(crate) fn refuse_false_law(root: &Path, frames: &FrameRegistry) -> Result<()
     if !refused {
         return Err("false_law.cell was admitted; the control must refuse".into());
     }
-    println!("corpus verify: refused false_law.cell by name");
+    say("corpus verify: refused false_law.cell by name");
     Ok(())
 }

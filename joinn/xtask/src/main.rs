@@ -62,22 +62,7 @@ fn main() -> ExitCode {
             Some("rebless") => fns::corpus_rebless(args.collect()),
             _ => Err("usage: cargo xtask corpus verify|rebless".into()),
         },
-        "gate" => match args.next().as_deref() {
-            Some("all") => fns::gate_all(),
-            Some("1") => fns::gate_one(fns::PHASE_LABELS[1]).and_then(fns::require_full),
-            Some("2") => fns::gate_two(fns::PHASE_LABELS[2]).and_then(fns::require_full),
-            Some("2.1") => fns::gate_two_one(fns::PHASE_LABELS[3]).and_then(fns::require_full),
-            Some("2.2") => fns::gate_two_two(fns::PHASE_LABELS[4]).and_then(fns::require_full),
-            Some("3") => fns::gate_three(fns::PHASE_LABELS[5]).and_then(fns::require_full),
-            Some("4") => fns::gate_four(fns::PHASE_LABELS[6]).and_then(fns::require_full),
-            Some("5") => fns::gate_five(fns::PHASE_LABELS[7]).and_then(fns::require_full),
-            Some("5.1") => fns::gate_five_one(fns::PHASE_LABELS[8]).and_then(fns::require_full),
-            Some("5.2") => fns::gate_five_two(fns::PHASE_LABELS[9]).and_then(fns::require_full),
-            Some("6") => fns::gate_six(fns::PHASE_LABELS[10]).and_then(fns::require_full),
-            Some("7") => fns::gate_seven(fns::PHASE_LABELS[11]).and_then(fns::require_full),
-            Some("7.2") => fns::gate_seven_two(fns::PHASE_LABELS[12]).and_then(fns::require_full),
-            _ => Err("usage: cargo xtask gate all|1|2|2.1|2.2|3|4|5|5.1|5.2|6|7|7.2".into()),
-        },
+        "gate" => fns::gate_cmd(args.collect()),
         "power" => fns::power(),
         "agree" => fns::agree(),
         "assay" => match args.next().as_deref() {
@@ -151,7 +136,7 @@ fn main() -> ExitCode {
         _ => {
             let _ = writeln!(
                 io::stderr(),
-                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | gate 7 | gate 7.2 | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
+                "xtask vocab | modules | layers | adapters | pick | regrow | forces | contact | grove [--seed N] [--out PATH] | zoom | roles <path> | layout <path> | layout --all | corpus verify | corpus rebless | gate all | gate 1 | gate 2 | gate 2.1 | gate 2.2 | gate 3 | gate 4 | gate 5 | gate 5.1 | gate 5.2 | gate 6 | gate 7 | gate 7.2 | gate <phase> --item <n> | power | agree | assay | assay agree | assay invariance | assay --all | decoration | perf | floor | decisions | witness | probe-refusal"
             );
             Ok(())
         }

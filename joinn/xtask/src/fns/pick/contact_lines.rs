@@ -8,6 +8,7 @@ use std::collections::BTreeSet;
 use super::ContactSubject;
 use super::compare::compare;
 use super::owner_name::owner_name;
+use crate::fns::once::say;
 
 /// One line per contact and viewport: `<label> <w>x<h>: agree, edge,
 /// disagree, owners n/total, links l`. A disagreement, a count that doesn't sum
@@ -41,14 +42,14 @@ pub(crate) fn contact_lines(
                 .copied()
                 .collect();
             let name = format!("{label} {}x{}", camera.width, camera.height);
-            println!(
+            say(&format!(
                 "{name}: agree {}, edge {}, disagree {}, owners {}/{total}, links {}",
                 t.agree,
                 t.edge,
                 t.disagree,
                 t.owners.len(),
                 links.len()
-            );
+            ));
             let pixels = camera.width as usize * camera.height as usize;
             if t.agree + t.edge + t.disagree != pixels {
                 failures.push(format!(
