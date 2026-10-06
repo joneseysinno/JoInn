@@ -15,6 +15,7 @@ impl<'a> BodyParser<'a> {
             grants: BTreeMap::new(),
             reads: BTreeSet::new(),
             forces: Vec::new(),
+            grows: None,
             budget_steps: 100_000,
             lineage: None,
         };

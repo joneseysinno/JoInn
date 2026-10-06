@@ -26,6 +26,6 @@ pub(crate) fn refused_at_admission(subject: &Subject) -> bool {
             corpus_cells(&frames)
                 .is_ok_and(|cells| matches!(check_contact(c, &cells, &frames), Verdict::Refused(_)))
         }
-        Subject::Lock(_) | Subject::Transcript(_) | Subject::Text(_) => false,
+        Subject::System(_) | Subject::Lock(_) | Subject::Transcript(_) | Subject::Text(_) => false,
     }
 }

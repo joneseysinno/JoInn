@@ -14,8 +14,11 @@ pub mod print;
 
 pub use assertion::{Assertion, parse_assertions};
 pub use body::contact::{
-    self as contact, CellEntry, Contact, ContactCoding, Force, ForceKind, Member, parse_contact,
-    print_contact,
+    self as contact, Accept, CellEntry, Contact, ContactCoding, Force, ForceKind, Grows, Member,
+    parse_contact, print_contact,
+};
+pub use body::system::{
+    self as system, System, SystemBody, SystemCoding, SystemForce, SystemRegulatory,
 };
 pub use body::{
     Body, BodyCoding, BodyRegulatory, GenomeEntry, GenomeTarget, Wire, check_body, parse_body,

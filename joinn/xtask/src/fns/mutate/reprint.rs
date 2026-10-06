@@ -19,6 +19,7 @@ pub(crate) fn reprint(s: &Subject) -> String {
             out.push_str(&reprint_regulatory(&contact.regulatory));
             out
         }
+        Subject::System(_) => String::new(),
         Subject::Universe(u) => {
             let mut out = print_universe(&u.coding);
             if !u.regulatory.names.is_empty() || !u.regulatory.labels.is_empty() {

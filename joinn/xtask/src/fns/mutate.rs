@@ -1,5 +1,6 @@
 //! Closed mutation catalogue: damage that keeps the form.
 
+mod accepts;
 mod add_wire;
 mod apply;
 mod coding_hash;
@@ -12,21 +13,28 @@ mod copy_member;
 mod corpus_fixture;
 mod corrupt_hash;
 mod drop_contact_genome;
+mod drop_contact_lineage;
 mod drop_declaration;
 mod drop_force;
 mod drop_genome;
 mod drop_grant;
 mod drop_lens;
 mod drop_line;
+mod drop_lineage;
 mod drop_link;
 mod drop_member;
+mod drop_system_force;
 mod drop_wire;
 mod flip_mark;
+mod force_on;
+#[cfg(test)]
+mod growing_contact;
 mod mutate_fn;
 mod neutral;
 mod parse_contact_member;
 mod parse_endpoint;
 mod parse_member_ref;
+mod rebind;
 mod refuse;
 mod rename_alias;
 mod rename_contact_alias;
@@ -42,12 +50,17 @@ mod swap_binding;
 mod swap_cell;
 mod swap_lines;
 mod swap_response;
+mod system_accepts;
+#[cfg(test)]
+mod system_fixture;
 mod wire_across;
 
 pub(crate) use mutate_fn::mutate;
 pub(crate) use neutral::neutral;
 pub(crate) use reparse::reparse;
 pub(crate) use reprint::reprint;
+
+use joinn_dna::Accept;
 
 /// One catalogue mutation. Closed; every non-legacy control opposes one.
 #[allow(dead_code)] // closed catalogue; not every variant is declared by a gate row yet
@@ -77,6 +90,9 @@ pub(crate) enum Mutation {
     SwapResponse(&'static str, &'static str),
     ShiftMember(&'static str, &'static str, u32),
     DropMember(&'static str, &'static str),
+    Accepts(&'static str, Accept),
+    DropLineage(&'static str),
+    ForceOn(&'static str, &'static str),
 }
 
 #[cfg(test)]

@@ -67,6 +67,37 @@ pub struct Force {
     pub members: Vec<Member>,
 }
 
+/// What a growing body accepts. Closed: Phase 7.4 writes one and any.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum Accept {
+    /// Exactly `1` in ℤ (counting).
+    One,
+    /// Any value in ℤ (adding).
+    Any,
+}
+
+impl Accept {
+    /// The word a `.contact` file writes.
+    pub fn word(self) -> &'static str {
+        match self {
+            Accept::One => "one",
+            Accept::Any => "any",
+        }
+    }
+}
+
+/// How a body grows: the cell each growth adds, the growth name its grown
+/// instances carry (`<name>.0`, `<name>.1`, …), and what it accepts.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Grows {
+    /// The cell each growth adds.
+    pub cell: Hash,
+    /// The growth name.
+    pub name: String,
+    /// What an input must be.
+    pub accepts: Accept,
+}
+
 /// One genome entry. A contact's genome holds cells only.
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct CellEntry {
@@ -89,6 +120,8 @@ pub struct ContactCoding {
     pub reads: BTreeSet<String>,
     /// Forces.
     pub forces: Vec<Force>,
+    /// How the body grows, if it does. Printed only when present.
+    pub grows: Option<Grows>,
     /// Step budget.
     pub budget_steps: u64,
     /// Parent body hash, if any.

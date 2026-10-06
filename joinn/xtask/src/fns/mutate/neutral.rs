@@ -68,7 +68,7 @@ pub(crate) fn neutral(s: &Subject) -> Option<Subject> {
                 joinn_frame::Verdict::Refused(_) => None,
             }
         }
-        Subject::Transcript(_) | Subject::Text(_) => None,
+        Subject::System(_) | Subject::Transcript(_) | Subject::Text(_) => None,
     }
 }
 

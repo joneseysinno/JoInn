@@ -10,6 +10,6 @@ pub(super) fn coding_hash(s: &Subject) -> Option<Hash> {
         Subject::Body(b) => Some(hash(&b.coding)),
         Subject::Contact(c) => Some(hash(&c.coding)),
         Subject::Universe(u) => Some(hash_universe(&u.coding)),
-        Subject::Lock(_) | Subject::Transcript(_) | Subject::Text(_) => None,
+        Subject::System(_) | Subject::Lock(_) | Subject::Transcript(_) | Subject::Text(_) => None,
     }
 }

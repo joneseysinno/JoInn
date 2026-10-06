@@ -18,6 +18,9 @@ pub(crate) fn reparse(kind: &Subject, text: &str) -> Verdict<Subject> {
             Verdict::Ok(c) => Verdict::Ok(Subject::Contact(c)),
             Verdict::Refused(r) => Verdict::Refused(r),
         },
+        Subject::System(_) => Verdict::Refused(refuse(
+            "a system has no canonical text yet; acceptance is a body, contact or universe",
+        )),
         Subject::Universe(_) => match parse_universe(text) {
             Verdict::Ok(u) => Verdict::Ok(Subject::Universe(u)),
             Verdict::Refused(r) => Verdict::Refused(r),
