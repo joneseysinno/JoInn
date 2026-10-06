@@ -73,6 +73,7 @@ pub(crate) fn grove_subjects(
             label
         };
         views.push(GroveView {
+            name: "grove",
             label,
             camera,
             scene,

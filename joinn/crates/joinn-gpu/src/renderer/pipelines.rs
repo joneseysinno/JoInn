@@ -10,8 +10,7 @@ const SEGMENT: &str = include_str!("../wgsl/segment.wgsl");
 /// Shape and curve share §7.2's layout; the segment organelle's group 1 is
 /// the fifth layout. Every pipeline blends color by alpha, with no
 /// multisampling. The ID target is never blended (an integer target cannot
-/// be): the owner writes it, the ghost leaves it alone; the segment owner
-/// leaves it alone too until links are picked (P73-08). An opaque color blends
+/// be): the owner writes it, the ghost leaves it alone. An opaque color blends
 /// to itself, so an owner drawn at full opacity writes exactly its style.
 pub(crate) fn pipelines(
     device: &wgpu::Device,
@@ -78,7 +77,7 @@ pub(crate) fn pipelines(
         shape_ghost: build("shape ghost", &tables, SHAPE, true, none),
         curve: build("curve", &tables, CURVE, false, all),
         curve_ghost: build("curve ghost", &tables, CURVE, true, none),
-        segment: build("segment", &segments, SEGMENT, false, none),
+        segment: build("segment", &segments, SEGMENT, false, all),
         segment_ghost: build("segment ghost", &segments, SEGMENT, true, none),
     }
 }

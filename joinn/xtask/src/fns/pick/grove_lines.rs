@@ -2,16 +2,17 @@
 
 use joinn_frame::Verdict;
 use joinn_gpu::{Gpu, OFFSCREEN_FORMAT, Renderer};
-use joinn_visual::{Pick, UniverseScene};
+use joinn_visual::{LINK_TAG, Pick, TAG_MASK, UniverseScene};
 use std::collections::BTreeSet;
 
 use super::GroveView;
 use super::compare::compare;
 
-/// One line per view: `grove <view>: sample <n> agree <a>, edge <e>, disagree
-/// <d>, owners <n> (cut allows <n>)`. The sample is judged against the grid
-/// pick; the whole image is judged too, and its owners are the GPU's owners of
-/// pixels the CPU doesn't call edge. A disagreement anywhere, a sampled pixel
+/// One line per view: `<name> <view>: sample <n> agree <a>, edge <e>,
+/// disagree <d>, owners <n> (cut allows <n>), link owners <n> (cut allows
+/// <n>)`. The sample is judged against the grid pick; the whole image is
+/// judged too, and its owners are the GPU's owners of pixels the CPU doesn't
+/// call edge, links counted apart (V152). A disagreement anywhere, a sampled pixel
 /// the brute-force walk names differently, or owners that differ from the
 /// cut's (V145) fails. The lines go to `lines`, the failures to `failures`.
 pub(crate) fn grove_lines(
@@ -58,14 +59,18 @@ pub(crate) fn grove_lines(
             .filter(|(p, id)| **p != Pick::Edge && **id != [0; 4])
             .map(|(_, id)| *id)
             .collect();
+        let is_link = |id: &&[u32; 4]| id[2] & TAG_MASK == LINK_TAG;
+        let links = owners.iter().filter(is_link).count();
+        let allowed_links = v.allows.iter().filter(is_link).count();
         lines.push(format!(
-            "grove {}: sample {} agree {agree}, edge {edge}, disagree {disagree}, owners {} (cut allows {})",
+            "{} {}: sample {} agree {agree}, edge {edge}, disagree {disagree}, owners {} (cut allows {}), link owners {links} (cut allows {allowed_links})",
+            v.name,
             v.label,
             v.sample.len(),
-            owners.len(),
-            v.allows.len()
+            owners.len() - links,
+            v.allows.len() - allowed_links
         ));
-        let line = format!("{adapter}: grove {}", v.label);
+        let line = format!("{adapter}: {} {}", v.name, v.label);
         if v.differ != 0 {
             failures.push(format!(
                 "{line}: cpu_pick and cpu_pick_reference name {} sampled pixel(s) differently",

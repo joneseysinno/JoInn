@@ -6,6 +6,7 @@
 //! shape with signed distance `d` holds a pixel inside when `d ≤ −EDGE`,
 //! outside when `d ≥ EDGE`, and at its edge otherwise.
 
+mod arrow_class;
 mod bounds_px;
 mod capsule_class;
 mod circle_class;
@@ -102,6 +103,16 @@ pub enum Geom {
         /// Half-width, sixteenths.
         half: i64,
     },
+    /// A link's arrowhead: a triangle from its base centre `a` to its tip
+    /// `b`, half-width `half` at the base, all in sixteenths of a layout unit.
+    Arrow {
+        /// Base centre, sixteenths.
+        a: (i64, i64),
+        /// Tip, sixteenths.
+        b: (i64, i64),
+        /// Half-width at the base, sixteenths.
+        half: i64,
+    },
 }
 
 /// One drawn shape and the ID it writes to the ID target (R G B A, §2.8).
@@ -126,6 +137,11 @@ pub(crate) enum GeomPx {
         r: i128,
     },
     Capsule {
+        a: (i128, i128),
+        b: (i128, i128),
+        w: i128,
+    },
+    Arrow {
         a: (i128, i128),
         b: (i128, i128),
         w: i128,

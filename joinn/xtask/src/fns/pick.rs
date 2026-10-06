@@ -33,8 +33,10 @@ pub(crate) const GROVE_SAMPLE: usize = 4096;
 /// One plan 7.2 2.12 view of the grove: its camera, the scene grown at its
 /// anchor, the grid pick of the whole image, the sampled pixel indices, how
 /// many sampled pixels the brute-force walk names differently, and every owner
-/// of a pixel in the grid pick.
+/// of a pixel in the grid pick. `name` begins its line: `grove`, or `ordered`
+/// for `ordered.universe`.
 pub(crate) struct GroveView {
+    pub(crate) name: &'static str,
     pub(crate) label: String,
     pub(crate) camera: Camera,
     pub(crate) scene: usize,

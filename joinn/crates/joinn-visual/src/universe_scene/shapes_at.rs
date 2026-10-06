@@ -6,14 +6,18 @@ use super::UniverseScene;
 use crate::bands::Band;
 use crate::camera::Camera;
 use crate::lens_cut::{CutForm, cut};
-use crate::pick::{GALAXY_TAG, Geom, PORT_TAG, SYSTEM_TAG, Shape, WIRE_TAG};
+use crate::pick::{GALAXY_TAG, Geom, LINK_TAG, PORT_TAG, SYSTEM_TAG, Shape, WIRE_TAG};
 use crate::refuse::refuse;
+use crate::routes::{PieceKind, fold_at, form_of, half_width};
 use crate::tables::{CHART_BODY, CHART_GALAXY, LIVE, SURFACE_PORT};
 
 impl UniverseScene {
-    /// What owns pixels under `camera`, in the GPU's draw order: frames, dots,
-    /// surfaces, cells, wires, ports, strokes, each by slot. A frame or node is
-    /// drawn when its chart is in the cut; a body's elements by its owner band
+    /// What owns pixels under `camera`, in the GPU's draw order: open frames,
+    /// link segments, lens nodes, dots, surfaces, cells, wires, ports, strokes,
+    /// each by slot. A frame or node is drawn when its chart is in the cut; a
+    /// segment when its route is in the fold state the zoom shows, as a stroke
+    /// or arrowhead in the route's owner form (a ghost form writes no ID,
+    /// plan 7.3 §2.8); a body's elements by its owner band
     /// (dot: the dot; glyph: the surface; summary: the surface, cells and
     /// surface ports; full: everything, with text). Coordinates are relative to
     /// the anchor. The camera must be anchored where the chart rows are.
@@ -46,26 +50,69 @@ impl UniverseScene {
         };
         let live = |flags: u32| flags & LIVE != 0;
         let mut shapes = Vec::new();
-        for f in &t.frame {
-            if live(f.flags) && form(f.chart).is_some() {
-                let (x, y) = origin(f.chart);
-                let tag = if f.kind == CHART_GALAXY {
-                    GALAXY_TAG
-                } else {
-                    SYSTEM_TAG
-                };
+        let frames = |shapes: &mut Vec<Shape>, want: CutForm| {
+            for f in &t.frame {
+                if live(f.flags) && form(f.chart) == Some(want) {
+                    let (x, y) = origin(f.chart);
+                    let tag = if f.kind == CHART_GALAXY {
+                        GALAXY_TAG
+                    } else {
+                        SYSTEM_TAG
+                    };
+                    shapes.push(Shape {
+                        geom: Geom::RoundRect {
+                            x,
+                            y,
+                            w: f.w.into(),
+                            h: f.h.into(),
+                            r: 0,
+                        },
+                        id: [0, 0, tag | f.index, f.generation],
+                    });
+                }
+            }
+        };
+        frames(&mut shapes, CutForm::Open);
+        let fold = fold_at(camera.zoom).number();
+        for (row, route) in t.route.iter().zip(&self.layout.routes.routes) {
+            if !live(row.flags) || row.fold != fold {
+                continue;
+            }
+            let (owner, _) = form_of(camera.zoom, route);
+            let first = row.segment_first as usize;
+            let rows = t
+                .segment
+                .iter()
+                .skip(first)
+                .take(row.segment_count as usize);
+            for (piece, s) in route.pieces.iter().zip(rows) {
+                let chart_live = t.chart.get(s.chart as usize).is_some_and(|c| live(c.flags));
+                if !live(s.flags) || !chart_live {
+                    continue;
+                }
+                let (x, y) = origin(s.chart);
+                let (x, y) = (16 * x, 16 * y);
+                let (a, b) = (
+                    (x + i64::from(s.x0), y + i64::from(s.y0)),
+                    (x + i64::from(s.x1), y + i64::from(s.y1)),
+                );
+                let half = half_width(owner, piece);
                 shapes.push(Shape {
-                    geom: Geom::RoundRect {
-                        x,
-                        y,
-                        w: f.w.into(),
-                        h: f.h.into(),
-                        r: 0,
+                    geom: if piece.kind == PieceKind::Arrow {
+                        Geom::Arrow { a, b, half }
+                    } else {
+                        Geom::Stroke { a, b, half }
                     },
-                    id: [0, 0, tag | f.index, f.generation],
+                    id: [
+                        row.link + 1,
+                        s.member,
+                        LINK_TAG | owner.number(),
+                        row.generation,
+                    ],
                 });
             }
         }
+        frames(&mut shapes, CutForm::Node);
         for (slot, m) in (0u32..).zip(&t.body) {
             if live(m.flags) && band(slot) == Some(Band::Dot) {
                 let (x, y) = origin(slot);

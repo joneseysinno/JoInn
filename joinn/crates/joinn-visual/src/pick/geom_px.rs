@@ -61,5 +61,13 @@ pub(crate) fn geom_px(shape: &Shape, camera: &Camera) -> Option<GeomPx> {
                 w: len(s(half)?)?,
             }
         }
+        Geom::Arrow { a, b, half } => {
+            let s = |n: i64| i128::from(n).checked_mul(sixteenth);
+            GeomPx::Arrow {
+                a: point(s(a.0)?, s(a.1)?)?,
+                b: point(s(b.0)?, s(b.1)?)?,
+                w: len(s(half)?)?,
+            }
+        }
     })
 }

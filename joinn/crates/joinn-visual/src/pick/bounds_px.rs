@@ -17,7 +17,7 @@ pub(crate) fn bounds_px(g: &GeomPx) -> Option<(i128, i128, i128, i128)> {
             c.0.checked_add(r)?,
             c.1.checked_add(r)?,
         ),
-        GeomPx::Capsule { a, b, w } => (
+        GeomPx::Capsule { a, b, w } | GeomPx::Arrow { a, b, w } => (
             a.0.min(b.0).checked_sub(w)?,
             a.1.min(b.1).checked_sub(w)?,
             a.0.max(b.0).checked_add(w)?,

@@ -4,13 +4,15 @@ use joinn_frame::Verdict;
 
 use super::UniverseScene;
 use crate::charts::ChartKind;
-use crate::pick::{GALAXY_TAG, PORT_TAG, SYSTEM_TAG, TAG_MASK, WIRE_TAG};
+use crate::pick::{GALAXY_TAG, LINK_TAG, PORT_TAG, SYSTEM_TAG, TAG_MASK, WIRE_TAG};
 use crate::refuse::refuse;
 
 impl UniverseScene {
     /// `background`, `galaxy <name>`, `system <name>`, `<alias> surface`,
-    /// `<alias>.<cell>`, `<alias>.<cell>@<position>`, or
-    /// `<alias> wire <cell>@<p> -> <cell>@<p>`. A text stroke carries the ID
+    /// `<alias>.<cell>`, `<alias>.<cell>@<position>`,
+    /// `<alias> wire <cell>@<p> -> <cell>@<p>`, `link <id>` (trunk, knot,
+    /// spine, region) or `link <id> member <i>` (`i` from 0 in incidence
+    /// order, plan 7.3 §2.7). A text stroke carries the ID
     /// of what it labels, so it prints as that.
     pub fn print_id(&self, id: [u32; 4]) -> Verdict<String> {
         let [r, g, b, _] = id;
@@ -23,6 +25,16 @@ impl UniverseScene {
                 "pick: ID {id:?} names nothing in this scene; acceptance is an ID the scene's tables wrote"
             ))
         };
+        if tag == LINK_TAG {
+            return match (r.checked_sub(1), index <= 3) {
+                (Some(link), true) => match self.layout.routes.ids.get(link as usize) {
+                    Some(name) if g == 0 => Verdict::Ok(format!("link {name}")),
+                    Some(name) => Verdict::Ok(format!("link {name} member {}", g - 1)),
+                    None => unknown(),
+                },
+                _ => unknown(),
+            };
+        }
         if r == 0 {
             let (kind, word) = match tag {
                 GALAXY_TAG => (ChartKind::Galaxy, "galaxy"),
@@ -93,7 +105,7 @@ mod tests {
 
     use crate::camera::ChartId;
     use crate::fixtures::phase5_universe;
-    use crate::pick::{GALAXY_TAG, PORT_TAG, SYSTEM_TAG, WIRE_TAG};
+    use crate::pick::{GALAXY_TAG, LINK_TAG, PORT_TAG, SYSTEM_TAG, WIRE_TAG};
     use crate::universe_scene::UniverseScene;
 
     #[test]
@@ -130,6 +142,13 @@ mod tests {
             printed([calc + 1, 0, WIRE_TAG | wire, 1]),
             "calc wire cli_a@1 -> sum@0"
         );
+        let link = scene.layout().routes.ids[0].clone();
+        assert_eq!(printed([1, 0, LINK_TAG | 3, 1]), format!("link {link}"));
+        assert_eq!(
+            printed([1, 2, LINK_TAG | 3, 1]),
+            format!("link {link} member 1")
+        );
+        assert!(printed([2, 0, LINK_TAG, 1]).starts_with("pick: ID"));
         assert_eq!(
             printed([0, 0, SYSTEM_TAG | 99, 1]),
             "pick: ID [0, 0, 805306467, 1] names nothing in this scene; acceptance is an ID the scene's tables wrote"

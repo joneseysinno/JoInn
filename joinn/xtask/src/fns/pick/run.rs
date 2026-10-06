@@ -4,7 +4,8 @@
 use joinn_frame::Verdict;
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
 use joinn_visual::{
-    FitCamera, PickImage, STANDARD_VIEWPORTS, Scene, cpu_pick, fit, shapes_of_tables,
+    Camera, ChartId, ChartKind, FitCamera, PickImage, Rect, STANDARD_VIEWPORTS, Scene, cpu_pick,
+    fit, shapes_of_tables,
 };
 
 use super::band_boundary::band_boundary;
@@ -19,11 +20,13 @@ use super::owner_name::owner_name;
 use super::plant::plant;
 use super::{Subject, Tally};
 use crate::fns::grove::grove_layout;
-use crate::fns::zoom::{fade_views, zoom_views};
+use crate::fns::links::laid_universe;
+use crate::fns::zoom::{VIEWPORT, fade_views, zoom_views};
 
 /// The calculator at the four standard viewports, then each corpus body at
 /// 1280×720, then the grove at plan 7.2 §2.12's views and one fade-window view
-/// per threshold, and the 240 px band boundary probe, on every adapter. Any
+/// per threshold, `ordered.universe` with its galaxy framed, and the 240 px band
+/// boundary probe, on every adapter. Any
 /// disagreement, an owner that owns no pixel, a count that doesn't sum to the
 /// image, grove owners other than the cut's, or an unrefused plant fails.
 pub(crate) fn pick() -> Result<(), String> {
@@ -67,6 +70,26 @@ pub(crate) fn pick() -> Result<(), String> {
         .chain(fade_views(&grove).into_iter().map(|(l, c, _)| (l, c)))
         .collect();
     let (grove_scenes, grove_views) = grove_subjects(&grove, cameras)?;
+    let (_, _, ordered) = laid_universe("phase5/ordered.universe")?;
+    let frame: Vec<(String, Camera)> = ordered
+        .charts
+        .iter()
+        .filter(|c| c.kind == ChartKind::Galaxy)
+        .map(|c| {
+            let rect = Rect {
+                x: c.root_origin.0,
+                y: c.root_origin.1,
+                w: c.size.0,
+                h: c.size.1,
+            };
+            let camera = Camera::frame(rect, ChartId(0), VIEWPORT.0, VIEWPORT.1);
+            (format!("galaxy {}", c.name), ordered.rebase(camera))
+        })
+        .collect();
+    let (ordered_scenes, mut ordered_views) = grove_subjects(&ordered, frame)?;
+    for v in &mut ordered_views {
+        v.name = "ordered";
+    }
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -176,6 +199,13 @@ pub(crate) fn pick() -> Result<(), String> {
             &gpu,
             adapter.line(),
             (&grove_scenes, &grove_views),
+            &mut lines,
+            &mut failures,
+        )?;
+        grove_lines(
+            &gpu,
+            adapter.line(),
+            (&ordered_scenes, &ordered_views),
             &mut lines,
             &mut failures,
         )?;
