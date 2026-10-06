@@ -262,6 +262,7 @@ mod shell_session;
 mod subject;
 mod surface_field;
 mod synthetic_fifty;
+mod system_admission;
 mod system_subject;
 mod text_val;
 mod tier;

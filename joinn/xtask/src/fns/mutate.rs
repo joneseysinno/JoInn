@@ -53,7 +53,7 @@ mod swap_lines;
 mod swap_response;
 mod system_accepts;
 #[cfg(test)]
-mod system_fixture;
+pub(crate) mod system_fixture;
 mod wire_across;
 
 pub(crate) use mutate_fn::mutate;
