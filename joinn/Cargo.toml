@@ -34,3 +34,17 @@ todo = "deny"
 dbg_macro = "deny"
 collapsible_if = "allow"
 too_many_arguments = "allow"
+
+[profile.dev]
+opt-level = 1
+debug = "line-tables-only"
+overflow-checks = true
+debug-assertions = true
+
+[profile.dev.package."*"]
+opt-level = 3
+
+# xtask's tests compare gate check functions by address; optimized code merges
+# identical function bodies (four gate 2.1/2.2 checks are one call each).
+[profile.dev.package.xtask]
+opt-level = 0
