@@ -441,6 +441,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 #### Phase 7.3 · Visual Host II: links
 
 > **3 Oct 2026.** Planned in Plans/JoInn Phase 7.3 Implementation Plan.md: routes in the gutters, one path at three widths, two fold states grown once. Snapshots wait (R105).
+>
+> **6 Oct 2026.** Built: routes in the gutters for every fold state, grown once; region, hub, bundle and spine; links under bodies and picked by both pickers; gate 7.3 3/3. Snapshots and rerouting under layout change are not built. Findings: [Findings/phase-7.3-links.md](../Findings/phase-7.3-links.md).
 
 **Deliverables**
 

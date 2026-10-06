@@ -141,8 +141,8 @@ line must name a file under `docs/Findings/`.
 | R106 | Streets as structure | 7.3 | open | |
 | R107 | The knot as a place | 7.3 | open | |
 | R108 | The engine's cost per fire | 7.3 | open | |
-| V148 | A hyperedge touches; it never crosses: §2.6's four checks hold for every route in every fold state | 7.3 | open | |
-| V149 | Routes live in gutters and are grown once per fold state; a zoom writes no row | 7.3 | open | |
-| V150 | Order is drawn only when declared: no spine and no arrowhead along an unordered link | 7.3 | open | |
-| V151 | A folded node is touched once per link: one touch point, one leg | 7.3 | open | |
-| V152 | Two pickers name every link pixel: CPU and GPU agree on link owners at every view | 7.3 | open | |
+| V148 | A hyperedge touches; it never crosses: §2.6's four checks hold for every route in every fold state | 7.3 | holds | `cargo xtask links`: `crossings 0` for universe.universe, ordered.universe and the grove in every fold state; gate 7.3 item 1: `body pixels a link owns 0` at every §2.12 view on all three adapters; drawing links over bodies fails it (4203 pixels) ([findings](phase-7.3-links.md)) |
+| V149 | Routes live in gutters and are grown once per fold state; a zoom writes no row | 7.3 | holds | `cargo xtask regrow`: `routes 0 regrow` at every grove step, rows 0 except the rebase; the plant that rewrites routes on a same-anchor pan fails (`a pan or zoom at b0000 wrote 4779 row(s)`, P73-09) |
+| V150 | Order is drawn only when declared: no spine and no arrowhead along an unordered link | 7.3 | holds | gate 7.3 item 2: grove `ordered 0, mid-path arrowheads 0, spines at 15 views 0`; ordered.universe's `path` a spine at its frame and at level −4; a mid-path arrowhead on unordered links fails it (146) |
+| V151 | A folded node is touched once per link: one touch point, one leg | 7.3 | holds | gate 7.3 item 3: `systems folded 264 touches, 136 legs; open 1182 stubs`, each node touched once per link and every member stood for |
+| V152 | Two pickers name every link pixel: CPU and GPU agree on link owners at every view | 7.3 | holds | `cargo xtask pick`: disagree 0 and `link owners n (cut allows n)` equal at every grove view and ordered.universe's galaxy, all three adapters (P73-08); gate 7.3 item 3: a leg pick `link sys_g0s00 member 3`, GPU equal on every adapter |

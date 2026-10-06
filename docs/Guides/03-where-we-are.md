@@ -7,7 +7,7 @@ JoInn is being built in three big stages. Think of them as ladders: each one let
 | Stage | Nickname | What it means in plain words | Status (roughly) |
 |-------|----------|------------------------------|------------------|
 | **B0** | True but unseen | The universe is correct and checkable, and you can still meet it as text | **The truth core holds** |
-| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly; links are drawn next** |
+| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly, its links drawn; snapshots next** |
 | **B2** | Self-editing | You build JoInn *inside* JoInn; the visual creator and the text form match byte-for-byte | Future |
 
 The rule of the road: **pixels come after truth.** A gorgeous editor with a weak core would force the core to bend. So Bootstrap 0 comes first on purpose.
@@ -26,6 +26,22 @@ You can, from the `joinn` code folder:
 - Run and open the calculator as **cells in contact** (`joinn run corpus/phase7/calculator.contact`, and the same path in the window), described below
 - Work five steel beams exactly (`cargo run --manifest-path spikes/s8-beam/Cargo.toml`), described below
 - Open a universe and zoom it (`cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe`), and print the generated test universe's counts (`cargo xtask grove`) and what each zoom draws (`cargo xtask zoom`), described below
+- See its links drawn in the same window, and print every route (`cargo xtask links`), the form each link takes at each zoom (`--forms`) and how long routing takes (`--measure`), described below
+
+## Links are drawn (Phase 7.3)
+
+A link between bodies is a **hyperedge**: one connection that can touch many bodies at once. The window now draws every link of any universe.
+
+- **Streets only.** Links travel on the **gutters**, the empty lanes between bodies, systems and galaxies. They never cross a cell, a body that isn't a member, or a folded system. A short **stub** runs from each member's port out to its gutter. `cargo xtask links` checks every route exactly and prints `crossings 0`.
+- **One meeting point.** An unordered link's **legs** meet at a **knot**, the street corner closest to all its members together. A stretch several legs share is **trunk**.
+- **Form follows size.** A small link (under 240 px across) is a pale, wide **region**; a medium one is thin lines meeting at the knot (**hub**); a large one (from 1920 px) draws each shared stretch thicker the more legs share it (**bundle**). Near each threshold the two forms crossfade. A link whose order is declared is a **spine** with arrowheads; an unordered link never has an arrow along it.
+- **A folded system is touched once.** Zoomed out, a system folds into one tile, and a link touches it at one point with one leg, however many of its members are inside.
+- **Under bodies, and picked like them.** Links are drawn beneath bodies, so a body always owns its own pixels. A click on a line prints `link sys_g0s00 member 3`, and the GPU's ID for that pixel names the same thing on every adapter.
+- **Grown once.** Every route for every fold state is computed when the universe opens. Zooming and panning still write no row.
+
+On the grove (137 links), routing takes about 1 s in the everyday build and 0.63 s optimized, once, when it opens. Gate 7.3 checks all of this on every graphics adapter.
+
+Not built yet: snapshots (a saved picture of a view), routes that move when the layout changes, and streets or knots as things in their own right. Findings: [phase-7.3-links.md](../Findings/phase-7.3-links.md).
 
 ## The universe zooms (Phase 7.2)
 
@@ -39,9 +55,9 @@ What makes it trustworthy:
 - **Moving writes nothing.** A pan or zoom changes only the camera; no table row is written. When the centre moves into another chart, a **rebase** rewrites chart rows only, and not one pixel changes.
 - **JoInn's own letters.** Titles, cell labels and values are drawn in a 48-glyph stroke font, the same on every machine.
 
-It is measured on **the grove**, a universe JoInn generates from seed 7: 8 galaxies, 128 systems, 3072 bodies and 137 links. The CPU cut takes 19–66 µs per view. A link already knows which drawn bodies or nodes it touches (264 at the farthest zoom, 1182 when framed), but links are not drawn yet.
+It is measured on **the grove**, a universe JoInn generates from seed 7: 8 galaxies, 128 systems, 3072 bodies and 137 links. The CPU cut takes 19–66 µs per view. A link already knows which drawn bodies or nodes it touches (264 at the farthest zoom, 1182 when framed); Phase 7.3 draws them (above).
 
-Not built yet: links drawn as hyperedges (region, hub, bundle, spine) and rerouting them, and snapshots. Those are Phase 7.3. Findings: [phase-7.2-zoom.md](../Findings/phase-7.2-zoom.md).
+Findings: [phase-7.2-zoom.md](../Findings/phase-7.2-zoom.md).
 
 ## The beam, worked exactly (Phase 7.1, stage 1)
 
@@ -96,7 +112,7 @@ C1 shows a missing promise, not a wrong number. A narrower check (does a round-t
 
 Under the hood, the project has already built the early “truth core”: frames and values, DNA plans, the gate, the floor of sealed basics, the live runner, and the start of **hosts** (a host is proved by there being two — CLI and a test host).
 
-The window shows a universe and zooms it, but it is not an editor. Building any app by clicking, zooming, and reading the screen aloud is still ahead in Bootstrap 1 and 2.
+The window shows a universe with its links and zooms it, but it is not an editor. Building any app by clicking, zooming, and reading the screen aloud is still ahead in Bootstrap 1 and 2.
 
 ## What “Phase” language means
 
