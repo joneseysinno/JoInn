@@ -11,6 +11,7 @@ pub(in crate::body::contact) fn is_contact_section(word: &str) -> bool {
             | "forces"
             | "genome"
             | "grants"
+            | "grows"
             | "lineage"
             | "read"
             | "steps"

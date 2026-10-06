@@ -27,7 +27,7 @@ impl<'a> BodyParser<'a> {
             let Some(word) = self.peek_ident().map(str::to_owned) else {
                 let got = self.rest().chars().next().unwrap_or(' ');
                 return Verdict::Refused(self.refuse(format!(
-                    "contact: unexpected {got:?}; acceptance is a section: budget, codex, forces, genome, grants, lineage, read"
+                    "contact: unexpected {got:?}; acceptance is a section: budget, codex, forces, genome, grants, grows, lineage, read"
                 )));
             };
             self.ident();
@@ -68,6 +68,10 @@ impl<'a> BodyParser<'a> {
                     }
                 }
                 "forces" => self.contact_forces().map(|f| coding.forces.extend(f)),
+                "grows" if coding.grows.is_some() => Err(self.refuse(
+                    "contact: two grows sections; acceptance is one (a body grows one way)",
+                )),
+                "grows" => self.contact_grows().map(|g| coding.grows = Some(g)),
                 "wires" => Err(self.refuse(
                     "contact: wires belong to systems; a body's cells touch. acceptance is a forces section",
                 )),
@@ -75,7 +79,7 @@ impl<'a> BodyParser<'a> {
                     "contact codex 1 has no declarations; acceptance is a .body or .universe for an assert",
                 )),
                 other => Err(self.refuse(format!(
-                    "contact: {other} is not a section; acceptance is budget, codex, forces, genome, grants, lineage or read"
+                    "contact: {other} is not a section; acceptance is budget, codex, forces, genome, grants, grows, lineage or read"
                 ))),
             };
             if let Err(r) = step {
@@ -87,6 +91,30 @@ impl<'a> BodyParser<'a> {
             .iter()
             .flat_map(|g| g.instances.iter().map(String::as_str))
             .collect();
+        if let Some(grows) = &coding.grows {
+            if !coding.forces.is_empty() {
+                return Verdict::Refused(self.refuse(
+                    "contact: forces in a growing body; acceptance is forces in the system that holds it",
+                ));
+            }
+            if instances.contains(grows.name.as_str()) {
+                return Verdict::Refused(self.refuse(format!(
+                    "contact: {} is both a cell and a growth name; acceptance is a new name",
+                    grows.name
+                )));
+            }
+            let grown = format!("{}.", grows.name);
+            for (cap, granted) in &coding.grants {
+                if let Some(i) = granted
+                    .iter()
+                    .find(|i| **i == grows.name || i.starts_with(&grown))
+                {
+                    return Verdict::Refused(self.refuse(format!(
+                        "contact: grant {cap} names {i}; acceptance is no grant for a grown instance (it holds stdin by being grown)"
+                    )));
+                }
+            }
+        }
         let mut responses = BTreeSet::new();
         for force in &coding.forces {
             if instances.contains(force.name.as_str()) {

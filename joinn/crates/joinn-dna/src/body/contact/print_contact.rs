@@ -7,7 +7,8 @@ use crate::body::contact::ContactCoding;
 
 /// Canonical contact text, including the trailing newline. Forces are sorted
 /// by response name and members by (instance, port): member order is never
-/// hashed.
+/// hashed. `grows` is printed only when present, so a contact without it
+/// prints as before.
 pub fn print_contact(coding: &ContactCoding) -> String {
     let mut out = String::new();
     let _ = writeln!(out, "budget");
@@ -63,6 +64,16 @@ pub fn print_contact(coding: &ContactCoding) -> String {
             force.response.to_hex(),
             force.name,
             members.join(" ")
+        );
+    }
+    if let Some(grows) = &coding.grows {
+        let _ = writeln!(out, "grows");
+        let _ = writeln!(
+            out,
+            "cell:{} as {} accepts {}",
+            grows.cell.to_hex(),
+            grows.name,
+            grows.accepts.word()
         );
     }
     out

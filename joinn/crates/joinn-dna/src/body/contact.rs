@@ -7,6 +7,7 @@ mod contact_coding;
 mod contact_forces;
 mod contact_genome;
 mod contact_grants;
+mod contact_grows;
 mod contact_members;
 mod contact_names;
 mod is_contact_section;
@@ -281,6 +282,85 @@ regulatory {{
             refused(&src),
             "contact: cli_b is both a cell and a force's response; acceptance is a new name"
         );
+    }
+
+    fn growing(accepts: &str, extra: &str) -> String {
+        format!(
+            "contact {{\n  codex 1\n  genome {{ }}\n{extra}  grows {{\n    cell:{CLI} as numbers accepts {accepts}\n  }}\n  budget {{ steps 100000 }}\n  lineage none\n}}\n"
+        )
+    }
+
+    #[test]
+    fn grows_parses_prints_and_round_trips() {
+        let c = parse_ok(&growing("one", ""));
+        let want = format!(
+            "budget\nsteps 100000\ncodex 1\ngenome\ngrants\nlineage none\nforces\ngrows\ncell:{CLI} as numbers accepts one\n"
+        );
+        assert_eq!(print_contact(&c.coding), want);
+        assert_eq!(print_contact(&parse_ok(&want).coding), want);
+        let grows = c
+            .coding
+            .grows
+            .as_ref()
+            .map(|g| (g.name.as_str(), g.accepts));
+        assert_eq!(grows, Some(("numbers", Accept::One)));
+        let any = parse_ok(&growing("any", ""));
+        assert_eq!(any.coding.grows.map(|g| g.accepts), Some(Accept::Any));
+        assert_ne!(
+            hash(&parse_ok(&growing("any", "")).coding),
+            hash(&c.coding),
+            "what a body accepts is hashed"
+        );
+    }
+
+    #[test]
+    fn accepts_other_than_one_or_any_is_refused() {
+        assert_eq!(
+            refused(&growing("two", "")),
+            "contact: accepts \"two\"; acceptance is one or any"
+        );
+    }
+
+    #[test]
+    fn forces_in_a_growing_contact_are_refused() {
+        let forces =
+            format!("  forces {{\n    combine ℤ 1 cell:{SUM} as count from numbers@1\n  }}\n");
+        assert_eq!(
+            refused(&growing("one", &forces)),
+            "contact: forces in a growing body; acceptance is forces in the system that holds it"
+        );
+    }
+
+    #[test]
+    fn grows_of_another_cell_twice_or_granted_is_refused() {
+        let src = growing("one", "").replace(&format!("cell:{CLI}"), &format!("cell:{SUM}"));
+        assert_eq!(
+            refused(&src),
+            format!(
+                "contact: grows cell:{SUM}; acceptance is the input cell cell:{CLI} in Phase 7.4"
+            )
+        );
+        let twice = format!("  grows {{ cell:{CLI} as more accepts any }}\n");
+        assert_eq!(
+            refused(&growing("one", &twice)),
+            "contact: two grows sections; acceptance is one (a body grows one way)"
+        );
+        assert_eq!(
+            refused(&growing("one", "  grants { stdin: numbers }\n")),
+            "contact: grant stdin names numbers; acceptance is no grant for a grown instance (it holds stdin by being grown)"
+        );
+    }
+
+    #[test]
+    fn the_calculator_s_hash_is_unchanged_by_grows() {
+        let hashes = include_str!("../../../../corpus/hashes.txt");
+        let pinned = hashes
+            .lines()
+            .find_map(|l| l.strip_prefix("calculator.contact "))
+            .map(str::trim);
+        let c = parse_ok(CORPUS);
+        assert_eq!(c.coding.grows, None);
+        assert_eq!(Some(hash(&c.coding).to_hex().as_str()), pinned);
     }
 
     #[test]
