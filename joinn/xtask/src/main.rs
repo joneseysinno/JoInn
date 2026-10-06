@@ -267,53 +267,91 @@ mod tests {
         assert!(hits.is_empty(), "alias lookup before binding: {hits:?}");
     }
 
+    /// The body of `fns/<name>.rs`'s function `name`, whitespace removed.
+    fn gate_fn_body(name: &str) -> Result<String, String> {
+        let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("src")
+            .join("fns")
+            .join(format!("{name}.rs"));
+        let text = std::fs::read_to_string(&path).map_err(|e| format!("{name}: {e}"))?;
+        let text = text.split("#[cfg(test)]").next().unwrap_or_default();
+        let sig = format!("fn {name}(");
+        let at = text.find(&sig).ok_or(format!("{name}: no `{sig}`"))?;
+        let rest = &text[at..];
+        let open = rest.find('{').ok_or(format!("{name}: no body"))?;
+        Ok(rest[open..]
+            .chars()
+            .filter(|c| !c.is_whitespace())
+            .collect())
+    }
+
     #[test]
     fn no_two_gate_items_share_a_check_or_control() {
-        let legacy = [
-            super::fns::gate_one_items(),
-            super::fns::gate_two_items(),
-            super::fns::gate_two_one_items(),
-            super::fns::gate_two_two_items(),
-            super::fns::gate_three_items(),
-        ];
-        let non_legacy = [
-            super::fns::gate_four_items(),
-            super::fns::gate_five_items(),
-            super::fns::gate_five_one_items(),
-            super::fns::gate_five_two_items(),
-            super::fns::gate_six_items(),
-            super::fns::gate_seven_items(),
-            super::fns::gate_seven_two_items(),
-        ];
-        let mut checks = Vec::new();
-        let mut controls = Vec::new();
-        for table in legacy {
+        // The four 2.1/2.2 rows that check one fact (`agree_cached().is_ok()`).
+        const ONE_FACT: [&str; 4] = ["p21_agree", "p22_see", "p22_true", "p22_roundtrip"];
+        let mut checks: Vec<(&str, &str)> = Vec::new();
+        let mut controls: Vec<(&str, &str)> = Vec::new();
+        for (_, table) in super::fns::legacy_tables() {
             for item in table {
-                checks.push((item.name, item.check as usize));
-                controls.push((item.name, item.control as usize));
+                checks.push((item.name, item.check_name));
+                controls.push((item.name, item.control_name));
             }
         }
-        for table in non_legacy {
+        for (_, table) in super::fns::opposed_tables() {
             for item in table {
-                checks.push((item.name, item.check as usize));
-                controls.push((item.name, item.control as usize));
+                checks.push((item.name, item.check_name));
+                controls.push((item.name, item.control_name));
             }
         }
+        assert!(checks.len() > 40, "{} rows", checks.len());
         let mut shared = Vec::new();
-        for (i, (name, ptr)) in checks.iter().enumerate() {
-            for (other, other_ptr) in checks.iter().skip(i + 1) {
-                if ptr == other_ptr {
-                    shared.push(format!("check {name} / {other}"));
+        for (kind, fns) in [("check", &checks), ("control", &controls)] {
+            let mut bodies = Vec::new();
+            for (item, f) in fns.iter() {
+                match gate_fn_body(f) {
+                    Ok(body) => bodies.push((*item, *f, body)),
+                    Err(e) => shared.push(format!("{kind} of {item}: {e}")),
                 }
             }
-        }
-        for (i, (name, ptr)) in controls.iter().enumerate() {
-            for (other, other_ptr) in controls.iter().skip(i + 1) {
-                if ptr == other_ptr {
-                    shared.push(format!("control {name} / {other}"));
+            for (i, (name, f, body)) in bodies.iter().enumerate() {
+                for (other, g, other_body) in bodies.iter().skip(i + 1) {
+                    if f == g {
+                        shared.push(format!("{kind} {name} / {other}: both {f}"));
+                    } else if body == other_body && !(ONE_FACT.contains(f) && ONE_FACT.contains(g))
+                    {
+                        shared.push(format!("{kind} {name} / {other}: {f} and {g} are one body"));
+                    }
                 }
             }
         }
         assert!(shared.is_empty(), "shared gate functions: {shared:?}");
+    }
+
+    #[test]
+    fn every_gate_row_names_its_own_functions() {
+        let manifest = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let mut bad = Vec::new();
+        let walk = super::fns::walk_rs(&manifest.join("src"), &mut |path, text| {
+            let lines: Vec<&str> = text.lines().collect();
+            for (i, line) in lines.iter().enumerate() {
+                for field in ["check", "control"] {
+                    let Some(val) = line.trim().strip_prefix(&format!("{field}: ")) else {
+                        continue;
+                    };
+                    let val = val.trim_end_matches(',');
+                    if val.starts_with("CheckId::") {
+                        continue;
+                    }
+                    let ident = val.chars().all(|c| c.is_ascii_alphanumeric() || c == '_');
+                    let want =
+                        format!("{field}_name: \"{}\",", if ident { val } else { "closure" });
+                    if lines.get(i + 1).map(|l| l.trim()) != Some(want.as_str()) {
+                        bad.push(format!("{}:{}: want `{want}`", path.display(), i + 2));
+                    }
+                }
+            }
+        });
+        assert!(walk.is_ok(), "{}", walk.err().unwrap_or_default());
+        assert!(bad.is_empty(), "{bad:?}");
     }
 }

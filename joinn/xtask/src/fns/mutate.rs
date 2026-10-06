@@ -81,37 +81,18 @@ pub(crate) enum Mutation {
 
 #[cfg(test)]
 mod tests {
-    use crate::fns::{
-        gate_five_items, gate_five_one_items, gate_five_two_items, gate_four_items, gate_one_items,
-        gate_seven_items, gate_seven_three_items, gate_seven_two_items, gate_six_items,
-        gate_three_items, gate_two_items, gate_two_one_items, gate_two_two_items,
-    };
+    use crate::fns::{gate_seven_items, legacy_tables, opposed_tables};
 
     #[test]
     fn only_gate_seven_names_a_contact_artifact() {
-        let legacy = [
-            gate_one_items(),
-            gate_two_items(),
-            gate_two_one_items(),
-            gate_two_two_items(),
-            gate_three_items(),
-        ];
-        let opposed = [
-            gate_four_items(),
-            gate_five_items(),
-            gate_five_one_items(),
-            gate_five_two_items(),
-            gate_six_items(),
-            gate_seven_two_items(),
-            gate_seven_three_items(),
-        ];
-        let artifacts: Vec<&str> = legacy
+        let artifacts: Vec<&str> = legacy_tables()
             .iter()
-            .flat_map(|t| t.iter().map(|i| i.control_artifact))
+            .flat_map(|(_, t)| t.iter().map(|i| i.control_artifact))
             .chain(
-                opposed
+                opposed_tables()
                     .iter()
-                    .flat_map(|t| t.iter().map(|i| i.control_artifact)),
+                    .filter(|(label, _)| *label != "phase 7")
+                    .flat_map(|(_, t)| t.iter().map(|i| i.control_artifact)),
             )
             .collect();
         assert!(artifacts.len() > 40, "{} rows", artifacts.len());

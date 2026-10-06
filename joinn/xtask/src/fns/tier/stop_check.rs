@@ -8,7 +8,7 @@ use std::path::Path;
 
 /// Run every CI step in workflow order (Linux-only steps only on Linux),
 /// printing each step's last line and ms as it ends, then every line that says
-/// "fail", every failing test, and the total. `--fresh` first clones the
+/// `FAILED`, `failed,` or `: fail`, every failing test, and the total. `--fresh` first clones the
 /// committed tree under `target/fresh` and runs there with its own target dir.
 pub(crate) fn stop_check(args: Vec<String>) -> Result<(), String> {
     let fresh = match args.as_slice() {
@@ -94,8 +94,10 @@ pub(crate) fn stop_check(args: Vec<String>) -> Result<(), String> {
             step.name, step.run, ran.ms
         ));
         for line in ran.out.iter().chain(&ran.err) {
-            let lower = line.to_lowercase();
-            if lower.contains("fail")
+            let says_fail = ["FAILED", "failed,", ": fail"]
+                .iter()
+                .any(|word| line.contains(word));
+            if says_fail
                 && !line.starts_with("test result:")
                 && !line.trim_end().ends_with(" ... ok")
             {

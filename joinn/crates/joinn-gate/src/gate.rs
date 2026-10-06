@@ -100,8 +100,12 @@ pub struct GateItem<S = (), O = ()> {
     pub name: &'static str,
     /// The witness this item must accept.
     pub check: fn() -> bool,
+    /// `check`'s own function name.
+    pub check_name: &'static str,
     /// The witness this item must refuse. True means the instrument is blind.
     pub control: fn(&S) -> bool,
+    /// `control`'s own function name.
+    pub control_name: &'static str,
     /// Repo-relative path of the control artifact. Not opened in this crate.
     pub control_artifact: &'static str,
     /// Catalogue mutation this control must catch. Legacy items use `()`.

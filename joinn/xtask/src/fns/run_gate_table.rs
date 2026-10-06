@@ -56,7 +56,9 @@ mod tests {
             &[GateItem {
                 name: "probe",
                 check: || true,
+                check_name: "closure",
                 control: control_false,
+                control_name: "control_false",
                 control_artifact: "corpus/phase5/does-not-exist.txt",
                 opposes: Mutation::Replace("x"),
             }],
@@ -77,7 +79,9 @@ mod tests {
             &[GateItem {
                 name: "bad universe",
                 check: || true,
+                check_name: "closure",
                 control: control_false,
+                control_name: "control_false",
                 control_artifact: "xtask/gate_fixtures/not_a_universe.universe",
                 opposes: Mutation::DropLink("e0"),
             }],

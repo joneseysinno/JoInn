@@ -22,14 +22,18 @@ pub(super) fn check_lock_round_trip() -> Result<(), String> {
         GateItem {
             name: "lock fixture a",
             check: check_ok,
+            check_name: "check_ok",
             control: honest_crossing,
+            control_name: "honest_crossing",
             control_artifact: UNIVERSE,
             opposes: Mutation::DropLink("e0"),
         },
         GateItem {
             name: "lock fixture b",
             check: check_ok,
+            check_name: "check_ok",
             control: honest_crossing,
+            control_name: "honest_crossing",
             control_artifact: UNIVERSE,
             opposes: Mutation::DropLink("e0"),
         },

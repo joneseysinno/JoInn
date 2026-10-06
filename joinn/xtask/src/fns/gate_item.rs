@@ -67,14 +67,18 @@ mod tests {
         GateItem {
             name: "first",
             check: passes,
+            check_name: "passes",
             control: linkless,
+            control_name: "linkless",
             control_artifact: "corpus/phase5/universe.universe",
             opposes: Mutation::DropLink("e0"),
         },
         GateItem {
             name: "second",
             check: fails,
+            check_name: "fails",
             control: linkless,
+            control_name: "linkless",
             control_artifact: "corpus/phase5/universe.universe",
             opposes: Mutation::DropLink("e0"),
         },

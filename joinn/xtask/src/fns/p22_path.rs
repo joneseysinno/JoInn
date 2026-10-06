@@ -24,7 +24,9 @@ pub(crate) fn p22_path() -> bool {
         &[GateItem {
             name: "probe",
             check: || true,
+            check_name: "closure",
             control: |_: &()| false,
+            control_name: "closure",
             control_artifact: "gates.lock",
             opposes: (),
         }],

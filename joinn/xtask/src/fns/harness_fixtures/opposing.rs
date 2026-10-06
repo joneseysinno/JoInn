@@ -16,7 +16,9 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     let ignores = GateItem {
         name: "ignores its subject",
         check: check_ok,
+        check_name: "check_ok",
         control: ignores_subject,
+        control_name: "ignores_subject",
         control_artifact: UNIVERSE,
         opposes: Mutation::DropLink("e0"),
     };
@@ -37,7 +39,9 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     let any_change = GateItem {
         name: "true on any change",
         check: check_ok,
+        check_name: "check_ok",
         control: oversensitive,
+        control_name: "oversensitive",
         control_artifact: UNIVERSE,
         opposes: Mutation::DropLink("e0"),
     };
@@ -59,7 +63,9 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     let missing = GateItem {
         name: "missing mutation target",
         check: check_ok,
+        check_name: "check_ok",
         control: honest_crossing,
+        control_name: "honest_crossing",
         control_artifact: UNIVERSE,
         opposes: Mutation::DropLink(MISSING),
     };
@@ -80,7 +86,9 @@ pub(super) fn check_opposing_fixtures() -> Result<(), String> {
     let honest = GateItem {
         name: "honest crossing",
         check: check_ok,
+        check_name: "check_ok",
         control: honest_crossing,
+        control_name: "honest_crossing",
         control_artifact: UNIVERSE,
         opposes: Mutation::DropLink("e0"),
     };
