@@ -10,7 +10,7 @@ pub(crate) fn g72_zoom_control(subject: &Subject) -> bool {
         return false;
     };
     match g72_layouts(u) {
-        Ok(layouts) => !layouts.iter().any(|l| l.lens == "function"),
+        Ok((_, layouts)) => !layouts.iter().any(|l| l.lens == "function"),
         Err(_) => true,
     }
 }

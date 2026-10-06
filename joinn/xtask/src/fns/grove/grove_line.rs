@@ -25,7 +25,7 @@ pub(crate) fn grove_line(seed: u64, universe: &Universe, store: &BodyStore) -> (
         .collect();
     let members: usize = universe.coding.links.iter().map(|l| l.members.len()).sum();
     let (verdict, admitted) = match admit_universe(universe, store) {
-        Verdict::Ok(()) => ("admitted".to_owned(), true),
+        Verdict::Ok(_) => ("admitted".to_owned(), true),
         Verdict::Refused(r) => (format!("refused: {}", r.reason), false),
     };
     let line = format!(

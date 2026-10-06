@@ -1,9 +1,11 @@
 //! A universe: bodies, links, and lenses. Hashed as joinn.universe.v1.
 
+mod canonical_universe;
 mod hash_universe;
 mod parse_universe;
 mod print_universe;
 
+pub use canonical_universe::canonical_universe;
 pub use hash_universe::hash_universe;
 pub use parse_universe::parse_universe;
 pub use print_universe::print_universe;

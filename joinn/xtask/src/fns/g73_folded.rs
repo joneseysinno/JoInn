@@ -5,8 +5,8 @@ use std::collections::BTreeSet;
 use joinn_frame::Verdict;
 use joinn_gpu::open;
 use joinn_visual::{
-    Camera, ChartId, ChartKind, FOCUS_UNIT, LEVEL_MIN, LINK_TAG, Pick, PieceKind, SIXTEENTHS,
-    TAG_MASK, UniverseScene, Zoom, cpu_pick_sample, fold_at,
+    Camera, ChartId, ChartKind, FOCUS_UNIT, LEVEL_MIN, LINK_TAG, Pick, Piece, PieceKind,
+    SIXTEENTHS, TAG_MASK, UniverseScene, Zoom, cpu_pick_sample, fold_at,
 };
 
 use super::g6_adapters::g6_adapters;
@@ -14,13 +14,17 @@ use super::g73_pictures::g73_pictures;
 use super::grove::grove_layout;
 use super::zoom::{VIEWPORT, zoom_views};
 
+/// In sixteenths: past a region leg's half-width (48) and a pixel's slack.
+const CLEAR: i64 = 64;
+
 /// The grove's routes at the `s`, level −4 step 0: 264 touches and 136 legs,
 /// each touch a folded system, no system touched twice by one link, and every
 /// member stood for. At the frame: 1182 stubs. Then a camera at level 3 step
-/// 0 centred on the midpoint of the longest leg that serves one member, in
-/// the first open route that has one: `cpu_pick` names that leg's link and
-/// member there, and on every adapter the GPU's owner of the pixel is the
-/// same.
+/// 0 centred on a point of a leg that serves one member, in the first open
+/// route that has one: the longest such leg's midpoint, quarter or eighth
+/// point clear of every other open piece by more than the widest half-width:
+/// `cpu_pick` names that leg's link and member there, and on every adapter
+/// the GPU's owner of the pixel is the same.
 pub(crate) fn g73_folded() -> bool {
     let Some(adapters) = g6_adapters() else {
         return false;
@@ -102,22 +106,61 @@ pub(crate) fn g73_folded() -> bool {
         }
     }
     let length = |a: (i64, i64), b: (i64, i64)| (b.0 - a.0).abs() + (b.1 - a.1).abs();
-    let leg = routes
+    let Some(route) = routes
         .routes
         .iter()
         .filter(|r| r.fold == unfolded)
-        .find_map(|r| {
+        .find(|r| {
             r.pieces
                 .iter()
-                .filter(|p| p.kind == PieceKind::Leg && p.member > 0)
-                .max_by_key(|p| length(p.a, p.b))
-                .map(|p| (r, *p))
-        });
-    let Some((route, leg)) = leg else {
+                .any(|p| p.kind == PieceKind::Leg && p.member > 0)
+        })
+    else {
         println!("folded grove: no open route has a leg that serves one member");
         return false;
     };
-    let mid = ((leg.a.0 + leg.b.0) / 2, (leg.a.1 + leg.b.1) / 2);
+    let mut legs: Vec<(usize, &Piece)> = route
+        .pieces
+        .iter()
+        .enumerate()
+        .filter(|(_, p)| p.kind == PieceKind::Leg && p.member > 0)
+        .collect();
+    legs.sort_by_key(|(_, p)| std::cmp::Reverse(length(p.a, p.b)));
+    let clear = |q: (i64, i64), own: usize| {
+        routes
+            .routes
+            .iter()
+            .filter(|r| r.fold == unfolded)
+            .flat_map(|r| {
+                r.pieces
+                    .iter()
+                    .enumerate()
+                    .filter(move |(i, _)| !(std::ptr::eq(r, route) && *i == own))
+            })
+            .all(|(_, p)| {
+                let dx = (p.a.0.min(p.b.0) - q.0).max(q.0 - p.a.0.max(p.b.0));
+                let dy = (p.a.1.min(p.b.1) - q.1).max(q.1 - p.a.1.max(p.b.1));
+                dx.max(dy) > CLEAR
+            })
+    };
+    let spot = legs.iter().find_map(|(i, p)| {
+        [(1, 2), (1, 4), (3, 4), (1, 8), (3, 8), (5, 8), (7, 8)]
+            .iter()
+            .map(|(n, d)| {
+                (
+                    p.a.0 + (p.b.0 - p.a.0) * n / d,
+                    p.a.1 + (p.b.1 - p.a.1) * n / d,
+                )
+            })
+            .find(|q| clear(*q, *i))
+            .map(|q| (**p, q))
+    });
+    let Some((leg, mid)) = spot else {
+        println!(
+            "folded grove: no point of a member's leg is clear of every other piece; acceptance is one"
+        );
+        return false;
+    };
     let unit = FOCUS_UNIT / SIXTEENTHS;
     let (w, h) = VIEWPORT;
     let camera = layout.rebase(Camera {

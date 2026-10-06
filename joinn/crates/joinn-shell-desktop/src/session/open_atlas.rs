@@ -2,7 +2,8 @@
 
 use joinn_frame::Verdict;
 use joinn_link::{
-    BodyStore, Universe, assemble_universe, bind, check_law4, check_lenses, check_link_types,
+    BodyStore, Universe, assemble_universe, bind, canonical_universe, check_law4, check_lenses,
+    check_link_types,
 };
 use joinn_visual::{Camera, ChartId, Rect, UniverseScene, layout_universe};
 
@@ -10,8 +11,9 @@ use super::{Atlas, View};
 
 impl Atlas {
     /// Admitted as any universe: bodies bound from `store` by hash, then Law 4,
-    /// lenses, link types and assembly. `lens`, or else the first lens in
-    /// canonical order, is laid out and grown, and framed in `width` × `height`.
+    /// lenses, link types and assembly, then put in print order
+    /// (`canonical_universe`). `lens`, or else the first lens in canonical
+    /// order, is laid out and grown, and framed in `width` × `height`.
     pub fn open(
         universe: &Universe,
         store: &BodyStore,
@@ -34,6 +36,7 @@ impl Atlas {
         if let Verdict::Refused(r) = assemble_universe(universe, &bound) {
             return Err(r.reason);
         }
+        let universe = &canonical_universe(universe);
         let mut names: Vec<&str> = universe
             .coding
             .lenses

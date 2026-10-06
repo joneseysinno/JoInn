@@ -7,22 +7,23 @@ use joinn_visual::{UniverseLayout, layout_universe};
 use super::corpus_store::corpus_store;
 use super::grove::admit_universe;
 
-/// Each lens's layout, in declared order, of a universe `admit_universe`
-/// admits (the one admission path), or the first refusal of admission or of
-/// a layout.
-pub(crate) fn g72_layouts(universe: &Universe) -> Result<Vec<UniverseLayout>, String> {
+/// The universe as `admit_universe` admits it (the one admission path; print
+/// order) and each lens's layout of it, in declared order, or the first
+/// refusal of admission or of a layout.
+pub(crate) fn g72_layouts(universe: &Universe) -> Result<(Universe, Vec<UniverseLayout>), String> {
     let (_, store) = corpus_store()?;
-    if let Verdict::Refused(r) = admit_universe(universe, store) {
-        return Err(r.reason);
-    }
+    let admitted = match admit_universe(universe, store) {
+        Verdict::Ok(u) => u,
+        Verdict::Refused(r) => return Err(r.reason),
+    };
     let mut out = Vec::new();
-    for lens in &universe.coding.lenses {
-        match layout_universe(universe, store, &lens.name) {
+    for lens in &admitted.coding.lenses {
+        match layout_universe(&admitted, store, &lens.name) {
             Verdict::Ok(l) => out.push(l),
             Verdict::Refused(r) => return Err(r.reason),
         }
     }
-    Ok(out)
+    Ok((admitted, out))
 }
 
 #[cfg(test)]
@@ -39,6 +40,7 @@ mod tests {
         let u = load_universe_arg("phase5/ordered.universe").unwrap_or_else(|e| panic!("{e}"));
         let names: Vec<String> = g72_layouts(&u)
             .unwrap_or_else(|e| panic!("{e}"))
+            .1
             .into_iter()
             .map(|l| l.lens)
             .collect();

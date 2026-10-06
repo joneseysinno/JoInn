@@ -66,10 +66,7 @@ pub(crate) fn g72_folded() -> bool {
             ));
         }
     }
-    let ordered = load_universe_arg(ORDERED).and_then(|u| {
-        let layouts = g72_layouts(&u)?;
-        Ok((u, layouts))
-    });
+    let ordered = load_universe_arg(ORDERED).and_then(|u| g72_layouts(&u));
     let (universe, layouts) = match ordered {
         Ok(a) => a,
         Err(e) => {

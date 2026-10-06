@@ -13,7 +13,7 @@ pub(crate) fn g72_bands_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
         return false;
     };
-    let Ok(layouts) = g72_layouts(u) else {
+    let Ok((_, layouts)) = g72_layouts(u) else {
         return true;
     };
     layouts.iter().any(|layout| {

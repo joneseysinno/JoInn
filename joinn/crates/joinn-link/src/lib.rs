@@ -43,7 +43,8 @@ pub use roles::{BodyRole, Facing, Holding, body_roles};
 pub use surface::{BoundaryPort, surface};
 pub use universe::{
     BodyBinding, CrossWire, Galaxy, Lens, Link, Mark, Member, Order, System, Universe,
-    UniverseCoding, UniverseRegulatory, hash_universe, parse_universe, print_universe,
+    UniverseCoding, UniverseRegulatory, canonical_universe, hash_universe, parse_universe,
+    print_universe,
 };
 pub use universe_state::{
     LinkRefusal, LinkRefusalKind, UniverseReport, UniverseState, format_link_refusal,

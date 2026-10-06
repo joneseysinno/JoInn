@@ -11,7 +11,7 @@ pub(crate) fn g73_touch_control(subject: &Subject) -> bool {
     let Subject::Universe(u) = subject else {
         return false;
     };
-    let Ok(layouts) = g72_layouts(u) else {
+    let Ok((u, layouts)) = g72_layouts(u) else {
         return true;
     };
     layouts.iter().any(|layout| {

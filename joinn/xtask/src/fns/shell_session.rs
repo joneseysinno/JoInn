@@ -146,8 +146,8 @@ mod tests {
             lines.last().map(String::as_str),
             Some("tick: level 2 step 223 (k 479/64), anchor g0s00, rows 0")
         );
-        assert_eq!((x, y, leg.member), (976, 556, 4));
-        assert_eq!(clicked, ["pick 976,556: link sys_g0s00 member 3 (cpu)"]);
+        assert_eq!((x, y, leg.member), (976, 556, 5));
+        assert_eq!(clicked, ["pick 976,556: link sys_g0s00 member 4 (cpu)"]);
     }
 
     #[test]
