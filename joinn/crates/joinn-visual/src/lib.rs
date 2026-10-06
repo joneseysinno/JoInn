@@ -14,6 +14,7 @@ mod layout;
 mod lens_cut;
 mod pick;
 mod refuse;
+mod routes;
 mod scene;
 #[cfg(test)]
 mod script;
@@ -44,6 +45,11 @@ pub use pick::{
     Class, GALAXY_TAG, Geom, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG, Shape, TAG_MASK,
     WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at, cpu_pick_sample,
     owner_of_layout, print_owner, shapes_of_layout,
+};
+pub use routes::{
+    Fold, GALAXY_GUTTER_X, GALAXY_GUTTER_Y, GALAXY_REACH, GALAXY_SIDES, Graph, Line,
+    SYSTEM_GUTTER_X, SYSTEM_GUTTER_Y, SYSTEM_REACH, SYSTEM_SIDES, UNIVERSE_GUTTER_X,
+    UNIVERSE_GUTTER_Y, grid_lines, routing_graph,
 };
 pub use scene::Scene;
 pub use tables::{
