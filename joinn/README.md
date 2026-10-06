@@ -64,7 +64,7 @@ cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe
 | `cargo xtask grove` | Grow the generated test universe (seed 7) and print its counts; never stored in the corpus |
 | `cargo xtask layout --universe <path\|grove>` | Every chart of a universe's lens on the fixed grid |
 | `cargo xtask zoom` | What the cut draws at each predicted view of the grove, and its touches (`--measure` times the cut) |
-| `cargo xtask links [--universe <path\|grove>]` | Every link's route in every fold state: legs, stubs, spines, knots, and §2.6's crossings (none) |
+| `cargo xtask links [--universe <path\|grove>]` | Every link's route in every fold state: legs, stubs, spines, knots, and §2.6's crossings (none) (`--forms`: the grove's link forms at each view) |
 | `cargo xtask pick` | The GPU's ID picture against the exact CPU pick, on every adapter |
 | `cargo xtask regrow` | Delta-built tables equal regrown ones, and a rebase moves no pixel |
 | `cargo xtask perf` | Performance measurements |

@@ -4,7 +4,10 @@
 
 mod crossings;
 mod distances;
+mod fold_at;
+mod form_of;
 mod grid_lines;
+mod half_width;
 mod knot;
 mod route_link;
 mod routes_of;
@@ -14,7 +17,10 @@ mod stub;
 mod walk;
 
 pub use crossings::crossings;
+pub use fold_at::fold_at;
+pub use form_of::form_of;
 pub use grid_lines::grid_lines;
+pub use half_width::half_width;
 pub use routes_of::routes;
 pub use routing_graph::routing_graph;
 pub use side::side;
@@ -146,6 +152,45 @@ impl Fold {
         }
     }
 }
+
+/// How a link is drawn at a view (§2.5): by the owner rule over its projected
+/// size, or a spine when its order is declared.
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
+pub enum Form {
+    /// A filled region, half-width 3, below 264 px.
+    Region,
+    /// Thin legs and a knot disc, from 264 px.
+    Hub,
+    /// Legs widened by how many share a segment, from 2112 px.
+    Bundle,
+    /// Declared order: one path through the members, with arrowheads.
+    Spine,
+}
+
+impl Form {
+    /// `region`, `hub`, `bundle` or `spine`.
+    pub fn name(self) -> &'static str {
+        match self {
+            Form::Region => "region",
+            Form::Hub => "hub",
+            Form::Bundle => "bundle",
+            Form::Spine => "spine",
+        }
+    }
+
+    /// The number in a link pixel's ID: 0 region, 1 hub, 2 bundle, 3 spine.
+    pub fn number(self) -> u32 {
+        match self {
+            Form::Region => 0,
+            Form::Hub => 1,
+            Form::Bundle => 2,
+            Form::Spine => 3,
+        }
+    }
+}
+
+/// Form thresholds in pixels: region to hub at 240, hub to bundle at 1920.
+pub const FORM_THRESHOLDS: [i64; 2] = [240, 1920];
 
 /// An axis-aligned piece of street from `a` to `b`, in root layout units.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]

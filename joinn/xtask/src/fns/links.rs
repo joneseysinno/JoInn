@@ -1,10 +1,12 @@
 //! `cargo xtask links`: the routing graph and the routes of plan 7.3 §2.2–2.6.
 
 mod fold_line;
+mod forms_text;
 mod laid_universe;
 mod run;
 
 pub(crate) use fold_line::fold_line;
+pub(crate) use forms_text::forms_text;
 pub(crate) use laid_universe::laid_universe;
 pub(crate) use run::links;
 

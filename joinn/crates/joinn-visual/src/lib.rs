@@ -47,10 +47,10 @@ pub use pick::{
     owner_of_layout, print_owner, shapes_of_layout,
 };
 pub use routes::{
-    Fold, GALAXY_GUTTER_X, GALAXY_GUTTER_Y, GALAXY_REACH, GALAXY_SIDES, Graph, Line, Piece,
-    PieceKind, Route, Routes, SIXTEENTHS, SYSTEM_GUTTER_X, SYSTEM_GUTTER_Y, SYSTEM_REACH,
-    SYSTEM_SIDES, Touch, UNIVERSE_GUTTER_X, UNIVERSE_GUTTER_Y, crossings, grid_lines, routes,
-    routing_graph, side,
+    FORM_THRESHOLDS, Fold, Form, GALAXY_GUTTER_X, GALAXY_GUTTER_Y, GALAXY_REACH, GALAXY_SIDES,
+    Graph, Line, Piece, PieceKind, Route, Routes, SIXTEENTHS, SYSTEM_GUTTER_X, SYSTEM_GUTTER_Y,
+    SYSTEM_REACH, SYSTEM_SIDES, Touch, UNIVERSE_GUTTER_X, UNIVERSE_GUTTER_Y, crossings, fold_at,
+    form_of, grid_lines, half_width, routes, routing_graph, side,
 };
 pub use scene::Scene;
 pub use tables::{
