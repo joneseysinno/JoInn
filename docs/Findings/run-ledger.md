@@ -12,3 +12,4 @@ Run 7.3–9:
 | # | Unit | HEAD | gate all | suite | snags | pushed | tripwire | gate all ms |
 |---|---|---|---|---|---|---|---|---|
 | 3 | 7.3 | 5c71b95e9eac00173f8c4c46eace0aefee126050 | phase 7.3: 3/3 | 442 passed, 0 failed | 25 | yes | none | 492425 |
+| 4 | 7.4 | aaf5fa5c3a3a17817154613ada3d3529498e57ae | phase 7.4: 3/3 | 486 passed, 0 failed | 43 | yes | none | 528347 |
