@@ -2,9 +2,13 @@
 //! count, drawn as tables (plan 7.4 §2.8). A growth step is a delta; regrow
 //! from the system and the whole input list must equal it byte for byte.
 
+mod allows;
 mod apply_growth;
+mod fit;
 mod grow;
+mod print_id;
 mod regrow;
+mod shapes;
 mod take_pending;
 mod write_rows;
 
@@ -54,12 +58,13 @@ impl SystemScene {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeMap;
+    use std::collections::{BTreeMap, BTreeSet};
 
     use joinn_dna::{Cell, Contact, System, hash, parse_cell, parse_contact, parse_system};
     use joinn_frame::{Frame, FrameRegistry, Hash, IntFrame, Term, Value, Verdict};
 
     use super::SystemScene;
+    use crate::pick::{FORCE_TAG, PORT_TAG, Pick, cpu_pick};
     use crate::tables::{RowWrite, STYLE_FORCE, Table, table_bytes};
 
     fn int(n: i64) -> Value {
@@ -167,6 +172,46 @@ mod tests {
         }
         assert_eq!(sc.tables(), &kept, "a refusal writes nothing");
         assert_eq!(sc.take_pending(), None);
+    }
+
+    #[test]
+    fn the_lasso_owns_pixels_under_the_force_and_every_allowed_owner_shows() {
+        let counting = system(include_str!("../../../corpus/phase74/counting.system"));
+        let sc = match SystemScene::regrow(
+            &counting,
+            &contacts(),
+            &cells(),
+            1,
+            &[int(1), int(1), int(1)],
+        ) {
+            Verdict::Ok(sc) => sc,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let camera = sc.fit(1280, 720);
+        let picked = match cpu_pick(&sc.shapes(), &camera) {
+            Verdict::Ok(p) => p,
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        };
+        let owners: BTreeSet<[u32; 4]> = picked
+            .pixels
+            .iter()
+            .filter_map(|p| match p {
+                Pick::Owned(id) => Some(*id),
+                _ => None,
+            })
+            .collect();
+        let force = [1, 0, FORCE_TAG, 1];
+        assert!(owners.contains(&force), "the lasso owns pixels");
+        assert_eq!(
+            owners,
+            sc.allows(),
+            "every owner the cut allows shows, and no other"
+        );
+        assert_eq!(sc.print_id(force), "force count");
+        assert_eq!(sc.print_id([1, 1, 0, 1]), "count");
+        assert_eq!(sc.print_id([1, 4, PORT_TAG, 1]), "numbers.2@0");
+        assert_eq!(sc.print_id([1, 5, 0, 1]), "numbers.3");
+        assert_eq!(sc.print_id([1, 0, 0, 1]), "surface");
     }
 
     #[test]

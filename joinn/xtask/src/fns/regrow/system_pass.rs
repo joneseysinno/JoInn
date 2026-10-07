@@ -1,16 +1,11 @@
 //! Plan 7.4's systems: tables grown by deltas equal tables regrown from the
 //! system and the whole input list, at every size (rule 58).
 
-use joinn_dna::Accept;
 use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, Verdict};
 use joinn_visual::{SystemScene, table_bytes};
 
 use crate::fns::forces::corpus_cells;
-use crate::fns::grow::{GROW_SYSTEMS, corpus_system};
-
-/// What each body accepts, seven times: counting `1`, adding seven others.
-const COUNTING: [i64; 7] = [1, 1, 1, 1, 1, 1, 1];
-const ADDING: [i64; 7] = [2, 3, 4, -2, 0, 7, 12];
+use crate::fns::grow::{GROW_SYSTEMS, corpus_system, seven_inputs};
 
 /// Per system `system <name>: deltas equal regrow at n = 0 … 7`. A size whose
 /// tables differ from a regrow, or a step the body refuses, fails.
@@ -21,10 +16,7 @@ pub(crate) fn system_pass(
     let cells = corpus_cells(&FrameRegistry::phase1())?;
     for name in GROW_SYSTEMS {
         let s = corpus_system(name)?;
-        let inputs = match s.accepts {
-            Accept::One => COUNTING,
-            Accept::Any => ADDING,
-        };
+        let inputs = seven_inputs(s.accepts);
         let mut scene = match SystemScene::grow(&s.system, &s.contacts, &cells, s.waiting) {
             Verdict::Ok(sc) => sc,
             Verdict::Refused(r) => return Err(format!("regrow: system {name}: {}", r.reason)),

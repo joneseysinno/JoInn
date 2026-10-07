@@ -1,6 +1,7 @@
 // The curve organelle: wires and strokes as capsules. A wire's ends are read
 // through link -> incidence -> port, so moving a port moves its wires without
-// a write. A stroke is in sixteenths of its chart.
+// a write. A stroke is in sixteenths of its chart. The lasso pass draws only
+// force strokes, the stroke pass every other.
 
 @vertex
 fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> Out {
@@ -42,6 +43,9 @@ fn vs(@builtin(vertex_index) vi: u32, @builtin(instance_index) ii: u32) -> Out {
     } else {
         let s = strokes[slot];
         if (s.flags & LIVE) == 0u || s.chart >= arrayLength(&charts) {
+            return nothing();
+        }
+        if (s.style == STYLE_FORCE) != (kind == KIND_LASSO) {
             return nothing();
         }
         var alpha = 0.0;

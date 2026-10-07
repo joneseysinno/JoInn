@@ -6,17 +6,17 @@ use joinn_visual::{Camera, STYLE_BACKGROUND, STYLE_TABLE};
 use super::target::target;
 use super::tick_bytes::tick_bytes;
 use super::{
-    ID_FORMAT, KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LINK, KIND_NODE, KIND_PORT,
-    KIND_SHIFT, KIND_STROKE, Renderer, SEGMENT, STYLE,
+    ID_FORMAT, KIND_BODY, KIND_CELL, KIND_DOT, KIND_FRAME, KIND_LASSO, KIND_LINK, KIND_NODE,
+    KIND_PORT, KIND_SHIFT, KIND_STROKE, Renderer, SEGMENT, STYLE,
 };
 use crate::gpu::{Gpu, scoped};
 use crate::refuse::refuse;
 
 impl Renderer {
     /// Writes the tick uniform, then one pass by slot: open frames, link
-    /// segments, lens nodes, dots, surfaces, cells, wires, ports, strokes
-    /// (plan 7.3 §2.5's draw order: links under every node and body, text
-    /// above). Each kind is drawn by its owner pipeline, then its ghost. The
+    /// segments, lassos, lens nodes, dots, surfaces, cells, wires, ports,
+    /// strokes (plan 7.3 §2.5's draw order: links under every node and body,
+    /// text above; plan 7.4 §2.8: the lasso under what it surrounds). Each kind is drawn by its owner pipeline, then its ghost. The
     /// color view must match the camera's viewport and this renderer's format.
     /// Submits and returns without waiting.
     pub fn draw_at(
@@ -119,6 +119,7 @@ impl Renderer {
                         pass.draw(0..6, span(kind, rows));
                     }
                 };
+                both(&p.curve, &p.curve_ghost, KIND_LASSO, self.rows[8]);
                 for (kind, rows) in shapes {
                     both(&p.shape, &p.shape_ghost, kind, rows);
                 }

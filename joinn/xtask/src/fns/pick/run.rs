@@ -1,5 +1,6 @@
 //! `cargo xtask pick`: every adapter, every standard viewport, every corpus
-//! contact, every measured corpus body, the grove's views, then the plant.
+//! contact, every measured corpus body, the grove's views, plan 7.4's
+//! systems, then the plant.
 
 use joinn_frame::Verdict;
 use joinn_gpu::{OFFSCREEN_FORMAT, Renderer, adapters, open};
@@ -18,6 +19,8 @@ use super::grove_subjects::grove_subjects;
 use super::measured::measured;
 use super::owner_name::owner_name;
 use super::plant::plant;
+use super::system_lines::system_lines;
+use super::system_subjects::system_subjects;
 use super::{Subject, Tally};
 use crate::fns::grove::grove_layout;
 use crate::fns::links::laid_universe;
@@ -90,6 +93,7 @@ pub(crate) fn pick() -> Result<(), String> {
     for v in &mut ordered_views {
         v.name = "ordered";
     }
+    let systems = system_subjects()?;
     let all = match adapters() {
         Verdict::Ok(a) => a,
         Verdict::Refused(r) => return Err(r.reason),
@@ -209,6 +213,7 @@ pub(crate) fn pick() -> Result<(), String> {
             &mut lines,
             &mut failures,
         )?;
+        system_lines(&gpu, adapter.line(), &systems, &mut lines, &mut failures)?;
         for line in &lines {
             println!("{line}");
         }

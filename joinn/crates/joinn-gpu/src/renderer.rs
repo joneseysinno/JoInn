@@ -87,6 +87,8 @@ pub(crate) const KIND_NODE: u32 = 5;
 pub(crate) const KIND_LINK: u32 = 0;
 /// Curve instances of the stroke table.
 pub(crate) const KIND_STROKE: u32 = 1;
+/// Curve instances of the stroke table's lasso rows, under every body.
+pub(crate) const KIND_LASSO: u32 = 2;
 
 /// What one upload wrote.
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]

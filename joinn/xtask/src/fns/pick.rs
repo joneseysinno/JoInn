@@ -13,6 +13,8 @@ mod owner_name;
 mod plant;
 mod port_slot;
 mod run;
+mod system_lines;
+mod system_subjects;
 
 pub(crate) use band_boundary::band_boundary;
 pub(crate) use contact_lines::contact_lines;
@@ -25,7 +27,7 @@ pub(crate) use run::pick;
 
 use std::collections::BTreeSet;
 
-use joinn_visual::{Camera, FitCamera, PickImage, Scene};
+use joinn_visual::{Camera, FitCamera, PickImage, Scene, SystemScene};
 
 /// Seeded pixels per grove view (plan 7.2 2.10).
 pub(crate) const GROVE_SAMPLE: usize = 4096;
@@ -52,6 +54,9 @@ pub(crate) type Subject = (String, Result<(Scene, FitCamera, PickImage), String>
 /// A corpus contact's file name, its grown scene, and its CPU pick at each
 /// standard viewport.
 pub(crate) type ContactSubject = (String, Scene, Vec<(FitCamera, PickImage)>);
+
+/// A plan 7.4 system at one size: its label, scene, 1280×720 camera and CPU pick.
+pub(crate) type SystemSubject = (String, SystemScene, FitCamera, PickImage);
 
 /// Disagreements kept for printing, per comparison.
 pub(crate) const KEPT: usize = 5;

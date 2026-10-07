@@ -16,6 +16,15 @@ use std::collections::BTreeMap;
 /// The systems `grow` reports, in order: `corpus/phase74/<name>.system`.
 pub(crate) const GROW_SYSTEMS: [&str; 2] = ["counting", "adding"];
 
+/// Seven inputs each body accepts, for `regrow` and `pick`: counting `1`s,
+/// adding seven others.
+pub(crate) fn seven_inputs(accepts: Accept) -> [i64; 7] {
+    match accepts {
+        Accept::One => [1; 7],
+        Accept::Any => [2, 3, 4, -2, 0, 7, 12],
+    }
+}
+
 /// A corpus system with the growing contacts it binds and its `hashes.txt` row.
 pub(crate) struct CorpusSystem {
     pub(crate) name: String,
