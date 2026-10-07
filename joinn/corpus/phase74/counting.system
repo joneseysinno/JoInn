@@ -1,0 +1,18 @@
+system {
+  codex 1
+  bodies {
+    contact:76203d8465ab1e3d0ab8bc2ef4e867021fc2f7760399745463997968eefacc3c as numbers
+  }
+  forces {
+    combine ℤ 1 cell:6b3271631abf49a3afdd852cea78a71ab6aa99598eb1405d1db051169e624c39 as count on numbers
+  }
+  lineage none
+}
+
+---
+
+regulatory {
+  names   { count "Count" numbers "Numbers" }
+  present { count "{0}" }
+  waiting { numbers 1 }
+}

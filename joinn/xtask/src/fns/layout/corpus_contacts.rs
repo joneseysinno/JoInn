@@ -1,4 +1,5 @@
-//! Every corpus `.contact`, parsed, with the corpus cells, in path order.
+//! Every corpus `.contact` that does not grow, parsed, with the corpus cells,
+//! in path order. A growing contact is a system's body; `grow` runs it.
 
 use joinn_dna::{Cell, Contact, parse_contact};
 use joinn_frame::{FrameRegistry, Hash, Verdict};
@@ -25,7 +26,11 @@ pub(crate) fn corpus_contacts() -> Result<(Vec<ParsedContact>, BTreeMap<Hash, Ce
             .to_string_lossy()
             .replace('\\', "/");
         let src = fs::read_to_string(&path).map_err(|e| format!("{rel}: {e}"))?;
-        out.push((rel, parse_contact(&src, &frames)));
+        let parsed = parse_contact(&src, &frames);
+        if matches!(&parsed, Verdict::Ok(c) if c.coding.grows.is_some()) {
+            continue;
+        }
+        out.push((rel, parsed));
     }
     Ok((out, cells))
 }

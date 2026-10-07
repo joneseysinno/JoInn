@@ -24,6 +24,7 @@ fn main() -> ExitCode {
         "grove" => fns::grove(args.collect()),
         "zoom" => fns::zoom(args.collect()),
         "links" => fns::links(args.collect()),
+        "grow" => fns::grow(args.collect()),
         "roles" => match args.next() {
             Some(path) => match fns::roles_text(&path) {
                 Ok(text) => {

@@ -57,6 +57,14 @@ pub(crate) fn corpus_verify() -> Result<(), String> {
                     }
                 };
                 hash_universe(&u.coding).to_hex()
+            } else if path.extension().is_some_and(|e| e == "system") {
+                let system = match joinn_dna::parse_system(&src) {
+                    Verdict::Ok(s) => s,
+                    Verdict::Refused(r) => {
+                        return Err(format!("{}: parse refusal: {}", path.display(), r.reason));
+                    }
+                };
+                hash(&system.coding).to_hex()
             } else if path.extension().is_some_and(|e| e == "contact") {
                 let contact = match parse_contact(&src, &frames) {
                     Verdict::Ok(c) => c,

@@ -16,7 +16,8 @@ use crate::fns::forces::corpus_cells;
 use crate::fns::workspace_root;
 
 /// Any inequality, or any mutant answering against §2.14, fails. The lowered
-/// text goes to stdout for comparison only; it is never written.
+/// text goes to stdout for comparison only; it is never written. A growing
+/// contact is a system's body and is left to `grow`.
 pub(crate) fn contact() -> Result<(), String> {
     let corpus = workspace_root()?.join("corpus");
     let frames = FrameRegistry::phase1();
@@ -25,6 +26,7 @@ pub(crate) fn contact() -> Result<(), String> {
     if paths.is_empty() {
         return Err("contact: no .contact file in the corpus".into());
     }
+    let mut bodies = 0;
     let mut failures: Vec<String> = Vec::new();
     let mut report = |line: Result<String, String>| match line {
         Ok(text) => println!("{text}"),
@@ -51,6 +53,10 @@ pub(crate) fn contact() -> Result<(), String> {
                 continue;
             }
         };
+        if contact.coding.grows.is_some() {
+            continue;
+        }
+        bodies += 1;
         let hex = hash(&contact.coding).to_hex();
         let lowered = match lower(&contact, &cells, &frames) {
             Verdict::Ok(b) => b,
@@ -83,6 +89,6 @@ pub(crate) fn contact() -> Result<(), String> {
     if !failures.is_empty() {
         return Err(format!("contact: {} failure(s)", failures.len()));
     }
-    println!("contact: {} body(ies); two forms, one truth", paths.len());
+    println!("contact: {bodies} body(ies); two forms, one truth");
     Ok(())
 }

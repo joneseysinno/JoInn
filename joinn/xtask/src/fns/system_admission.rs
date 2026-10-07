@@ -10,7 +10,7 @@ use std::fs;
 
 use super::contact::corpus_files;
 use super::forces::corpus_cells;
-use super::layout::corpus_contacts;
+use super::layout::{corpus_contacts, corpus_growing_contacts};
 use super::subject::SystemSubject;
 use super::workspace_root;
 
@@ -24,6 +24,7 @@ pub(crate) fn system_admission(s: &SystemSubject) -> Result<Verdict<()>, String>
             Verdict::Refused(_) => None,
         })
         .collect();
+    contacts.extend(corpus_growing_contacts()?);
     contacts.extend(s.contacts.values().map(|c| (hash(&c.coding), c.clone())));
     let corpus = workspace_root()?.join("corpus");
     let mut systems = BTreeMap::new();

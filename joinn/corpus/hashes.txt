@@ -61,3 +61,8 @@ loop.universe bf5f0c4c7a9690a31a86193e791b31e02480ae76e167d535b551f1db12fc2ace
 loop_declared.universe bd054c47fb60263b1d9d6142d86347e7dde0375ccf82bbd3159a0ad17e867e15
 # Phase 7. The calculator as a contact body. New file, no earlier hash moved.
 calculator.contact 868e79b293c8d35625f514274eb0bf04d228898ed994a795b23b942a530b6209
+# Phase 7.4. Counting and adding: growing contacts and the systems that hold them. New files, no earlier hash moved.
+counting.contact 76203d8465ab1e3d0ab8bc2ef4e867021fc2f7760399745463997968eefacc3c
+counting.system c211e65544e59bbc2465aa018d0e94a558ab69355241fa8eaa6bcbb68f0e07cc
+adding.contact a0666f5aa30d9e14c493f49d194f0e1de090bdabbf94e7985fc1c487f0cb759d
+adding.system 9bd87572c3bc386a3f892169ea2884a58412513e2d0d55890eaaf7619cf1152e

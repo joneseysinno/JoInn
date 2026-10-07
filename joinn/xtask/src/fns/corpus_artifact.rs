@@ -23,7 +23,14 @@ pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
     if name.ends_with(".desc") {
         return root.join("corpus").join("descriptions").join(name);
     }
+    if name.ends_with(".system") {
+        return root.join("corpus").join("phase74").join(name);
+    }
     if name.ends_with(".contact") {
+        let phase74 = root.join("corpus").join("phase74").join(name);
+        if phase74.exists() {
+            return phase74;
+        }
         return root.join("corpus").join("phase7").join(name);
     }
     if name.ends_with(".universe") {

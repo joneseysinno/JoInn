@@ -1,0 +1,14 @@
+contact {
+  codex 1
+  grows {
+    cell:c4a0a132c4b63027083b81e14b1c1055858a00cc03655661b2434a2e2f4ed17e as numbers accepts one
+  }
+  budget { steps 100000 }
+  lineage none
+}
+
+---
+
+regulatory {
+  names { numbers "Numbers" }
+}
