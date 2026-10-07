@@ -12,16 +12,22 @@ mod escape;
 #[cfg(test)]
 mod fixtures;
 mod gpu_agree;
+mod grower_view;
 mod home;
 mod host;
 mod key;
 mod new_shell;
 mod open;
 mod open_atlas;
+mod open_system;
 mod owner_line;
 mod press;
 mod release;
 mod resize;
+mod system_click;
+mod system_enter;
+#[cfg(test)]
+mod system_fixture;
 mod take_confirm;
 mod take_tick;
 mod tick_line;
@@ -38,7 +44,7 @@ use joinn_dna::{Body, Cell};
 use joinn_frame::{Hash, Verdict};
 use joinn_host::{Address, Signals};
 use joinn_live::BodyState;
-use joinn_visual::{Camera, Delta, Scene, Tables, UniverseScene, Zoom};
+use joinn_visual::{Camera, Delta, Scene, SystemScene, Tables, UniverseScene, Zoom};
 
 /// What Enter prints on an empty buffer: no intent, no run, no tick.
 pub const NOTHING_SENT: &str = "  (empty: nothing sent)";
@@ -112,6 +118,17 @@ pub struct Desktop {
 pub struct Atlas {
     scene: UniverseScene,
     camera: Camera,
+    confirm: Option<Confirm>,
+}
+
+/// A system that grows as it is typed into (plan 7.4 §2.11): its scene, its
+/// camera, the waiting box selected and what is typed there, and the click
+/// waiting to be confirmed.
+pub struct Grower {
+    scene: SystemScene,
+    camera: Camera,
+    selected: Option<String>,
+    buffer: String,
     confirm: Option<Confirm>,
 }
 

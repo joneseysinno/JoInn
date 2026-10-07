@@ -17,7 +17,7 @@ fn main() {
     };
     let Some(path) = rest.first() else {
         eprintln!(
-            "joinn-desktop: usage: joinn-desktop <path to a .body, .contact or .universe> [--lens NAME]"
+            "joinn-desktop: usage: joinn-desktop <path to a .body, .contact, .system or .universe> [--lens NAME]"
         );
         std::process::exit(1);
     };

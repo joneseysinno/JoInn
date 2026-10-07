@@ -1,4 +1,4 @@
-//! Load the body, contact or universe and run the window until it closes.
+//! Load the body, contact, system or universe and run the window until it closes.
 
 use std::path::Path;
 
@@ -10,12 +10,14 @@ use super::ShellApp;
 use super::emit::emit;
 use super::pick_adapter::pick_adapter;
 use crate::load::{
-    find_corpus, load_body_file, load_cells, load_contact_file, load_store, load_universe_file,
+    find_corpus, load_body_file, load_cells, load_contact_file, load_store, load_system_file,
+    load_universe_file,
 };
-use crate::session::{Atlas, Desktop, Shell, View};
+use crate::session::{Atlas, Desktop, Grower, Shell, View};
 
 /// `adapter: <line>`, then `surface: <format>`, then one tick per change. A
-/// `.universe` opens `lens`, or its first lens in canonical order.
+/// `.universe` opens `lens`, or its first lens in canonical order; a `.system`
+/// opens at size 0 with its waiting boxes.
 pub fn run(path: &str, lens: Option<&str>) -> Result<(), String> {
     let corpus = find_corpus()?;
     let cells = load_cells(&corpus)?;
@@ -23,6 +25,9 @@ pub fn run(path: &str, lens: Option<&str>) -> Result<(), String> {
         let universe = load_universe_file(Path::new(path))?;
         let store = load_store(&corpus, &cells)?;
         Box::new(Atlas::open(&universe, &store, lens, 1280, 720)?)
+    } else if path.ends_with(".system") {
+        let (system, contacts, waiting) = load_system_file(Path::new(path))?;
+        Box::new(Grower::open(&system, &contacts, &cells, waiting)?)
     } else if path.ends_with(".contact") {
         let (contact, body) = load_contact_file(Path::new(path), &cells)?;
         Box::new(Desktop::open(body, cells, Some(&contact))?)
