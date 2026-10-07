@@ -22,5 +22,6 @@ pub(crate) struct CorpusSystem {
     pub(crate) system: System,
     pub(crate) contacts: BTreeMap<Hash, Contact>,
     pub(crate) accepts: Accept,
+    pub(crate) waiting: u32,
     pub(crate) golden: String,
 }

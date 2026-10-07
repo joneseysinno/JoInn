@@ -6,17 +6,18 @@ use joinn_link::{
     Grown, accept_word, check_evolution, count_witness, grow as grown_from, grow_step, respond,
     transcripts,
 };
+use joinn_visual::{check_lasso, layout_system};
 
 use super::plants::plants;
 use super::{CorpusSystem, GROW_SYSTEMS, corpus_system, step_fault};
 use crate::fns::forces::corpus_cells;
 
 /// Per system and §3 transcript, one line per step:
-/// `grow <system> <step>: +<v> → cells <n>, count <c>, witness <c>, lasso —,
+/// `grow <system> <step>: +<v> → cells <n>, count <c>, witness <c>, lasso ok,
 /// hash <12 hex>` (an empty transcript prints step 0), or `… +<v> refused:
 /// <reason>`, which ends that transcript. Then the evolution line, the
-/// standing plants (rule 93) and the last line. A V161 or V162 fault, a
-/// refused evolution or a plant not refused fails.
+/// standing plants (rule 93) and the last line. A V161 or V162 fault, a lasso
+/// rule broken, a refused evolution or a plant not refused fails.
 pub(crate) fn grow(args: Vec<String>) -> Result<(), String> {
     if !args.is_empty() {
         return Err("usage: cargo xtask grow".into());
@@ -47,8 +48,19 @@ pub(crate) fn grow(args: Vec<String>) -> Result<(), String> {
             if let Some(f) = step_fault(name, g.inputs(), &response, &witness, &h, &s.golden) {
                 faults.push(f);
             }
+            let lasso = match layout_system(&s.system, &s.contacts, &cells, g, s.waiting) {
+                Verdict::Ok(l) => check_lasso(&l),
+                Verdict::Refused(r) => Verdict::Refused(r),
+            };
+            let lasso = match lasso {
+                Verdict::Ok(()) => "ok",
+                Verdict::Refused(r) => {
+                    faults.push(format!("grow {name} {}: {}", g.inputs().len(), r.reason));
+                    "refused"
+                }
+            };
             Ok(format!(
-                "cells {}, count {}, witness {}, lasso —, hash {}",
+                "cells {}, count {}, witness {}, lasso {lasso}, hash {}",
                 g.inputs().len(),
                 response.print_term(),
                 witness.print_term(),
@@ -121,7 +133,7 @@ pub(crate) fn grow(args: Vec<String>) -> Result<(), String> {
         ));
     }
     println!(
-        "grow: {} systems, every size true, counting witnesses every step; evolution holds; planted fold, lasso —, hash: refused (ok)",
+        "grow: {} systems, every size true, counting witnesses every step; evolution holds; planted fold, lasso, hash: refused (ok)",
         systems.len()
     );
     Ok(())

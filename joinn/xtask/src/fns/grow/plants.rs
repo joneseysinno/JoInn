@@ -5,15 +5,17 @@ use joinn_frame::{
     CanonWriter, Frame, FrameRegistry, Hash, IntFrame, TAG_SYSTEM, Term, Verdict, keyed_hash,
 };
 use joinn_link::{count_witness, grow as grown_from, respond};
+use joinn_visual::{LASSO_GAP, check_lasso, lasso_outline, layout_system};
 use std::collections::BTreeMap;
 
 use super::{CorpusSystem, step_fault};
 
 /// On `s` grown by `1 1 1`, each plant must be refused by `step_fault`:
 /// (a) the fold drops its last member (its response is the fold of all but
-/// the last input), refused at the first n ≥ 2; (c) the hash is computed over
-/// the grown state (the canonical print, then each input), refused at the
-/// first growth. Returns the plants' lines and the names of those not refused.
+/// the last input), refused at the first n ≥ 2; (b) the lasso's outline drawn
+/// 2 units inward, refused by lasso rule 1; (c) the hash is computed over the
+/// grown state (the canonical print, then each input), refused at the first
+/// growth. Returns the plants' lines and the names of those not refused.
 pub(crate) fn plants(
     s: &CorpusSystem,
     cells: &BTreeMap<Hash, Cell>,
@@ -77,6 +79,20 @@ pub(crate) fn plants(
             "planted fold drops its last member: refused at n {n}: {f}"
         )),
         None => missed.push("fold"),
+    }
+    let n = inputs.len();
+    let mut laid = match layout_system(&s.system, &s.contacts, cells, &at(n)?, s.waiting) {
+        Verdict::Ok(l) => l,
+        Verdict::Refused(r) => return Err(format!("plant: {}", r.reason)),
+    };
+    let inward = lasso_outline(&laid.surface, LASSO_GAP - 2);
+    laid.lasso.splice(..inward.len(), inward);
+    match check_lasso(&laid) {
+        Verdict::Refused(r) => lines.push(format!(
+            "planted lasso drawn 2 units inward: refused at n {n}: {}",
+            r.reason
+        )),
+        Verdict::Ok(()) => missed.push("lasso"),
     }
     match grown_hash {
         Some((n, f)) => lines.push(format!(

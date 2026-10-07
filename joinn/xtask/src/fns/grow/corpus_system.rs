@@ -26,6 +26,13 @@ pub(crate) fn corpus_system(name: &str) -> Result<CorpusSystem, String> {
         .and_then(|c| c.coding.grows.as_ref())
         .map(|g| g.accepts)
         .ok_or_else(|| format!("{file}: its body is no corpus growing contact"))?;
+    let waiting = system
+        .coding
+        .bodies
+        .first()
+        .and_then(|b| system.regulatory.waiting.get(&b.alias))
+        .copied()
+        .unwrap_or(0);
     let hashes = fs::read_to_string(hashes_path()?).map_err(|e| e.to_string())?;
     let golden = hashes
         .lines()
@@ -37,6 +44,7 @@ pub(crate) fn corpus_system(name: &str) -> Result<CorpusSystem, String> {
         system,
         contacts,
         accepts,
+        waiting,
         golden,
     })
 }

@@ -18,6 +18,7 @@ mod routes;
 mod scene;
 #[cfg(test)]
 mod script;
+mod system_layout;
 mod tables;
 mod universe_scene;
 
@@ -53,6 +54,10 @@ pub use routes::{
     form_of, grid_lines, half_width, routes, routing_graph, side,
 };
 pub use scene::Scene;
+pub use system_layout::{
+    ARROW, LASSO_CORNER, LASSO_GAP, LASSO_HALF_WIDTH, LassoStroke, NECK, ROW_CELLS, SYSTEM_PAD,
+    SystemLayout, check_lasso, lasso_outline, layout_system,
+};
 pub use tables::{
     BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CHART_BODY, CHART_GALAXY, CHART_ROW_BYTES,
     CHART_SYSTEM, CHART_UNIVERSE, CellRow, ChartRow, Delta, FILLED, FRAME_ROW_BYTES, FrameRow,
