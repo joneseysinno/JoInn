@@ -17,7 +17,8 @@ pub use table_bytes::table_bytes;
 pub const LIVE: u32 = 1;
 /// Cell flags bit 1: the instance's last run refused at its membrane.
 pub const REFUSED: u32 = 2;
-/// Cell flags bit 2: a force's response whose out-port holds no value.
+/// Cell flags bit 2: a force's response whose out-port holds no value, or a
+/// growing body's waiting box.
 pub const LATENT: u32 = 4;
 /// Port flags bit 1: the port holds a value.
 pub const FILLED: u32 = 2;
@@ -64,10 +65,12 @@ pub const STYLE_REGION: u32 = 12;
 pub const STYLE_HUB: u32 = 13;
 /// A link drawn as a spine, with its arrowheads.
 pub const STYLE_SPINE: u32 = 14;
+/// A force drawn as a lasso (plan 7.4 §2.8).
+pub const STYLE_FORCE: u32 = 15;
 
 /// One RGBA8 `u32` per style id: bytes R, G, B, A in little-endian order.
 /// Id 11 is not assigned: transparent.
-pub const STYLE_TABLE: [u32; 15] = [
+pub const STYLE_TABLE: [u32; 16] = [
     u32::from_le_bytes([0x15, 0x17, 0x1C, 0xFF]),
     u32::from_le_bytes([0x22, 0x26, 0x2E, 0xFF]),
     u32::from_le_bytes([0x2F, 0x5D, 0x8A, 0xFF]),
@@ -83,6 +86,7 @@ pub const STYLE_TABLE: [u32; 15] = [
     u32::from_le_bytes([0x2C, 0x3A, 0x4A, 0xFF]),
     u32::from_le_bytes([0x6F, 0xA8, 0xD8, 0xFF]),
     u32::from_le_bytes([0xE0, 0x8A, 0x3C, 0xFF]),
+    u32::from_le_bytes([0xB4, 0x6C, 0xE0, 0xFF]),
 ];
 
 /// Bytes per body row: 7 fields, padded.

@@ -1,6 +1,7 @@
 //! `cargo xtask regrow`: §2.12's script, Amendment A4's event, the camera and
 //! idle checks, then VH2 on every adapter, then the same on the contact
-//! calculator, then plan 7.2's zoom script on the grove, then the plant.
+//! calculator, then plan 7.2's zoom script on the grove, then plan 7.4's
+//! systems, then the plant.
 
 use std::collections::BTreeMap;
 
@@ -13,6 +14,7 @@ use joinn_visual::{FILLED, REFUSED, Scene, fit, table_bytes};
 use super::contact_pass::contact_pass;
 use super::drive::drive;
 use super::grove_pass::grove_pass;
+use super::system_pass::system_pass;
 use super::{Form, Input};
 use crate::fns::corpus_bodies;
 use crate::fns::layout::corpus_contacts;
@@ -190,6 +192,7 @@ pub(crate) fn regrow() -> Result<(), String> {
 
     let mut lines = Vec::new();
     grove_pass(&all, &mut lines, &mut failures)?;
+    system_pass(&mut lines, &mut failures)?;
     for line in &lines {
         println!("{line}");
     }

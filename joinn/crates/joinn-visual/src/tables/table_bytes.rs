@@ -125,8 +125,8 @@ mod tests {
         assert_eq!(&b.stroke[36..48], &[10, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]);
         assert_eq!(
             b.style.len(),
-            15 * 4,
-            "styles 8, 9 and 10 came in 7.2; 12, 13 and 14 in 7.3; 11 is unassigned"
+            16 * 4,
+            "styles 8, 9 and 10 came in 7.2; 12, 13 and 14 in 7.3; 15 in 7.4; 11 is unassigned"
         );
         for size in [CHART_ROW_BYTES, FRAME_ROW_BYTES, STROKE_ROW_BYTES] {
             assert_eq!(size % 16, 0);

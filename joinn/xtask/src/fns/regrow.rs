@@ -7,6 +7,7 @@ mod drive;
 mod event;
 mod grove_pass;
 mod run;
+mod system_pass;
 
 pub(crate) use cleared_elsewhere::cleared_elsewhere;
 pub(crate) use event::event;

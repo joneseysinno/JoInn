@@ -48,6 +48,8 @@ pub const SYSTEM_TAG: u32 = 0x3000_0000;
 pub const GALAXY_TAG: u32 = 0x4000_0000;
 /// Blue channel of a link's pixel: `LINK_TAG | form` (plan 7.3 §2.7).
 pub const LINK_TAG: u32 = 0x5000_0000;
+/// Blue channel of a lasso's pixel: a force (plan 7.4 §2.8).
+pub const FORCE_TAG: u32 = 0x6000_0000;
 /// The tag bits of the blue channel.
 pub const TAG_MASK: u32 = 0xF000_0000;
 

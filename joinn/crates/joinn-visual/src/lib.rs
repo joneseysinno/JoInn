@@ -19,6 +19,7 @@ mod scene;
 #[cfg(test)]
 mod script;
 mod system_layout;
+mod system_scene;
 mod tables;
 mod universe_scene;
 
@@ -43,8 +44,8 @@ pub use layout::{
 };
 pub use lens_cut::{Cut, CutEntry, CutForm, cut, touches};
 pub use pick::{
-    Class, GALAXY_TAG, Geom, LINK_TAG, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG, Shape,
-    TAG_MASK, WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at,
+    Class, FORCE_TAG, GALAXY_TAG, Geom, LINK_TAG, Owner, PORT_TAG, Pick, PickImage, SYSTEM_TAG,
+    Shape, TAG_MASK, WIRE_TAG, cpu_pick, cpu_pick_at, cpu_pick_reference, cpu_pick_reference_at,
     cpu_pick_sample, owner_of_layout, print_owner, shapes_of_layout,
 };
 pub use routes::{
@@ -58,12 +59,13 @@ pub use system_layout::{
     ARROW, LASSO_CORNER, LASSO_GAP, LASSO_HALF_WIDTH, LassoStroke, NECK, ROW_CELLS, SYSTEM_PAD,
     SystemLayout, check_lasso, lasso_outline, layout_system,
 };
+pub use system_scene::SystemScene;
 pub use tables::{
     BODY_ROW_BYTES, BodyRow, CELL_ROW_BYTES, CHART_BODY, CHART_GALAXY, CHART_ROW_BYTES,
     CHART_SYSTEM, CHART_UNIVERSE, CellRow, ChartRow, Delta, FILLED, FRAME_ROW_BYTES, FrameRow,
     INCIDENCE_BYTES, LATENT, LINK_ROW_BYTES, LIVE, LinkRow, PORT_ROW_BYTES, PortRow, REFUSED,
     ROUTE_ROW_BYTES, RouteRow, RowWrite, SEGMENT_ROW_BYTES, STROKE_ROW_BYTES, STYLE_BACKGROUND,
-    STYLE_BYTES, STYLE_CELL, STYLE_CELL_REFUSED, STYLE_FRAME, STYLE_HUB, STYLE_NODE,
+    STYLE_BYTES, STYLE_CELL, STYLE_CELL_REFUSED, STYLE_FORCE, STYLE_FRAME, STYLE_HUB, STYLE_NODE,
     STYLE_PORT_EMPTY, STYLE_PORT_FILLED, STYLE_REGION, STYLE_RESPONSE_LATENT, STYLE_SPINE,
     STYLE_SURFACE, STYLE_TABLE, STYLE_TEXT, STYLE_WIRE, SURFACE_PORT, SegmentRow, StrokeRow, Table,
     TableBytes, Tables, WIRE_KIND, row_bytes, shapes_of_tables, table_bytes,
