@@ -7,7 +7,7 @@ JoInn is being built in three big stages. Think of them as ladders: each one let
 | Stage | Nickname | What it means in plain words | Status (roughly) |
 |-------|----------|------------------------------|------------------|
 | **B0** | True but unseen | The universe is correct and checkable, and you can still meet it as text | **The truth core holds** |
-| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly, its links drawn; snapshots next** |
+| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly, its links drawn; a system grows by its DNA, its force drawn as a lasso; systems in universes next** |
 | **B2** | Self-editing | You build JoInn *inside* JoInn; the visual creator and the text form match byte-for-byte | Future |
 
 The rule of the road: **pixels come after truth.** A gorgeous editor with a weak core would force the core to bend. So Bootstrap 0 comes first on purpose.
@@ -27,6 +27,23 @@ You can, from the `joinn` code folder:
 - Work five steel beams exactly (`cargo run --manifest-path spikes/s8-beam/Cargo.toml`), described below
 - Open a universe and zoom it (`cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe`), and print the generated test universe's counts (`cargo xtask grove`) and what each zoom draws (`cargo xtask zoom`), described below
 - See its links drawn in the same window, and print every route (`cargo xtask links`), the form each link takes at each zoom (`--forms`) and how long routing takes (`--measure`), described below
+- Open a counting system and grow it by typing (`cargo run -p joinn-shell-desktop -- corpus/phase74/counting.system`), and print every growth with its counting witness (`cargo xtask grow`), described below
+
+## A system grows (Phase 7.4)
+
+A **system** is a body and the forces that act on it. It starts as a seed: no cells yet, only the DNA that says how the body grows. The first is `corpus/phase74/counting.system`: a body of numbers and one force, *combine*, answered by a cell called `count`.
+
+- **The DNA says how it grows.** The body's `.contact` file says `grows { cell:… as numbers accepts one }`: each new cell is a copy of that one cell, named `numbers.0`, `numbers.1`, and so on, and counting accepts only the number 1. Growing adds no line to any file; the cells grown so far are the system's **grown state**, which is never hashed or stored. The system's hash is the same at every size.
+- **Every size is true.** With no cells, `count` is 0 (combine's identity). With one, it is that input. With n, it is all of them combined in order. `3` is refused in counting's own words: `counting: 3 is not one; acceptance is 1 (counting grows by one)`.
+- **Counting is the witness.** After every step, a second derivation that only counts up and down by one (`count_witness`) must give the same answer as the engine. `cargo xtask grow` runs ten transcripts and prints both side by side.
+- **Adding evolved from counting.** `adding.system` names counting as its parent and accepts any integer. The evolution check holds it to every one of counting's witnesses (1 1 1 still gives 3), and requires it to gain something counting refuses: adding accepts `3`. A child that accepts nothing new is refused, because that would be an edit, not an evolution.
+- **A force is seen as a lasso.** The force is drawn as a loop around the whole body, clear of every cell, with a neck and an arrowhead pointing at `count`. It is drawn under the cells, so a cell always owns its own pixels. A click on the lasso prints `force count`, and the GPU's ID for that pixel names the same force on every adapter.
+
+In the window, an empty **waiting box** sits beside the grown cells. Click it, type `1` and press Enter: the body grows by one cell and `count` goes up. Typing `3` prints the refusal and nothing grows. The camera doesn't follow the growing body; `F` frames it again.
+
+Each step costs about 0.15 ms with no cells and about 8 ms at 96, because the engine rebuilds the body and runs it again on every step (`cargo xtask grow --measure`). Gate 7.4 checks all of this, on every graphics adapter for the lasso.
+
+Not built yet: systems inside a universe, a system of several bodies, removing a number, and growth that doesn't rebuild the body each step. Findings: [phase-7.4-growth.md](../Findings/phase-7.4-growth.md).
 
 ## Links are drawn (Phase 7.3)
 

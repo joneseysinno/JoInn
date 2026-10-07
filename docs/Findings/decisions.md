@@ -175,8 +175,8 @@ line must name a file under `docs/Findings/`.
 | R115 | Removing a number | 7.4 | open | |
 | R116 | Where state lives | 7.4 | open | |
 | R117 | Systems of several bodies | 7.4 | open | |
-| V160 | A body grows by its DNA, and every size is true: identity at 0, the input at 1, the combine at n | 7.4 | open | |
-| V161 | Counting is the witness: after every growth step the response equals `count_witness` | 7.4 | open | |
-| V162 | Growth is not evolution: the system's hash is unchanged by growth; grown state is never hashed or stored | 7.4 | open | |
-| V163 | Evolution keeps every old witness and gains an ability | 7.4 | open | |
-| V164 | A force is seen as a lasso: it surrounds what it reaches, never meets a cell, and points to its response; CPU and GPU name its pixels alike | 7.4 | open | |
+| V160 | A body grows by its DNA, and every size is true: identity at 0, the input at 1, the combine at n | 7.4 | holds | P74-06 (76f3328); `cargo xtask grow`: §3's ten transcripts, `count 0` at size 0 and every count as predicted; gate 7.4 item 1, whose control flips when counting accepts the 3 (demo b) |
+| V161 | Counting is the witness: after every growth step the response equals `count_witness` | 7.4 | holds | P74-07 (0df0880); `grow` prints the witness beside the engine at every step; its plant (a fold that drops its last member) is refused at n 2; gate 7.4 item 1: `witness agrees` on every transcript |
+| V162 | Growth is not evolution: the system's hash is unchanged by growth; grown state is never hashed or stored | 7.4 | holds | P74-06 (76f3328); `grow`: `hash c211e65544e5` / `9bd87572c3bc` at every step, and a hash over the grown state is refused at n 1; gate 7.4 item 3: the hash at sizes 0 … 13 |
+| V163 | Evolution keeps every old witness and gains an ability | 7.4 | holds | P74-07 (0df0880); gate 7.4 item 2: `evolution counting → adding: 3 witnesses hold; adding gains 3`, and adding made to accept one is refused as an edit; removing the gain test fails it (demo c) |
+| V164 | A force is seen as a lasso: it surrounds what it reaches, never meets a cell, and points to its response; CPU and GPU name its pixels alike | 7.4 | holds | P74-09 (3547079), P74-11 (0596f31); `pick`: `disagree 0`, `force owners 1 (cut allows 1)` at sizes 0, 3, 7 of both systems on all three adapters; gate 7.4 item 3: rules at sizes 0 … 13, no body pixel owned by the force; the lasso drawn after the cells fails it (demo d) |

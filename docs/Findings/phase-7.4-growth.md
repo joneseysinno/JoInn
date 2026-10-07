@@ -162,9 +162,9 @@ What the numbers say:
 - **The camera does not follow a growing body.** Each growth widens the body
   and moves the response right, so from the first step the opening camera no
   longer frames the system (the session test's first try clicked the old box
-  position and hit the surface). The camera is Phase 7.2's, so Home refits, and
-  the session test presses it before each click. A system in a universe may want its chart refitted on
-  growth, or a frame that leaves room.
+  position and hit the surface). The camera is Phase 7.2's, so `F` (the view's
+  home) refits, and the session test calls home before each click. A system in
+  a universe may want its chart refitted on growth, or a frame that leaves room.
 - **Waiting boxes are fixed by the file.** `waiting { numbers 1 }` shows one
   empty box at every size, and after each growth the next one is selected. Two
   bodies in one system (R117) would need a waiting count per body and a rule

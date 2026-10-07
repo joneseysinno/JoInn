@@ -454,6 +454,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 #### Phase 7.4 · Her counting app, part 1
 
 > **6 Oct 2026.** Planned in Plans/JoInn Phase 7.4 Implementation Plan.md after Part VII: a counting system grows by its DNA, counting witnesses every step, adding evolves from counting, and the force is drawn as a lasso. Phase 7.5 (systems in universes, the lens as the view, links that show their ends, each level's own look) follows; Phases 8 and 9 keep their numbers.
+>
+> **6 Oct 2026.** Built: a `.contact` says how its body grows and a `.system` binds it to a force; counting and adding grow by typing, every size true and counted by the witness; adding evolves from counting, keeping every witness and gaining 3; the force drawn as a lasso under the body, picked alike on every adapter; gate 7.4 3/3. Systems in universes, several bodies in a system, and growth that doesn't re-lower the body are not built. Findings: [Findings/phase-7.4-growth.md](../Findings/phase-7.4-growth.md).
 
 ---
 

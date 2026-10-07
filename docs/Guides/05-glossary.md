@@ -4,6 +4,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 
 | Term | Plain meaning |
 |------|----------------|
+| **Accepts** | What a growing body takes as input, written in its `grows` line: `accepts one` (only the number 1, as counting does) or `accepts any` (any integer, as adding does). Anything else is refused in the body's own words. |
 | **Allele** | One candidate way to *implement* a cell’s plan. The plan’s identity is the laws; the allele is a payload that must pass those laws. |
 | **Anchor** | The chart the camera's focus is measured in: the deepest chart under the window's centre pixel. Positions are kept relative to it, so the numbers stay small at any zoom. |
 | **Arrowhead** | A small triangle on a link. A spine has one at the middle of each stretch between consecutive members, pointing along it; any link has one on the stub of each tail member, pointing away from the port. An unordered link never has one along its legs. |
@@ -23,6 +24,7 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Combine** | The one force Phase 7 writes: put the values of its members together with the frame's answer (on integers, the sum). Its answer must not depend on member order. |
 | **Contact body** | A body whose cells touch, with no wires inside; its operations are forces. Written as a `.contact` file, which cannot express a wire. |
 | **Corpus** | The library of golden examples (and deliberate fakes) used as testimony and regression checks. |
+| **Count witness** | The second derivation of a growing system's answer, using only steps of one up or down (`count_witness`). After every growth step it must equal the engine's answer; all basic math is counting, so counting is the witness. |
 | **Declaration** | A sentence in a body's or universe's hashed part that the assay must satisfy. Today the only one is `assert H₁ = 0` (“no loop is open”); if it fails, the body or universe is refused at admission. |
 | **Delta** | The table rows one run changed. The picture updates by writing those rows. |
 | **Crate** | A Rust library or program package in the repo (for example `joinn-gate`). |
@@ -31,22 +33,27 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **DNA** | The building plan for a cell: what it is and what laws it obeys. |
 | **Edge pixel** | A pixel within 1/16 of a pixel of a shape's boundary. It is counted and never judged: the two pickers need not agree there. |
 | **Elevation plane** | The flat picture a beam lives in: x along the span, y up. A moment lives on the plane itself (x ∧ y), which is why a beam is not only a line. |
+| **Evolution check** | What admits a system that names a parent in its `lineage`: it must keep every one of the parent's witnesses and gain an input the parent refuses. Adding keeps counting's three and gains `3`. A child that gains nothing is an edit, and is refused. |
 | **Filling** | What closes a loop in the assay: a frame (the value keeps its kind all the way round), or one law that promises to undo a conversion, named by body, instance and law. Nothing else closes a loop. |
 | **Floor** | The sealed set of basic operations JoInn is written in. Admitted only if irreducible and opposed. Never “fixed” by renaming its size. |
 | **Fold state** | Which charts are folded into lens nodes at a zoom: *open*, *systems folded* or *galaxies folded*. Every system has one size and every galaxy another, so a universe has at most three, and every link has one route per fold state, computed when the universe opens. |
 | **Focus** | The point of the anchor chart the camera holds still, kept in 2^-16 layout units. Zooming never moves it. Zooming about a different pixel moves it once (a refocus), the camera's only rounding. |
-| **Force** | An operation applied to a body's cells from outside, such as combine. It names its members (cell ports) and a response. A force owns no pixel. |
+| **Force** | An operation applied to a body's cells from outside, such as combine. It names its members (cell ports) and a response. In a contact body a force owns no pixel; in a system it is drawn as a lasso, which owns its own pixels. |
 | **Force register** | The short table of which forces a frame answers, and with which cell: combine on integers answers with the sum cell. A row is admitted only if the answer is order-blind and its opposite (a turn of the response) is on file. |
 | **Frame** | The context in which truth is judged (example: integers, or a text frame). |
 | **Gate** | The checker that admits good growth and refuses bad growth. |
 | **Genome** | The full set of DNA shared by the cells of one body. |
 | **Gutter** | An empty lane of the grid layout between bodies, systems or galaxies. Links travel only on gutters, so they never cross a cell, a body that isn't a member, or a folded node. |
 | **Grove (the)** | JoInn's generated test universe: seed 7 gives 8 galaxies, 128 systems, 3072 bodies and 137 links, bound from corpus bodies by hash. It is grown wherever it is needed and never stored in the corpus or the docs. |
+| **Grown state** | The cells a system has grown so far: its accepted inputs, in order. Growth changes only this. It is never hashed or stored, so a system's hash is the same at every size. |
+| **Grows** | The line in a `.contact` that says how its body grows: `grows { cell:… as numbers accepts one }`. Each growth adds one copy of that cell. |
+| **Growth name** | The name in a `grows` line (`numbers`) that grown cells are counted under: `numbers.0`, `numbers.1`, and so on. A system's force reaches the body by this name (`on numbers`). |
 | **Island** | In the assay, one connected piece of a universe once the outside world is removed. |
 | **Hub** | A medium link's form (240 to 1920 px across): thin legs meeting at a knot, drawn as a small disc. |
 | **Host** | Whatever presents the universe to the outside (terminal, test harness, desktop window). A host is proved by there being more than one. |
 | **ID target** | The second picture: one integer per pixel naming its owner. A click reads one texel of it. |
 | **Knot** | Where an unordered link's legs meet: the street corner with the smallest total distance to all its touch points (ties go to the smallest y, then x). A link whose touch points are one point has none. |
+| **Lasso** | How a force is drawn in a system: a loop around the whole body it reaches, clear of every cell, with a neck and an arrowhead pointing at its response. It is drawn under the cells, and a click on it prints `force count`. A link never looks like one. |
 | **Latent** | A response that holds no value yet. It is drawn dim, and takes its normal color once a value arrives. |
 | **Layout unit** | The integer length the tables use for positions. Pixels are what the camera makes of them. |
 | **Leg** | The shortest street path from a link's knot to one touch point. A leg serves one member; where several legs share a stretch, that stretch is trunk. A click on a leg prints `link <id> member <i>`. |
@@ -54,11 +61,12 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Live engine** | The runner that executes a body now, with an explicit step budget. |
 | **Lower** | The engine's own derivation of the deliveries a contact body needs to run. Its only inputs are the contact, its cells and the force register. It is never written to a file, described, or drawn. |
 | **Membrane** | The boundary of a cell — the only place it meets anything outside itself. A body has no membrane; its outline is its *surface*. |
+| **Neck** | The short stretch of a lasso from the loop out to its arrowhead, crossing the gap between the body and the response cell beside it. |
 | **Order-blind** | A result that doesn't depend on the order its members were combined in, such as a sum. The order still happened, and JoInn records it. (Earlier documents said *order-free*.) |
 | **Order-bound** | A result that depends on order completely, so the order is part of its truth. |
 | **Order-signed** | A result whose order changes at most its sign: lever arm ∧ force is a moment, and force ∧ lever arm is the same moment with the opposite sign. |
 | **Organelle** | A small fixed shader that draws one kind of shape from the tables. Phase 6 has the shape and the curve; Phase 7.2 adds frames, the dot and strokes; Phase 7.3 adds link segments (capsules, knot discs and arrowheads). Images and snapshots are later. |
-| **Owner** | The one thing a pixel belongs to: the background, a galaxy or system frame, the surface, a cell, a port, a wire, or a link (`link <id>`, or `link <id> member <i>` on a leg or stub). In a contact body there is no wire, and no force owns a pixel. |
+| **Owner** | The one thing a pixel belongs to: the background, a galaxy or system frame, the surface, a cell, a port, a wire, a link (`link <id>`, or `link <id> member <i>` on a leg or stub), or in a system a force's lasso (`force <name>`). In a contact body there is no wire, and no force owns a pixel. |
 | **Owner band** | The band that owns a body's pixels in the ID picture: the higher band once 10·s ≥ 11·T, the middle of its fade window. The other band only fades, in colour. |
 | **Pair** | The two partners across one mirror, such as force and displacement. Multiplied, they give energy. Part of a quantity's tag. |
 | **Pin** | The whole pixel the focus sits on. Panning moves the pin; zooming does not. |
@@ -80,10 +88,12 @@ Short definitions for words you’ll see in JoInn docs. Deeper, precise meanings
 | **Spine** | How a link with declared order is drawn, at every size: one path through its members in order, with an arrowhead in the middle of each stretch. |
 | **Step** | The fraction of a zoom level: k = 2^level·(256 + step)/256, with step 0 to 255. One notch is 32 steps, so eight notches double k. |
 | **Stroke font** | JoInn's own letters: 48 glyphs drawn as straight strokes on a 6 × 8 grid (digits, a–z and a few signs), used for titles, cell labels and values. A character outside the set is refused. |
+| **System file** | A `.system`: the bodies a system holds (by hash, each with an alias), the forces acting on them, and its `lineage` (`none`, or its parent's hash). It starts as a seed; its bodies grow by their own DNA. |
 | **Tick** | One redraw. It carries the camera. An idle scene has nothing to draw, so the window waits. |
 | **Touch** | A link reaching a cut node: a member's body if it is drawn, otherwise the lens node that holds it. Each node is touched at most once per link. |
 | **Touch point** | Where a link's route meets one node: a port's centre when the body is drawn, or the side of a folded system or galaxy that faces the knot. Members inside one folded node share one touch point and one leg. |
 | **Trunk** | A stretch of street that two or more legs of one link share. It serves no one member, so a click on it prints `link <id>`. |
+| **Waiting box** | An empty cell drawn beside a growing body, where the next input goes. The system file says how many (`waiting { numbers 1 }`). Click it, type a number and press Enter, and the body grows or prints its refusal. |
 | **Where** | The piece a quantity lives on, with its orientation: a point, a line, or the plane, and which way it faces. Its dimension, as opposed to its unit. Part of a quantity's tag. |
 | **Witness** | A recorded true result that future versions must still satisfy — testimony the gate can replay. |
 | **Witness library** | A library that states formulas JoInn derives itself, such as AISC Table 3-23 or Roark Table 8.1. Compared exactly and never used to derive; a disagreement is a truth violation. |
@@ -110,3 +120,5 @@ Back to the start: [README.md](README.md).
 > **5 Oct 2026.** Phase 7.2 adds the zoom: charts, the exact camera, bands, the cut, lens nodes, touches and the stroke font, measured on the grove.
 >
 > **6 Oct 2026.** Phase 7.3 draws links: gutters, the routing graph, touch points, stubs, knots, legs and trunk, one route per fold state, and four forms (region, hub, bundle, spine) with arrowheads.
+>
+> **6 Oct 2026.** Phase 7.4 grows a system: system files, `grows` and `accepts`, the grown state, waiting boxes, the count witness, the evolution check, and the force drawn as a lasso with a neck.
