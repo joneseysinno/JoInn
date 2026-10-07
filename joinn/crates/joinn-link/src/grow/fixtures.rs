@@ -35,16 +35,30 @@ pub(crate) fn cells() -> BTreeMap<Hash, Cell> {
 }
 
 fn system(accepts: &str) -> (System, BTreeMap<Hash, Contact>) {
+    descendant(accepts, None)
+}
+
+/// A system whose body accepts so; with a parent, both the contact and the
+/// system name the parent's as their lineage.
+pub(crate) fn descendant(
+    accepts: &str,
+    parent: Option<(&System, &BTreeMap<Hash, Contact>)>,
+) -> (System, BTreeMap<Hash, Contact>) {
+    let lineage = |h: Option<Hash>| h.map_or_else(|| "none".to_string(), |h| h.to_hex());
+    let parent_contact = parent.and_then(|(_, cs)| cs.keys().next().copied());
+    let parent_system = parent.map(|(s, _)| hash(&s.coding));
     let src = format!(
-        "contact {{ codex 1 grows {{ cell:{CLI} as numbers accepts {accepts} }} budget {{ steps 100000 }} lineage none }}\n"
+        "contact {{ codex 1 grows {{ cell:{CLI} as numbers accepts {accepts} }} budget {{ steps 100000 }} lineage {} }}\n",
+        lineage(parent_contact)
     );
     let contact = match parse_contact(&src, &FrameRegistry::phase1()) {
         Verdict::Ok(c) => c,
         Verdict::Refused(r) => panic!("{}", r.reason),
     };
     let src = format!(
-        "system {{ codex 1 bodies {{ contact:{} as numbers }} forces {{ combine ℤ 1 cell:{SUM} as count on numbers }} lineage none }}\n",
-        hash(&contact.coding)
+        "system {{ codex 1 bodies {{ contact:{} as numbers }} forces {{ combine ℤ 1 cell:{SUM} as count on numbers }} lineage {} }}\n",
+        hash(&contact.coding),
+        lineage(parent_system)
     );
     let system = match parse_system(&src) {
         Verdict::Ok(s) => s,

@@ -1,13 +1,21 @@
 //! Growth: a system and the inputs its body accepted, exact at every size.
 
+mod accept_word;
+mod check_evolution;
+mod count_witness;
 mod grow_step;
 mod identity;
 mod lower_grown;
 mod respond;
+mod transcripts;
 
+pub use accept_word::accept_word;
+pub use check_evolution::{Evolution, check_evolution};
+pub use count_witness::count_witness;
 pub use grow_step::grow_step;
 pub use lower_grown::lower_grown;
 pub use respond::respond;
+pub use transcripts::transcripts;
 
 use joinn_dna::{Cell, Contact, System, SystemForce};
 use joinn_frame::{FrameRegistry, Hash, Value, Verdict};
@@ -98,8 +106,116 @@ mod tests {
     use joinn_dna::hash;
     use joinn_frame::{FrameRegistry, Verdict};
 
-    use super::fixtures::{adding, cells, counting, int, run};
-    use super::{grow, grow_step, lower_grown, respond};
+    use super::fixtures::{adding, cells, counting, descendant, int, run};
+    use super::{check_evolution, count_witness, grow, grow_step, lower_grown, respond};
+
+    #[test]
+    fn count_witness_and_the_engine_agree_on_every_transcript_at_every_step() {
+        let cells = cells();
+        let frames = FrameRegistry::phase1();
+        let (counting, counting_contacts) = counting();
+        let (adding, adding_contacts) = adding();
+        let twelve: Vec<i64> = (1..=12).collect();
+        let cases: Vec<(&str, Vec<i64>, Vec<i64>, bool)> = vec![
+            ("counting", vec![], vec![], false),
+            ("counting", vec![1, 1, 1], vec![1, 2, 3], false),
+            ("counting", vec![1, 1, 3], vec![1, 2], true),
+            ("counting", vec![1; 12], twelve.clone(), false),
+            ("adding", vec![], vec![], false),
+            ("adding", vec![2, 3, 4], vec![2, 5, 9], false),
+            ("adding", vec![5, -2, 0, 7], vec![5, 3, 3, 10], false),
+            ("adding", vec![1, 1, 1], vec![1, 2, 3], false),
+            ("adding", vec![1, 1, 3], vec![1, 2, 5], false),
+            ("adding", vec![1; 12], twelve, false),
+        ];
+        for (name, transcript, counts, refuses_last) in cases {
+            let (system, contacts) = if name == "counting" {
+                (&counting, &counting_contacts)
+            } else {
+                (&adding, &adding_contacts)
+            };
+            let mut grown = match grow(system, contacts, &cells, &[]) {
+                Verdict::Ok(g) => g,
+                Verdict::Refused(r) => panic!("{}", r.reason),
+            };
+            let mut seen = vec![0i64];
+            seen.extend(counts.iter().copied());
+            for (step, v) in transcript.iter().enumerate() {
+                match grow_step(&grown, &int(*v)) {
+                    Verdict::Ok(g) => grown = g,
+                    Verdict::Refused(r) => {
+                        assert!(refuses_last && step + 1 == transcript.len(), "{name} {v}");
+                        assert_eq!(
+                            r.reason,
+                            format!(
+                                "counting: {v} is not one; acceptance is 1 (counting grows by one)"
+                            )
+                        );
+                        break;
+                    }
+                }
+            }
+            assert_eq!(
+                grown.inputs().len(),
+                counts.len(),
+                "{name} {transcript:?} cells"
+            );
+            for (n, want) in seen.iter().enumerate() {
+                let prefix: Vec<_> = transcript[..n].iter().map(|v| int(*v)).collect();
+                let at = match grow(system, contacts, &cells, &prefix) {
+                    Verdict::Ok(g) => g,
+                    Verdict::Refused(r) => panic!("{}", r.reason),
+                };
+                let engine = match respond(&at, &cells, &frames) {
+                    Verdict::Ok(v) => v,
+                    Verdict::Refused(r) => panic!("{}", r.reason),
+                };
+                let witness = match count_witness(at.inputs()) {
+                    Verdict::Ok(v) => v,
+                    Verdict::Refused(r) => panic!("{}", r.reason),
+                };
+                assert_eq!(engine, witness, "{name} {:?}", &transcript[..n]);
+                assert_eq!(engine, int(*want), "{name} {:?}", &transcript[..n]);
+            }
+        }
+    }
+
+    #[test]
+    fn count_witness_refuses_too_many_steps() {
+        match count_witness(&[int(2), int(-1_000_001)]) {
+            Verdict::Refused(r) => {
+                assert_eq!(
+                    r.reason,
+                    "witness: too many steps; acceptance is |v| ≤ 1000000"
+                );
+            }
+            Verdict::Ok(v) => panic!("counted {}", v.print_term()),
+        }
+    }
+
+    #[test]
+    fn adding_evolves_counting_and_a_counting_with_nothing_new_is_refused() {
+        let cells = cells();
+        let (counting, counting_contacts) = counting();
+        let (adding, mut contacts) = descendant("any", Some((&counting, &counting_contacts)));
+        contacts.extend(counting_contacts.clone());
+        match check_evolution(&counting, &adding, &contacts, &cells) {
+            Verdict::Ok(e) => {
+                assert_eq!(e.witnesses, 3);
+                assert_eq!(e.gained, int(3));
+            }
+            Verdict::Refused(r) => panic!("{}", r.reason),
+        }
+        let (again, mut contacts) = descendant("one", Some((&counting, &counting_contacts)));
+        contacts.extend(counting_contacts);
+        match check_evolution(&counting, &again, &contacts, &cells) {
+            Verdict::Refused(r) => assert_eq!(
+                r.reason,
+                "evolution: counting accepts nothing counting refuses; acceptance is a new ability (otherwise it is an edit)"
+            ),
+            Verdict::Ok(e) => panic!("an edit evolved: {e:?}"),
+        }
+    }
 
     #[test]
     fn every_size_is_true_on_counting_and_adding() {

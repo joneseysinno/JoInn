@@ -4,6 +4,7 @@ use joinn_dna::Accept;
 use joinn_frame::{Frame, IntFrame, Term, Value, Verdict};
 
 use super::Grown;
+use super::accept_word::accept_word;
 
 /// Check `input` against what the body accepts, then grow `numbers.<n>`
 /// filled with it. The system is unchanged; only the input list grows.
@@ -16,10 +17,7 @@ pub fn grow_step(grown: &Grown, input: &Value) -> Verdict<Grown> {
     let Some(force) = grown.force() else {
         return crate::refuse("grow: the system has no force; acceptance is a force");
     };
-    let word = match grows.accepts {
-        Accept::One => "counting",
-        Accept::Any => "adding",
-    };
+    let word = accept_word(grows.accepts);
     if input.frame() != &force.frame {
         return crate::refuse(format!(
             "{word}: {} is not in {}; acceptance is a value in {}",
