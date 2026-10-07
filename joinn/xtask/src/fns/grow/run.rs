@@ -1,4 +1,4 @@
-//! `cargo xtask grow`.
+//! `cargo xtask grow [--measure]`.
 
 use joinn_dna::hash;
 use joinn_frame::{Frame, FrameRegistry, IntFrame, Term, Value, Verdict};
@@ -9,7 +9,7 @@ use joinn_link::{
 use joinn_visual::{check_lasso, layout_system};
 
 use super::plants::plants;
-use super::{CorpusSystem, GROW_SYSTEMS, corpus_system, step_fault};
+use super::{CorpusSystem, GROW_SYSTEMS, corpus_system, grow_measure, step_fault};
 use crate::fns::forces::corpus_cells;
 
 /// Per system and §3 transcript, one line per step:
@@ -17,10 +17,16 @@ use crate::fns::forces::corpus_cells;
 /// hash <12 hex>` (an empty transcript prints step 0), or `… +<v> refused:
 /// <reason>`, which ends that transcript. Then the evolution line, the
 /// standing plants (rule 93) and the last line. A V161 or V162 fault, a lasso
-/// rule broken, a refused evolution or a plant not refused fails.
+/// rule broken, a refused evolution or a plant not refused fails. With
+/// `--measure`, the step costs instead.
 pub(crate) fn grow(args: Vec<String>) -> Result<(), String> {
-    if !args.is_empty() {
-        return Err("usage: cargo xtask grow".into());
+    match args.as_slice() {
+        [] => {}
+        [flag] if flag == "--measure" => {
+            print!("{}", grow_measure()?);
+            return Ok(());
+        }
+        _ => return Err("usage: cargo xtask grow [--measure]".into()),
     }
     let frames = FrameRegistry::phase1();
     let cells = corpus_cells(&frames)?;

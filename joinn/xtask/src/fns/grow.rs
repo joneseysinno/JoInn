@@ -1,11 +1,13 @@
 //! `cargo xtask grow`: counting and adding grow, every size true (plan 7.4 §3).
 
 mod corpus_system;
+mod grow_measure;
 mod plants;
 mod run;
 mod step_fault;
 
 pub(crate) use corpus_system::corpus_system;
+pub(crate) use grow_measure::grow_measure;
 pub(crate) use run::grow;
 pub(crate) use step_fault::step_fault;
 
