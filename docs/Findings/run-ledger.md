@@ -13,3 +13,4 @@ Run 7.3–9:
 |---|---|---|---|---|---|---|---|---|
 | 3 | 7.3 | 5c71b95e9eac00173f8c4c46eace0aefee126050 | phase 7.3: 3/3 | 442 passed, 0 failed | 25 | yes | none | 492425 |
 | 4 | 7.4 | aaf5fa5c3a3a17817154613ada3d3529498e57ae | phase 7.4: 3/3 | 486 passed, 0 failed | 43 | yes | none | 528347 |
+| 5 | 8 | 5dcc2dd5a2056aeab0cb83b7a836c8dcb7fa9e12 | phase 8: 3/3 | 566 passed, 0 failed | 51 | yes | none | 510416 |
