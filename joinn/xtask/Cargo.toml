@@ -20,6 +20,7 @@ joinn-visual = { path = "../crates/joinn-visual" }
 joinn-gpu = { path = "../crates/joinn-gpu" }
 joinn-strand = { path = "../crates/joinn-strand" }
 joinn-codex = { path = "../crates/joinn-codex" }
+joinn-tower = { path = "../crates/joinn-tower" }
 # Features pinned so the workspace builds once: winit turns these on in the
 # workspace build (on Linux); `cargo run -p xtask` resolves xtask's tree alone.
 bitflags = { version = "2", features = ["std"] }

@@ -871,6 +871,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "joinn-tower"
+version = "0.1.0"
+dependencies = [
+ "joinn-frame",
+]
+
+[[package]]
 name = "joinn-visual"
 version = "0.1.0"
 dependencies = [
@@ -2987,6 +2994,7 @@ dependencies = [
  "joinn-shell-desktop",
  "joinn-strand",
  "joinn-test-host",
+ "joinn-tower",
  "joinn-visual",
  "smallvec",
 ]

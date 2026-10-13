@@ -16,3 +16,4 @@ joinn-gpu
 joinn-shell-desktop
 joinn-strand
 joinn-codex
+joinn-tower

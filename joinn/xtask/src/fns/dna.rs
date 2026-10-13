@@ -1,5 +1,5 @@
-//! `cargo xtask strand | codex | read`: Phase 8's letters, strands, codex 1
-//! and the reader, printed from code (plan 8 §3).
+//! `cargo xtask strand | codex | read | tower`: Phase 8's letters, strands,
+//! codex 1, the reader and the fold, printed from code (plan 8 §3).
 
 mod codex_cmd;
 mod codex_text;
@@ -11,6 +11,8 @@ mod strand_cmd;
 mod strand_reading;
 mod strand_text;
 mod strand_witnesses;
+mod tower_cmd;
+mod tower_text;
 
 pub(crate) use codex_cmd::codex;
 pub(crate) use codex_text::codex_text;
@@ -22,6 +24,8 @@ pub(crate) use strand_cmd::strand;
 pub(crate) use strand_reading::strand_reading;
 pub(crate) use strand_text::strand_text;
 pub(crate) use strand_witnesses::strand_witnesses;
+pub(crate) use tower_cmd::tower;
+pub(crate) use tower_text::tower_text;
 
 #[cfg(test)]
 mod tests {
@@ -39,6 +43,17 @@ mod tests {
         match std::fs::read_to_string(corpus_artifact(&root, name)) {
             Ok(t) => t.replace("\r\n", "\n"),
             Err(e) => panic!("{name}: {e}"),
+        }
+    }
+
+    #[test]
+    fn tower_holds_every_fact_at_orders_1_to_6() {
+        match super::tower_text() {
+            Ok(t) => assert!(
+                t.ends_with("tower: orders 1-6 hold T1-T7; every order holds the one before it\n"),
+                "{t}"
+            ),
+            Err(e) => panic!("{e}"),
         }
     }
 

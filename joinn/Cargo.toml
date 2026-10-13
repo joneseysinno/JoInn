@@ -16,6 +16,7 @@ members = [
     "crates/joinn-shell-desktop",
     "crates/joinn-strand",
     "crates/joinn-codex",
+    "crates/joinn-tower",
     "xtask",
 ]
 
