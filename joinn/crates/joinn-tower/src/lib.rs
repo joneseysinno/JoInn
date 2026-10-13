@@ -9,6 +9,7 @@ mod direction;
 mod facts;
 mod level;
 mod point;
+mod pool;
 mod refuse;
 
 pub use chromosome::{Chromosome, parse_chromosomes, print_chromosome};
@@ -17,3 +18,4 @@ pub use direction::{Direction, directions};
 pub use facts::{FACT_IDS, facts, t5_filter};
 pub use level::{level, level_filter};
 pub use point::{Point, nodes, point};
+pub use pool::{Pool, short as short_hash};

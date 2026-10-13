@@ -50,6 +50,8 @@ jobs:
         run: cargo xtask contact
       - name: zoom
         run: cargo xtask grove && cargo xtask zoom && cargo xtask links && cargo xtask grow
+      - name: dna
+        run: cargo xtask strand corpus/phase8/strands/twelve.strand && cargo xtask codex && cargo xtask read corpus/phase8/strands/empty.strand && cargo xtask read corpus/phase8/strands/pair-split.strand && cargo xtask read corpus/phase8/strands/twelve.strand && cargo xtask tower && cargo xtask pool
       - name: spike s8
         run: cargo test --manifest-path spikes/s8-beam/Cargo.toml
       - name: power

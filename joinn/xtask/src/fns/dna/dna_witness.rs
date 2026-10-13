@@ -4,7 +4,7 @@ use joinn_frame::keyed_hash;
 use joinn_strand::TAG_DNA;
 
 use super::super::{corpus_artifact, workspace_root};
-use super::{strand_witnesses, tower_witnesses};
+use super::{pool_witnesses, strand_witnesses, tower_witnesses};
 
 /// Each witness absent from the corpus is written; one present with the same
 /// bytes is left alone; one present with other bytes is refused, never
@@ -13,6 +13,7 @@ pub(crate) fn dna_witness() -> Result<(), String> {
     let root = workspace_root()?;
     let mut all = strand_witnesses()?;
     all.extend(tower_witnesses()?);
+    all.extend(pool_witnesses()?);
     for (name, text) in all {
         let path = corpus_artifact(&root, &name);
         let state = match std::fs::read_to_string(&path) {

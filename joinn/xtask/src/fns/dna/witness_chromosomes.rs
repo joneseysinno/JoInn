@@ -6,7 +6,10 @@ use joinn_tower::{Chromosome, parse_chromosomes};
 use super::super::{corpus_artifact, workspace_root};
 
 /// The corpus names of every chromosome witness.
-pub(crate) const CHROMOSOME_WITNESSES: [&str; 1] = ["phase8/tower/twelve.chromosome"];
+pub(crate) const CHROMOSOME_WITNESSES: [&str; 2] = [
+    "phase8/tower/twelve.chromosome",
+    "phase8/pool/cycle.chromosome",
+];
 
 /// Each witness's name and its chromosomes, as committed.
 pub(crate) fn witness_chromosomes() -> Result<Vec<(String, Vec<Chromosome>)>, String> {

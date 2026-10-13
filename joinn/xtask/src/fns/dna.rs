@@ -1,11 +1,16 @@
-//! `cargo xtask strand | codex | read | tower`: Phase 8's letters, strands,
-//! codex 1, the reader and the fold, printed from code (plan 8 §3).
+//! `cargo xtask strand | codex | read | tower | pool | dna-witness`: Phase 8's
+//! letters, strands, codex 1, the reader, the fold and the gene pool, printed
+//! from code (plan 8 §3), and its witnesses written once.
 
 mod codex_cmd;
 mod codex_text;
 mod dna_witness;
 mod floors_text;
+mod load_pool;
 mod order_text;
+mod pool_cmd;
+mod pool_text;
+mod pool_witnesses;
 mod read_cmd;
 mod read_strand_file;
 mod read_text;
@@ -22,7 +27,11 @@ pub(crate) use codex_cmd::codex;
 pub(crate) use codex_text::codex_text;
 pub(crate) use dna_witness::dna_witness;
 pub(crate) use floors_text::floors_text;
+pub(crate) use load_pool::load_pool;
 pub(crate) use order_text::order_text;
+pub(crate) use pool_cmd::pool;
+pub(crate) use pool_text::pool_text;
+pub(crate) use pool_witnesses::pool_witnesses;
 pub(crate) use read_cmd::read;
 pub(crate) use read_strand_file::read_strand_file;
 pub(crate) use read_text::read_text;
@@ -51,6 +60,24 @@ mod tests {
         match std::fs::read_to_string(corpus_artifact(&root, name)) {
             Ok(t) => t.replace("\r\n", "\n"),
             Err(e) => panic!("{name}: {e}"),
+        }
+    }
+
+    #[test]
+    fn pool_refuses_the_cycle_and_reads_only_when_asked() {
+        match super::pool_text() {
+            Ok(t) => {
+                assert!(t.contains("reads 0 (nothing is read until asked)\n"), "{t}");
+                assert!(
+                    t.ends_with("pool: no cycles; grows only when asked\n"),
+                    "{t}"
+                );
+            }
+            Err(e) => panic!("{e}"),
+        }
+        match super::load_pool(&["phase8/pool/cycle.chromosome"]) {
+            Err(e) => assert!(e.contains("contains itself through"), "{e}"),
+            Ok(_) => panic!("the cycle witness entered a pool"),
         }
     }
 
@@ -114,6 +141,10 @@ mod tests {
             Err(e) => panic!("{e}"),
         };
         match super::tower_witnesses() {
+            Ok(w) => witnesses.extend(w),
+            Err(e) => panic!("{e}"),
+        }
+        match super::pool_witnesses() {
             Ok(w) => witnesses.extend(w),
             Err(e) => panic!("{e}"),
         }

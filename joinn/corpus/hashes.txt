@@ -86,3 +86,5 @@ phase8/tower/order-3.txt 4667528fd6ff0ca4ba087c956c6c4074736b80ab24ec51645a95bf2
 phase8/tower/order-4.txt a6e6552af2e89948923f3895be41705224f5915532ce0580162a7e5f387976a8
 phase8/tower/twelve.chromosome 2bc09f8ef4250e377e3fe1c9ee90465b0f0fbbc88430c719be55773c71b2206e
 phase8/tower/twelve.floors.txt a305442889206483885f40b0f0f0a419bad697b86f6751186bbcf39c1d615f00
+# Phase 8, 13 Oct 2026. Pool witness: two chromosomes naming each other, refused on entry. Bytes hashed under joinn.dna.v1. New file, no earlier hash moved.
+phase8/pool/cycle.chromosome c00684aa761f67969f18e4d537a048c0fff9f7909117e7b0cbbfa660016e7381
