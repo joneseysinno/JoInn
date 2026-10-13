@@ -2,11 +2,13 @@
 //! opens a protein and the next STOP closes it; a protein is the amino acids
 //! between them (D10, D20). Anything else is a refusal, never a guess.
 
+mod meanings;
 mod opposite;
 mod print_proteins;
 mod read_file;
 mod translate;
 
+pub use meanings::meanings;
 pub use print_proteins::print_proteins;
 pub use read_file::read_file;
 pub use translate::translate;

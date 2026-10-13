@@ -6,6 +6,8 @@ mod click;
 #[cfg(test)]
 mod contact_fixture;
 mod desktop_view;
+mod dna_click;
+mod dna_view;
 mod drag_to;
 mod enter;
 mod escape;
@@ -19,6 +21,7 @@ mod key;
 mod new_shell;
 mod open;
 mod open_atlas;
+mod open_dna;
 mod open_system;
 mod owner_line;
 mod press;
@@ -44,7 +47,7 @@ use joinn_dna::{Body, Cell};
 use joinn_frame::{Hash, Verdict};
 use joinn_host::{Address, Signals};
 use joinn_live::BodyState;
-use joinn_visual::{Camera, Delta, Scene, SystemScene, Tables, UniverseScene, Zoom};
+use joinn_visual::{Camera, Delta, Scene, StrandScene, SystemScene, Tables, UniverseScene, Zoom};
 
 /// What Enter prints on an empty buffer: no intent, no run, no tick.
 pub const NOTHING_SENT: &str = "  (empty: nothing sent)";
@@ -129,6 +132,14 @@ pub struct Grower {
     camera: Camera,
     selected: Option<String>,
     buffer: String,
+    confirm: Option<Confirm>,
+}
+
+/// A strand as a picture (plan 8 §2.10): looked at along its length, zoomed
+/// and picked. Nothing runs.
+pub struct Dna {
+    strand: StrandScene,
+    camera: Camera,
     confirm: Option<Confirm>,
 }
 

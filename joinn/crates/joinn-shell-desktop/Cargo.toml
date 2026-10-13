@@ -19,6 +19,9 @@ joinn-link = { path = "../joinn-link" }
 joinn-host = { path = "../joinn-host" }
 joinn-visual = { path = "../joinn-visual" }
 joinn-gpu = { path = "../joinn-gpu" }
+joinn-strand = { path = "../joinn-strand" }
+joinn-codex = { path = "../joinn-codex" }
+joinn-tower = { path = "../joinn-tower" }
 wgpu = "30"
 winit = "0.30"
 pollster = "0.4"

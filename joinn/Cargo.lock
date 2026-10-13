@@ -836,6 +836,7 @@ dependencies = [
 name = "joinn-shell-desktop"
 version = "0.1.0"
 dependencies = [
+ "joinn-codex",
  "joinn-dna",
  "joinn-frame",
  "joinn-gate",
@@ -844,6 +845,8 @@ dependencies = [
  "joinn-link",
  "joinn-live",
  "joinn-prim",
+ "joinn-strand",
+ "joinn-tower",
  "joinn-visual",
  "pollster",
  "wgpu",
@@ -883,12 +886,15 @@ dependencies = [
 name = "joinn-visual"
 version = "0.1.0"
 dependencies = [
+ "joinn-codex",
  "joinn-dna",
  "joinn-frame",
  "joinn-host",
  "joinn-link",
  "joinn-live",
  "joinn-prim",
+ "joinn-strand",
+ "joinn-tower",
 ]
 
 [[package]]

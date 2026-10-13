@@ -50,6 +50,9 @@ pub const GALAXY_TAG: u32 = 0x4000_0000;
 pub const LINK_TAG: u32 = 0x5000_0000;
 /// Blue channel of a lasso's pixel: a force (plan 7.4 §2.8).
 pub const FORCE_TAG: u32 = 0x6000_0000;
+/// Blue channel of a strand's or a fold's pixel: `CODON_TAG | index`, the
+/// index a codon, a segment or a node as the green channel says (plan 8 §2.10).
+pub const CODON_TAG: u32 = 0x7000_0000;
 /// The tag bits of the blue channel.
 pub const TAG_MASK: u32 = 0xF000_0000;
 

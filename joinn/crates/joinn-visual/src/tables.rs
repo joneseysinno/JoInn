@@ -67,10 +67,28 @@ pub const STYLE_HUB: u32 = 13;
 pub const STYLE_SPINE: u32 = 14;
 /// A force drawn as a lasso (plan 7.4 §2.8).
 pub const STYLE_FORCE: u32 = 15;
+/// Letter A's rung (plan 8 §2.10); T, G and C follow in letter order.
+pub const STYLE_LETTER_A: u32 = 16;
+/// The first amino acid's tint; the others follow in table order.
+pub const STYLE_ACID_FIRST: u32 = 20;
+/// A strand's backbone.
+pub const STYLE_BACKBONE: u32 = 32;
+/// START and STOP: their tint.
+pub const STYLE_CAP: u32 = 33;
+/// A mismatched pair.
+pub const STYLE_GLOW: u32 = 34;
+/// A codon codex 1 does not name.
+pub const STYLE_RESERVED: u32 = 35;
+/// A silent segment of a fold.
+pub const STYLE_SILENT: u32 = 36;
+/// A node's gene reference, drawn as a ring.
+pub const STYLE_RING: u32 = 37;
+/// The bar that closes a strand at a START or a STOP.
+pub const STYLE_END_CAP: u32 = 38;
 
 /// One RGBA8 `u32` per style id: bytes R, G, B, A in little-endian order.
-/// Id 11 is not assigned: transparent.
-pub const STYLE_TABLE: [u32; 16] = [
+/// Ids 11 and 39 are not assigned: transparent.
+pub const STYLE_TABLE: [u32; 40] = [
     u32::from_le_bytes([0x15, 0x17, 0x1C, 0xFF]),
     u32::from_le_bytes([0x22, 0x26, 0x2E, 0xFF]),
     u32::from_le_bytes([0x2F, 0x5D, 0x8A, 0xFF]),
@@ -87,6 +105,30 @@ pub const STYLE_TABLE: [u32; 16] = [
     u32::from_le_bytes([0x6F, 0xA8, 0xD8, 0xFF]),
     u32::from_le_bytes([0xE0, 0x8A, 0x3C, 0xFF]),
     u32::from_le_bytes([0xB4, 0x6C, 0xE0, 0xFF]),
+    u32::from_le_bytes([0x4C, 0xB8, 0x5C, 0xFF]),
+    u32::from_le_bytes([0xD9, 0x4F, 0x4F, 0xFF]),
+    u32::from_le_bytes([0xE8, 0xC2, 0x3A, 0xFF]),
+    u32::from_le_bytes([0x4A, 0x8F, 0xE0, 0xFF]),
+    u32::from_le_bytes([0x5E, 0x3A, 0x7A, 0xFF]),
+    u32::from_le_bytes([0x7A, 0x3A, 0x5E, 0xFF]),
+    u32::from_le_bytes([0x2E, 0x5E, 0x6E, 0xFF]),
+    u32::from_le_bytes([0x6E, 0x4E, 0x2E, 0xFF]),
+    u32::from_le_bytes([0x3A, 0x6A, 0x3E, 0xFF]),
+    u32::from_le_bytes([0x6A, 0x3A, 0x3A, 0xFF]),
+    u32::from_le_bytes([0x3A, 0x4E, 0x7A, 0xFF]),
+    u32::from_le_bytes([0x7A, 0x66, 0x2E, 0xFF]),
+    u32::from_le_bytes([0x2E, 0x6A, 0x5A, 0xFF]),
+    u32::from_le_bytes([0x6A, 0x2E, 0x46, 0xFF]),
+    u32::from_le_bytes([0x52, 0x6A, 0x2E, 0xFF]),
+    u32::from_le_bytes([0x4A, 0x2E, 0x6A, 0xFF]),
+    u32::from_le_bytes([0x9A, 0xA3, 0xB0, 0xFF]),
+    u32::from_le_bytes([0x3A, 0x46, 0x52, 0xFF]),
+    u32::from_le_bytes([0xFF, 0x3D, 0xF0, 0xFF]),
+    u32::from_le_bytes([0x48, 0x4C, 0x54, 0xFF]),
+    u32::from_le_bytes([0x3A, 0x3E, 0x46, 0xFF]),
+    u32::from_le_bytes([0xF2, 0xE6, 0xC0, 0xFF]),
+    u32::from_le_bytes([0xF4, 0xF4, 0xF4, 0xFF]),
+    0,
 ];
 
 /// Bytes per body row: 7 fields, padded.

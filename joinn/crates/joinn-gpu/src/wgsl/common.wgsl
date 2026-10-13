@@ -32,7 +32,7 @@ struct Stroke {
 @group(1) @binding(5) var<storage, read> charts: array<Chart>;
 @group(1) @binding(6) var<storage, read> frames: array<Frame>;
 @group(1) @binding(7) var<storage, read> strokes: array<Stroke>;
-@group(2) @binding(0) var<uniform> styles: array<vec4<u32>, 4>;
+@group(2) @binding(0) var<uniform> styles: array<vec4<u32>, 10>;
 
 struct Out {
     @builtin(position) pos: vec4<f32>,

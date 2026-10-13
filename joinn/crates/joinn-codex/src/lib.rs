@@ -15,5 +15,5 @@ pub use codex::{CODEX, CODEX_1, READER_VERSION, Row, check_table, codon_of, look
 pub use codon::{Codon, Parity};
 pub use meaning::{AminoAcid, Meaning};
 pub use organelle::{ORGANELLES, Organelle};
-pub use reader::{Protein, print_proteins, read_file, translate};
+pub use reader::{Protein, meanings, print_proteins, read_file, translate};
 pub use side::{Side, side};

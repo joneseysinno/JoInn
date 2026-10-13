@@ -17,8 +17,11 @@ mod reconfigure;
 mod regrow;
 mod resume;
 mod run;
+mod run_dna;
+mod run_view;
 
 pub use run::run;
+pub use run_dna::run_dna;
 
 use std::sync::Arc;
 

@@ -62,8 +62,8 @@ pub(crate) const CHART: usize = 6;
 pub(crate) const ROUTE: usize = 9;
 /// The segment table's index in `ROW_SIZES`: bound only by the segment pipeline.
 pub(crate) const SEGMENT: usize = 10;
-/// Bytes of the style uniform: sixteen styles, as four `vec4<u32>`.
-pub(crate) const STYLE_UNIFORM_BYTES: usize = 64;
+/// Bytes of the style uniform: forty styles, as ten `vec4<u32>`.
+pub(crate) const STYLE_UNIFORM_BYTES: usize = 160;
 /// Bytes of the tick uniform: `level step pin_x pin_y ox oy fx fy width
 /// height`, padded.
 pub(crate) const TICK_BYTES: usize = 48;
