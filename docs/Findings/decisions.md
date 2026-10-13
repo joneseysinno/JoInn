@@ -180,3 +180,21 @@ line must name a file under `docs/Findings/`.
 | V162 | Growth is not evolution: the system's hash is unchanged by growth; grown state is never hashed or stored | 7.4 | holds | P74-06 (76f3328); `grow`: `hash c211e65544e5` / `9bd87572c3bc` at every step, and a hash over the grown state is refused at n 1; gate 7.4 item 3: the hash at sizes 0 … 13 |
 | V163 | Evolution keeps every old witness and gains an ability | 7.4 | holds | P74-07 (0df0880); gate 7.4 item 2: `evolution counting → adding: 3 witnesses hold; adding gains 3`, and adding made to accept one is refused as an edit; removing the gain test fails it (demo c) |
 | V164 | A force is seen as a lasso: it surrounds what it reaches, never meets a cell, and points to its response; CPU and GPU name its pixels alike | 7.4 | holds | P74-09 (3547079), P74-11 (0596f31); `pick`: `disagree 0`, `force owners 1 (cut allows 1)` at sizes 0, 3, 7 of both systems on all three adapters; gate 7.4 item 3: rules at sizes 0 … 13, no body pixel owned by the force; the lasso drawn after the cells fails it (demo d) |
+| V165 | Partner is the low bit: `partner` is an involution with no fixed letter, and never changes strength | 8 | open | plan 8 §2.11 V160, renumbered (7.4 holds V160–V164) |
+| V166 | A codon and its partner have opposite parity; no codon is its own partner | 8 | open | plan 8 §2.11 V161, renumbered |
+| V167 | The table lives in the reader only; every codon's partner names its opposite; reserved stays reserved | 8 | open | plan 8 §2.11 V162, renumbered |
+| V168 | The reader's version never changes a codex-1 strand's meaning | 8 | open | plan 8 §2.11 V163, renumbered |
+| V169 | The fold is free and exact: T1–T7 hold for orders 1–6 | 8 | open | plan 8 §2.11 V164, renumbered |
+| V170 | Every order holds the one before it (T3, T5) | 8 | open | plan 8 §2.11 V165, renumbered |
+| V171 | Nothing is stored for nothing: silent slots and empty nodes cost no bytes | 8 | open | plan 8 §2.11 V166, renumbered |
+| V172 | The pool has no cycles, and grows only when asked | 8 | open | plan 8 §2.11 V167, renumbered |
+| V173 | Two views, one truth: strand and fold views pick the same codon address | 8 | open | plan 8 §2.11 V168, renumbered |
+| R128 | Membrane from the fold | 8 | open | |
+| R129 | Roles from the fold | 8 | open | |
+| R130 | Fold variants | 8 | open | |
+| R131 | Higher dimensions | 8 | open | |
+| R132 | Several codices | 8 | open | |
+| R133 | Tower security and transfer | 8 | open | |
+| D-letters | Letters: A=00 T=01 G=10 C=11; partner is the low bit (12 Oct 2026). | 8 | holds | |
+| D-held | Phase 8 Draft 0.1 (visual truth) held until 8.4 (12 Oct 2026). | 8 | holds | Plans/JoInn Visual Truth Plan (held).md |
+| D-accepted | D18 and D25 treated as accepted by Phase 8. | 8 | holds | |

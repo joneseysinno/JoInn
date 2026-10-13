@@ -461,6 +461,8 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 
 #### Phase 8 · Visual truth
 
+> **12 Oct 2026.** Replanned as the first Part VIII phase: letters, codex 1 and its reader, the Hilbert tower and gene pool, the 3D strand view and the fold view. Visual truth is held until the calculator is regrown from a strand (8.4).
+
 **Goal.** Make what a cell *means* on screen into something the gate can judge.
 
 **Deliverables**

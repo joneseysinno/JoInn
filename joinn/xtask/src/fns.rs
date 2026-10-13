@@ -205,6 +205,7 @@ mod load_calculator;
 mod load_phase5_bodies;
 mod load_seals;
 mod load_universe_file;
+mod lock_text;
 mod mask_std_calls;
 mod mutate;
 mod nz;
@@ -266,6 +267,7 @@ mod run_calculator_bin;
 mod run_gate_table;
 mod run_legacy_table;
 mod scores_match;
+mod settle_lock;
 #[cfg(test)]
 mod shell_session;
 mod subject;
@@ -529,7 +531,6 @@ pub(crate) use walk_cells::walk_cells;
 pub(crate) use walk_rs::walk_rs;
 pub(crate) use witness::witness;
 pub(crate) use workspace_root::workspace_root;
-pub(crate) use write_lock::write_lock;
 pub(crate) use xtask_writes_findings::xtask_writes_findings;
 pub(crate) use zoom::zoom;
 

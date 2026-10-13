@@ -1,37 +1,52 @@
 # JoInn Phase 8 Implementation Plan
 
-**Visual truth: what a body means on screen is witnessed · the screen-reader tree from the same cut · every intent by keyboard**
+**The strand and the tower: four letters, one reader, and a fold that is free**
 
-Author: AJ, with Claude · Draft 0.1 · October 3, 2026
+Author: AJ, with Claude · Draft 1.0 · October 12, 2026 · replaces Draft 0.1 (visual truth), which is held (§9)
 
-> **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going. This phase runs inside `docs/Plans/JoInn Run 7.2B-9.md`; its tripwires apply.
+> **Every decision in this plan is final.** Nothing here waits on AJ. Cursor never stops to ask AJ anything, and no file in this phase is typed by AJ. If a step can't be done the way the plan says, Cursor follows §0.3 (Snags) and keeps going. The phase runs as **one unit with one stop** (AJ, 5 Oct).
 
 ---
 
 ## For AJ: this plan in plain English
 
-**What Phase 8 is.** JoInn's gate already protects what a cell *computes*. Phase 8 protects what it *means on screen*: who you can click, what a screen reader says, and what you can do. Those three things are recorded once as **witnesses**, and from then on any change to a body must keep them, or it is refused. Style is free: colours, names and exact pixel positions may change.
+**What Phase 8 is.** The first phase of the DNA base from Part VIII, rebuilt around what we worked out on 12 Oct. It makes three things real and lets you see them:
 
-**Three witnesses, three questions.**
+1. **The letters.** A, T, G, C as two bits each, with pairing built into the bits.
+2. **The reader.** It reads letters three at a time through the one code table (codex 1) and names the amino acids. It is versioned on its own; the table is frozen.
+3. **The tower.** A strand's codons sit on the segments of a Hilbert curve. The curve is the fold: it puts every codon at an exact place, for free, and every order of the curve holds the one before it. The nodes between segments can point to other genes: the gene pool.
 
-| Witness | Question it answers | Truth (checked) | Style (free) |
+**What you'll see at the end** (about five minutes, §6.2): the strand as a turning 3D helix with its partner strand, codons grouped and named, a mismatched letter glowing; then the same strand folded flat on its Hilbert curve, where zooming out shows the order below it, and a node opens into the gene it points to.
+
+**What it does not do yet.** It doesn't run proteins, build cells, form membranes, or rebuild the calculator. Those are the next phases (§8). Phase 8 makes the material and the fold true first.
+
+**The bit layout (today's decision, now in the plan):**
+
+| Letter | Bits | 1st bit: strength | 2nd bit: shape |
 |---|---|---|---|
-| **Owners** | Who owns pixels in this view? | the set of addresses you can click | where exactly, what colour |
-| **Reader** | What does a screen reader hear? | roles, values, order, what can be done | names and labels |
-| **Intents** | What can you do here? | the list of inputs you can fill | how you reach them |
+| A | 00 | weak | big (purine) |
+| T | 01 | weak | small (pyrimidine) |
+| G | 10 | strong | big |
+| C | 11 | strong | small |
 
-**Three cuts, one truth.** The picture, the clicking, and the screen-reader tree all come from the same cut of the universe. Zooming in, for a screen reader, is opening a group. Zooming out is closing it.
+A letter's partner is the same letter with its **second bit flipped**. So A↔T and G↔C, exactly as Part VIII says, and the big/small question from 8 Oct is answered without extra bits.
 
-**Keyboard only.** The calculator becomes fully usable with no mouse: Tab moves between inputs, you type, Enter sends it. Enter on a lens tile zooms into it; Backspace zooms back out. If the focused thing is off screen, the camera brings it into view.
+**Two facts I checked by program before writing them here:**
 
-**Enter on an empty box** (left open since Phase 6): does nothing and the terminal says so. Nothing is sent.
+- **A codon and its partner always have opposite parity**, for all 64 codons, and no codon is its own partner. So the reader can tell which strand it's holding just by counting ones. That's why the opposite protein can't be read by mistake.
+- **The tower properties hold through order 6:** every order's strand, filtered to its upper floors, is exactly the order below; every curve is its own mirror; every order nests inside the next.
+
+**One correction to what I told you this morning.** I said the middle codon of a strand is "the single highest-floor bridge." That's wrong. Every order has **three** top-floor bridges (at ¼, ½ and ¾ of the strand), and the middle codon is the centre one of the three. It's still a natural centre, just not unique. The plan uses the corrected fact.
 
 **What I decided (say if you disagree):**
-- **Names aren't witnessed.** A screen reader saying "Total" instead of "Sum" is a rename, which JoInn allows silently (names are regulatory since Phase 0). Saying "6" instead of "5", or losing the result, is refused.
-- **Golden pixel images are dropped as witnesses.** Comparing pictures across graphics cards needs a tolerance that is either too tight or too loose. The roadmap said to pre-agree this fallback, and owners already catch everything that matters. Pixels are still compared exactly inside one run (regrow, rebase).
-- **JoInn builds its own reader tree**, exact and testable; the real screen reader (Windows Narrator) gets it through AccessKit, the one new library in this run.
 
-**What you do at the end** (about four minutes, §6.2): run the calculator with the keyboard only, and, if you like, turn on Narrator and hear it read the sum.
+- **2D only in this phase.** Even dimensions (4D, 6D) come later; the tower code is written so dimension is one number, but only 2 is built and tested.
+- **A chromosome uses the smallest order that holds its codons.** Slots past the last codon are **silent**: not stored, not null, the reader simply finds nothing there. This follows D25 (nothing is never stored); this plan treats D25 as accepted.
+- **Start and stop stay as codons too.** The curve's first and last nodes are the chromosome's ends; START and STOP codons still mark where each protein begins and ends inside it. Both, not one or the other.
+- **Nodes hold at most one gene reference each**, by hash. A gene can't contain itself, directly or through others; that's refused when it enters the pool. Nodes open only when asked (zoom or request), never all at once.
+- **The reader holds exactly one codex (1).** Reading a strand that names another codex is refused. Holding several codices side by side (the mitochondria case) is a later decision.
+- **Organelles are listed, not built.** The runtime declares what it inherits (screen, input, storage, clock); a strand may only touch an organelle the runtime lists. No new organelle is written in this phase.
+- **Membranes and roles from the fold** (closed folds, faces-out from geometry) are written down as research, not built. They need the reader running proteins first.
 
 ---
 
@@ -40,25 +55,26 @@ Author: AJ, with Claude · Draft 0.1 · October 3, 2026
 | | |
 |---|---|
 | **Plan file** | `D:\JoInn\docs\Plans\JoInn Phase 8 Implementation Plan.md` |
-| **Code** | `D:\JoInn\joinn\`. No new crate. New external dependencies: `accesskit` and `accesskit_winit`, in `joinn-shell-desktop` only (§2.9) |
+| **Theory it builds** | `docs/Theory/` Part VIII *JoInn DNA, Codons and Amino Acids* (D1–D30), with the 12 Oct additions in §2 here |
+| **Code** | `D:\JoInn\joinn\`. **Three new crates** beside today's code: `joinn-strand`, `joinn-codex`, `joinn-tower`. The views go in `joinn-visual` and `joinn-shell-desktop`. Nothing existing is deleted |
+| **New external dependencies** | none |
 | **Standing rules** | `AGENTS.md` as updated by P8-01 (Appendix A) |
-| **Unit of work** | a **chunk** (A, B or C); commit ids `P8-NN` |
-| **End of a chunk** | stop report (§0.2), commit, push, ledger, tripwires, continue per the run plan |
-| **Who decides** | every decision is in §2. Cursor decides module layout, function bodies, private representations, the focus ring's shape, and error wording where §2 gives none |
-| **Who checks** | Claude after the run, from a fresh clone; CI on every push; AJ at the end of the run |
-| **Input** | rule 67 |
+| **Unit of work** | the whole phase; commits `P8-01` … `P8-12`; **one stop**, at the end |
+| **Who decides** | every decision is in §2. Cursor decides module layout, private representations, function bodies, colours inside the style table, and error wording where §2 gives none |
+| **Who checks** | Claude, from a fresh clone, after the stop; CI on every push; AJ at the end (§6.2) |
+| **Speed** | run only the affected crates' tests per commit (`cargo test -p <crate>`); `gate all` and the full workspace build run **once**, at P8-11. Use the existing `stop-check` |
 
 ### 0.1 The commit report
 
-As Phase 7.2's §0.1, plus from P8-05 on: `Visual:     cargo xtask visual → <last line>`.
+As Phase 7.4, plus from P8-04 on: `Tower:      cargo xtask tower → <last line>`.
 
 ### 0.2 The stop report
 
-As Phase 7.2's §0.2, at `docs/Findings/phase-8-stop-<letter>.md`, adding `cargo xtask grove`, `zoom`, `links`, and from P8-05 on `cargo xtask visual`, from P8-08 on `cargo xtask inverse`. Then the run plan's §5 lines.
+At `docs/Findings/phase-8-stop.md`: every command in §3 with its last line, `gate all`, `corpus verify`, CI status, and any snags.
 
 ### 0.3 Snags
 
-As Phase 7.2's §0.3.
+As Phase 7.4: write the snag in the stop report with the exact output, take the plan's stated fallback if there is one, and keep going. Never widen a check to make it pass.
 
 ---
 
@@ -66,27 +82,28 @@ As Phase 7.2's §0.3.
 
 ### In scope
 
-- **The reader tree** (`A11yTree`) from the CPU cut, exact, in `joinn-visual` (§2.2).
-- **Roles** grow from four to six (§2.3).
-- **Witnesses**: owners, reader, intents, for three subjects, written once under `corpus/phase8/visual/` (§2.4–§2.6).
-- **`check_visual`**: a body or universe against its witnesses (§2.7).
-- **The inverse contract** for every row kind (V3, §2.8), including text: point ↔ character index.
-- **Keyboard**: focus, Tab order, typing, Enter, expand and collapse by zoom (§2.9).
-- **The AccessKit bridge** in the shell (§2.10).
-- **Parity**: the test host and the desktop session produce identical witnesses (V10).
-- **Gate 8**, findings `docs/Findings/phase-8-visual-truth.md`, the freeze.
+- **The `gates.lock` fix** from the Phase 7.4 review (compare before writing). Opens the phase.
+- **Letters and strands** (`joinn-strand`): the bit layout, partners, partner strands, packing, hashing.
+- **The codex and the reader** (`joinn-codex`): codex 1 exactly as Part VIII §6.1, reading frames, translation into amino-acid chains, refusals, the runtime/codex version split.
+- **The tower** (`joinn-tower`): the 2D Hilbert fold, segment levels, the level filter, mirror and nesting checks, chromosomes, silent slots, the gene pool and node expansion.
+- **The organelle list**: a declared, read-only list in the runtime.
+- **Two views**: the 3D strand view (D30, first) and the flat fold view.
+- **Witnesses** for all of the above, written once under `corpus/phase8/`.
+- **Gate 8**, findings, freeze.
 
 ### Out of scope
 
 | Not now | Why it is tempting |
 |---|---|
-| Golden pixels as witnesses, perceptual tolerance | Dropped, as the roadmap pre-agreed (§2.1) |
-| A fifth gate check | Visual truth is checked by `check_visual`, beside the gate. The gate keeps four checks (rule 49, R3) |
-| Changing what Phase 3's descriptions hold | They are compared against, not changed |
-| Mobile, web, touch intents | Phase 11 |
-| Editing anything by keyboard beyond filling in-ports | The creator, Phase 9 |
-| Speech output of JoInn's own | The platform's screen reader speaks; JoInn supplies the tree |
-| Any grammar change; changing any existing corpus file | No new grammar. New files only in `corpus/phase8/visual/` |
+| Running proteins (executing amino acids) | It's the next step; Phase 8 only reads and names them |
+| Membranes, roles, cells from proteins | Need running proteins first (§8) |
+| Rebuilding the calculator from a strand | The milestone after that (§8) |
+| Dimensions other than 2 | Written as a parameter, built and tested at 2 only |
+| Moore curve or other fold variants | Research (R130) |
+| A second codex | Refused by the reader (§2.5) |
+| Switches (D27) | Their own phase |
+| Changing any existing grammar, crate or corpus file | New crates and new corpus files only |
+| The visual-truth work (old Draft 0.1) | Held (§9) |
 
 ---
 
@@ -94,251 +111,267 @@ As Phase 7.2's §0.3.
 
 All **DECIDED**.
 
-### 2.1 Truth and style
+### 2.1 Letters
 
-| Witness | Truth (hashed, checked) | Style (free) |
-|---|---|---|
-| **Owners** | per view, the sorted set of owner addresses with at least one non-edge pixel | pixel positions, colours, stroke shapes |
-| **Reader** | per view, the tree's shape, order, roles, values, actions, `expanded` | names and labels |
-| **Intents** | per environment, the ordered intent set | key bindings |
-| **Golden pixels** | — (not a witness) | everything |
-
-**Why owners and not the pick map.** A label's strokes belong to their cell, so a relabel moves pixels without changing who owns them. The owner set is what *means*; the map is where.
-
-### 2.2 The reader tree
-
-`a11y(&scene, &camera) → A11yTree`, in `joinn-visual`, built **from the CPU cut** (rule 72 extended: three cuts, one truth). A node is in the tree when its owner can own a pixel in the cut, or it is an ancestor of one.
-
-| Thing | Node |
+| Letter | Bits |
 |---|---|
-| universe, open galaxy, open system | `group`, `expanded yes`, children in layout order |
-| lens node (folded system or galaxy) | `group`, `expanded no`, no children |
-| body below Summary | `group`, `expanded no`, no children |
-| body at Summary or Full | `group`, `expanded yes`, its cells as children. A link is never a body's child: it sits after the bodies of the lowest open level that contains all its members |
-| cell | `cell`; children its surface ports in position order |
-| in-port on the surface | `input`, `value <printed>` or `value -`, `actions focus set` |
-| out-port on the surface | `output`, `value <printed>` or `value -` |
-| refused cell | `refusal` |
-| link (Phase 7.3) | `relation`; unordered: `members <n>`; ordered: `order 1 of n` … on each member reference |
+| A | `00` |
+| T | `01` |
+| G | `10` |
+| C | `11` |
 
-Children are ordered as the layout orders them: galaxies, systems, slots, then cells in layout order, then ports by position. Links come after the bodies at their level, in link-id order.
+- **Partner** = flip the low bit. `partner(partner(x)) = x`; no letter is its own partner.
+- **Strength** = the high bit (A, T weak; G, C strong). Pairing never changes strength.
+- **Shape** = the low bit (A, G big; T, C small). Pairing always swaps it.
+- A letter alone means nothing (D5). No API gives a letter a name other than A, T, G, C.
 
-**Text form.** One node per line, two spaces of indent per depth:
+### 2.2 Strands
 
-```
-<role> <address> [value <v>] [actions <a,b>] [expanded yes|no] [members <n>] [order <i> of <n>]
-```
+- A strand is a row of letters with a head and a tail, read head to tail (D6).
+- **Partner strand** = every letter's partner, in reverse order (Part VIII §3.3).
+- **Packing**: four letters to a byte, first letter in the two high bits; a strand's length in letters is stored beside it so a last partial byte is exact.
+- **Identity** = the existing JoInn hash over the packed bytes plus the length (D8). A strand and its partner have different hashes.
+- **Text form** (for corpus files): the letters on one line, grouped in threes by single spaces from the first letter, `\n` at the end. Line 1 of every strand file is `codex 1`.
 
-Addresses print as Phase 7.2's owners: in a single-body scene `sum@2`, in a universe `<alias>.sum@2` (`calc.sum@2`, `b0000.sum@2`), plus `system g0s00`, `galaxy g0`, `link e0`. The **truth face** is exactly this text; the **label face** is the same lines with ` label "<label>"` appended and is never hashed or witnessed.
+### 2.3 Codons and parity
 
-### 2.3 Roles
+- A codon is three letters, 6 bits, 64 in all (D9). All three letters carry meaning (D13).
+- **Parity** of a codon = the number of 1 bits in its 6 bits, mod 2.
+- **The partner codon** (the three letters' partners, reversed) **always has the opposite parity.** No codon is its own partner. (Checked for all 64 by program, 12 Oct.)
+- The reader reports a strand's **side**. `AAT` (START) is `00 00 01`: one 1 bit, **odd**. `ATT` (STOP) is `00 01 01`: two, **even**. So a strand whose START reads odd is `sense`; one whose START reads even is `partner`. P8-03 prints both parities from code as a check on this text.
 
-`joinn_host::Role` grows from four to six: `Cell`, `Input`, `Output`, `Refusal` (unchanged, same strings) plus **`Group`** and **`Relation`**. Phase 3 descriptions never produce the new two, and their hashes do not move (a test asserts `calculator.desc` still hashes to its golden). Rule 65 still holds: this is the accessibility role, not a cell's role.
+### 2.4 Codex 1
 
-### 2.4 Witness views and states
+Exactly Part VIII §6.1, unchanged:
 
-| Subject | States | Views |
-|---|---|---|
-| `corpus/phase2/calculator.body` | `fresh`; `summed` (after `a = "2"`, `b = "3"`, sum 5); `refused` (after `a = "two"`) | the four Phase 6 standard viewports (fit); and at 1920 × 1080, focus the body's centre, pin `(960, 540)`, at level −4 (`dot`), −1 (`glyph`), 1 (`summary`), 3 (`full`); the standard viewports are named as Phase 6 names them |
-| `corpus/phase7/calculator.contact` | the same three | the same eight |
-| `corpus/phase5/universe.universe` | fresh | its frame at 1920 × 1080; level −4 and level 3 at the centre of `calc` |
+| Codon | Means | Partner | Means |
+|---|---|---|---|
+| `AAT` | START | `ATT` | STOP |
+| `AAA` | pair | `TTT` | split |
+| `CAC` | build | `GTG` | case |
+| `AAC` | refer | `GTT` | return |
+| `CAA` | sense | `TTG` | show |
+| `GAA` | keep | `TTC` | recall |
+| `AAG` | grant | `CTT` | revoke |
 
-**Predicted bands** for a 40 × 24 body (size 40) at the four zooms: level −4 `s = 5/2` → **dot**; level −1 `s = 20` → **glyph**; level 1 `s = 80` → **summary**; level 3 `s = 320` → **full**. None sits in a fade window (`10s` vs `11T`: 25 < 44; 200 vs 44 and < 352; 800 vs 352 and < 2640; 3200 ≥ 2640).
+All other 50 codons are **reserved**: reading one is a refusal, never a guess (D18 treated as accepted). The table lives in `joinn-codex` and nowhere else (D11). A test asserts that for every row, the partner of the codon names the opposite amino acid (D19), and that every reserved codon's partner is reserved.
 
-### 2.5 Witness files
+### 2.5 The reader and its versions
 
-Under `corpus/phase8/visual/`, three per subject (`calculator_body`, `calculator_contact`, `universe`):
+- `translate(strand) → Verdict<Vec<Protein>>`: find each START in frame order, read in threes until STOP; a protein is the list of amino acids between them (D10, D20).
+- Refusals (rule 35 wording: what was found, where, what acceptance looks like):
+  - reserved codon: `reader: codon TAA at letter 12 names nothing in codex 1; acceptance is a codon codex 1 names`
+  - START without STOP: `reader: start at letter 0 has no stop; acceptance is a stop in frame`
+  - wrong codex: `reader: strand names codex 2; this reader holds codex 1`
+- **Two version tracks.** The strand file's `codex 1` line pins the table. The reader's own version (`reader 8.0`) is separate and printed by `cargo xtask codex`. Changing the reader never changes what a codex-1 strand means; a test reads every Phase 8 strand witness and compares to its witnessed protein list byte for byte.
+- **The partner reading.** `translate(partner(s))` for a strand of one protein gives the opposite protein: the opposites in reverse order (D19). Tested on every protein witness.
+
+### 2.6 The tower (2D)
+
+**Backbone.** At order *n* the curve has 4ⁿ nodes and 4ⁿ − 1 segments. Node *d* (0 … 4ⁿ − 1) is at integer point `point(n, d)`, the standard Hilbert map. All integer, no floats.
+
+**Facts the code must witness** (all checked by program for orders 1–6, 12 Oct):
+
+| # | Fact |
+|---|---|
+| T1 | node 0 is at (0, 0); the last node is at (2ⁿ − 1, 0) |
+| T2 | consecutive nodes are one unit step apart |
+| T3 | **nesting**: `point(n, d) >> 1 == point(n − 1, d >> 2)` for every *d* |
+| T4 | **level** of segment *i* = the number of trailing 3s in *i* written in base 4 |
+| T5 | **level filter**: the directions of order *n*'s segments with level ≥ 1, in order, are exactly order *n − 1*'s directions |
+| T6 | **mirror**: reverse the direction list, reverse each direction, swap E↔W: the list is unchanged |
+| T7 | **top floor**: exactly three segments have level *n − 1*, at indices 4ⁿ⁻¹·k − 1 for k = 1, 2, 3; the middle segment is the centre one |
+
+**Direction** of a segment is one of N, E, S, W, derived, never stored.
+
+**Chromosome.** A chromosome is a strand of codons placed on a tower:
+
+- codon *k* (counting from the strand's head, in frame from letter 0) sits on segment *k*;
+- its **order** is the smallest *n* with 4ⁿ − 1 ≥ the codon count (order 0 holds nothing: the empty chromosome);
+- segments past the last codon are **silent**: not stored and not null; the reader returns nothing for them;
+- a chromosome's identity is its strand's hash; the order is derived, never stored.
+
+**Zoom out = level filter.** The chromosome at floor *f* is the codons on segments with level ≥ *f*. `cargo xtask tower` prints each floor of every witness chromosome.
+
+**Dimension** is a parameter in the API (`Dim(2)`); any other value is refused: `tower: dimension 4 is not built; acceptance is dimension 2`.
+
+### 2.7 The gene pool
+
+- Each **node** of a chromosome may hold **one gene reference**: the hash of another chromosome in the pool. A node with no reference holds nothing (silent).
+- References are written in a chromosome's file as lines after the strand: `node <d> gene <hash>`, sorted by *d*.
+- The **pool** is a content-addressed store of chromosomes, using the existing hash store.
+- **No self-containment.** A gene that reaches itself through references is refused when it enters the pool: `pool: gene <h> contains itself through <h1> → <h2> → <h>; acceptance is a pool without cycles`.
+- **Grow on demand.** `expand(chromosome, node)` returns the referenced chromosome; nothing is read from the pool until asked. A test counts pool reads and asserts zero for an unexpanded chromosome.
+- A reference to a hash not in the pool is refused at expansion: `pool: node 5 names gene <h>, which the pool does not hold`.
+
+### 2.8 Organelles
+
+`joinn-codex` (the runtime side) holds a fixed list:
+
+| Organelle | Used by amino acids |
+|---|---|
+| `screen` | show |
+| `input` | sense |
+| `store` | keep, recall |
+| `clock` | sense |
+
+The list is printed by `cargo xtask codex`. Phase 8 only declares it; a test asserts every world amino acid (sense, show, keep, recall) names at least one listed organelle, and every organelle is named by at least one amino acid. Grant/revoke act on membranes, not organelles.
+
+### 2.9 Witnesses
+
+Under `corpus/phase8/`, written once (rule 79 style: an existing file is refused, never rewritten):
 
 | File | Holds |
 |---|---|
-| `<subject>.owners.txt` | for each state then view, a header line `view <state> <view>` and one owner per line, sorted |
-| `<subject>.reader.txt` | for each state then view, `view <state> <view>` and the tree's truth face |
-| `<subject>.intents.txt` | for each environment (`test-host`, `desktop`), `environment <name>` and one intent address per line, in Tab order |
+| `strands/empty.strand` | `AAT ATT` (the empty protein: nothing, D25) |
+| `strands/pair-split.strand` | `AAT AAA TTT ATT` |
+| `strands/twelve.strand` | START, all twelve amino acids in table order, STOP |
+| `strands/reserved.strand` | START, `TAA`, STOP (must be refused) |
+| `strands/*.proteins.txt` | the reader's output for each, or its refusal line |
+| `strands/*.partner.txt` | the partner strand and its proteins |
+| `tower/order-1.txt` … `order-4.txt` | each order's nodes, segment directions and levels |
+| `tower/twelve.chromosome` | `twelve.strand` placed on its tower, with two gene references |
+| `tower/twelve.floors.txt` | the chromosome at every floor |
+| `pool/cycle.chromosome` | two chromosomes referencing each other (must be refused) |
 
-Bytes with `\n` line ends, UTF-8, no trailing spaces. `cargo xtask visual print <subject> --out <path>` writes a file **only when it does not exist** and only under `corpus/phase8/visual/`; an existing file is refused (`visual: <path> exists; acceptance is a new witness. A witness is written once.`). Each file is added to `corpus/hashes.txt` under a dated comment with the tag `joinn.visual.v1`, and to `corpus verify`. **`corpus verify` then prints 53** (44 + 9). This is the run's only corpus addition before Phase 9, and T1 ignores it.
+Each file goes in `corpus/hashes.txt` under a dated comment with the tag `joinn.dna.v1` and in `corpus verify`. Cursor prints the new `corpus verify` count.
 
-Witness text files are artifacts of the existing **transcript** kind for the mutation catalogue (`DropLine`, `SwapLines`), so no new grammar and no new mutation (rule 52 does not apply).
+### 2.10 The views
 
-### 2.6 Intents and Tab order
+**Strand view (3D, first; D30).** A double helix turning slowly on its own axis: one rung per letter pair, the four letters in four style colours, rungs grouped in threes with a small gap, each codon tinted by its amino acid (reserved codons grey), START and STOP as end caps, the amino acid's name in the stroke font beside its codon. A **mismatched pair** (a letter whose partner is wrong) **glows**. The camera moves along a fixed path only (Part VIII §11.1, gentle 3D): arrow keys move along the strand, `+`/`-` move in and out. No free orbit.
 
-The intent set is Phase 3's (rule 28: one address per in-port of ∂(body)); for a universe, the union over bodies in layout order. **Tab order is the intent set's order.** A witness lists it per environment; V10 requires the two lists equal.
+**Fold view (2D).** The chromosome drawn on its Hilbert curve: each segment coloured by its codon's amino acid, silent segments as thin grey, nodes with a gene reference drawn as a small ring. Zoom out shows floor by floor (the level filter, §2.6); Enter on a ringed node opens its gene in place (§2.7). Exact integers throughout; the existing zoom and pick machinery is reused.
 
-### 2.7 `check_visual`
+Both views draw from the reader's and the tower's output; neither computes meaning itself (rule 72 in spirit: one truth, two pictures). Picking a codon in either view returns the same address: `<strand hash>.codon<k>`.
 
-`check_visual(subject, witnesses) → Verdict<()>` in `joinn-visual`: derive all three witnesses for the subject and compare with the files. A difference refuses, naming the file, the view and the first differing line, and what acceptance looks like (rule 35):
+`joinn-shell-desktop` opens them with `--strand <file>` and `--fold <file>`; Tab switches between the two views of the same file.
 
-```
-visual: calculator_contact.owners.txt view summed full: missing sum@2; acceptance is every witnessed owner
-```
-
-It lives beside the gate, not in it (rule 49). `cargo xtask visual` runs it over the three subjects, and over each subject's **neutral edit** (a label change) and a **style plant** (every style colour rotated by one), both of which must pass, then prints its last line.
-
-### 2.8 The inverse contract (V3)
-
-Every row kind in the tables declares its inverse; `cargo xtask inverse` checks each, over the calculator (both forms), `universe.universe` and the grove at Phase 7.2's §2.12 views:
-
-| Row kind | Inverse | Checked |
-|---|---|---|
-| Body, cell, port, frame, lens node (shapes) | CPU inside test | already: two pickers agree |
-| Stroke (text) | `index_at(point) → character index` and `caret(index) → point`, exact | round trip for every index of every drawn string |
-| Chart | rebase back is identity | every chart row: `rebase(A→B→A)` = identity |
-| Segment (link) | CPU inside test | already: Phase 7.3 picking |
-| **Every row** | its owner has a node in the reader tree | every row, every view in which it can own a pixel |
-
-A row whose owner has no reader node is refused: `inverse: <row kind> row <n> owns pixels for <owner>, which has no reader node; acceptance is a face for every owner`. **Shown then reverted** in P8-08: a stroke row whose owner is removed from the tree.
-
-### 2.9 Keyboard
-
-Focus is a session value: an address in the intent set, or a group node, or none.
-
-| Key | Does |
-|---|---|
-| Tab / Shift+Tab | next / previous intent in Tab order (wraps) |
-| typing | fills the focused input's box (Phase 6 typing) |
-| Enter on an input with text | sends it, as Phase 6 |
-| **Enter on an empty input** | sends nothing; prints `enter: empty box at <address>; acceptance is a value` |
-| Escape | clears the box |
-| Enter on a folded node or collapsed body | frames it (zoom in = expand) |
-| Backspace with an empty box | frames the parent (zoom out = collapse) |
-| `F`, `+`, `-`, arrows | as Phase 7.2 |
-
-**Focus follows into view:** when focus moves to an address not visible, the camera frames that body (Phase 7.2's `frame`); otherwise the camera does not move. A **focus ring** (style 11) is drawn around the focused port; it is owned by that port, so owners do not change.
-
-### 2.10 The AccessKit bridge
-
-`joinn-shell-desktop` maps the `A11yTree` to AccessKit nodes after any tick that changed the tree, through `accesskit_winit`. Roles map: group → `Group`, cell → `GenericContainer`, input → `TextInput`, output → `Label` with value, refusal → `Alert`, relation → `List` (ordered) or `Group`. Labels go to the node name; values to the value. An AccessKit action (`Focus`, `SetValue`, `Default`) becomes the same intent the keyboard would send. Versions: the newest `accesskit_winit` that supports the workspace's `winit`; if none does, it is a snag: the tree, the witnesses and the keyboard still ship, and the bridge goes to the findings. `cargo xtask layers` gains `accesskit in joinn-shell-desktop` and refuses it anywhere else.
-
-### 2.11 Parity (V10)
-
-The headless test host (Phase 3) and the desktop session (no window) each produce the three witnesses for every subject and state. They must be byte-identical. For the full-band view of a single body, the reader tree's cells and ports must also agree with Phase 3's `Description` roles and values (two derivations, one truth).
-
-### 2.12 Invariants
+### 2.11 Invariants
 
 | # | Invariant | Commit |
 |---|---|---|
-| **V153** | Three cuts, one truth: picture, pick and reader tree come from one cut | P8-03 |
-| **V154** | Meaning is witnessed, style is not: a relabel or restyle passes `check_visual`; losing an owner, a value, a role or an intent is refused | P8-06 |
-| **V155** | A witness is written once; a different derivation later is a refusal, never a rewrite | P8-05 |
-| **V156** | Every intent is reachable by keyboard; hover carries nothing (V9) | P8-09 |
-| **V157** | Every row has an inverse and a face (V3) | P8-08 |
-| **V158** | Two environments, one meaning: the test host and the desktop produce identical witnesses (V10) | P8-07 |
-| **V159** | Zooming in is expanding a group; zooming out is collapsing it | P8-02 |
+| **V160** | Partner is the low bit: `partner` is an involution with no fixed letter, and never changes strength | P8-02 |
+| **V161** | A codon and its partner have opposite parity; no codon is its own partner | P8-03 |
+| **V162** | The table lives in the reader only; every codon's partner names its opposite; reserved stays reserved | P8-03 |
+| **V163** | The reader's version never changes a codex-1 strand's meaning | P8-05 |
+| **V164** | The fold is free and exact: T1–T7 hold for orders 1–6 | P8-06 |
+| **V165** | Every order holds the one before it (T3, T5) | P8-06 |
+| **V166** | Nothing is stored for nothing: silent slots and empty nodes cost no bytes | P8-07 |
+| **V167** | The pool has no cycles, and grows only when asked | P8-08 |
+| **V168** | Two views, one truth: strand and fold views pick the same codon address | P8-10 |
 
 ---
 
-## 3. What runs
+## 3. What Runs
 
 | Command | Prints | Exit 1 when |
 |---|---|---|
-| `cargo xtask reader <subject> [--state S] [--view V] [--labels]` | the tree's truth face (or label face) | refusal |
-| `cargo xtask visual` | per subject: `visual <subject>: <n> views, owners ok, reader ok, intents ok; neutral ok; style ok`; last line `visual: 3 subjects witnessed; meaning held under relabel and restyle` | any refusal |
-| `cargo xtask visual print <subject> --out <path>` | writes once (§2.5) | the file exists, or the path is elsewhere |
-| `cargo xtask inverse` | per row kind `inverse <kind>: <n> rows, inverse ok, face ok`; last line `inverse: every row has an inverse and a face` | a row without one |
-| `cargo xtask keys` | the keyboard script on both calculators (§4, P8-09), one line per key; last line `keys: calculator by keyboard: 2 + 3 = 5; every intent reached` | otherwise |
-| CI | new step `visual` after `zoom` on both jobs: `cargo xtask visual`, `inverse`, `keys` | the step fails |
+| `cargo xtask strand <file>` | the strand, its partner, side (`sense`/`partner`), hash; last line `strand: <n> letters, <c> codons, side <s>` | a letter that isn't A, T, G, C |
+| `cargo xtask codex` | the table, the organelle list, `reader 8.0`, `codex 1`; last line `codex 1: 14 named, 50 reserved; every partner names the opposite` | any table check fails |
+| `cargo xtask read <file>` | the proteins, then the partner's proteins; last line `read: <p> proteins; partner reads the opposites` | refusal |
+| `cargo xtask tower` | T1–T7 per order 1–6, then every witness chromosome by floor; last line `tower: orders 1-6 hold T1-T7; every order holds the one before it` | any fact fails |
+| `cargo xtask pool` | the pool, each expansion, the cycle refusal; last line `pool: no cycles; grows only when asked` | otherwise |
+| CI | new step `dna` after `zoom` on both jobs: `strand`, `codex`, `read`, `tower`, `pool` | the step fails |
 
 ---
 
 ## 4. The Commits
 
-### Chunk A: the reader tree
-
 | # | Commit | Delivers | Done when |
 |---|---|---|---|
-| **P8-01** | **Plan, rules, docs** | Commit this plan; `AGENTS.md` per Appendix A; Appendix B | `git show --stat HEAD` lists this plan, `AGENTS.md`, backlog, `decisions.md`, roadmap |
-| **P8-02** | **Roles and the tree** | §2.2, §2.3; V159 | Tests: `calculator.desc` golden unchanged; the grove at level −4 has 128 `group … expanded no` system nodes and no body nodes; at level −3 every system is `expanded yes`; framing a folded node (the Enter rule) turns its node `expanded yes` |
-| **P8-03** | **Three cuts, one truth** | the tree from the cut; V153 | Test over every Phase 7.2 §2.12 view: the set of tree addresses equals the CPU cut's owners plus their ancestors. `cargo xtask reader calculator_contact --state summed --view full` printed whole (paste it) |
-| **P8-04** | **Labels** | the label face from the regulatory region | Test: renaming `sum` changes the label face and not the truth face (bytes compared) |
-| — | **Stop A** | `phase-8-stop-a.md`, push, ledger, continue | — |
+| **P8-01** | **Plan, rules, docs, `gates.lock` fix** | First `git mv` the existing Draft 0.1 plan to `docs/Plans/JoInn Visual Truth Plan (held).md` unchanged (§9), then commit this plan at the Phase 8 path; `AGENTS.md` per Appendix A; Appendix B; `gates.lock` compares before writing (7.4 review) | `git show --stat HEAD` lists the plan, `AGENTS.md`, backlog, `decisions.md`, roadmap, the lock fix. A test: writing an unchanged lock leaves the file's bytes and timestamp untouched |
+| **P8-02** | **Letters and strands** | `joinn-strand`; §2.1, §2.2; V160 | Tests: all four partners; involution; strength unchanged; pack/unpack round trip for lengths 0–64; partner strand of the partner is the strand |
+| **P8-03** | **Codons and codex 1** | `joinn-codex`; §2.3, §2.4; V161, V162 | `cargo xtask codex` printed whole (paste it). Tests: parity flips for all 64; table pairs; reserved partners reserved; the parity of `AAT` and `ATT` printed |
+| **P8-04** | **The reader** | §2.5 translate and refusals | `cargo xtask read` on every strand witness (paste the last lines); each refusal pasted |
+| **P8-05** | **Strand witnesses and versions** | §2.9 strands; V163 | Witness files committed; `corpus verify` count printed. Test: bump the reader's version string; every witness still reads byte-identically |
+| **P8-06** | **The fold** | `joinn-tower`; §2.6 backbone, T1–T7; V164, V165 | `cargo xtask tower` printed whole. **Shown then reverted**: swap two node positions at order 3; T2 and T5 fail; paste both refusals |
+| **P8-07** | **Chromosomes and floors** | §2.6 chromosome, silent slots, floors; V166 | Test: a 20-codon strand gets order 3 and stores 20 codons, not 63; floors of `twelve.chromosome` printed; the empty strand is order 0 |
+| **P8-08** | **The gene pool** | §2.7; V167 | `cargo xtask pool` printed whole; the cycle refusal pasted; the zero-reads test passes |
+| **P8-09** | **The 3D strand view** | §2.10 strand view | Cursor runs `--strand corpus/phase8/strands/twelve.strand` once and pastes the first tick line, or writes `no display`. A headless test: the drawn rows hold 3 × codons rungs per strand side, one tint per codon, one glow when one letter of the partner is flipped |
+| **P8-10** | **The fold view** | §2.10 fold view; V168 | Headless tests: segment count drawn = codons + silent; floor zoom draws exactly the level-filtered segments; picking codon 7 in both views returns the same address |
+| **P8-11** | **Gate 8 and findings** | §6; `docs/Findings/phase-8-strand-and-tower.md` with every command's output, the predictions of §2.6 marked, and the 12 Oct correction (the middle codon is one of three top-floor bridges) | `gate all` exits 0 and prints `phase 8: 3/3`. **Shown then reverted**: (a) give `AAA` the meaning `split` (item 1 fails); (b) drop T5's level filter to level ≥ 0 (item 2 fails); (c) let a gene reference itself (item 3 fails) |
+| **P8-12** | **Docs and freeze** | README; `03-where-we-are.md` (the strand is read, the fold is free); glossary: *letter bits, strength bit, shape bit, partner strand, side, codex, reader version, tower, order, floor, level filter, chromosome, silent slot, gene pool, organelle*; `decisions.md` V160–V168; roadmap note | `gate all` from a fresh clone prints phases 0 … 8, exits 0; `git diff --stat <P8-01>..HEAD -- joinn/corpus` lists only `corpus/phase8/` and `hashes.txt` |
+| — | **Stop** | `phase-8-stop.md`, push, ledger | — |
 
-### Chunk B: witnesses and the inverse contract
-
-| # | Commit | Delivers | Done when |
-|---|---|---|---|
-| **P8-05** | **Witness files** | §2.4–§2.6; `visual print`; the nine files; hashes; V155 | The nine files committed; `corpus verify` prints `53 hash(es) match` (paste it). Test: `visual print` on an existing file is refused with §2.5's words. `git diff --stat <run start>..HEAD -- joinn/corpus` lists only the nine new files and `hashes.txt` |
-| **P8-06** | **`check_visual`** | §2.7; `cargo xtask visual`; V154 | `cargo xtask visual` printed whole (paste it). Tests: neutral and style plant pass; a plant that stops drawing `sum@2`'s port is refused naming `sum@2`; a plant where `b = "4"` (value 6) is refused naming the output's line; dropping the `cli_b@0` intent is refused |
-| **P8-07** | **Parity** | §2.11; V158 | Test: test host and desktop session witnesses byte-equal for every subject and state; the full-band reader nodes agree with `Description` roles and values |
-| **P8-08** | **The inverse contract** | §2.8; text `index_at` / `caret`; `cargo xtask inverse`; V157 | `cargo xtask inverse` printed whole (paste it). **Shown then reverted:** the faceless stroke row; paste the refusal |
-| — | **Stop B** | `phase-8-stop-b.md`, push, ledger, continue | — |
-
-### Chunk C: keyboard, the bridge, gate 8, freeze
-
-| # | Commit | Delivers | Done when |
-|---|---|---|---|
-| **P8-09** | **The keyboard** | §2.9; focus ring; `cargo xtask keys`; V156 | `cargo xtask keys` printed whole: on both calculators, Tab, `2`, Enter, Tab, `3`, Enter prints the transcript line `2 + 3 = 5`; Enter on an empty box prints §2.9's line and sends nothing; every intent reached by Tab. A session test (no window) on the grove at level −4: Tab from nothing focuses `b0000.cli_a@0` and frames `b0000` (the tick line is pasted) |
-| **P8-10** | **The AccessKit bridge** | §2.10 | `cargo xtask layers` passes with the accesskit line (paste it). A test maps the calculator's tree to AccessKit nodes and back to the same truth face. Cursor runs the window once and pastes the first tick line, or writes `no display`. If no compatible version exists: snag, and this commit delivers the `layers` refusal test only |
-| **P8-11** | **Findings** | `docs/Findings/phase-8-visual-truth.md`: every command's output from P8-02 on; *Predictions* (§2.4's bands, `corpus verify 53`) marked; **The adversary** (§7); **Golden pixels**: why they are not witnesses, in the roadmap's words | Every prediction marked |
-| **P8-12** | **Gate 8** | §6 items; `phase 8` after `phase 7.3`; lock row | `gate all` exits 0 and prints `phase 8: 3/3`. **Shown then reverted**, pasting each failure: (a) item 2 given item 3's `opposes`; (b) the reader tree built from all bodies instead of the cut (item 2 must fail at the level −4 view); (c) Tab skipping `cli_b@0` (item 3 must fail) |
-| **P8-13** | **Docs and freeze** | README, `03-where-we-are.md` (meaning is witnessed; the calculator by keyboard); glossary: *witness, owners witness, reader tree, truth face, label face, intent set, Tab order, focus, inverse contract, three cuts one truth*; `decisions.md` V153–V159; roadmap Phase 8 note | `gate all` from a fresh clone prints phases 0 … 8, exits 0; `corpus verify` 53; `git diff --stat <P8-01>..HEAD -- joinn/corpus` lists only the nine witnesses and `hashes.txt` |
-| — | **Stop C** | `phase-8-stop-c.md` with CI, push, ledger, tripwires, continue | — |
-
-Dependencies: in order. P8-06 depends on P8-05; P8-07 on P8-06; P8-12 on P8-06, P8-08, P8-09.
-
-**If something has to be cut for time:** the AccessKit bridge first (the tree and keyboard stay), then `--labels`. Never cut V153, V154, V155, V158.
+**If something has to be cut for time:** the fold view's node expansion (the pool stays, tested headless), then the strand view's glow. Never cut V161, V162, V164, V165, V167.
 
 ---
 
 ## 5. Test Strategy
 
-As Phase 7.2's §5. Witness tests compare bytes. No test asserts only that a tree "exists"; each asserts lines.
+As Phase 7.4. Every witness test compares bytes. No test asserts only that something exists. Tower facts are checked for every *d* at orders 1–6, not sampled.
 
 ---
 
 ## 6. Exit Gate 8
 
-Three items in `xtask/src/fns/gate_eight_items.rs`. The witness files are the controls: a control parses its transcript-kind artifact and answers whether the **subject's derivation differs from it**.
+Three items in `xtask/src/fns/gate_eight_items.rs`. Witness files are the controls.
 
 | # | Item | `control_artifact` | `opposes` | Control answers `true` when |
 |---|---|---|---|---|
-| 1 | **Who owns the screen is witnessed** | `corpus/phase8/visual/calculator_contact.owners.txt` | `DropLine(n)`, `n` = the line of `sum@2` in view `summed full` (Cursor computes it and prints it) | the derived owners differ from the artifact |
-| 2 | **What the reader hears is witnessed** | `corpus/phase8/visual/calculator_contact.reader.txt` | `SwapLines(a, b)`, the `cli_a@0` and `cli_b@0` input lines in view `fresh full` (printed) | the derived truth face differs from the artifact |
-| 3 | **Every intent, by keyboard, everywhere** | `corpus/phase8/visual/calculator_contact.intents.txt` | `DropLine(m)`, the first `cli_b@0` line (printed) | the derived intent set, in either environment, differs from the artifact |
+| 1 | **The reader holds the one table** | `corpus/phase8/strands/twelve.proteins.txt` | the codex with `AAA` and `TTT` swapped (printed) | the reader's output differs from the artifact |
+| 2 | **Every order holds the one before it** | `corpus/phase8/tower/twelve.floors.txt` | T5 filtering at level ≥ 0 (printed) | the derived floors differ from the artifact |
+| 3 | **The pool has no cycles** | `corpus/phase8/pool/cycle.chromosome` | admission without the cycle check | the cycle is admitted |
 
-The transcript kind has no neutral edit (as for `corpus/transcripts/`); the control must answer false on the subject and true on the mutant.
+### 6.1 Conditions for the next phase
 
-**Checks:**
+All of §4 done, gate 8 passing, every earlier gate passing (V28), CI green.
 
-1. On every adapter, every subject, state and view: GPU non-edge owners = CPU cut owners = the witness. Relabel and restyle pass; the `sum@2` plant is refused.
-2. Every subject's reader truth face equals its witness in both environments; the `b = "4"` plant is refused naming the line; the tree's addresses equal the cut's owners plus ancestors at every Phase 7.2 view of the grove.
-3. `keys` on both calculators prints `2 + 3 = 5` with no pointer event; every intent is reached by Tab; the `cli_b@0` drop is refused.
-
-### 6.1 Conditions for opening Phase 9
-
-The run plan's tripwires.
-
-### 6.2 AJ's check (end of run, about four minutes)
+### 6.2 AJ's check (end of phase, about five minutes)
 
 ```
 cd D:\JoInn\joinn
-cargo run --release -p joinn-shell-desktop -- corpus/phase7/calculator.contact
+cargo run --release -p joinn-shell-desktop -- --strand corpus/phase8/strands/twelve.strand
 ```
 
-1. Don't touch the mouse. Press **Tab**. A ring appears on the first input.
-2. Type `2`, press **Enter**. Press **Tab**, type `3`, **Enter**. The sum shows **5**.
-3. Press **Tab** until the ring is on an empty box and press **Enter**. Nothing happens; the terminal says the box is empty.
-4. *(Optional)* Turn on Windows Narrator (Ctrl+Win+Enter), Tab through, and listen: it should read the inputs and the sum's value. Turn it off the same way.
-5. Close the window. Tell Claude what worked.
+1. Watch the helix turn. You should see two strands, rungs in groups of three, and the amino acid names beside them.
+2. Arrow keys move along it. Find START at one end and STOP at the other.
+3. Press **Tab**. The same strand lies flat on its Hilbert curve, coloured by amino acid.
+4. Press **-** a few times. The curve simplifies floor by floor; each floor is the order below.
+5. Find a small ring on a node and press **Enter**. The gene it points to opens there.
+6. Close the window. Tell Claude what you saw and what felt wrong.
 
 ---
 
-## 7. Risks
+## 8. What Comes After (for the roadmap, not this phase)
+
+| Next | What it proves |
+|---|---|
+| **8.1 Proteins run** | The reader executes chains (D21) using the Floor's Rust for pair/split/build/case; the partner protein undoes |
+| **8.2 Fold to membrane** | Closed folds become boundaries; faces-out/in from geometry, holds/reacts from the amino acid (R128, R129) |
+| **8.3 The cell from a strand** | A protein chain inside a derived membrane is a cell, drawn by today's host |
+| **8.4 The calculator from a strand** | The counting calculator regrown from DNA, with Phase 7.4's hand-built version as its witness |
+
+---
+
+## 9. What Happens to Draft 0.1 (Visual Truth)
+
+The 3 Oct plan (owners, reader tree, intents witnessed; keyboard; AccessKit) is **held unchanged** as `docs/Plans/JoInn Visual Truth Plan (held).md`. Its work is still wanted, but its subjects (`calculator.body`, `calculator.contact`) are the bodies Part VIII will rebuild from strands, so it waits until 8.4 and is then replanned against the strand-built calculator. Its open items R108–R110 stay open.
+
+---
+
+## 10. Risks
 
 | Risk | What to do |
 |---|---|
-| **The adversary: witnesses too tight or too loose.** The roadmap's fear was pixels; here it is owners. If a harmless restyle changes the owner set (a label's strokes vanish at some band), owners are too tight; if dropping a port still passes, too loose | Both plants test it. A plant that passes or fails the wrong way is a snag with its line; never loosen `check_visual` |
-| AccessKit and winit versions don't meet | Snag; bridge to findings (§2.10) |
-| Phase 3's description hash moves when `Role` grows | T1 would fire. The new variants must not touch `print_description` for existing roles |
-| A witness differs between Windows and Linux | A truth problem (line endings, sort order). Rule 48. Never write two witnesses |
+| The Hilbert map has an off-by-one in rotation that only shows above order 3 | T1–T7 are checked for every node at orders 1–6, and the order-1 … 4 witnesses pin the exact output |
+| 3D in the existing host is more work than expected | Snag: ship the strand view as a flat ladder (same rows, no turn) and note it; the glow and tints still ship |
+| Packing order disagrees between platforms | Rule 48: one byte order, defined in §2.2; a witness differing between Windows and Linux is a truth problem |
+| The silent-slot rule tempts a "blank codon" | There is none. A test asserts no API returns a codon for a silent slot |
+| The gene pool's cycle check is slow on deep pools | Phase 8 pools are tiny; note the depth in findings for later |
 
 ---
 
-## 8. Open Items
+## 11. Open Items
 
 | ID | Topic | Question |
 |---|---|---|
-| **R108** | Three cuts, one truth | R101 asked if "two cuts, one truth" is the rule for every derived view. Phase 8 adds a third. Is every future view (print, PDF, a calc package) a cut too? |
-| **R109** | What a reader says for a force | A force owns no pixel (rule 64), so the reader never names `combine`. Should a person be able to ask *why* the sum is 5? |
-| **R110** | Witnesses in DNA | Visual witnesses live in `corpus/`, beside the body. Should a body's founding visual witnesses be part of its coding region, like founding witnesses? |
+| **R128** | Membrane from the fold | Is a membrane a closed fold (a Moore curve)? How does a closed loop sit inside an open tower? |
+| **R129** | Roles from the fold | Does faces-out/in come from geometry (edge vs inside of the occupied region) while holds/reacts comes from the amino acid? Then "faces out" is never a base kind |
+| **R130** | Fold variants | May a gene choose its sub-curve's orientation (mirror, rotation, Moore), so sequence shapes the fold? |
+| **R131** | Higher dimensions | 4D and 6D towers: in 6D one floor is exactly one codon. Which dimension suits app structure: deep (2D) or wide (6D)? |
+| **R132** | Several codices | Should the reader ever hold two codices side by side, as cells do with mitochondria? |
+| **R133** | Tower security and transfer | Merkle hashing up the floors; a key for floor *n* derived from floor *n − 1*; sending only the order plus codons |
 
 ---
 
@@ -349,41 +382,39 @@ Replace the header paragraph with:
 ```markdown
 # JoInn — standing rules
 
-This repo is JoInn. Phase 8 is visual truth: what a body means on screen —
-who owns pixels, what a screen reader hears, what can be done — is witnessed
-once and checked forever, and the calculator works by keyboard alone. Its one
-idea is MEANING IS WITNESSED, STYLE IS NOT. The build plan is
-docs/Plans/JoInn Phase 8 Implementation Plan.md, run inside
-docs/Plans/JoInn Run 7.2B-9.md. Work one CHUNK at a time, one git commit per
-numbered step, write each stop report, and continue unless a tripwire fires.
-Never stop to ask; follow the plan's Snags section instead.
+This repo is JoInn. Phase 8 builds the DNA base: four letters (A, T, G, C as
+two bits each), the one code table read by a versioned reader, and the tower
+(a 2D Hilbert curve) that folds a strand for free. Its one idea is THE FOLD IS
+FREE AND EXACT. The build plan is docs/Plans/JoInn Phase 8 Implementation
+Plan.md. The phase is one unit with one stop. Never stop to ask; follow the
+plan's Snags section instead.
 
-No new grammar in this phase. The only new dependency is AccessKit, in the shell.
+New crates only: joinn-strand, joinn-codex, joinn-tower. No existing crate,
+grammar or corpus file changes except gates.lock (P8-01).
 ```
 
 Keep every rule. Append:
 
 ```markdown
-77. MEANING IS WITNESSED, STYLE IS NOT. Owners, the reader tree's truth face and
-    the intent set are witnesses. Names, labels, colours and pixel positions are
-    style. No witness is ever widened to make a check pass.
-78. THREE CUTS, ONE TRUTH. The picture, the pick and the reader tree come from
-    one cut. A node in the tree that the cut does not allow, or an owner the tree
-    does not hold, is a truth violation.
-79. A WITNESS IS WRITTEN ONCE. `visual print` refuses an existing file. A later
-    derivation that differs is a refusal, never a rewrite.
-80. EVERY INTENT HAS A KEY. Everything a pointer can do to a port, a key can do.
-    Hover carries nothing.
-81. EVERY ROW HAS AN INVERSE AND A FACE. A row kind declares its inverse; every
-    row's owner has a reader node.
+82. A LETTER IS TWO BITS. A=00, T=01, G=10, C=11. Partner is the low bit.
+    No letter has another name or meaning.
+83. THE TABLE LIVES IN THE READER. Meaning is assigned only in joinn-codex.
+    A reserved codon is a refusal, never a guess. The reader's version never
+    changes what a codex-1 strand means.
+84. THE FOLD IS FREE AND EXACT. Positions, directions and levels are derived
+    from the segment index with integers. Nothing derived is stored.
+85. NOTHING IS STORED FOR NOTHING. Silent slots and empty nodes have no bytes
+    and no null.
+86. GENES GROW WHEN ASKED. The pool is read only on expansion, and a gene that
+    contains itself is refused at admission.
 ```
 
 ## Appendix B · Documents
 
-- **Backlog**: after R107, `> **3 Oct 2026 · Phase 8.** R108–R110 come from the visual-truth plan.` then R108–R110 (`open`) with §8's questions.
-- **`decisions.md`**: R108–R110 (phase `8`, `open`); V153–V159 (`open`; P8-13 sets them). Also the line: `Golden pixels: not a witness (Phase 8 plan §2.1), the roadmap's pre-agreed fallback.`
-- **Roadmap**, under Phase 8: `> **3 Oct 2026.** Planned in Plans/JoInn Phase 8 Implementation Plan.md: owners, reader and intents witnessed; golden pixels dropped as witnesses (the pre-agreed fallback); the calculator by keyboard.`
+- **Backlog**: after the last R-item, `> **12 Oct 2026 · Phase 8 (Draft 1.0).** R128–R133 come from the strand-and-tower plan.` then R128–R133 (`open`) with §11's questions.
+- **`decisions.md`**: V160–V168 (`open`; P8-12 sets them); R128–R133 (phase `8`, `open`); and the lines: `Letters: A=00 T=01 G=10 C=11; partner is the low bit (12 Oct 2026).` `Phase 8 Draft 0.1 (visual truth) held until 8.4 (12 Oct 2026).` `D18 and D25 treated as accepted by Phase 8.`
+- **Roadmap**, under Phase 8: `> **12 Oct 2026.** Replanned as the first Part VIII phase: letters, codex 1 and its reader, the Hilbert tower and gene pool, the 3D strand view and the fold view. Visual truth is held until the calculator is regrown from a strand (8.4).`
 
 ---
 
-*JoInn Phase 8 Implementation Plan, Draft 0.1 (3 Oct 2026). Written with the run plan while AJ was away. Claude decided, open to AJ's veto at the run review: owners instead of the pick map; names not witnessed; golden pixels dropped; JoInn's own reader tree with AccessKit as the bridge; Enter on an empty box does nothing and says so.*
+*JoInn Phase 8 Implementation Plan, Draft 1.0 (12 Oct 2026), from AJ's conversation with Claude that day. AJ decided: keep nature's four letters with pairing (00↔01, 11↔10); codons can't be derived from other codons; amino acids as many as the irreducibility rule allows; the partner strand reads the opposite protein; all 64 codons meaningful; the Hilbert tower determines the fold, with codons on segments and nodes as a gene pool; the reader is the versioned runtime; inherited machinery lives in the runtime; Phase 8 becomes the first DNA phase. Claude decided, open to AJ's veto: 2D only; smallest order that holds the codons, with silent slots; START/STOP kept as codons; one gene per node; one codex held; organelles listed not built; membranes and roles deferred to research. Claude checked by program: parity flips for all 64 codons; T1–T7 for orders 1–6; and corrected the earlier claim that the middle codon is the unique top-floor bridge.*

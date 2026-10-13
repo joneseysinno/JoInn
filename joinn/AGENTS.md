@@ -1,15 +1,14 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 7.4 is her counting app, part 1: one counting system
-that grows by its DNA, witnessed by counting, evolved into adding, with its force
-drawn as a lasso. Its one idea is A BODY GROWS BY ITS DNA, AND EVERY SIZE IS
-TRUE. The build plan is docs/Plans/JoInn Phase 7.4 Implementation Plan.md, run
-inside docs/Plans/JoInn Run 7.3-9.md. Work the phase's commits in order, one git
-commit per numbered step, check each by tier, and stop once at the phase's end.
-Never stop to ask; follow the plan's Snags section instead.
+This repo is JoInn. Phase 8 builds the DNA base: four letters (A, T, G, C as
+two bits each), the one code table read by a versioned reader, and the tower
+(a 2D Hilbert curve) that folds a strand for free. Its one idea is THE FOLD IS
+FREE AND EXACT. The build plan is docs/Plans/JoInn Phase 8 Implementation
+Plan.md. The phase is one unit with one stop. Never stop to ask; follow the
+plan's Snags section instead.
 
-New grammar in this phase: `grows` in .contact, and the .system file kind. Their
-mutants ship first (rule 52). Universes do not change (Phase 7.5).
+New crates only: joinn-strand, joinn-codex, joinn-tower. No existing crate,
+grammar or corpus file changes except gates.lock (P8-01).
 
 ## Hard rules
 
@@ -257,6 +256,17 @@ mutants ship first (rule 52). Universes do not change (Phase 7.5).
 92. A SYSTEM IS THE BODIES ITS FORCES REACH. A system with no force is refused.
 93. A TRUTH BY CONSTRUCTION GETS A STANDING PLANT. When no admitted artifact can
     break a truth, its command plants the fault on every run and must refuse it.
+82. A LETTER IS TWO BITS. A=00, T=01, G=10, C=11. Partner is the low bit.
+    No letter has another name or meaning.
+83. THE TABLE LIVES IN THE READER. Meaning is assigned only in joinn-codex.
+    A reserved codon is a refusal, never a guess. The reader's version never
+    changes what a codex-1 strand means.
+84. THE FOLD IS FREE AND EXACT. Positions, directions and levels are derived
+    from the segment index with integers. Nothing derived is stored.
+85. NOTHING IS STORED FOR NOTHING. Silent slots and empty nodes have no bytes
+    and no null.
+86. GENES GROW WHEN ASKED. The pool is read only on expansion, and a gene that
+    contains itself is refused at admission.
 
 ## Definition of done
 

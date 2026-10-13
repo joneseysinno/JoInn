@@ -531,3 +531,29 @@ A grown state is the input list. When the saves system exists, it stores that li
 ## R117 — Systems of several bodies  ·  status: open
 
 A system holds one body here. With two (the beam and its column), does one lasso hold both, or one lasso per body?
+
+> **12 Oct 2026 · Phase 8 (Draft 1.0).** R128–R133 come from the strand-and-tower plan.
+
+## R128 — Membrane from the fold  ·  status: open
+
+Is a membrane a closed fold (a Moore curve)? How does a closed loop sit inside an open tower?
+
+## R129 — Roles from the fold  ·  status: open
+
+Does faces-out/in come from geometry (edge vs inside of the occupied region) while holds/reacts comes from the amino acid? Then "faces out" is never a base kind.
+
+## R130 — Fold variants  ·  status: open
+
+May a gene choose its sub-curve's orientation (mirror, rotation, Moore), so sequence shapes the fold?
+
+## R131 — Higher dimensions  ·  status: open
+
+4D and 6D towers: in 6D one floor is exactly one codon. Which dimension suits app structure: deep (2D) or wide (6D)?
+
+## R132 — Several codices  ·  status: open
+
+Should the reader ever hold two codices side by side, as cells do with mitochondria?
+
+## R133 — Tower security and transfer  ·  status: open
+
+Merkle hashing up the floors; a key for floor *n* derived from floor *n − 1*; sending only the order plus codons.

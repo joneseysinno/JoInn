@@ -3,23 +3,18 @@
 use std::fs;
 use std::path::Path;
 
+use super::lock_text::lock_text;
+
+/// Writes only when the file's bytes would change: an unchanged lock keeps
+/// its bytes and its timestamp. Returns whether it wrote.
 pub(crate) fn write_lock(
     path: &Path,
     outcomes: &[(&str, bool, u32, u32, bool)],
-) -> Result<(), String> {
-    let mut body = String::from(
-        "# JoInn gates.lock — recorded passed gates. Never edit to make a check pass.\n",
-    );
-    for (name, ok, n, total, legacy) in outcomes {
-        if *name == "phase 0" {
-            body.push_str("phase 0: ");
-            body.push_str(if *ok { "pass" } else { "fail" });
-            body.push('\n');
-        } else if *legacy {
-            body.push_str(&format!("{name}: {n}/{total} legacy\n"));
-        } else {
-            body.push_str(&format!("{name}: {n}/{total}\n"));
-        }
+) -> Result<bool, String> {
+    let body = lock_text(outcomes);
+    if fs::read(path).is_ok_and(|have| have == body.as_bytes()) {
+        return Ok(false);
     }
-    fs::write(path, body).map_err(|e| e.to_string())
+    fs::write(path, body).map_err(|e| e.to_string())?;
+    Ok(true)
 }

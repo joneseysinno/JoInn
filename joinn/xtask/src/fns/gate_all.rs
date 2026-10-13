@@ -5,9 +5,9 @@ use std::io::{self, Write};
 use std::time::Instant;
 
 use super::gate_table::{GateTable, phase_gates};
-use super::{
-    corpus_verify, harness_fixtures, parse_lock_scores, scores_match, workspace_root, write_lock,
-};
+use super::lock_text::lock_text;
+use super::settle_lock::settle_lock;
+use super::{corpus_verify, harness_fixtures, parse_lock_scores, scores_match, workspace_root};
 
 /// Every phase label the lock and gate tables print. One place only.
 pub(crate) const PHASE_LABELS: &[&str] = &[
@@ -30,7 +30,9 @@ pub(crate) const PHASE_LABELS: &[&str] = &[
 
 /// Phase 0 (harness fixtures and the corpus), then each phase gate in lock
 /// order. After the lock, one `<label> ms <n> (information)` line per phase and
-/// the total. No time reaches a decision (rule 4).
+/// the total. No time reaches a decision (rule 4). The committed lock is
+/// compared before it is written: a phase that differs from it leaves the file
+/// untouched and fails the run.
 // Rule 4: xtask MAY measure wall time.
 #[allow(clippy::disallowed_methods)]
 pub(crate) fn gate_all() -> Result<(), String> {
@@ -60,15 +62,16 @@ pub(crate) fn gate_all() -> Result<(), String> {
         outcomes.push((label, ok, n, total, legacy));
     }
     let lock = workspace_root()?.join("gates.lock");
-    write_lock(&lock, &outcomes)?;
-    let text = fs::read_to_string(&lock).map_err(|e| e.to_string())?;
-    let rows = parse_lock_scores(&text)?;
-    scores_match(&outcomes, &rows)?;
-    println!("{}", text.trim());
+    let settled = settle_lock(&lock, &outcomes);
+    println!("{}", lock_text(&outcomes).trim());
     for (label, ms) in &times {
         println!("{label} ms {ms} (information)");
     }
     println!("gate all wall milliseconds: {}", t0.elapsed().as_millis());
+    settled?;
+    let text = fs::read_to_string(&lock).map_err(|e| e.to_string())?;
+    let rows = parse_lock_scores(&text)?;
+    scores_match(&outcomes, &rows)?;
     if outcomes.iter().any(|(_, ok, _, _, _)| !ok) {
         return Err("gate all: a phase failed".into());
     }
