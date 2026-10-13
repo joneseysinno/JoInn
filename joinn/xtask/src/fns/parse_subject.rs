@@ -3,6 +3,7 @@
 use joinn_dna::{parse_body, parse_contact, parse_system};
 use joinn_frame::{FrameRegistry, Verdict};
 use joinn_link::parse_universe;
+use joinn_tower::parse_chromosomes;
 
 use super::parse_lock_scores::parse_lock_scores;
 use super::subject::Subject;
@@ -39,6 +40,12 @@ pub(crate) fn parse_subject(path: &str, text: &str) -> Result<Subject, String> {
         return match parse_lock_scores(text) {
             Ok(rows) => Ok(Subject::Lock(rows)),
             Err(reason) => Err(reason),
+        };
+    }
+    if path.ends_with(".chromosome") {
+        return match parse_chromosomes(text) {
+            Verdict::Ok(_) => Ok(Subject::Text(text.trim().to_owned())),
+            Verdict::Refused(r) => Err(r.reason),
         };
     }
     if path.ends_with(".txt") {
