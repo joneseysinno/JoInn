@@ -10,6 +10,7 @@ mod dna_draw;
 mod dropped;
 #[cfg(test)]
 mod fixtures;
+mod fold_scene;
 mod font;
 mod layout;
 mod lens_cut;
@@ -34,6 +35,7 @@ pub use charts::{
     BODIES_MAX, BODY_MAX, Chart, ChartKind, GALAXIES_MAX, GALAXY_SIZE, SYSTEM_SIZE, SYSTEMS_MAX,
     UNIVERSE_SIZE, UniverseLayout, layout_universe,
 };
+pub use fold_scene::{FoldScene, NODE_PITCH};
 pub use font::{
     ADVANCE, GALAXY_TITLE_SIZE, GRID_DESCENT, GRID_H, GRID_W, GlyphStroke, LABEL_SIZE, STROKE_SET,
     SYSTEM_TITLE_SIZE, TextSize, TextStroke, TitleOf, VALUE_GLYPHS, VALUE_SIZE, cell_label, glyph,

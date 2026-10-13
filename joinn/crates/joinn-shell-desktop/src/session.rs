@@ -7,6 +7,11 @@ mod click;
 mod contact_fixture;
 mod desktop_view;
 mod dna_click;
+mod dna_enter;
+#[cfg(test)]
+mod dna_fixture;
+mod dna_floor;
+mod dna_tab;
 mod dna_view;
 mod drag_to;
 mod enter;
@@ -37,6 +42,7 @@ mod tick_line;
 mod type_backspace;
 mod type_char;
 mod wheel;
+mod whole_delta;
 
 pub(crate) use gpu_agree::gpu_agree;
 pub use tick_line::tick_line;
@@ -47,7 +53,10 @@ use joinn_dna::{Body, Cell};
 use joinn_frame::{Hash, Verdict};
 use joinn_host::{Address, Signals};
 use joinn_live::BodyState;
-use joinn_visual::{Camera, Delta, Scene, StrandScene, SystemScene, Tables, UniverseScene, Zoom};
+use joinn_tower::Pool;
+use joinn_visual::{
+    Camera, Delta, FoldScene, Scene, StrandScene, SystemScene, Tables, UniverseScene, Zoom,
+};
 
 /// What Enter prints on an empty buffer: no intent, no run, no tick.
 pub const NOTHING_SENT: &str = "  (empty: nothing sent)";
@@ -99,6 +108,15 @@ pub trait View {
     fn type_char(&mut self, text: &str) -> Option<String>;
     /// Clear the selection.
     fn escape(&mut self);
+    /// Tab: the view's other picture of the same thing. `None`: it has none.
+    fn tab(&mut self) -> Option<Vec<String>> {
+        None
+    }
+    /// `+` (`out` false) or `-` when the view zooms by its own floors: what it
+    /// printed, and whether anything changed. `None`: the camera zooms.
+    fn floor_key(&mut self, _out: bool) -> Option<(Vec<String>, bool)> {
+        None
+    }
 }
 
 /// One body, its live state, and the picture of it.
@@ -135,11 +153,20 @@ pub struct Grower {
     confirm: Option<Confirm>,
 }
 
-/// A strand as a picture (plan 8 §2.10): looked at along its length, zoomed
-/// and picked. Nothing runs.
+/// A chromosome as two pictures (plan 8 §2.10): its strand beside the
+/// reader's partner, and its fold on the tower, Tab between them. Each keeps
+/// its own camera. In the fold `+`/`-` change the floor, and Enter opens the
+/// selected ring's gene (or the first ring not yet open) from the pool.
+/// Nothing runs.
 pub struct Dna {
     strand: StrandScene,
+    fold: FoldScene,
+    pool: Pool,
+    folded: bool,
     camera: Camera,
+    other: Option<Camera>,
+    whole: bool,
+    selected: Option<u64>,
     confirm: Option<Confirm>,
 }
 
@@ -162,6 +189,8 @@ pub enum Key {
     Up,
     /// Arrow down.
     Down,
+    /// Tab.
+    Tab,
 }
 
 /// What one tick draws: the zoom and anchor it prints, and the rows it uploads.

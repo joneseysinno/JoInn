@@ -4,16 +4,18 @@
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let strand = args
+    let dna = args
         .iter()
-        .position(|a| a == "--strand")
-        .map(|i| args.get(i + 1));
-    if let Some(path) = strand {
+        .position(|a| a == "--strand" || a == "--fold")
+        .map(|i| (args[i] == "--fold", args.get(i + 1)));
+    if let Some((folded, path)) = dna {
         let Some(path) = path else {
-            eprintln!("joinn-desktop: usage: joinn-desktop --strand <path to a .strand>");
+            eprintln!(
+                "joinn-desktop: usage: joinn-desktop --strand|--fold <path to a .strand or .chromosome>"
+            );
             std::process::exit(1);
         };
-        if let Err(e) = joinn_shell_desktop::run_dna(path) {
+        if let Err(e) = joinn_shell_desktop::run_dna(path, folded) {
             eprintln!("joinn-desktop: {e}");
             std::process::exit(1);
         }
@@ -32,7 +34,7 @@ fn main() {
     };
     let Some(path) = rest.first() else {
         eprintln!(
-            "joinn-desktop: usage: joinn-desktop <path to a .body, .contact, .system, .universe or .strand> [--lens NAME] | --strand <file>"
+            "joinn-desktop: usage: joinn-desktop <path to a .body, .contact, .system, .universe, .strand or .chromosome> [--lens NAME] | --strand <file> | --fold <file>"
         );
         std::process::exit(1);
     };

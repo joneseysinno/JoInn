@@ -20,6 +20,7 @@ impl ShellApp {
             WinitKey::Named(NamedKey::ArrowRight) => Key::Right,
             WinitKey::Named(NamedKey::ArrowUp) => Key::Up,
             WinitKey::Named(NamedKey::ArrowDown) => Key::Down,
+            WinitKey::Named(NamedKey::Tab) => Key::Tab,
             WinitKey::Character(text) => Key::Text(text.to_string()),
             _ => return,
         };

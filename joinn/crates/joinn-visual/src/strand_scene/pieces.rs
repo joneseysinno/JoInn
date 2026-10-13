@@ -7,6 +7,7 @@ use joinn_strand::Strand;
 use super::helix::helix;
 use super::{AXIS, HELIX_RADIUS, LETTER_PITCH, MARGIN};
 use crate::dna_draw::{Piece, label, meaning_style, owner};
+use crate::font::LABEL_SIZE;
 use crate::refuse::refuse;
 use crate::tables::{STYLE_BACKBONE, STYLE_END_CAP, STYLE_GLOW, STYLE_LETTER_A};
 
@@ -73,6 +74,7 @@ pub(super) fn strand_pieces(
                 &m.name().to_lowercase(),
                 centre,
                 AXIS + HELIX_RADIUS + 24,
+                LABEL_SIZE,
                 owners[k],
             ) {
                 Verdict::Ok(p) => names.extend(p),

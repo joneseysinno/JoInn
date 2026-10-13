@@ -3,16 +3,23 @@
 use super::{ARROW_PIXELS, Key, NOTHING_SENT, Shell};
 
 impl Shell {
-    /// `+` and `-` zoom one notch about the centre pixel and `F` frames, unless
-    /// a port is selected, when text types into it. An arrow moves the camera
-    /// 64 px, so the picture moves the other way. Enter owes a tick when it ran.
+    /// `+` and `-` zoom one notch about the centre pixel (or change the floor,
+    /// when the view zooms by floors) and `F` frames, unless a port is
+    /// selected, when text types into it. An arrow moves the camera 64 px, so
+    /// the picture moves the other way. Enter owes a tick when it ran; Tab when
+    /// the view has another picture.
     pub fn key(&mut self, key: Key) -> Vec<String> {
         let c = self.view.camera();
         let (cx, cy) = (i64::from(c.width / 2), i64::from(c.height / 2));
         let typing = self.view.typing();
         match key {
-            Key::Text(t) if !typing && t == "+" => self.wheel(cx, cy, 1),
-            Key::Text(t) if !typing && t == "-" => self.wheel(cx, cy, -1),
+            Key::Text(t) if !typing && (t == "+" || t == "-") => {
+                if let Some((lines, changed)) = self.view.floor_key(t == "-") {
+                    self.dirty |= changed;
+                    return lines;
+                }
+                self.wheel(cx, cy, if t == "+" { 1 } else { -1 })
+            }
             Key::Text(t) if !typing && (t == "f" || t == "F") => self.frame(),
             Key::Text(t) => self.view.type_char(&t).into_iter().collect(),
             Key::Left => self.apply(c.pan(ARROW_PIXELS, 0)),
@@ -31,6 +38,13 @@ impl Shell {
                 self.view.escape();
                 Vec::new()
             }
+            Key::Tab => match self.view.tab() {
+                Some(lines) => {
+                    self.dirty = true;
+                    lines
+                }
+                None => Vec::new(),
+            },
         }
     }
 }
