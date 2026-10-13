@@ -7,7 +7,7 @@ JoInn is being built in three big stages. Think of them as ladders: each one let
 | Stage | Nickname | What it means in plain words | Status (roughly) |
 |-------|----------|------------------------------|------------------|
 | **B0** | True but unseen | The universe is correct and checkable, and you can still meet it as text | **The truth core holds** |
-| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly, its links drawn; a system grows by its DNA, its force drawn as a lasso; systems in universes next** |
+| **B1** | Seen and touched | Same universe drawn and picked, at any zoom | **Under way — a universe of thousands of bodies zooms exactly, its links drawn; a system grows by its DNA, its force drawn as a lasso; a strand of DNA letters is read, folded and drawn two ways; systems in universes next** |
 | **B2** | Self-editing | You build JoInn *inside* JoInn; the visual creator and the text form match byte-for-byte | Future |
 
 The rule of the road: **pixels come after truth.** A gorgeous editor with a weak core would force the core to bend. So Bootstrap 0 comes first on purpose.
@@ -28,6 +28,21 @@ You can, from the `joinn` code folder:
 - Open a universe and zoom it (`cargo run -p joinn-shell-desktop -- corpus/phase5/universe.universe`), and print the generated test universe's counts (`cargo xtask grove`) and what each zoom draws (`cargo xtask zoom`), described below
 - See its links drawn in the same window, and print every route (`cargo xtask links`), the form each link takes at each zoom (`--forms`) and how long routing takes (`--measure`), described below
 - Open a counting system and grow it by typing (`cargo run -p joinn-shell-desktop -- corpus/phase74/counting.system`), and print every growth with its counting witness (`cargo xtask grow`), described below
+- Read a strand of DNA letters (`cargo xtask read corpus/phase8/strands/twelve.strand`), print the codex, the tower and the gene pool (`cargo xtask codex`, `tower`, `pool`), and open the strand as a helix and as a fold (`cargo run -p joinn-shell-desktop -- --strand corpus/phase8/strands/twelve.strand`), described below
+
+## The strand is read, the fold is free (Phase 8)
+
+Phase 8 is the first phase of the DNA base (Part VIII). Earlier phases wrote DNA as text files. Here it becomes a row of four letters, read by a fixed table.
+
+- **Four letters, two bits each.** A = 00, T = 01, G = 10, C = 11. A letter's **partner** flips the low bit, so A pairs with T and G with C. The high bit (**strength**) never changes in a pair; the low bit (**shape**) always does. A **strand** is a row of letters read head to tail. Its **partner strand** is every letter's partner, in reverse order. A strand's identity is a hash of its letters.
+- **Codex 1 names 14 codons.** Three letters make a codon, so there are 64. Codex 1 names 14 of them: START, STOP, and twelve **amino acids** in opposite pairs (pair/split, build/case, refer/return, sense/show, keep/recall, grant/revoke). The other 50 are **reserved**: reading one is a refusal, never a guess. A codon's partner always has the opposite parity (an odd or even count of 1 bits), and always means the opposite.
+- **The reader.** `cargo xtask read` reads from each START to the next STOP. `twelve.strand` reads as `pair split build case refer return sense show keep recall grant revoke`. Its partner strand reads the opposites in reverse order. The reader has its own version (`reader 8.0`), separate from the codex. Changing the reader never changes what a codex-1 strand means, and every witness still reads byte for byte.
+- **The tower: the fold is free.** A strand is laid on a Hilbert curve, one codon per segment. Nothing about the fold is stored; it follows from the curve. The **order** is the smallest curve with enough segments, so twelve's 14 codons need order 2's 15 segments. The one segment left over is **silent** and costs no bytes. Each segment has a **level**. Zooming out keeps only the segments at or above a level (the **level filter**), and what remains is exactly the curve one order down. `cargo xtask tower` checks this, with six other facts, at every node of orders 1 to 6.
+- **Three bridges, not one.** On the top floor of any order there are exactly three segments. They are the bridges between the curve's four quarters, and the middle one is the centre. For twelve, they hold `build`, `sense` and `grant`. (An earlier claim, that the middle codon is the *only* top-floor bridge, was wrong; 12 Oct.)
+- **The gene pool.** A node of the curve can name another chromosome by its hash, as a gene. The pool holds chromosomes and reads none of them until asked (`expand`). A chromosome that would contain itself through its genes is refused on entry.
+- **Two views, one truth.** The strand view draws a still double helix: rungs in threes, each codon tinted by its meaning and named underneath. A mismatched letter pair glows. **Tab** shows the same strand flat on its curve. There, `-` climbs a floor, a ring marks each node with a gene, and Enter opens that gene beside its node. A click on codon 7 prints `edf1529a6fc2.codon7` in either view.
+
+Gate 8 checks the reader against its witnesses, every order of the tower against the one before it, and the pool for cycles. Not built yet: a turning helix, more than one codex, folds in three dimensions, and a body grown from a strand (the calculator regrown from DNA is Phase 8.4). Findings: [phase-8-strand-and-tower.md](../Findings/phase-8-strand-and-tower.md).
 
 ## A system grows (Phase 7.4)
 

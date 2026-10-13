@@ -462,6 +462,16 @@ Six throwaway experiments, all cheap, all designed to kill something. They run i
 #### Phase 8 · Visual truth
 
 > **12 Oct 2026.** Replanned as the first Part VIII phase: letters, codex 1 and its reader, the Hilbert tower and gene pool, the 3D strand view and the fold view. Visual truth is held until the calculator is regrown from a strand (8.4).
+>
+> **13 Oct 2026.** Built:
+> - Letters of two bits, strands and partner strands.
+> - Codex 1 (14 named, 50 reserved), with a reader whose partner reading gives the opposites.
+> - The 2D Hilbert tower: T1–T7 hold at orders 1–6, and every order holds the one before it.
+> - Chromosomes with silent slots and floors.
+> - A gene pool with no cycles, read only when asked.
+> - The strand view (a still helix) and the fold view, which pick the same codon address.
+>
+> Gate 8 is 3/3. Not built: a turning helix, more than one codex, folds beyond 2D, and a body grown from a strand. Findings: [Findings/phase-8-strand-and-tower.md](../Findings/phase-8-strand-and-tower.md).
 
 **Goal.** Make what a cell *means* on screen into something the gate can judge.
 
