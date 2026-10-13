@@ -79,3 +79,10 @@ phase8/strands/twelve.partner.txt 7a343906ebcbd373ec477baefe77686e7f745c7e306913
 phase8/strands/reserved.strand a5f7c568c3048e905e62db691af806a5f5399cbb72f86420aeb3c569f7db7673
 phase8/strands/reserved.proteins.txt f5999bcd7c24e5308a8e30506f8c631b425baaf3f676b7beb67a596aa3f11d73
 phase8/strands/reserved.partner.txt 052d30087b3988e2e774752dcfe61b09f6e1d9699ca666e223ee285bbd1da8c8
+# Phase 8, 13 Oct 2026. Tower witnesses: orders 1-4, twelve.strand on its tower with two gene references, and its floors. Bytes hashed under joinn.dna.v1. New files, no earlier hash moved.
+phase8/tower/order-1.txt c439c39d9b213b8f10eded32fa0a4a2ef48ead5fbc75214fa02f356c1bdda685
+phase8/tower/order-2.txt 11dfce02ed9e85505515b1d4b6d5d4c8874dc236fcdc74baa694f9bf000c0fe2
+phase8/tower/order-3.txt 4667528fd6ff0ca4ba087c956c6c4074736b80ab24ec51645a95bf22df2b7a20
+phase8/tower/order-4.txt a6e6552af2e89948923f3895be41705224f5915532ce0580162a7e5f387976a8
+phase8/tower/twelve.chromosome 2bc09f8ef4250e377e3fe1c9ee90465b0f0fbbc88430c719be55773c71b2206e
+phase8/tower/twelve.floors.txt a305442889206483885f40b0f0f0a419bad697b86f6751186bbcf39c1d615f00

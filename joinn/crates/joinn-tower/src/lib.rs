@@ -3,6 +3,7 @@
 
 #![forbid(unsafe_code)]
 
+mod chromosome;
 mod dim;
 mod direction;
 mod facts;
@@ -10,6 +11,7 @@ mod level;
 mod point;
 mod refuse;
 
+pub use chromosome::{Chromosome, parse_chromosomes, print_chromosome};
 pub use dim::{Dim, check_dim};
 pub use direction::{Direction, directions};
 pub use facts::{FACT_IDS, facts, t5_filter};

@@ -1,0 +1,3 @@
+chromosome edf1529a6fc21715846486999b3252f1336462dc70b16f9edeb70eb96e617bca order 2: 14 codons on 15 segments, 1 silent, 2 gene references
+floor 0 (level ≥ 0): 14 codons: 0 AAT START, 1 AAA pair, 2 TTT split, 3 CAC build, 4 GTG case, 5 AAC refer, 6 GTT return, 7 CAA sense, 8 TTG show, 9 GAA keep, 10 TTC recall, 11 AAG grant, 12 CTT revoke, 13 ATT STOP
+floor 1 (level ≥ 1): 3 codons: 3 CAC build, 7 CAA sense, 11 AAG grant

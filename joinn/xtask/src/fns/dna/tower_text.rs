@@ -3,8 +3,11 @@
 use joinn_frame::Verdict;
 use joinn_tower::{Dim, facts, nodes};
 
-/// T1–T7 for orders 1–6, each fact's line or its refusal, and the dimension
-/// refusal. The whole text is the error when any fact fails.
+use super::{floors_text, witness_chromosomes};
+
+/// T1–T7 for orders 1–6, each fact's line or its refusal; every witness
+/// chromosome by floor; the dimension refusal. The whole text is the error
+/// when any fact fails.
 pub(crate) fn tower_text() -> Result<String, String> {
     let mut out = String::from("tower: dimension 2, orders 1-6\n");
     let mut failed = 0;
@@ -25,6 +28,14 @@ pub(crate) fn tower_text() -> Result<String, String> {
                     failed += 1;
                     out.push_str(&format!("  {id} refused: {}\n", r.reason));
                 }
+            }
+        }
+    }
+    for (name, chromosomes) in witness_chromosomes()? {
+        for c in chromosomes {
+            out.push_str(&format!("{name}\n"));
+            for line in floors_text(&c).lines() {
+                out.push_str(&format!("  {line}\n"));
             }
         }
     }

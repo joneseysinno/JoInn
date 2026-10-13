@@ -1,0 +1,8 @@
+order 1: 4 nodes, 3 segments
+node 0 at (0, 0)
+node 1 at (0, 1)
+node 2 at (1, 1)
+node 3 at (1, 0)
+segment 0 N level 0
+segment 1 E level 0
+segment 2 S level 0

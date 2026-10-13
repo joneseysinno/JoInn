@@ -874,7 +874,9 @@ dependencies = [
 name = "joinn-tower"
 version = "0.1.0"
 dependencies = [
+ "joinn-codex",
  "joinn-frame",
+ "joinn-strand",
 ]
 
 [[package]]

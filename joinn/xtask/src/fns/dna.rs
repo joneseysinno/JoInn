@@ -4,6 +4,8 @@
 mod codex_cmd;
 mod codex_text;
 mod dna_witness;
+mod floors_text;
+mod order_text;
 mod read_cmd;
 mod read_strand_file;
 mod read_text;
@@ -13,10 +15,14 @@ mod strand_text;
 mod strand_witnesses;
 mod tower_cmd;
 mod tower_text;
+mod tower_witnesses;
+mod witness_chromosomes;
 
 pub(crate) use codex_cmd::codex;
 pub(crate) use codex_text::codex_text;
 pub(crate) use dna_witness::dna_witness;
+pub(crate) use floors_text::floors_text;
+pub(crate) use order_text::order_text;
 pub(crate) use read_cmd::read;
 pub(crate) use read_strand_file::read_strand_file;
 pub(crate) use read_text::read_text;
@@ -26,6 +32,8 @@ pub(crate) use strand_text::strand_text;
 pub(crate) use strand_witnesses::strand_witnesses;
 pub(crate) use tower_cmd::tower;
 pub(crate) use tower_text::tower_text;
+pub(crate) use tower_witnesses::tower_witnesses;
+pub(crate) use witness_chromosomes::witness_chromosomes;
 
 #[cfg(test)]
 mod tests {
@@ -100,14 +108,42 @@ mod tests {
     }
 
     #[test]
-    fn the_witnesses_on_disk_are_the_ones_codex_1_builds() {
-        let witnesses = match strand_witnesses() {
+    fn the_witnesses_on_disk_are_the_ones_the_code_builds() {
+        let mut witnesses = match strand_witnesses() {
             Ok(w) => w,
             Err(e) => panic!("{e}"),
         };
+        match super::tower_witnesses() {
+            Ok(w) => witnesses.extend(w),
+            Err(e) => panic!("{e}"),
+        }
         for (name, text) in witnesses {
             assert_eq!(corpus_text(&name), text, "{name}");
         }
+    }
+
+    #[test]
+    fn the_floors_witness_is_twelve_chromosome_read_from_disk() {
+        let all = match super::witness_chromosomes() {
+            Ok(a) => a,
+            Err(e) => panic!("{e}"),
+        };
+        let Some((_, twelve)) = all.iter().find(|(n, _)| n.ends_with("twelve.chromosome")) else {
+            panic!("twelve.chromosome is a witness");
+        };
+        let [c] = twelve.as_slice() else {
+            panic!("one chromosome");
+        };
+        assert_eq!(c.order(), 2);
+        assert_eq!(c.genes().len(), 2);
+        assert_eq!(
+            super::floors_text(c),
+            corpus_text("phase8/tower/twelve.floors.txt")
+        );
+        assert_eq!(
+            super::witness_chromosomes::CHROMOSOME_WITNESSES.len(),
+            all.len()
+        );
     }
 
     #[test]
