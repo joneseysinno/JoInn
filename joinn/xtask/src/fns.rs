@@ -308,7 +308,7 @@ pub(crate) use corpus_rebless::corpus_rebless;
 pub(crate) use corpus_verify::corpus_verify;
 pub(crate) use decisions::decisions;
 pub(crate) use decoration::decoration;
-pub(crate) use dna::{codex, read, strand};
+pub(crate) use dna::{codex, dna_witness, read, strand};
 pub(crate) use drive_bound_zero::drive_bound_zero;
 pub(crate) use first_desc_diff::first_desc_diff;
 pub(crate) use fixture_line::fixture_line;

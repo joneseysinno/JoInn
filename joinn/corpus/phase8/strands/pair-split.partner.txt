@@ -1,0 +1,2 @@
+partner AAT AAA TTT ATT
+protein at letter 0: pair split

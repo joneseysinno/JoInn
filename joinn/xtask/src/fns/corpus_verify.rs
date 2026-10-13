@@ -47,7 +47,9 @@ pub(crate) fn corpus_verify() -> Result<(), String> {
             let path = corpus_artifact(&root, name);
             let src = fs::read_to_string(&path).map_err(|e| format!("{path:?}: {e}"))?;
             let src = src.replace("\r\n", "\n");
-            let got = if path.extension().is_some_and(|e| e == "desc") {
+            let got = if name.starts_with("phase8/") {
+                keyed_hash(joinn_strand::TAG_DNA, src.as_bytes()).to_hex()
+            } else if path.extension().is_some_and(|e| e == "desc") {
                 keyed_hash(TAG_DESCRIPTION, src.as_bytes()).to_hex()
             } else if path.extension().is_some_and(|e| e == "universe") {
                 let u = match parse_universe(&src) {

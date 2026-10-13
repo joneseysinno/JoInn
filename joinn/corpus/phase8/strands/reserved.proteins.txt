@@ -1,0 +1,1 @@
+reader: codon TAA at letter 3 names nothing in codex 1; acceptance is a codon codex 1 names

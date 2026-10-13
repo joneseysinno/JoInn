@@ -20,6 +20,11 @@ use std::time::Instant;
 use super::*;
 
 pub(crate) fn corpus_artifact(root: &Path, name: &str) -> PathBuf {
+    if name.starts_with("phase8/") {
+        return name
+            .split('/')
+            .fold(root.join("corpus"), |path, part| path.join(part));
+    }
     if name.ends_with(".desc") {
         return root.join("corpus").join("descriptions").join(name);
     }

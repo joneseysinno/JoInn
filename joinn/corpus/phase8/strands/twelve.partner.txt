@@ -1,0 +1,2 @@
+partner AAT AAG CTT GAA TTC CAA TTG AAC GTT CAC GTG AAA TTT ATT
+protein at letter 0: grant revoke keep recall sense show refer return build case pair split

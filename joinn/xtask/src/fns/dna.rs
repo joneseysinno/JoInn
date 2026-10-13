@@ -3,23 +3,97 @@
 
 mod codex_cmd;
 mod codex_text;
+mod dna_witness;
 mod read_cmd;
 mod read_strand_file;
 mod read_text;
 mod strand_cmd;
+mod strand_reading;
 mod strand_text;
+mod strand_witnesses;
 
 pub(crate) use codex_cmd::codex;
 pub(crate) use codex_text::codex_text;
+pub(crate) use dna_witness::dna_witness;
 pub(crate) use read_cmd::read;
 pub(crate) use read_strand_file::read_strand_file;
 pub(crate) use read_text::read_text;
 pub(crate) use strand_cmd::strand;
+pub(crate) use strand_reading::strand_reading;
 pub(crate) use strand_text::strand_text;
+pub(crate) use strand_witnesses::strand_witnesses;
 
 #[cfg(test)]
 mod tests {
-    use super::{codex_text, read_text, strand_text};
+    use super::super::{corpus_artifact, workspace_root};
+    use super::{
+        codex_text, read_strand_file, read_text, strand_reading, strand_text, strand_witnesses,
+    };
+
+    /// The bytes of a corpus file, line ends as committed.
+    fn corpus_text(name: &str) -> String {
+        let root = match workspace_root() {
+            Ok(r) => r,
+            Err(e) => panic!("{e}"),
+        };
+        match std::fs::read_to_string(corpus_artifact(&root, name)) {
+            Ok(t) => t.replace("\r\n", "\n"),
+            Err(e) => panic!("{name}: {e}"),
+        }
+    }
+
+    #[test]
+    fn every_strand_witness_reads_byte_identically() {
+        let witnesses = match strand_witnesses() {
+            Ok(w) => w,
+            Err(e) => panic!("{e}"),
+        };
+        let mut read = 0;
+        for (name, _) in &witnesses {
+            let Some(stem) = name.strip_suffix(".strand") else {
+                continue;
+            };
+            let root = match workspace_root() {
+                Ok(r) => r,
+                Err(e) => panic!("{e}"),
+            };
+            let path = corpus_artifact(&root, name).display().to_string();
+            let file = match read_strand_file(&path) {
+                Ok(f) => f,
+                Err(e) => panic!("{e}"),
+            };
+            let (proteins, partner) = strand_reading(&file);
+            assert_eq!(
+                proteins,
+                corpus_text(&format!("{stem}.proteins.txt")),
+                "{name}"
+            );
+            assert_eq!(
+                partner,
+                corpus_text(&format!("{stem}.partner.txt")),
+                "{name}"
+            );
+            for text in [&proteins, &partner] {
+                assert!(
+                    !text.contains(joinn_codex::READER_VERSION),
+                    "{name}: {text}"
+                );
+            }
+            read += 1;
+        }
+        assert_eq!(read, 4);
+    }
+
+    #[test]
+    fn the_witnesses_on_disk_are_the_ones_codex_1_builds() {
+        let witnesses = match strand_witnesses() {
+            Ok(w) => w,
+            Err(e) => panic!("{e}"),
+        };
+        for (name, text) in witnesses {
+            assert_eq!(corpus_text(&name), text, "{name}");
+        }
+    }
 
     #[test]
     fn read_prints_the_partner_reading_and_refuses_a_reserved_codon() {
