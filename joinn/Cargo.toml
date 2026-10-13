@@ -14,6 +14,7 @@ members = [
     "crates/joinn-visual",
     "crates/joinn-gpu",
     "crates/joinn-shell-desktop",
+    "crates/joinn-strand",
     "xtask",
 ]
 

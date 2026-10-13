@@ -14,3 +14,4 @@ joinn-link
 joinn-visual
 joinn-gpu
 joinn-shell-desktop
+joinn-strand

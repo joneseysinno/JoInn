@@ -843,6 +843,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "joinn-strand"
+version = "0.1.0"
+dependencies = [
+ "joinn-frame",
+]
+
+[[package]]
 name = "joinn-test-host"
 version = "0.1.0"
 dependencies = [
