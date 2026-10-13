@@ -32,6 +32,7 @@ pub(crate) const ABOVE: &[&str] = &[
     "joinn-cli",
     "joinn-visual",
     "joinn-strand",
+    "joinn-codex",
 ];
 
 /// Crates below the boundary. Only these hold their own `[lints]` table.
@@ -51,6 +52,7 @@ pub(crate) const EDGES: &[(&str, &[&str])] = &[
     ),
     ("joinn-gpu", &["joinn-frame", "joinn-visual"]),
     ("joinn-strand", &["joinn-frame"]),
+    ("joinn-codex", &["joinn-frame", "joinn-strand"]),
     (
         "joinn-shell-desktop",
         &[

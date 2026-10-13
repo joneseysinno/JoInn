@@ -733,6 +733,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "joinn-codex"
+version = "0.1.0"
+dependencies = [
+ "joinn-frame",
+ "joinn-strand",
+]
+
+[[package]]
 name = "joinn-dna"
 version = "0.1.0"
 dependencies = [
@@ -2967,6 +2975,7 @@ dependencies = [
  "bitflags 2.13.2",
  "joinn-assay",
  "joinn-cli",
+ "joinn-codex",
  "joinn-dna",
  "joinn-frame",
  "joinn-gate",
@@ -2976,6 +2985,7 @@ dependencies = [
  "joinn-live",
  "joinn-prim",
  "joinn-shell-desktop",
+ "joinn-strand",
  "joinn-test-host",
  "joinn-visual",
  "smallvec",
