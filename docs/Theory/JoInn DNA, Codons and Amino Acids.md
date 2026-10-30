@@ -10,6 +10,8 @@ Author: AJ, with Claude · Draft 0.4 · October 7, 2026
 
 > **Thesis.** JoInn's DNA is a strand of four letters, A, T, G and C, that mean nothing on their own. Read three at a time, they make codons. One fixed table, held by the reader and nowhere else, turns each codon into an amino acid, a start or a stop. Chains of amino acids make proteins, proteins make cells, and cells make everything above them. **The platform knows the letters, the table, the reader and the laws. Everything else is written in DNA.** That is how JoInn stops hard-coding.
 
+> **30 Oct 2026.** This paper is the storage research for a hypernode. The product story lives in the [guides](../Guides/01-what-is-joinn.md). See [JoInn Graph Storage](JoInn%20Graph%20Storage.md).
+
 ---
 
 ## For AJ: this note in plain English

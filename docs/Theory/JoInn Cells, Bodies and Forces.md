@@ -10,6 +10,8 @@ Author: AJ, with Claude · Draft 0.2 · September 29, 2026
 
 > **Thesis.** Phases 2 to 6 built a body as cells joined by wires, made `sum` a cell, and called the body's edge its membrane. Those were the wrong words for the right machinery. **A cell is data that knows what it is. A body is cells in contact. An operation is a force from outside. Wires belong to systems. And opposition is what keeps the forces few.**
 
+> **30 Oct 2026.** Product language is now hypernode, relationship, wave, and app ([Guides/01](../Guides/01-what-is-joinn.md) and the [Hypernode Refactor Plan](../Plans/JoInn%20Hypernode%20Refactor%20Plan.md)). This paper remains the decision record for contact, forces, and membranes. A body is the hypernode. A force is a directed relationship.
+
 ---
 
 ## For AJ: this note in plain English

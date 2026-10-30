@@ -1,5 +1,7 @@
 # Try the calculator
 
+> **30 Oct 2026.** The calculator is the first hypernode: two input blocks in contact, and one directed relationship, *combine*, pointing at the result. The window draws that result as its own cell, so the picture has three cells: `cli_a`, `cli_b`, and `sum`. In that contact picture the force owns no pixel. Drawing it as a lasso is later work.
+
 This walkthrough runs JoInn’s small demo: a calculator that asks for two integers, refuses bad input, then prints `2 + 3 = 5`.
 
 You need a computer with **Rust** installed (`cargo` available in a terminal). If that isn’t set up yet, ask someone technical to install the Rust toolchain first, then come back here.

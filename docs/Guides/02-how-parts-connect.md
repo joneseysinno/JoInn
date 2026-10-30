@@ -1,6 +1,6 @@
 # How the parts connect
 
-> **30 Sep 2026: the code has started to follow the theory.** A body can now be cells in contact, with no wires inside (section 4). The calculator exists in both forms; the older wired form below still runs and is still checked. See *Theory/JoInn Cells, Bodies and Forces.md* for the theory.
+> **30 Oct 2026.** The product words are hypernode, relationship, wave, and app. In the code, the contact file is the hypernode the engine runs. The wired `.body` remains a compilation target, and gate 7 still checks it. See [What is JoInn?](01-what-is-joinn.md) and [JoInn Graph Storage](../Theory/JoInn%20Graph%20Storage.md).
 
 This page is the **map**. Each diagram shows how pieces fit. Under the boxes you’ll find **what it is** and **why JoInn needs it**.
 
@@ -8,82 +8,143 @@ If a word is new, peek at the [glossary](05-glossary.md).
 
 ---
 
-## 1. Product idea (big picture)
+## 1. Product idea
 
 ```mermaid
 flowchart TB
-  Creator[You building an app] --> Cells[Cells like Lego blocks]
-  Cells --> DNA[DNA the plan and rules]
-  DNA --> Gate[Gate checks truth]
-  Gate --> Live[Live engine runs it]
-  Live --> Host[Host shows or talks outside]
-  Host --> FutureVisual[Later visual editor on GPU]
+  Person[A person] --> Blocks[Blocks inside a hypernode]
+  Blocks --> Joins[Relationships and waves]
+  Joins --> App[The app: the outermost hypernode]
+  App --> Live[Live engine runs it now]
+  Live --> Compiler[A later compiler must agree]
 ```
 
 | Piece | What it is | Why it’s necessary |
 |-------|------------|--------------------|
-| **You** | The creator | JoInn exists so people can build apps |
-| **Cells** | Small reusable blocks | Big apps are made of small, understandable parts |
-| **DNA** | The plan and the laws for a cell | Without a clear plan, “correct” is only an opinion |
-| **Gate** | The checker that admits or refuses growth | So bad or fake growth is refused on purpose, not hoped away |
-| **Live engine** | The runner that executes a body step by step | So you get answers now, while the full compiler comes later |
-| **Host** | The bridge to the outside (keyboard, screen, tests) | Truth that never meets a person isn’t a product yet |
-| **Visual editor (later)** | Draw, pick, and zoom the same universe | The product face — but only after the universe is already true |
+| **A person** | The one who builds | JoInn exists so a person can build an app |
+| **Blocks** | The pieces a person snaps. They meet only at their ports | A large app is made of small pieces with clear edges |
+| **Hypernode** | Blocks in contact. Edited as blocks, run as one unit, drawn as one node from outside | One shape at every zoom |
+| **Relationship** | A join that can touch many hypernodes. A force is a relationship with a direction: it surrounds what it acts on and points at the result | The meaning of contact, stored and drawn |
+| **Wave** | A relationship whose members are every part of that hypernode that accepts the signal | One signal, offered to a whole hypernode, with refusal still possible. Building this is [Phase F](../Plans/JoInn%20Hypernode%20Refactor%20Plan.md) |
+| **App** | The outermost hypernode | The thing a person ships |
+| **Live engine** | The runner that executes a hypernode now, step by step | Answers today, while the compiler is still ahead |
+| **Compiler (later)** | A second engine that reads the same form and produces native code | Power, checked against the live engine from the day it exists |
+
+The contact file is the source. The window is a view of that form. Pixels follow the tables.
 
 ---
 
-## 2. Code stack (small picture)
+## 2. Place, relationship, and camera
 
-The code is split into **crates** (separate libraries that depend on each other). Think of them as floors of a building: lower floors must exist before the upper ones can stand.
+Three different structures. They stay different.
 
-Arrows mean “uses / sits on top of.”
+```mermaid
+flowchart TB
+  subgraph place [Place: a tree]
+    App[App]
+    App --> Inner[Hypernode]
+    Inner --> Blocks[Blocks in contact]
+  end
+  subgraph rel [Relationship: a hypergraph]
+    R[One relationship]
+    A[Hypernode] --- R
+    B[Hypernode] --- R
+    C[Hypernode] --- R
+  end
+  subgraph cam [Camera: contraction]
+    Open[Open hypernode] --> Node[One node on screen]
+  end
+```
+
+| | What it is | What it may do |
+|--|------------|----------------|
+| **Place** | Containment. A hypernode holds blocks, and it can hold smaller hypernodes | A tree. A reference to another hypernode is a hash, loaded when asked. A hypernode that contains itself through references is refused |
+| **Relationship** | A join that can touch many hypernodes at once | It may cycle. A force is the directed form: it surrounds what it acts on and points at the result |
+| **Camera** | Zoom. It draws a hypernode as one node, and a relationship that crosses the boundary is what you still see | Contraction. A folded node is touched once. Today the camera folds three fixed levels: universe, galaxy, system |
+
+A system seen from outside is a hypernode. A galaxy is a zoom depth. The app is the root hypernode.
+
+Today’s code still has cell, body, system, galaxy, and universe as named levels. The [refactor plan](../Plans/JoInn%20Hypernode%20Refactor%20Plan.md) migrates those to depths. The identifiers stay until a phase whose job is the rename. Inside a hypernode you edit by contact. The stored meaning of that contact is a relationship. Zoom draws the hypernode as a node.
+
+---
+
+## 3. Code stack
+
+The code is split into **crates** (separate libraries that depend on each other). Lower layers exist before the upper ones stand.
+
+Arrows in the picture are the main layers, pointing toward the crate that sits above. A few crates also reach sideways. `joinn-host` and `joinn-link` each use the other. The desktop window uses the runner, the picture, and the storage view together.
 
 ```mermaid
 flowchart BT
-  frame[joinn-frame basic values]
-  dna[joinn-dna plans]
-  gate[joinn-gate truth checks]
-  prim[joinn-prim sealed basics]
-  live[joinn-live runner]
-  host[joinn-host host protocol]
-  cli[joinn-cli terminal demo]
-  testHost[joinn-test-host second host]
-  frame --> dna
-  dna --> gate
-  dna --> prim
-  gate --> prim
-  frame --> live
-  dna --> live
-  gate --> live
-  prim --> live
-  live --> host
+  subgraph runner [Runner]
+    frame[joinn-frame]
+    dna[joinn-dna text plans]
+    gate[joinn-gate]
+    prim[joinn-prim]
+    live[joinn-live]
+    host[joinn-host]
+  end
+  subgraph storage [Storage and its view]
+    strand[joinn-strand]
+    codex[joinn-codex]
+    tower[joinn-tower]
+  end
+  subgraph picture [Picture and joins]
+    assay[joinn-assay]
+    link[joinn-link]
+    visual[joinn-visual]
+    gpu[joinn-gpu]
+  end
+  subgraph faces [Faces]
+    cli[joinn-cli]
+    testHost[joinn-test-host]
+    desktop[joinn-shell-desktop]
+  end
+  frame --> dna --> gate --> prim --> live --> host
+  frame --> strand --> codex --> tower
+  frame --> assay
+  assay --> link
+  live --> link --> visual --> gpu
   host --> cli
   host --> testHost
+  host --> desktop
+  gpu --> desktop
+  tower --> desktop
 ```
 
 ### What each crate does — and why
 
 | Crate | What it does | Why it’s necessary |
 |-------|--------------|--------------------|
-| **joinn-frame** | Basic values, frames (contexts like “integers”), and verdicts (ok vs refused) | Everything else needs a shared language for “what is a value” and “what is a refusal” |
-| **joinn-dna** | Reads, writes, and hashes DNA (plans) | Identity and truth need a precise, checkable written form |
-| **joinn-gate** | Runs the law checks and evolution checks; can refuse | Without a gate, “truth first” is a slogan, not a machine |
-| **joinn-prim** | The **floor**: sealed basic operations that cells are built from | You need a small, opposed foundation so higher cells aren’t floating on sand |
-| **joinn-live** | Runs a body with an explicit step budget (no wild recursion) | Instant feedback; same universe the compiler must later match |
-| **joinn-host** | The protocol for hosts: a **description** is a value, not just painted text | So “what was shown” can be compared and proved, not only believed |
-| **joinn-cli** | Terminal host: `joinn run calculator` | A real face today, with no GPU required |
-| **joinn-test-host** | A second, headless host for tests | **Two hosts prove a host.** Agreement between them catches “it only works on my screen” |
+| **joinn-frame** | Values, frames (the laws a value obeys), and verdicts: ok, or a refusal | A shared language for “what is a value” and “what is a refusal” |
+| **joinn-dna** | The text-plan crate: reads, writes, and hashes today’s plans (cells, bodies, contacts, and the files around them) | Identity needs a precise written form. Letter storage lives in the three crates below |
+| **joinn-gate** | Law checks and evolution checks. It can refuse | So “truth first” is a machine |
+| **joinn-prim** | The **floor**: sealed opposed operations, and the force register | Higher blocks stand on operations that name their opposites |
+| **joinn-live** | Runs a hypernode with an explicit step budget | Answers now. The later compiler has to match this runner |
+| **joinn-host** | The host protocol. A description is a value | What was shown can be compared |
+| **joinn-cli** | Terminal host: `joinn run calculator` | A face that needs no window |
+| **joinn-test-host** | A second, headless host | Two hosts prove a host |
+| **joinn-assay** | Measures the shape of a body or universe: loops, and which of them something closes. It reports | A declaration can then refuse an open loop at admission |
+| **joinn-link** | Relationships as hyperedges, and `lower`: compilation of a contact hypernode into the deliveries the live engine runs | The source stays a contact file. The runner receives deliveries |
+| **joinn-visual** | Tables, the exact camera, and layout in whole numbers | The picture is the tables |
+| **joinn-gpu** | Draws those tables | The same owners, on the graphics device |
+| **joinn-shell-desktop** | The desktop window | Where a person sees the drawing, the zoom, and the strand |
+| **joinn-strand** | Storage: four letters, two bits each, and the partner strand | The alphabet of a stored hypernode |
+| **joinn-codex** | Storage: the reader table, and the reader’s own version | Meaning lives in the reader |
+| **joinn-tower** | Storage’s view: the Hilbert curve, levels, chromosomes, and the gene pool | The picture of a strand is derived. Layout stays out of the hash |
 
-Nearby helpers (not on the stack diagram):
+Nearby helpers (beside the stack):
 
 | Piece | What it does | Why it’s necessary |
 |-------|--------------|--------------------|
-| **corpus/** | Golden example DNA, bodies, transcripts, and deliberate fakes | Testimony and regression: the platform must keep replaying what it claimed was true |
-| **xtask** | Build instruments (`vocab`, `floor`, `agree`, `gate`, …) | Machines that print numbers and catch lies; they don’t rewrite the story to look green |
+| **corpus/** | Golden examples, transcripts, and deliberate fakes | The platform keeps replaying what it claimed was true |
+| **xtask** | Build instruments (`vocab`, `floor`, `agree`, `gate`, …) | Machines that print numbers. They do not rewrite the story to look green |
 
 ---
 
-## 3. One trip through the calculator
+## 4. One trip through the calculator
+
+The calculator is the first hypernode. Two input blocks meet by contact. One directed relationship, *combine*, points at the result. The window draws that result as its own cell.
 
 What happens when you run the demo:
 
@@ -95,7 +156,7 @@ sequenceDiagram
   participant Live as joinn-live
   participant Gate as joinn-gate
   You->>CLI: joinn run calculator
-  CLI->>Corpus: load DNA and bodies
+  CLI->>Corpus: load the hypernode
   CLI->>Live: run
   Live->>Gate: check when needed
   Live-->>CLI: result or refusal
@@ -104,11 +165,11 @@ sequenceDiagram
 
 In words:
 
-1. You ask the CLI to run the calculator.  
-2. The CLI loads the saved plans and bodies from **corpus**.  
-3. The **live** engine runs them.  
-4. When truth must be judged, the **gate** (and the laws baked into DNA) can **refuse** — for example `"two"` is not an integer.  
-5. The CLI prints a transcript for you.
+1. You ask the CLI to run the calculator.
+2. The CLI loads the saved hypernode from **corpus**.
+3. The **live** engine runs it. For the contact file, `lower` compiles that source into the deliveries the engine runs.
+4. When truth must be judged, the **gate** can **refuse**. The word `"two"` is not an integer.
+5. The CLI prints a transcript.
 
 That’s why the expected demo looks like:
 
@@ -117,64 +178,77 @@ a: two
    refused at membrane: "two" is not in ℤ
 a: 2
 b: 3
-2 + 3 = 5
+   2 + 3 = 5
 ```
 
-The refusal is a **feature**. It shows the system saying “no” instead of crashing or guessing.
+The refusal is a **feature**. The system answers “no” as a value.
+
+The contact source prints the same lines:
+
+```text
+cargo run -p joinn-cli -- run corpus/phase7/calculator.contact
+```
 
 Step-by-step to run it yourself: [04-try-the-calculator.md](04-try-the-calculator.md).
 
 ---
 
-## 4. Contact inside a body, wires between bodies
+## 5. Source and compilation
 
-The theory draws one line: **inside a body, cells touch; between bodies, wires**. A wire is a system's business, joining one body's surface to another's. Inside a body there is nothing to wire, because an operation such as sum is a **force** applied to the cells from outside.
+The contact file is the source a person would edit. It lists the blocks in contact and the relationships that act on them. `lower`, in joinn-link, compiles that hypernode into the deliveries the live engine runs. The derivation is computed when needed. It is the engine’s compilation of the source.
+
+The wired `.body` remains a compilation target. Gate 7 shows that the contact calculator lowers to the wired calculator: the same transcript, the same descriptions, and the same surface (`cli_a@0`, `cli_b@0`, `sum@2`). A later phase retires the wired form as a second product. Until that phase, both files run, and the wired file is the witness that compilation matched.
 
 ```mermaid
 flowchart LR
-  subgraph body1 [Contact body: the calculator]
-    cliA[cli_a cell] --- sum[sum: combine's response]
-    cliB[cli_b cell] --- sum
-  end
-  subgraph body2 [Another body]
-    other[its cells]
-  end
-  sum -. "wire (a system's)" .-> other
-  register[Force register: combine on integers] -. "answers with" .-> sum
+  source[Contact file: the hypernode]
+  lower[lower: compilation]
+  live[Live engine]
+  wired[Wired .body: compilation witness]
+  source --> lower --> live
+  lower --> wired
 ```
 
-| Piece | What it is | Why it's necessary |
+| Piece | What it is | Why it’s necessary |
 |-------|------------|--------------------|
-| **Contact body** (`.contact`) | Cells that touch, plus the forces that act on them. The file can't write a wire | The body says *what* touches, never *how values travel*, so it can't be wired wrong |
-| **Force** | An operation applied from outside, such as combine | The operation's truth lives in what it acts on, not in a wire someone drew |
-| **Force register** | One short table: combine on integers answers with the sum cell, and its opposite is on file | Only order-blind forces with a known opposite are allowed, so member order can never change a result |
-| **`lower`** (joinn-link) | The engine's own derivation of the deliveries a contact body needs to run | The engine runs one kind of body; the derivation is never written, described or drawn |
-| **Wire between bodies** | Phase 5's typed link, in a universe | Systems join bodies at their surfaces; that part is unchanged |
+| **Contact file** (`.contact`) | The hypernode: blocks that touch, and the forces that act on them | The source says what meets what |
+| **Force** | A directed relationship, such as combine on integers. It surrounds its members and points at the response | The operation’s truth lives with the frame it acts on |
+| **Force register** | The short table of which frames answer which forces, each with its opposite on file | A registered combine is order-blind: member order is recorded, and the result does not depend on it |
+| **`lower`** | Compilation into the deliveries the live engine runs | One runner, fed from the contact source |
+| **Wired `.body`** | The compilation witness for today’s calculator | Gate 7 fails if the two forms diverge |
 
-The two calculator forms are checked against each other (gate 7): the contact one lowers to exactly the wired one, so they print the same transcript and descriptions.
+In a **system**, the window draws a force as a lasso: a loop around what it acts on, and an arrowhead at the result. In the **contact calculator** the force still owns no pixel. Drawing that relationship as a lasso on the calculator itself is ahead, in the refactor plan.
+
+A link between bodies, in a universe file, is a relationship the window already draws: one hyperedge, touching its members along the gutters, never crossing a non-member.
 
 ---
 
-## 5. How the documentation folders connect
+## 6. How the documentation folders connect
 
 ```mermaid
 flowchart LR
   Guides[Guides plain English]
-  Theory[Theory deep design]
-  Plans[Plans build order]
-  Findings[Findings evidence]
-  Guides -->|want more depth| Theory
-  Theory -->|how we build it| Plans
-  Plans -->|what we learned| Findings
-  Findings -->|feeds decisions back| Theory
+  Storage[Graph Storage]
+  Plan[Hypernode Refactor Plan]
+  Theory[Older theory: the decision record]
+  Plans[Plans: historical build order]
+  Findings[Findings: evidence]
+  Guides --> Storage
+  Guides --> Plan
+  Storage --> Theory
+  Plan --> Plans
+  Plans --> Findings
+  Findings --> Theory
 ```
 
-| Folder | Who it’s for | Why it exists |
-|--------|--------------|---------------|
-| **Guides** | Humans who want clarity first | So the project is understandable without a CS degree |
-| **Theory** | Settling the laws and vocabulary | So builders and agents share one precise language |
-| **Plans** | Ordered construction | So each step proves one more law by machine, not by hope |
-| **Findings** | Dated evidence | So claims leave a paper trail (hashes, reviews, spikes) |
+| Folder or paper | Who it’s for | Why it exists |
+|-----------------|--------------|---------------|
+| **Guides** | Humans who want clarity first | The product, in everyday language |
+| **[JoInn Graph Storage](../Theory/JoInn%20Graph%20Storage.md)** | Anyone asking how a hypernode is stored | The storage properties Phase 8 already checked |
+| **[Hypernode Refactor Plan](../Plans/JoInn%20Hypernode%20Refactor%20Plan.md)** | The next build, in product words | Phases from this language through to a person building an app |
+| **Theory** | The decision record | Laws and vocabulary already settled. Cells, bodies, and forces stay the record for contact and membranes. The DNA paper stays the storage research |
+| **Plans** | Ordered construction already written | Each historical phase, left as it was |
+| **Findings** | Dated evidence | Hashes, reviews, and what a gate printed |
 
 Code entry: [../../joinn/README.md](../../joinn/README.md). Agent rules: [../../joinn/AGENTS.md](../../joinn/AGENTS.md).
 
@@ -182,5 +256,5 @@ Code entry: [../../joinn/README.md](../../joinn/README.md). Agent rules: [../../
 
 ## Next
 
-- Progress snapshot: [03-where-we-are.md](03-where-we-are.md)  
+- Progress snapshot: [03-where-we-are.md](03-where-we-are.md)
 - Try the demo: [04-try-the-calculator.md](04-try-the-calculator.md)

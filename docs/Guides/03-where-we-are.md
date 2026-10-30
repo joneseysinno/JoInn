@@ -1,5 +1,24 @@
 # Where we are
 
+## How to read the record below
+
+The phase record under this note stays as it was written. Read its code names with the product language:
+
+| What the record says | What it is |
+|----------------------|------------|
+| Contact body | The hypernode the engine runs |
+| Link | A relationship the window draws |
+| Universe on screen | A drawing of an app |
+| Strand | Storage |
+
+The snap-together editor, waves, a native compile, and one tree of arbitrary depth are ahead. The camera folds three fixed levels: universe, galaxy, and system.
+
+In the Phase 8 section below, the three top-level curve segments are called bridges, and the record says there are three of them. In the product language those three segments are joints. The beam’s bridge, an underivable law read from a pinned edition, is a different word. The curve filter in that section is a level; **floor** in the product language is the sealed operations.
+
+The next build is Phase B of the [Hypernode Refactor Plan](../Plans/JoInn%20Hypernode%20Refactor%20Plan.md): one running hypernode. The Phase 8 section below names Phase 8.4 (the calculator regrown from DNA) as its next step; in the refactor plan that join is Phase G.
+
+Product language: [What is JoInn?](01-what-is-joinn.md). Storage: [JoInn Graph Storage](../Theory/JoInn%20Graph%20Storage.md).
+
 ## The three ladders (bootstraps)
 
 JoInn is being built in three big stages. Think of them as ladders: each one lets you climb farther.

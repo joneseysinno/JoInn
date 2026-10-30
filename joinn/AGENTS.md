@@ -1,14 +1,21 @@
 # JoInn — standing rules
 
-This repo is JoInn. Phase 8 builds the DNA base: four letters (A, T, G, C as
-two bits each), the one code table read by a versioned reader, and the tower
-(a 2D Hilbert curve) that folds a strand for free. Its one idea is THE FOLD IS
-FREE AND EXACT. The build plan is docs/Plans/JoInn Phase 8 Implementation
-Plan.md. The phase is one unit with one stop. Never stop to ask; follow the
-plan's Snags section instead.
+This repo is JoInn, an app builder. A person zooms a hypergraph: every level
+is nodes joined by relationships that can touch many nodes at once. Opening a
+node shows blocks in contact, and that node runs (and later compiles) as one
+unit. The product words are HYPERNODE, RELATIONSHIP, WAVE and APP. DNA words
+(letter, strand, codon, codex, chromosome, gene, tower) are STORAGE: how a
+hypernode is kept, never the screen a person builds on. Guides:
+docs/Guides/01-what-is-joinn.md. Storage record: docs/Theory/JoInn Graph
+Storage.md.
 
-New crates only: joinn-strand, joinn-codex, joinn-tower. No existing crate,
-grammar or corpus file changes except gates.lock (P8-01).
+The active plan is docs/Plans/JoInn Hypernode Refactor Plan.md. Phase A (the
+language) is closed. The next implementation phase is B: one running
+hypernode. Phase 8's plan is finished work (gate 8 passed); rules 82–86 remain
+the storage rules, and its "new crates only" limit no longer applies.
+
+Code names (`body`, `contact`, `universe`, `strand`) stay until a phase whose
+job is the rename. The hard rules below are unchanged.
 
 ## Hard rules
 

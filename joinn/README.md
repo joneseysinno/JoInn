@@ -2,17 +2,19 @@
 
 This folder is the **running code** for JoInn: libraries (crates), the calculator demo, golden examples (`corpus/`), and build checks (`xtask`).
 
-JoInn is a **truth-first** platform for composing apps from small blocks called **cells**. The terminal calculator still refuses bad input and computes `2 + 3`. A desktop window draws a body or a whole universe: the picture is the tables, and every pixel names its owner. A universe zooms exactly from all its galaxies down to one letter of a cell's label (Phase 7.2). Links between bodies are not drawn yet, and there are no snapshots.
+JoInn is an app builder. A person zooms a picture of nodes and relationships. The live engine runs a node as one unit. The outermost node is the app. The terminal calculator refuses bad input and computes `2 + 3`. A desktop window draws a body or a whole universe: the picture is the tables, every pixel names its owner, and the universe zooms exactly from all its galaxies down to one letter of a cell's label (Phase 7.2). Links are drawn as hyperedges. Snapshots are ahead. The editor a stranger can snap together is ahead.
 
-The calculator now exists in two forms. `corpus/phase2/calculator.body` joins its cells with wires. `corpus/phase7/calculator.contact` is a **contact body**: its cells touch, and sum is a **force** (combine) with no wire inside. Both run the same transcript, give the same descriptions, and draw from the same kind of tables.
+The calculator has two files, and they match. `corpus/phase7/calculator.contact` is the source: a **contact body**, the hypernode the engine runs. Its cells touch, and sum is a **force** (combine) pointing at the result. `corpus/phase2/calculator.body` is the wired form, still a compilation target. Both run the same transcript, give the same descriptions, and draw from the same kind of tables.
 
-Phase 8 begins DNA proper. A **strand** is a row of the letters A, T, G and C, two bits each. **Codex 1** names 14 of the 64 three-letter codons, and the **reader** turns a strand into proteins. The strand's partner reads the opposite proteins. A strand is folded onto a **Hilbert tower**, where each floor holds the one below it, and a **gene pool** holds chromosomes that refer to one another, never in a cycle.
+A **strand** is storage: a row of the letters A, T, G and C, two bits each. **Codex 1** names 14 of the 64 three-letter codons, and the **reader** lists the names. The strand's partner reads the opposite names. A strand is drawn as a helix and, on a **Hilbert tower**, as a fold. A **gene pool** holds chromosomes that refer to one another by hash, and it refuses a cycle. The strand is read and drawn. Running the calculator from a strand is ahead.
 
 ## Start here (humans)
 
-Plain-English guides — big picture, connection diagrams, where we are, try-it steps, glossary:
+Plain-English guides — the picture, how the parts connect, where we are, try-it steps, glossary:
 
 **[../docs/Guides/](../docs/Guides/)**
+
+Product theory from 30 Oct 2026: the guides, [JoInn Graph Storage](../docs/Theory/JoInn%20Graph%20Storage.md), and the [Hypernode Refactor Plan](../docs/Plans/JoInn%20Hypernode%20Refactor%20Plan.md). Older theory papers remain the decision record.
 
 Docs index: [../docs/README.md](../docs/README.md)
 
@@ -49,6 +51,8 @@ Open a strand as a double helix beside its partner. Each codon is tinted by its 
 ```text
 cargo run -p joinn-shell-desktop -- --strand corpus/phase8/strands/twelve.strand
 ```
+
+In the files and gates below, a contact body is the hypernode the engine runs, a link is a relationship, and a strand is storage.
 
 ## Gates
 

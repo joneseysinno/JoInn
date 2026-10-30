@@ -4,6 +4,8 @@
 
 That folder explains what JoInn is, how the pieces connect, where the project stands, and how to try the calculator — without assuming you already know programming.
 
+**Current product theory (30 Oct 2026):** the [Guides](Guides/), [JoInn Graph Storage](Theory/JoInn%20Graph%20Storage.md), and the [Hypernode Refactor Plan](Plans/JoInn%20Hypernode%20Refactor%20Plan.md). The older theory papers remain the decision record.
+
 ## What’s in this folder
 
 | Folder | Who it’s for | What it is |
@@ -13,6 +15,6 @@ That folder explains what JoInn is, how the pieces connect, where the project st
 | **[Plans/](Plans/)** | Build work | Roadmap and phase-by-phase construction plans |
 | **[Findings/](Findings/)** | Evidence / lab notes | Proofs, reviews, spikes, and decisions from the build |
 
-**Newest theory (29 Sep 2026):** [Theory/JoInn Cells, Bodies and Forces.md](Theory/JoInn%20Cells,%20Bodies%20and%20Forces.md). Read it first when planning what comes after Phase 6.
+**Decision record for contact, forces, and membranes:** [Theory/JoInn Cells, Bodies and Forces.md](Theory/JoInn%20Cells,%20Bodies%20and%20Forces.md). A body is the hypernode. A force is a directed relationship. The DNA paper is the storage research; [JoInn Graph Storage](Theory/JoInn%20Graph%20Storage.md) records the properties Phase 8 already checked.
 
 The code itself lives in [`../joinn/`](../joinn/). Its README points back here for humans and to `AGENTS.md` for coding agents.
