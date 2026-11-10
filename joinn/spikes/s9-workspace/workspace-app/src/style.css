@@ -243,5 +243,19 @@ button, input, textarea, select { font: inherit; color: inherit; }
   border-top: 1px solid var(--line);
 }
 
+.banner, .picker {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 8px 12px;
+  box-shadow: 0 10px 28px rgba(40, 28, 12, 0.12);
+}
+.banner { top: 12px; left: 50%; transform: translateX(-50%); }
+.picker { top: 12px; right: 12px; flex-direction: column; align-items: stretch; min-width: 220px; }
 .timebar input[type="range"] { flex: 1; }
 .time-label { color: var(--muted); min-width: 48px; }

@@ -76,13 +76,14 @@ fn App() -> Element {
     let mut viewport = use_signal(|| (900.0_f64, 640.0_f64));
     let mut panning = use_signal(|| None::<(f64, f64, f64, f64)>);
     let mut link_from = use_signal(|| None::<CellId>);
+    let mut cursor = use_signal(|| 1usize);
+    let mut picker = use_signal(|| false);
+    let mut files = use_signal(Vec::<String>::new);
 
-    let sheet = match doc.read().now() {
-        Ok(sheet) => sheet,
-        Err(refusal) => {
-            return rsx! { div { class: "shell", "{refusal.message()}" } };
-        }
-    };
+    let moment_len = doc.read().len();
+    let at = cursor().min(moment_len);
+    let in_past = at < moment_len;
+    let sheet = sheet_now(&doc, cursor);
     let answers = evaluate(&sheet);
     let cam = camera();
     let viewing = cam
@@ -131,15 +132,15 @@ fn App() -> Element {
                 }
                 let key = event.key();
                 if key == Key::Delete {
-                    delete_selected(doc, selected, notice);
+                    delete_selected(doc, selected, notice, cursor);
                 } else if key == Key::Escape {
-                    let sheet = sheet_now(&doc);
+                    let sheet = sheet_now(&doc, cursor);
                     let current = camera().cell.or_else(|| sheet.root());
                     if let Some(parent) = current.and_then(|id| sheet.parent_of(id)) {
                         camera.set(camera::frame_cell(&sheet, parent, viewport_of(viewport())));
                     }
                 } else if key == Key::Home {
-                    let sheet = sheet_now(&doc);
+                    let sheet = sheet_now(&doc, cursor);
                     if let Some(root) = sheet.root() {
                         camera.set(camera::frame_cell(&sheet, root, viewport_of(viewport())));
                     }
@@ -163,7 +164,7 @@ fn App() -> Element {
                     let mut cam = camera();
                     cam.pan_x = pan_x + (x - origin_x);
                     cam.pan_y = pan_y + (y - origin_y);
-                    camera.set(camera::settle(cam, &sheet_now(&doc), viewport_of(viewport())));
+                    camera.set(camera::settle(cam, &sheet_now(&doc, cursor), viewport_of(viewport())));
                     return;
                 }
                 let Some(mut current) = drag() else { return };
@@ -178,9 +179,9 @@ fn App() -> Element {
                 drag.set(Some(current));
                 if current.moved {
                     let cam = camera();
-                    if let Some(tree) = view_tree(&sheet_now(&doc), cam) {
+                    if let Some(tree) = view_tree(&sheet_now(&doc, cursor), cam) {
                         let world = to_world((x, y), canvas_at(), (cam.pan_x, cam.pan_y), cam.scale);
-                        hover.set(drop_group(&tree, world.0, world.1, Some(current.id), &sheet_now(&doc)));
+                        hover.set(drop_group(&tree, world.0, world.1, Some(current.id), &sheet_now(&doc, cursor)));
                     }
                 }
             },
@@ -204,7 +205,8 @@ fn App() -> Element {
                     cam.scale,
                     &current,
                     pointer_xy(&event),
-                    cam.cell.or_else(|| sheet_now(&doc).root()),
+                    cam.cell.or_else(|| sheet_now(&doc, cursor).root()),
+                    cursor,
                 );
             },
             header { class: "topbar",
@@ -214,7 +216,7 @@ fn App() -> Element {
                         button {
                             class: if here { "crumb here" } else { "crumb" },
                             onclick: move |_| {
-                                let sheet = sheet_now(&doc);
+                                let sheet = sheet_now(&doc, cursor);
                                 camera.set(camera::frame_cell(&sheet, id, viewport_of(viewport())));
                             },
                             "{name}"
@@ -226,14 +228,32 @@ fn App() -> Element {
                     button { onclick: move |_| {
                         doc.set(fresh_worksheet());
                         selected.set(None);
-                        notice.set(None);
-                        let sheet = sheet_now(&doc);
+                        keep(doc, &mut cursor, &mut notice);
+                        let sheet = sheet_now(&doc, cursor);
                         if let Some(root) = sheet.root() {
                             camera.set(camera::frame_cell(&sheet, root, viewport_of(viewport())));
                         }
                     }, "New" }
-                    button { onclick: move |_| notice.set(Some("Open arrives with the time slider.".to_string())), "Open" }
-                    button { onclick: move |_| notice.set(Some("The example arrives with the time slider.".to_string())), "Open example" }
+                    button { onclick: move |_| {
+                        files.set(saved_names());
+                        picker.set(true);
+                    }, "Open" }
+                    button { onclick: move |_| {
+                        let path = saves_dir().join("simple-beam.json");
+                        let loaded = if path.exists() {
+                            match Document::load(&path) {
+                                Ok(loaded) => loaded,
+                                Err(err) => {
+                                    notice.set(Some(err.message()));
+                                    return;
+                                }
+                            }
+                        } else {
+                            workspace_model::simple_beam()
+                        };
+                        show_log(doc, cursor, selected, notice, camera, viewport, loaded);
+                        picker.set(false);
+                    }, "Open example" }
                 }
             }
             if let Some(text) = notice() {
@@ -241,11 +261,11 @@ fn App() -> Element {
             }
             aside { class: "palette",
                 h2 { "Cells" }
-                Swatch { kind: BaseKind::Number, doc, selected, notice, draft }
-                Swatch { kind: BaseKind::Text, doc, selected, notice, draft }
-                Swatch { kind: BaseKind::Choice, doc, selected, notice, draft }
-                Swatch { kind: BaseKind::Result, doc, selected, notice, draft }
-                Swatch { kind: BaseKind::Group, doc, selected, notice, draft }
+                Swatch { kind: BaseKind::Number, doc, selected, notice, draft, cursor }
+                Swatch { kind: BaseKind::Text, doc, selected, notice, draft, cursor }
+                Swatch { kind: BaseKind::Choice, doc, selected, notice, draft, cursor }
+                Swatch { kind: BaseKind::Result, doc, selected, notice, draft, cursor }
+                Swatch { kind: BaseKind::Group, doc, selected, notice, draft, cursor }
             }
             main {
                 class: "canvas",
@@ -256,7 +276,7 @@ fn App() -> Element {
                             let corner = rect.min();
                             canvas_at.set((corner.x, corner.y));
                             viewport.set((rect.width(), rect.height()));
-                            let sheet = sheet_now(&doc);
+                            let sheet = sheet_now(&doc, cursor);
                             if camera().cell.is_none() {
                                 if let Some(root) = sheet.root() {
                                     camera.set(camera::frame_cell(
@@ -285,17 +305,17 @@ fn App() -> Element {
                     let local = (x - canvas_at().0, y - canvas_at().1);
                     let mut cam = camera();
                     if cam.cell.is_none() {
-                        cam.cell = sheet_now(&doc).root();
+                        cam.cell = sheet_now(&doc, cursor).root();
                     }
                     cam = camera::zoom_about(cam, local.0, local.1, factor);
-                    camera.set(camera::settle(cam, &sheet_now(&doc), viewport_of(viewport())));
+                    camera.set(camera::settle(cam, &sheet_now(&doc, cursor), viewport_of(viewport())));
                 },
                 ondragover: move |event| {
                     event.prevent_default();
                     let cam = camera();
                     let world = to_world(drag_xy(&event), canvas_at(), (cam.pan_x, cam.pan_y), cam.scale);
-                    if let Some(tree) = view_tree(&sheet_now(&doc), cam) {
-                        hover.set(drop_group(&tree, world.0, world.1, None, &sheet_now(&doc)));
+                    if let Some(tree) = view_tree(&sheet_now(&doc, cursor), cam) {
+                        hover.set(drop_group(&tree, world.0, world.1, None, &sheet_now(&doc, cursor)));
                     }
                 },
                 ondrop: move |event| {
@@ -307,16 +327,51 @@ fn App() -> Element {
                     let Some(kind) = token.strip_prefix("palette:").and_then(BaseKind::from_token) else {
                         return;
                     };
-                    let sheet = sheet_now(&doc);
+                    let sheet = sheet_now(&doc, cursor);
                     let tree = view_tree(&sheet, cam);
                     let parent = tree.as_ref().and_then(|tree| drop_group(tree, world.0, world.1, None, &sheet));
-                    place_new(doc, selected, notice, draft, kind, parent, &sheet, tree.as_ref(), world);
+                    place_new(doc, selected, notice, draft, kind, parent, &sheet, tree.as_ref(), world, cursor);
                 },
+                if in_past {
+                    div { class: "banner",
+                        span { "You are looking at an earlier moment." }
+                        button { onclick: move |_| cursor.set(doc.read().len()), "Return to now" }
+                        button { onclick: move |_| {
+                            let index = cursor().min(doc.read().len());
+                            let restored = doc.write().restore(index);
+                            match restored {
+                                Ok(()) => keep(doc, &mut cursor, &mut notice),
+                                Err(refusal) => notice.set(Some(refusal.message())),
+                            }
+                        }, "Restore this moment" }
+                    }
+                }
+                if picker() {
+                    div { class: "picker",
+                        if files().is_empty() {
+                            p { class: "quiet", "No saved worksheets yet." }
+                        }
+                        for name in files().iter().cloned() {
+                            button {
+                                onclick: move |_| {
+                                    match Document::load(&saves_dir().join(&name)) {
+                                        Ok(loaded) => {
+                                            show_log(doc, cursor, selected, notice, camera, viewport, loaded);
+                                            picker.set(false);
+                                        }
+                                        Err(err) => notice.set(Some(err.message())),
+                                    }
+                                },
+                                "{name}"
+                            }
+                        }
+                    }
+                }
                 div {
                     class: "world",
                     style: "transform: translate({pan.0}px, {pan.1}px) scale({scale});",
                     if let Some(tree) = laid {
-                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), scale, doc, selected, notice, draft, renaming, move_armed, drag, camera, viewport, link_from) }
+                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), scale, doc, selected, notice, draft, renaming, move_armed, drag, camera, viewport, link_from, cursor) }
                     }
                     svg {
                         class: "wires",
@@ -339,10 +394,31 @@ fn App() -> Element {
                     }
                 }
             }
-            { details_panel(sheet, answers, selected(), draft, doc, selected, notice, draft, typing) }
+            { details_panel(sheet, answers, selected(), draft, doc, selected, notice, draft, typing, cursor) }
             footer { class: "timebar",
-                span { class: "time-label", "Now" }
-                input { r#type: "range", min: "0", max: "1", value: "1", disabled: true }
+                span { class: "time-label", if in_past { "{at}" } else { "Now" } }
+                input {
+                    r#type: "range",
+                    min: "0",
+                    max: "{moment_len}",
+                    step: "1",
+                    value: "{at}",
+                    oninput: move |event| {
+                        if let Ok(n) = event.value().parse::<usize>() {
+                            cursor.set(n.min(doc.read().len()));
+                        }
+                    },
+                    onkeydown: move |event| {
+                        let len = doc.read().len();
+                        if event.key() == Key::ArrowLeft {
+                            event.prevent_default();
+                            cursor.set(cursor().saturating_sub(1));
+                        } else if event.key() == Key::ArrowRight {
+                            event.prevent_default();
+                            cursor.set((cursor() + 1).min(len));
+                        }
+                    },
+                }
             }
         }
     }
@@ -355,6 +431,7 @@ fn Swatch(
     mut selected: Signal<Option<CellId>>,
     mut notice: Signal<Option<String>>,
     mut draft: Signal<Draft>,
+    mut cursor: Signal<usize>,
 ) -> Element {
     let token = kind.token();
     let label = kind.label();
@@ -367,10 +444,16 @@ fn Swatch(
                 let _ = event.data_transfer().set_data("text/plain", &format!("palette:{token}"));
             },
             onclick: move |_| {
-                let parent = selected_group(&sheet_now(&doc), selected());
+                if looking_at_past(&doc, cursor, &mut notice) {
+                    return;
+                }
+                let parent = selected_group(&sheet_now(&doc, cursor), selected());
                 let added = add_cell(&mut doc.write(), parent, kind, 24, 48);
                 match added {
-                    Ok(id) => select_cell(&sheet_now(&doc), id, selected, draft),
+                    Ok(id) => {
+                        keep(doc, &mut cursor, &mut notice);
+                        select_cell(&sheet_now(&doc, cursor), id, selected, draft);
+                    }
                     Err(refusal) => notice.set(Some(refusal.message())),
                 }
             },
@@ -399,6 +482,7 @@ fn draw_cell(
     mut camera: Signal<Camera>,
     viewport: Signal<(f64, f64)>,
     mut link_from: Signal<Option<CellId>>,
+    mut cursor: Signal<usize>,
 ) -> Element {
     let id = laid.id;
     let Some(cell) = sheet.cell(id) else {
@@ -445,26 +529,28 @@ fn draw_cell(
                 event.stop_propagation();
                 if let Some(from) = link_from() {
                     if from != id {
-                        let _ = push(doc, notice, Op::AddLink { from: from.raw(), to: id.raw() });
+                        let _ = push(doc, notice, cursor, Op::AddLink { from: from.raw(), to: id.raw() });
                         link_from.set(None);
-                        select_cell(&sheet_now(&doc), id, selected, draft);
+                        select_cell(&sheet_now(&doc, cursor), id, selected, draft);
                         return;
                     }
                 }
                 if move_armed() {
-                    let sheet = sheet_now(&doc);
+                    let sheet = sheet_now(&doc, cursor);
                     if let (Some(moving), Some(cell)) = (selected(), sheet.cell(id)) {
                         if cell.inside().is_group() && moving != id {
-                            match doc.write().push(Op::Move {
-                                id: moving.raw(),
-                                parent: id.raw(),
-                                index: sheet.children_of(id).len(),
-                                x: 24,
-                                y: 48,
-                            }) {
-                                Ok(()) => notice.set(None),
-                                Err(refusal) => notice.set(Some(refusal.message())),
-                            }
+                            let _ = push(
+                                doc,
+                                notice,
+                                cursor,
+                                Op::Move {
+                                    id: moving.raw(),
+                                    parent: id.raw(),
+                                    index: sheet.children_of(id).len(),
+                                    x: 24,
+                                    y: 48,
+                                },
+                            );
                             move_armed.set(false);
                             return;
                         }
@@ -479,11 +565,11 @@ fn draw_cell(
                     last_y: y,
                     moved: false,
                 }));
-                select_cell(&sheet_now(&doc), id, selected, draft);
+                select_cell(&sheet_now(&doc, cursor), id, selected, draft);
             },
             ondoubleclick: move |event| {
                 event.stop_propagation();
-                let sheet = sheet_now(&doc);
+                let sheet = sheet_now(&doc, cursor);
                 if sheet.cell(id).is_some_and(|cell| cell.inside().is_group()) {
                     camera.set(camera::frame_cell(&sheet, id, viewport_of(viewport())));
                 }
@@ -502,7 +588,7 @@ fn draw_cell(
                                 draft.set(next);
                             },
                             onchange: move |event| {
-                                commit_rename(doc, notice, id, event.value());
+                                commit_rename(doc, notice, cursor, id, event.value());
                                 renaming.set(None);
                             },
                         }
@@ -510,7 +596,7 @@ fn draw_cell(
                         span {
                             ondoubleclick: move |event| {
                                 event.stop_propagation();
-                                select_cell(&sheet_now(&doc), id, selected, draft);
+                                select_cell(&sheet_now(&doc, cursor), id, selected, draft);
                                 renaming.set(Some(id));
                             },
                             "{name}"
@@ -524,7 +610,7 @@ fn draw_cell(
             }
             if show_children {
                 for child in children {
-                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, scale, doc, selected, notice, draft, renaming, move_armed, drag_sig, camera, viewport, link_from) }
+                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, scale, doc, selected, notice, draft, renaming, move_armed, drag_sig, camera, viewport, link_from, cursor) }
                 }
             }
         }
@@ -541,6 +627,7 @@ fn details_panel(
     mut notice: Signal<Option<String>>,
     mut draft_sig: Signal<Draft>,
     mut typing: Signal<bool>,
+    mut cursor: Signal<usize>,
 ) -> Element {
     let Some(id) = selected_id else {
         return rsx! {
@@ -579,7 +666,7 @@ fn details_panel(
                         next.name = event.value();
                         draft_sig.set(next);
                     },
-                    onchange: move |event| commit_rename(doc, notice, id, event.value()),
+                    onchange: move |event| commit_rename(doc, notice, cursor, id, event.value()),
                 }
             }
             { match &inside {
@@ -594,7 +681,7 @@ fn details_panel(
                                 next.value = event.value();
                                 draft_sig.set(next);
                             },
-                            onchange: move |event| commit_number(doc, notice, id, event.value()),
+                            onchange: move |event| commit_number(doc, notice, cursor, id, event.value()),
                         }
                     }
                     label { "Unit label"
@@ -607,7 +694,7 @@ fn details_panel(
                                 next.unit = event.value();
                                 draft_sig.set(next);
                             },
-                            onchange: move |event| commit_unit(doc, notice, id, event.value()),
+                            onchange: move |event| commit_unit(doc, notice, cursor, id, event.value()),
                         }
                     }
                     p { class: "exact", "Exact {value.exact()}" }
@@ -625,7 +712,7 @@ fn details_panel(
                                 draft_sig.set(next);
                             },
                             onchange: move |event| {
-                                let _ = push(doc, notice, Op::SetText { id: id.raw(), text: event.value() });
+                                let _ = push(doc, notice, cursor, Op::SetText { id: id.raw(), text: event.value() });
                             },
                         }
                     }
@@ -635,7 +722,7 @@ fn details_panel(
                         select {
                             onchange: move |event| {
                                 if let Ok(pick) = event.value().parse::<usize>() {
-                                    let _ = push(doc, notice, Op::SetPick { id: id.raw(), pick });
+                                    let _ = push(doc, notice, cursor, Op::SetPick { id: id.raw(), pick });
                                 }
                             },
                             for (index, option) in options.iter().cloned().enumerate() {
@@ -656,7 +743,7 @@ fn details_panel(
                             },
                             onchange: move |event| {
                                 let options: Vec<String> = event.value().lines().map(|line| line.to_string()).filter(|line| !line.trim().is_empty()).collect();
-                                let _ = push(doc, notice, Op::SetOptions { id: id.raw(), options });
+                                let _ = push(doc, notice, cursor, Op::SetOptions { id: id.raw(), options });
                             },
                         }
                     }
@@ -674,7 +761,7 @@ fn details_panel(
                                 draft_sig.set(next);
                             },
                             onchange: move |event| {
-                                let _ = push(doc, notice, Op::SetFormula { id: id.raw(), formula: event.value() });
+                                let _ = push(doc, notice, cursor, Op::SetFormula { id: id.raw(), formula: event.value() });
                             },
                         }
                     }
@@ -688,7 +775,7 @@ fn details_panel(
                                 next.unit = event.value();
                                 draft_sig.set(next);
                             },
-                            onchange: move |event| commit_unit(doc, notice, id, event.value()),
+                            onchange: move |event| commit_unit(doc, notice, cursor, id, event.value()),
                         }
                     }
                     { match &answer {
@@ -713,12 +800,12 @@ fn details_panel(
                         div { class: "arrange",
                             button {
                                 class: if *arrangement == Arrangement::Stack { "on" } else { "" },
-                                onclick: move |_| { let _ = push(doc, notice, Op::SetArrangement { id: id.raw(), arrangement: Arrangement::Stack }); },
+                                onclick: move |_| { let _ = push(doc, notice, cursor, Op::SetArrangement { id: id.raw(), arrangement: Arrangement::Stack }); },
                                 "Stack"
                             }
                             button {
                                 class: if *arrangement == Arrangement::Free { "on" } else { "" },
-                                onclick: move |_| { let _ = push(doc, notice, Op::SetArrangement { id: id.raw(), arrangement: Arrangement::Free }); },
+                                onclick: move |_| { let _ = push(doc, notice, cursor, Op::SetArrangement { id: id.raw(), arrangement: Arrangement::Free }); },
                                 "Free"
                             }
                         }
@@ -730,7 +817,7 @@ fn details_panel(
                                     r#type: "checkbox",
                                     checked: shown,
                                     onchange: move |_| {
-                                        let _ = push(doc, notice, Op::SetShowOnFace { id: child_id.raw(), show: !shown });
+                                        let _ = push(doc, notice, cursor, Op::SetShowOnFace { id: child_id.raw(), show: !shown });
                                     },
                                 }
                                 span { "{child_name}" }
@@ -741,7 +828,7 @@ fn details_panel(
             }}
             button {
                 class: "delete",
-                onclick: move |_| delete_selected(doc, selected, notice),
+                onclick: move |_| delete_selected(doc, selected, notice, cursor),
                 "Delete"
             }
         }
@@ -812,14 +899,18 @@ fn place_new(
     sheet: &Worksheet,
     tree: Option<&Laid>,
     world: (f64, f64),
+    mut cursor: Signal<usize>,
 ) {
+    if looking_at_past(&doc, cursor, &mut notice) {
+        return;
+    }
     let parent = parent.or_else(|| sheet.root());
     let (x, y, _index_unused) = local_drop(sheet, tree, parent, world);
     let added = add_cell(&mut doc.write(), parent, kind, x, y);
     match added {
         Ok(id) => {
-            notice.set(None);
-            select_cell(&sheet_now(&doc), id, selected, draft);
+            keep(doc, &mut cursor, &mut notice);
+            select_cell(&sheet_now(&doc, cursor), id, selected, draft);
         }
         Err(refusal) => notice.set(Some(refusal.message())),
     }
@@ -861,8 +952,9 @@ fn finish_move(
     drag: &PointerDrag,
     client: (f64, f64),
     view: Option<CellId>,
+    mut cursor: Signal<usize>,
 ) {
-    let sheet = sheet_now(&doc);
+    let sheet = sheet_now(&doc, cursor);
     let Some(view) = view else { return };
     let Some(tree) = layout::layout_cell(&sheet, view, scale, 2) else {
         return;
@@ -892,6 +984,7 @@ fn finish_move(
     let _ = push(
         doc,
         notice,
+        cursor,
         Op::Move {
             id: drag.id.raw(),
             parent: parent.raw(),
@@ -902,40 +995,50 @@ fn finish_move(
     );
 }
 
-fn commit_rename(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, id: CellId, name: String) {
-    let _ = push(doc, notice, Op::Rename { id: id.raw(), name });
+fn commit_rename(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, mut cursor: Signal<usize>, id: CellId, name: String) {
+    let _ = push(doc, notice, cursor, Op::Rename { id: id.raw(), name });
 }
 
-fn commit_number(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, id: CellId, text: String) {
+fn commit_number(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, mut cursor: Signal<usize>, id: CellId, text: String) {
     match Fraction::parse_decimal(&text) {
         Some(value) => {
-            let _ = push(doc, notice, Op::SetNumber { id: id.raw(), value });
+            let _ = push(doc, notice, cursor, Op::SetNumber { id: id.raw(), value });
         }
         None => notice.set(Some("Type a number, such as 24 or 1.2.".to_string())),
     }
 }
 
-fn commit_unit(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, id: CellId, unit: String) {
-    let _ = push(doc, notice, Op::SetUnit { id: id.raw(), unit });
+fn commit_unit(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, mut cursor: Signal<usize>, id: CellId, unit: String) {
+    let _ = push(doc, notice, cursor, Op::SetUnit { id: id.raw(), unit });
 }
 
 fn delete_selected(
     mut doc: Signal<Document>,
     mut selected: Signal<Option<CellId>>,
     mut notice: Signal<Option<String>>,
+    mut cursor: Signal<usize>,
 ) {
     let Some(id) = selected() else {
         return;
     };
-    if push(doc, notice, Op::Remove { id: id.raw() }) {
+    if push(doc, notice, cursor, Op::Remove { id: id.raw() }) {
         selected.set(None);
     }
 }
 
-fn push(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, op: Op) -> bool {
-    match doc.write().push(op) {
+fn push(
+    mut doc: Signal<Document>,
+    mut notice: Signal<Option<String>>,
+    mut cursor: Signal<usize>,
+    op: Op,
+) -> bool {
+    if looking_at_past(&doc, cursor, &mut notice) {
+        return false;
+    }
+    let pushed = doc.write().push(op);
+    match pushed {
         Ok(()) => {
-            notice.set(None);
+            keep(doc, &mut cursor, &mut notice);
             true
         }
         Err(refusal) => {
@@ -945,8 +1048,76 @@ fn push(mut doc: Signal<Document>, mut notice: Signal<Option<String>>, op: Op) -
     }
 }
 
-fn sheet_now(doc: &Signal<Document>) -> Worksheet {
-    doc.read().now().unwrap_or_else(|_| Worksheet::empty())
+fn looking_at_past(
+    doc: &Signal<Document>,
+    cursor: Signal<usize>,
+    notice: &mut Signal<Option<String>>,
+) -> bool {
+    if cursor() < doc.read().len() {
+        notice.set(Some(
+            "You are looking at an earlier moment. Return to now to change it.".to_string(),
+        ));
+        true
+    } else {
+        false
+    }
+}
+
+fn keep(doc: Signal<Document>, cursor: &mut Signal<usize>, notice: &mut Signal<Option<String>>) {
+    cursor.set(doc.read().len());
+    let path = saves_dir().join("current.json");
+    if let Err(err) = doc.read().save(&path) {
+        notice.set(Some(err.message()));
+    } else {
+        notice.set(None);
+    }
+}
+
+fn saves_dir() -> std::path::PathBuf {
+    std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../saves")
+}
+
+fn saved_names() -> Vec<String> {
+    let mut names = Vec::new();
+    let Ok(read) = std::fs::read_dir(saves_dir()) else {
+        return names;
+    };
+    for entry in read.flatten() {
+        let name = entry.file_name().to_string_lossy().to_string();
+        if name.ends_with(".json") {
+            names.push(name);
+        }
+    }
+    names.sort();
+    names
+}
+
+fn show_log(
+    mut doc: Signal<Document>,
+    mut cursor: Signal<usize>,
+    mut selected: Signal<Option<CellId>>,
+    mut notice: Signal<Option<String>>,
+    mut camera: Signal<Camera>,
+    viewport: Signal<(f64, f64)>,
+    next: Document,
+) {
+    doc.set(next);
+    cursor.set(doc.read().len());
+    selected.set(None);
+    notice.set(None);
+    let sheet = sheet_now(&doc, cursor);
+    if let Some(root) = sheet.root() {
+        camera.set(camera::frame_cell(&sheet, root, viewport_of(viewport())));
+    } else {
+        camera.set(Camera::identity());
+    }
+}
+
+fn sheet_now(doc: &Signal<Document>, cursor: Signal<usize>) -> Worksheet {
+    let index = cursor().min(doc.read().len());
+    doc.read()
+        .state_at(index)
+        .unwrap_or_else(|_| Worksheet::empty())
 }
 
 fn to_world(client: (f64, f64), origin: (f64, f64), pan: (f64, f64), scale: f64) -> (f64, f64) {
