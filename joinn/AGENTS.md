@@ -9,10 +9,15 @@ hypernode is kept, never the screen a person builds on. Guides:
 docs/Guides/01-what-is-joinn.md. Storage record: docs/Theory/JoInn Graph
 Storage.md.
 
-The active plan is docs/Plans/JoInn Hypernode Refactor Plan.md. Phase A (the
-language) is closed. The next implementation phase is B: one running
-hypernode. Phase 8's plan is finished work (gate 8 passed); rules 82–86 remain
-the storage rules, and its "new crates only" limit no longer applies.
+The active plan is docs/Plans/JoInn Workspace Sketch Plan.md (10 Nov 2026):
+a creator workspace AJ can see and judge, built as a spike in
+spikes/s9-workspace with Dioxus. It is outside the gates; the plan's §0.1
+lists what it is exempt from. Nothing under crates/, xtask/ or corpus/
+changes. Work the commits in order, one git commit per numbered step, and
+stop once at the end of Sitting 1. Never stop to ask; follow the plan's
+fallbacks. The Hypernode Refactor Plan's Phases B, C and D are parked until
+AJ has judged the workspace. Phase 8's plan is finished work (gate 8
+passed); rules 82–86 remain the storage rules.
 
 Code names (`body`, `contact`, `universe`, `strand`) stay until a phase whose
 job is the rename. The hard rules below are unchanged.

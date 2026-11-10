@@ -4,7 +4,9 @@
 
 *A general execution plan · 30 October 2026*
 
-> **Status.** 30 Oct 2026. AJ’s direction from the vision conversation. Phase A is closed. Current phase: **B**. This plan is general. It names what each phase proves and what would kill it. It is not a task list.
+> **Status.** 10 Nov 2026: Phases B, C and D are parked until AJ has judged the workspace. See [JoInn Workspace Sketch Plan](JoInn%20Workspace%20Sketch%20Plan.md).
+>
+> 30 Oct 2026. AJ’s direction from the vision conversation. Phase A is closed. Current phase: **B**. This plan is general. It names what each phase proves and what would kill it. It is not a task list.
 >
 > Pixels and compilers follow a canonical form. The visual editor is a view over that form.
 >
