@@ -1,0 +1,13 @@
+[package]
+name = "workspace-app"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "JoInn workspace sketch: the Dioxus window. It draws workspace-model and sends it edits."
+
+[dependencies]
+dioxus = { version = "0.7", features = ["desktop"] }
+workspace-model = { path = "../workspace-model" }
+
+[lints.rust]
+unsafe_code = "forbid"
