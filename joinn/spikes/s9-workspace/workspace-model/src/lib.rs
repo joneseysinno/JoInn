@@ -4,9 +4,12 @@
 #![forbid(unsafe_code)]
 
 mod fraction;
+mod log;
 mod sheet;
 
 pub use fraction::Fraction;
+pub use log::{Document, Entry, Kind, Op, StoreError};
 pub use sheet::{
-    Arrangement, Cell, CellId, Inside, NewCell, Placed, Refusal, Worksheet,
+    Arrangement, Cell, CellId, Inside, Link, NewCell, Placed, Refusal, Snapshot, StoredCell,
+    Worksheet,
 };

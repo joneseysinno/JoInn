@@ -4,10 +4,13 @@
 
 use std::collections::BTreeMap;
 
+use serde::{Deserialize, Serialize};
+
 use crate::fraction::Fraction;
 
 /// Identity of a cell. Stable for the life of the worksheet.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Serialize, Deserialize)]
+#[serde(transparent)]
 pub struct CellId(pub u64);
 
 impl CellId {
@@ -17,7 +20,8 @@ impl CellId {
 }
 
 /// How a group's children are placed.
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Arrangement {
     /// Top to bottom, like a calculation sheet. The default for a new group.
     Stack,
@@ -26,7 +30,7 @@ pub enum Arrangement {
 }
 
 /// A child, as its parent holds it.
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
 pub struct Placed {
     pub id: CellId,
     pub x: i64,
@@ -35,7 +39,8 @@ pub struct Placed {
 }
 
 /// What a cell holds. A group holds other cells; every other kind holds data.
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Inside {
     Number { value: Fraction, unit: String },
     Text { text: String },
@@ -112,6 +117,9 @@ pub enum Refusal {
     IntoItself,
     NotThatKind,
     BadPick,
+    LinkNeedsTwo,
+    DuplicateLink,
+    NoSuchMoment,
 }
 
 impl Refusal {
@@ -126,8 +134,42 @@ impl Refusal {
             Self::IntoItself => "A group can't be put inside itself.".to_string(),
             Self::NotThatKind => "That cell doesn't hold this.".to_string(),
             Self::BadPick => "That isn't one of the choices.".to_string(),
+            Self::LinkNeedsTwo => "A link joins two different cells.".to_string(),
+            Self::DuplicateLink => "Those two cells are already linked.".to_string(),
+            Self::NoSuchMoment => "That moment is not in the log.".to_string(),
         }
     }
+}
+
+/// A hand-drawn link. It carries nothing in Sitting 1; it is only a line.
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+pub struct Link {
+    pub from: CellId,
+    pub to: CellId,
+}
+
+impl Link {
+    pub fn joins(&self, a: CellId, b: CellId) -> bool {
+        (self.from == a && self.to == b) || (self.from == b && self.to == a)
+    }
+}
+
+/// One cell, as stored in a snapshot so a moment can be restored whole.
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+pub struct StoredCell {
+    pub id: CellId,
+    pub name: String,
+    pub parent: Option<CellId>,
+    pub inside: Inside,
+}
+
+/// The whole worksheet at one moment.
+#[derive(Clone, PartialEq, Eq, Debug, Serialize, Deserialize)]
+pub struct Snapshot {
+    pub next_id: u64,
+    pub root: Option<CellId>,
+    pub cells: Vec<StoredCell>,
+    pub links: Vec<Link>,
 }
 
 /// The worksheet: a tree of cells. Empty until the first cell, which is the root.
@@ -136,6 +178,7 @@ pub struct Worksheet {
     next_id: u64,
     cells: BTreeMap<CellId, Cell>,
     root: Option<CellId>,
+    links: Vec<Link>,
 }
 
 impl Default for Worksheet {
@@ -150,6 +193,54 @@ impl Worksheet {
             next_id: 1,
             cells: BTreeMap::new(),
             root: None,
+            links: Vec::new(),
+        }
+    }
+
+    pub fn next_id(&self) -> u64 {
+        self.next_id
+    }
+
+    pub fn links(&self) -> &[Link] {
+        &self.links
+    }
+
+    pub fn snapshot(&self) -> Snapshot {
+        Snapshot {
+            next_id: self.next_id,
+            root: self.root,
+            cells: self
+                .cells
+                .values()
+                .map(|cell| StoredCell {
+                    id: cell.id,
+                    name: cell.name.clone(),
+                    parent: cell.parent,
+                    inside: cell.inside.clone(),
+                })
+                .collect(),
+            links: self.links.clone(),
+        }
+    }
+
+    pub fn from_snapshot(snapshot: Snapshot) -> Self {
+        let mut cells = BTreeMap::new();
+        for stored in snapshot.cells {
+            cells.insert(
+                stored.id,
+                Cell {
+                    id: stored.id,
+                    name: stored.name,
+                    parent: stored.parent,
+                    inside: stored.inside,
+                },
+            );
+        }
+        Self {
+            next_id: snapshot.next_id,
+            cells,
+            root: snapshot.root,
+            links: snapshot.links,
         }
     }
 
@@ -316,8 +407,33 @@ impl Worksheet {
         if self.root == Some(id) {
             self.root = None;
         }
-        for cell_id in gone {
-            self.cells.remove(&cell_id);
+        for cell_id in &gone {
+            self.cells.remove(cell_id);
+        }
+        self.links
+            .retain(|link| !gone.contains(&link.from) && !gone.contains(&link.to));
+        Ok(())
+    }
+
+    pub fn add_link(&mut self, from: CellId, to: CellId) -> Result<(), Refusal> {
+        if from == to {
+            return Err(Refusal::LinkNeedsTwo);
+        }
+        if !self.cells.contains_key(&from) || !self.cells.contains_key(&to) {
+            return Err(Refusal::NoSuchCell);
+        }
+        if self.links.iter().any(|link| link.joins(from, to)) {
+            return Err(Refusal::DuplicateLink);
+        }
+        self.links.push(Link { from, to });
+        Ok(())
+    }
+
+    pub fn remove_link(&mut self, from: CellId, to: CellId) -> Result<(), Refusal> {
+        let before = self.links.len();
+        self.links.retain(|link| !link.joins(from, to));
+        if self.links.len() == before {
+            return Err(Refusal::NoSuchCell);
         }
         Ok(())
     }

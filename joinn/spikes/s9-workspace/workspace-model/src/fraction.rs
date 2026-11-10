@@ -1,6 +1,7 @@
 //! Exact fractions. Typing `1.2` means 6/5. A value is shown as a decimal.
 
 use num_rational::Rational64;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 /// A rational number, stored in lowest terms.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -158,6 +159,30 @@ impl Fraction {
 
     pub fn cmp_value(self, other: Self) -> std::cmp::Ordering {
         self.0.cmp(&other.0)
+    }
+}
+
+impl Serialize for Fraction {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        serializer.serialize_str(&format!("{}/{}", self.numer(), self.denom()))
+    }
+}
+
+impl<'de> Deserialize<'de> for Fraction {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let text = String::deserialize(deserializer)?;
+        parse_stored(&text).ok_or_else(|| serde::de::Error::custom(format!("bad fraction: {text}")))
+    }
+}
+
+fn parse_stored(text: &str) -> Option<Fraction> {
+    match text.split_once('/') {
+        Some((numer, denom)) => {
+            let numer: i64 = numer.parse().ok()?;
+            let denom: i64 = denom.parse().ok()?;
+            Fraction::new(numer, denom)
+        }
+        None => text.parse().ok().map(Fraction::from_i64),
     }
 }
 
