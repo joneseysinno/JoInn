@@ -1,5 +1,17 @@
 # Where we are
 
+## Workspace sketch
+
+There is a window you can open and judge. A cell can sit inside a cell. The wheel zooms from the whole worksheet down into one cell, and the trail at the top says where you are. A formula shows its answer and a line to the cells it uses. The slider at the bottom plays the worksheet backwards, one change at a time. Open example loads a simple beam: 24 ft, 1.2 kip/ft, reactions 14.4 kip, moment 86.4 kip·ft.
+
+From the repository root:
+
+```
+cargo run --manifest-path joinn/spikes/s9-workspace/Cargo.toml -p workspace-app
+```
+
+This sketch is the thing to look at now. Phases B, C and D of the Hypernode Refactor Plan stay parked until that look is done. The notes from the look are in [workspace sketch stop](../Findings/workspace-sketch-stop.md).
+
 ## How to read the record below
 
 The phase record under this note stays as it was written. Read its code names with the product language:

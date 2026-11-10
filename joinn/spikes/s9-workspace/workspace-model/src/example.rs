@@ -136,3 +136,17 @@ fn result(formula: &str, unit: &str) -> Inside {
         unit: unit.to_string(),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shipped_log_matches_the_builder() {
+        let path =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../saves/simple-beam.json");
+        let expected = simple_beam().to_json().expect("json");
+        let text = std::fs::read_to_string(&path).expect("saves/simple-beam.json");
+        assert_eq!(text, expected);
+    }
+}

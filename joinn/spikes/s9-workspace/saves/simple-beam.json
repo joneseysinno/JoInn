@@ -1,0 +1,171 @@
+{
+  "entries": [
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 1,
+      "parent": null,
+      "name": "Simple beam",
+      "inside": {
+        "kind": "group",
+        "arrangement": "stack",
+        "children": []
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 2,
+      "parent": 1,
+      "name": "Title",
+      "inside": {
+        "kind": "text",
+        "text": "Simple beam, uniform load"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 3,
+      "parent": 1,
+      "name": "Inputs",
+      "inside": {
+        "kind": "group",
+        "arrangement": "stack",
+        "children": []
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 4,
+      "parent": 3,
+      "name": "L",
+      "inside": {
+        "kind": "number",
+        "value": "24/1",
+        "unit": "ft"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 5,
+      "parent": 3,
+      "name": "w",
+      "inside": {
+        "kind": "number",
+        "value": "6/5",
+        "unit": "kip/ft"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 6,
+      "parent": 3,
+      "name": "Ma",
+      "inside": {
+        "kind": "number",
+        "value": "464/5",
+        "unit": "kip·ft"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 7,
+      "parent": 3,
+      "name": "Steel",
+      "inside": {
+        "kind": "choice",
+        "options": [
+          "A992",
+          "A36"
+        ],
+        "pick": 0
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 8,
+      "parent": 1,
+      "name": "Results",
+      "inside": {
+        "kind": "group",
+        "arrangement": "stack",
+        "children": []
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": false
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 9,
+      "parent": 8,
+      "name": "R",
+      "inside": {
+        "kind": "result",
+        "formula": "w * L / 2",
+        "unit": "kip"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": true
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 10,
+      "parent": 8,
+      "name": "M",
+      "inside": {
+        "kind": "result",
+        "formula": "w * L^2 / 8",
+        "unit": "kip·ft"
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": true
+    },
+    {
+      "kind": "edit",
+      "do": "add",
+      "id": 11,
+      "parent": 8,
+      "name": "Check",
+      "inside": {
+        "kind": "result",
+        "formula": "M <= Ma",
+        "unit": ""
+      },
+      "x": 0,
+      "y": 0,
+      "show_on_face": true
+    }
+  ]
+}
