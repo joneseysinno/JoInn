@@ -51,10 +51,18 @@ impl Laid {
     }
 }
 
-/// `open_depth` is how many levels below the current cell may draw their children.
 pub fn layout(sheet: &Worksheet, scale: f64, open_depth: u32) -> Option<Laid> {
-    let root = sheet.root()?;
-    Some(place(sheet, root, 0.0, 0.0, 0.0, 0.0, scale, 0, open_depth))
+    layout_cell(sheet, sheet.root()?, scale, open_depth)
+}
+
+/// Lay a cell out in its own coordinates. `open_depth` is how many levels below it may draw children.
+pub fn layout_cell(sheet: &Worksheet, id: CellId, scale: f64, open_depth: u32) -> Option<Laid> {
+    if sheet.cell(id).is_none() {
+        return None;
+    }
+    Some(place(
+        sheet, id, 0.0, 0.0, 0.0, 0.0, scale, 0, open_depth,
+    ))
 }
 
 fn place(

@@ -2,6 +2,7 @@
 
 #![forbid(unsafe_code)]
 
+mod camera;
 mod edit;
 mod layout;
 mod view;

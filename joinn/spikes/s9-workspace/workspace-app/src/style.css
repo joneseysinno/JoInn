@@ -169,12 +169,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .cell.choice { box-shadow: inset 4px 0 0 #a56b1a, var(--shadow); }
 .cell.result { box-shadow: inset 4px 0 0 var(--accent), var(--shadow); }
 .cell.group { box-shadow: inset 4px 0 0 #3d4a5c, var(--shadow); }
-.cell.dot {
-  height: 10px !important;
-  min-height: 0;
-  border-radius: 999px;
-  box-shadow: none;
-}
+.cell.dot { border-radius: 999px; }
 
 .header, .face {
   display: flex;

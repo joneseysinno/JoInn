@@ -5,6 +5,7 @@ use workspace_model::{
     evaluate, Answer, Arrangement, CellId, Document, Fraction, Inside, Op, Worksheet,
 };
 
+use crate::camera::{self, Camera};
 use crate::edit::{add_cell, fresh_worksheet, BaseKind};
 use crate::layout::{self, drop_group, find, stack_index, Band, Laid};
 
@@ -70,6 +71,9 @@ fn App() -> Element {
     let mut typing = use_signal(|| false);
     let mut draft = use_signal(Draft::default);
     let mut canvas_at = use_signal(|| (0.0_f64, 0.0));
+    let mut camera = use_signal(Camera::identity);
+    let mut viewport = use_signal(|| (900.0_f64, 640.0_f64));
+    let mut panning = use_signal(|| None::<(f64, f64, f64, f64)>);
 
     let sheet = match doc.read().now() {
         Ok(sheet) => sheet,
@@ -78,15 +82,33 @@ fn App() -> Element {
         }
     };
     let answers = evaluate(&sheet);
-    let laid = layout::layout(&sheet, 1.0, 8);
+    let cam = camera();
+    let viewing = cam
+        .cell
+        .filter(|id| sheet.cell(*id).is_some())
+        .or_else(|| sheet.root());
+    let scale = if cam.scale > 0.0 { cam.scale } else { 1.0 };
+    let pan = (cam.pan_x, cam.pan_y);
+    let laid = viewing.and_then(|id| layout::layout_cell(&sheet, id, scale, 2));
+    let crumbs: Vec<(CellId, String, bool)> = viewing
+        .map(|id| {
+            let path = sheet.path_to(id);
+            let last = path.len().saturating_sub(1);
+            path.into_iter()
+                .enumerate()
+                .filter_map(|(index, cell_id)| {
+                    sheet
+                        .cell(cell_id)
+                        .map(|cell| (cell_id, cell.name().to_string(), index == last))
+                })
+                .collect()
+        })
+        .unwrap_or_default();
     let root_name = sheet
         .root()
         .and_then(|id| sheet.cell(id))
         .map(|cell| cell.name().to_string())
         .unwrap_or_else(|| "Empty".to_string());
-
-    let pan = (32.0_f64, 32.0_f64);
-    let scale = 1.0_f64;
 
     rsx! {
         style { "{STYLE}" }
@@ -101,6 +123,17 @@ fn App() -> Element {
                 let key = event.key();
                 if key == Key::Delete {
                     delete_selected(doc, selected, notice);
+                } else if key == Key::Escape {
+                    let sheet = sheet_now(&doc);
+                    let current = camera().cell.or_else(|| sheet.root());
+                    if let Some(parent) = current.and_then(|id| sheet.parent_of(id)) {
+                        camera.set(camera::frame_cell(&sheet, parent, viewport_of(viewport())));
+                    }
+                } else if key == Key::Home {
+                    let sheet = sheet_now(&doc);
+                    if let Some(root) = sheet.root() {
+                        camera.set(camera::frame_cell(&sheet, root, viewport_of(viewport())));
+                    }
                 } else if let Key::Character(text) = key {
                     if text.eq_ignore_ascii_case("m") {
                         if selected().is_some() {
@@ -111,6 +144,14 @@ fn App() -> Element {
                 }
             },
             onpointermove: move |event| {
+                if let Some((origin_x, origin_y, pan_x, pan_y)) = panning() {
+                    let (x, y) = pointer_xy(&event);
+                    let mut cam = camera();
+                    cam.pan_x = pan_x + (x - origin_x);
+                    cam.pan_y = pan_y + (y - origin_y);
+                    camera.set(camera::settle(cam, &sheet_now(&doc), viewport_of(viewport())));
+                    return;
+                }
                 let Some(mut current) = drag() else { return };
                 let (x, y) = pointer_xy(&event);
                 let dx = x - current.origin_x;
@@ -122,29 +163,61 @@ fn App() -> Element {
                 current.last_y = y;
                 drag.set(Some(current));
                 if current.moved {
-                    if let Some(tree) = layout::layout(&sheet_now(&doc), 1.0, 8) {
-                        let world = to_world((x, y), canvas_at(), pan, scale);
+                    let cam = camera();
+                    if let Some(tree) = view_tree(&sheet_now(&doc), cam) {
+                        let world = to_world((x, y), canvas_at(), (cam.pan_x, cam.pan_y), cam.scale);
                         hover.set(drop_group(&tree, world.0, world.1, Some(current.id), &sheet_now(&doc)));
                     }
                 }
             },
             onpointerup: move |event| {
+                if panning().is_some() {
+                    panning.set(None);
+                    return;
+                }
                 let Some(current) = drag() else { return };
                 drag.set(None);
                 hover.set(None);
                 if !current.moved {
                     return;
                 }
-                finish_move(doc, notice, canvas_at(), pan, scale, &current, pointer_xy(&event));
+                let cam = camera();
+                finish_move(
+                    doc,
+                    notice,
+                    canvas_at(),
+                    (cam.pan_x, cam.pan_y),
+                    cam.scale,
+                    &current,
+                    pointer_xy(&event),
+                    cam.cell.or_else(|| sheet_now(&doc).root()),
+                );
             },
             header { class: "topbar",
                 span { class: "mark", "JoInn" }
                 nav { class: "crumbs",
-                    button { class: "crumb here", "{root_name}" }
+                    for (id, name, here) in crumbs.iter().cloned() {
+                        button {
+                            class: if here { "crumb here" } else { "crumb" },
+                            onclick: move |_| {
+                                let sheet = sheet_now(&doc);
+                                camera.set(camera::frame_cell(&sheet, id, viewport_of(viewport())));
+                            },
+                            "{name}"
+                        }
+                    }
                 }
                 span { class: "worksheet-name", "{root_name}" }
                 div { class: "top-actions",
-                    button { onclick: move |_| { doc.set(fresh_worksheet()); selected.set(None); notice.set(None); }, "New" }
+                    button { onclick: move |_| {
+                        doc.set(fresh_worksheet());
+                        selected.set(None);
+                        notice.set(None);
+                        let sheet = sheet_now(&doc);
+                        if let Some(root) = sheet.root() {
+                            camera.set(camera::frame_cell(&sheet, root, viewport_of(viewport())));
+                        }
+                    }, "New" }
                     button { onclick: move |_| notice.set(Some("Open arrives with the time slider.".to_string())), "Open" }
                     button { onclick: move |_| notice.set(Some("The example arrives with the time slider.".to_string())), "Open example" }
                 }
@@ -168,26 +241,60 @@ fn App() -> Element {
                         if let Ok(rect) = data.get_client_rect().await {
                             let corner = rect.min();
                             canvas_at.set((corner.x, corner.y));
+                            viewport.set((rect.width(), rect.height()));
+                            let sheet = sheet_now(&doc);
+                            if camera().cell.is_none() {
+                                if let Some(root) = sheet.root() {
+                                    camera.set(camera::frame_cell(
+                                        &sheet,
+                                        root,
+                                        camera::Viewport { w: rect.width(), h: rect.height() },
+                                    ));
+                                }
+                            }
                         }
                     });
                 },
+                onpointerdown: move |event| {
+                    let (x, y) = pointer_xy(&event);
+                    let cam = camera();
+                    panning.set(Some((x, y, cam.pan_x, cam.pan_y)));
+                },
+                onwheel: move |event| {
+                    event.prevent_default();
+                    let dy = event.delta().strip_units().y;
+                    if dy == 0.0 {
+                        return;
+                    }
+                    let factor = if dy < 0.0 { 1.12 } else { 1.0 / 1.12 };
+                    let (x, y) = wheel_xy(&event);
+                    let local = (x - canvas_at().0, y - canvas_at().1);
+                    let mut cam = camera();
+                    if cam.cell.is_none() {
+                        cam.cell = sheet_now(&doc).root();
+                    }
+                    cam = camera::zoom_about(cam, local.0, local.1, factor);
+                    camera.set(camera::settle(cam, &sheet_now(&doc), viewport_of(viewport())));
+                },
                 ondragover: move |event| {
                     event.prevent_default();
-                    let world = to_world(drag_xy(&event), canvas_at(), pan, scale);
-                    if let Some(tree) = layout::layout(&sheet_now(&doc), 1.0, 8) {
+                    let cam = camera();
+                    let world = to_world(drag_xy(&event), canvas_at(), (cam.pan_x, cam.pan_y), cam.scale);
+                    if let Some(tree) = view_tree(&sheet_now(&doc), cam) {
                         hover.set(drop_group(&tree, world.0, world.1, None, &sheet_now(&doc)));
                     }
                 },
                 ondrop: move |event| {
                     event.prevent_default();
-                    let world = to_world(drag_xy(&event), canvas_at(), pan, scale);
+                    let cam = camera();
+                    let world = to_world(drag_xy(&event), canvas_at(), (cam.pan_x, cam.pan_y), cam.scale);
                     let token = transfer_text(&event);
                     hover.set(None);
                     let Some(kind) = token.strip_prefix("palette:").and_then(BaseKind::from_token) else {
                         return;
                     };
                     let sheet = sheet_now(&doc);
-                    let tree = layout::layout(&sheet, 1.0, 8);
+                    let tree = view_tree(&sheet, cam);
                     let parent = tree.as_ref().and_then(|tree| drop_group(tree, world.0, world.1, None, &sheet));
                     place_new(doc, selected, notice, draft, kind, parent, &sheet, tree.as_ref(), world);
                 },
@@ -195,7 +302,7 @@ fn App() -> Element {
                     class: "world",
                     style: "transform: translate({pan.0}px, {pan.1}px) scale({scale});",
                     if let Some(tree) = laid {
-                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), doc, selected, notice, draft, renaming, move_armed, drag) }
+                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), scale, doc, selected, notice, draft, renaming, move_armed, drag, camera, viewport) }
                     }
                 }
             }
@@ -248,6 +355,7 @@ fn draw_cell(
     hover_id: Option<CellId>,
     drag: Option<PointerDrag>,
     renaming_id: Option<CellId>,
+    scale: f64,
     mut doc: Signal<Document>,
     mut selected: Signal<Option<CellId>>,
     mut notice: Signal<Option<String>>,
@@ -255,6 +363,8 @@ fn draw_cell(
     mut renaming: Signal<Option<CellId>>,
     mut move_armed: Signal<bool>,
     mut drag_sig: Signal<Option<PointerDrag>>,
+    mut camera: Signal<Camera>,
+    viewport: Signal<(f64, f64)>,
 ) -> Element {
     let id = laid.id;
     let Some(cell) = sheet.cell(id) else {
@@ -270,7 +380,10 @@ fn draw_cell(
     let offset = drag
         .as_ref()
         .filter(|drag| drag.id == id && drag.moved)
-        .map(|drag| (drag.last_x - drag.origin_x, drag.last_y - drag.origin_y));
+        .map(|drag| {
+            let scale = if scale.abs() < 0.0001 { 1.0 } else { scale };
+            ((drag.last_x - drag.origin_x) / scale, (drag.last_y - drag.origin_y) / scale)
+        });
     let transform = offset
         .map(|(dx, dy)| format!("transform: translate({dx}px, {dy}px);"))
         .unwrap_or_default();
@@ -326,6 +439,13 @@ fn draw_cell(
                 }));
                 select_cell(&sheet_now(&doc), id, selected, draft);
             },
+            ondoubleclick: move |event| {
+                event.stop_propagation();
+                let sheet = sheet_now(&doc);
+                if sheet.cell(id).is_some_and(|cell| cell.inside().is_group()) {
+                    camera.set(camera::frame_cell(&sheet, id, viewport_of(viewport())));
+                }
+            },
             if laid.band != Band::Dot {
                 div { class: "header",
                     if renaming_this {
@@ -362,7 +482,7 @@ fn draw_cell(
             }
             if show_children {
                 for child in children {
-                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, doc, selected, notice, draft, renaming, move_armed, drag_sig) }
+                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, scale, doc, selected, notice, draft, renaming, move_armed, drag_sig, camera, viewport) }
                 }
             }
         }
@@ -698,9 +818,11 @@ fn finish_move(
     scale: f64,
     drag: &PointerDrag,
     client: (f64, f64),
+    view: Option<CellId>,
 ) {
     let sheet = sheet_now(&doc);
-    let Some(tree) = layout::layout(&sheet, 1.0, 8) else {
+    let Some(view) = view else { return };
+    let Some(tree) = layout::layout_cell(&sheet, view, scale, 2) else {
         return;
     };
     let world = to_world(client, canvas_at, pan, scale);
@@ -791,6 +913,26 @@ fn to_world(client: (f64, f64), origin: (f64, f64), pan: (f64, f64), scale: f64)
         (client.0 - origin.0 - pan.0) / scale,
         (client.1 - origin.1 - pan.1) / scale,
     )
+}
+
+fn viewport_of(size: (f64, f64)) -> camera::Viewport {
+    camera::Viewport {
+        w: size.0.max(200.0),
+        h: size.1.max(200.0),
+    }
+}
+
+fn view_tree(sheet: &Worksheet, cam: Camera) -> Option<Laid> {
+    let id = cam
+        .cell
+        .filter(|id| sheet.cell(*id).is_some())
+        .or_else(|| sheet.root())?;
+    layout::layout_cell(sheet, id, cam.scale, 2)
+}
+
+fn wheel_xy(event: &Event<WheelData>) -> (f64, f64) {
+    let point = event.client_coordinates();
+    (point.x, point.y)
 }
 
 fn pointer_xy(event: &Event<PointerData>) -> (f64, f64) {
