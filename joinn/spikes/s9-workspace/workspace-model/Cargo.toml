@@ -1,0 +1,13 @@
+[package]
+name = "workspace-model"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "JoInn workspace sketch: cells, nesting, the time log, and formulas. No screen code."
+
+[dependencies]
+num-rational = "0.4"
+num-traits = "0.2"
+
+[lints.rust]
+unsafe_code = "forbid"
