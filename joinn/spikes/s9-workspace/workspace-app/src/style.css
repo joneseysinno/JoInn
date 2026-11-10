@@ -231,6 +231,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
   color: var(--refusal);
 }
 
+.wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+
 .timebar {
   grid-area: time;
   display: flex;

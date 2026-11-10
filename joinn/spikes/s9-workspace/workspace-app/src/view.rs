@@ -8,6 +8,7 @@ use workspace_model::{
 use crate::camera::{self, Camera};
 use crate::edit::{add_cell, fresh_worksheet, BaseKind};
 use crate::layout::{self, drop_group, find, stack_index, Band, Laid};
+use crate::wires;
 
 const STYLE: &str = include_str!("style.css");
 
@@ -74,6 +75,7 @@ fn App() -> Element {
     let mut camera = use_signal(Camera::identity);
     let mut viewport = use_signal(|| (900.0_f64, 640.0_f64));
     let mut panning = use_signal(|| None::<(f64, f64, f64, f64)>);
+    let mut link_from = use_signal(|| None::<CellId>);
 
     let sheet = match doc.read().now() {
         Ok(sheet) => sheet,
@@ -90,6 +92,13 @@ fn App() -> Element {
     let scale = if cam.scale > 0.0 { cam.scale } else { 1.0 };
     let pan = (cam.pan_x, cam.pan_y);
     let laid = viewing.and_then(|id| layout::layout_cell(&sheet, id, scale, 2));
+    let link_pairs: Vec<(CellId, CellId)> = sheet.links().iter().map(|link| (link.from, link.to)).collect();
+    let drawn = laid
+        .as_ref()
+        .map(|tree| wires::wires(&sheet, tree, &wires::result_uses(&sheet, &answers), &link_pairs))
+        .unwrap_or_default();
+    let sheet_w = laid.as_ref().map(|tree| tree.w).unwrap_or(0.0);
+    let sheet_h = laid.as_ref().map(|tree| tree.h).unwrap_or(0.0);
     let crumbs: Vec<(CellId, String, bool)> = viewing
         .map(|id| {
             let path = sheet.path_to(id);
@@ -139,6 +148,11 @@ fn App() -> Element {
                         if selected().is_some() {
                             move_armed.set(true);
                             notice.set(Some("Click the group it should move into.".to_string()));
+                        }
+                    } else if text.eq_ignore_ascii_case("l") {
+                        if let Some(id) = selected() {
+                            link_from.set(Some(id));
+                            notice.set(Some("Click the other cell to draw a link.".to_string()));
                         }
                     }
                 }
@@ -302,7 +316,26 @@ fn App() -> Element {
                     class: "world",
                     style: "transform: translate({pan.0}px, {pan.1}px) scale({scale});",
                     if let Some(tree) = laid {
-                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), scale, doc, selected, notice, draft, renaming, move_armed, drag, camera, viewport) }
+                        { draw_cell(tree, &sheet, &answers, selected(), hover(), drag(), renaming(), scale, doc, selected, notice, draft, renaming, move_armed, drag, camera, viewport, link_from) }
+                    }
+                    svg {
+                        class: "wires",
+                        width: "{sheet_w}",
+                        height: "{sheet_h}",
+                        for wire in drawn.iter().cloned() {
+                            line {
+                                x1: "{wire.x1}",
+                                y1: "{wire.y1}",
+                                x2: "{wire.x2}",
+                                y2: "{wire.y2}",
+                                stroke: if wire.stroke == wires::Stroke::Formula { "#0f6e56" } else { "#9a9186" },
+                                stroke_width: "2",
+                                "vector-effect": "non-scaling-stroke",
+                            }
+                            if wire.stroke == wires::Stroke::Formula {
+                                { arrow_el(&wire) }
+                            }
+                        }
                     }
                 }
             }
@@ -365,6 +398,7 @@ fn draw_cell(
     mut drag_sig: Signal<Option<PointerDrag>>,
     mut camera: Signal<Camera>,
     viewport: Signal<(f64, f64)>,
+    mut link_from: Signal<Option<CellId>>,
 ) -> Element {
     let id = laid.id;
     let Some(cell) = sheet.cell(id) else {
@@ -409,6 +443,14 @@ fn draw_cell(
             style: "{style}",
             onpointerdown: move |event| {
                 event.stop_propagation();
+                if let Some(from) = link_from() {
+                    if from != id {
+                        let _ = push(doc, notice, Op::AddLink { from: from.raw(), to: id.raw() });
+                        link_from.set(None);
+                        select_cell(&sheet_now(&doc), id, selected, draft);
+                        return;
+                    }
+                }
                 if move_armed() {
                     let sheet = sheet_now(&doc);
                     if let (Some(moving), Some(cell)) = (selected(), sheet.cell(id)) {
@@ -482,7 +524,7 @@ fn draw_cell(
             }
             if show_children {
                 for child in children {
-                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, scale, doc, selected, notice, draft, renaming, move_armed, drag_sig, camera, viewport) }
+                    { draw_cell(child, sheet, answers, selected_id, hover_id, drag.clone(), renaming_id, scale, doc, selected, notice, draft, renaming, move_armed, drag_sig, camera, viewport, link_from) }
                 }
             }
         }
@@ -913,6 +955,14 @@ fn to_world(client: (f64, f64), origin: (f64, f64), pan: (f64, f64), scale: f64)
         (client.0 - origin.0 - pan.0) / scale,
         (client.1 - origin.1 - pan.1) / scale,
     )
+}
+
+fn arrow_el(wire: &wires::Wire) -> Element {
+    let [a, b, c] = wires::arrow(wire);
+    let points = format!("{},{} {},{} {},{}", a.0, a.1, b.0, b.1, c.0, c.1);
+    rsx! {
+        polygon { points: "{points}", fill: "#0f6e56" }
+    }
 }
 
 fn viewport_of(size: (f64, f64)) -> camera::Viewport {

@@ -6,6 +6,7 @@ mod camera;
 mod edit;
 mod layout;
 mod view;
+mod wires;
 
 fn main() {
     view::launch();
