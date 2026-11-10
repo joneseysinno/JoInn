@@ -1,6 +1,6 @@
 # How the parts connect
 
-> **30 Oct 2026.** The product words are hypernode, relationship, wave, and app. In the code, the contact file is the hypernode the engine runs. The wired `.body` remains a compilation target, and gate 7 still checks it. See [What is JoInn?](01-what-is-joinn.md) and [JoInn Graph Storage](../Theory/JoInn%20Graph%20Storage.md).
+> **30 Oct 2026.** The product words are hypernode, relationship, wave, and app. In the code, the contact file is the hypernode the engine runs. The wired `.body` is the witness of `lower`'s compilation, and gate 7 checks that the two match. See [What is JoInn?](01-what-is-joinn.md) and [JoInn Graph Storage](../Theory/JoInn%20Graph%20Storage.md).
 
 This page is the **map**. Each diagram shows how pieces fit. Under the boxes you’ll find **what it is** and **why JoInn needs it**.
 
@@ -197,7 +197,7 @@ Step-by-step to run it yourself: [04-try-the-calculator.md](04-try-the-calculato
 
 The contact file is the source a person would edit. It lists the blocks in contact and the relationships that act on them. `lower`, in joinn-link, compiles that hypernode into the deliveries the live engine runs. The derivation is computed when needed. It is the engine’s compilation of the source.
 
-The wired `.body` remains a compilation target. Gate 7 shows that the contact calculator lowers to the wired calculator: the same transcript, the same descriptions, and the same surface (`cli_a@0`, `cli_b@0`, `sum@2`). A later phase retires the wired form as a second product. Until that phase, both files run, and the wired file is the witness that compilation matched.
+The wired `.body` is the witness of that compilation: `lower` must produce it byte for byte. Gate 7 shows that the contact calculator lowers to the wired calculator: the same transcript, the same descriptions, and the same surface (`cli_a@0`, `cli_b@0`, `sum@2`). Both files run. Today `joinn run calculator` still runs the wired body; Phase B of the refactor plan makes the contact file the default. A later phase retires the wired file as a second product.
 
 ```mermaid
 flowchart LR

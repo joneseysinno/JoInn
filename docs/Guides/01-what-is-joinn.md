@@ -55,7 +55,7 @@ A system seen from outside is a hypernode. A galaxy is a zoom depth. The app is 
 | A drawing of an app | the universe on screen |
 | Storage | strand |
 
-The contact file is the source a person would edit. `lower` is the compilation of that hypernode into the deliveries the live engine runs. The wired `.body` remains a compilation target. A later phase retires it as a second product. Gate 7 already shows the two calculator forms match.
+The contact file is the source a person would edit. `lower` is the compilation of that hypernode into the deliveries the live engine runs. The wired `.body` is the witness of that compilation: `lower` must produce it byte for byte. Gate 7 already shows the two calculator forms match. Today `joinn run calculator` still runs the wired body. Phase B of the refactor plan makes the contact file the default. A later phase retires the wired file as a second product.
 
 ## Why truth before pixels?
 

@@ -102,7 +102,7 @@ Words for pixels, owners, and the runner that exist today.
 | **Tick** | One redraw. It carries the camera. An idle scene draws nothing, so the window waits. |
 | **Trunk** | A stretch of street that two or more legs of one link share. A click prints `link <id>`. |
 | **Waiting box** | The empty cell beside a growing body, where the next input goes. |
-| **Wire** | A pixel owner in the wired compilation (`body wire …`). The contact source has blocks in contact. The wired file remains the compilation witness. |
+| **Wire** | A pixel owner in the wired compilation (`body wire …`). The contact source has blocks in contact. The wired file is the witness of `lower`'s compilation. |
 | **Witness** | A recorded true result that later versions still satisfy. The gate can replay it. |
 
 ## Names the code still uses

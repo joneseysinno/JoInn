@@ -76,6 +76,8 @@ Gate 7 already shows the contact calculator and the wired calculator match: same
 
 **Rules, scheduled here and edited later.** `joinn/AGENTS.md` rule 32 says that inside a body is a wire. Rule 61 says that a body has no wires. Both stand today. The implementation work of this phase resolves that contradiction in the rules when the code has one source of truth: the contact file, compiled by `lower`, witnessed by the wired body. This plan only schedules that edit. It does not make it.
 
+**Implementation plan:** [JoInn Phase B Implementation Plan](JoInn%20Phase%20B%20Implementation%20Plan.md).
+
 ---
 
 ## Phase C — Open the hypernode
@@ -90,19 +92,23 @@ Today the contact calculator is drawn as cells in contact, and its force owns no
 
 **Adversary.** The picture drifts from the tables.
 
+**Implementation plan:** [JoInn Phase C Implementation Plan](JoInn%20Phase%20C%20Implementation%20Plan.md).
+
 ---
 
 ## Phase D — One relationship
 
 **Goal.** Link, force, and later wave are one connector, with different ways of choosing members and of carrying a direction. Forces stay directed hyperedges, as Part VII already decided (G6 in [JoInn Systems, Forces and Growth](../Theory/JoInn%20Systems,%20Forces%20and%20Growth.md)): a force surrounds what it acts on and points at the result.
 
-**Proves.** A force and a link are both relationships, and the screen still tells them apart because their owner names differ (lasso, routed link).
+**Proves.** A force and a link are both relationships, and they stay distinct. On screen they look different: a force is a lasso, a link is a routed line (Part VII G19). A click prints different owner names: `force <name>` for a force, `link <id>` for a link.
 
 **Exit.** A document and a gate story in which a force and a link are both relationships, and a click names the owner the other picker names.
 
 **Adversary.** Unifying them erases a pixel owner, and the pickers disagree on that pixel.
 
 Wave membership itself is Phase F. This phase only keeps a place for it on the same connector.
+
+**Implementation plan:** [JoInn Phase D Implementation Plan](JoInn%20Phase%20D%20Implementation%20Plan.md).
 
 ---
 
