@@ -3,10 +3,14 @@
 
 #![forbid(unsafe_code)]
 
+mod example;
+mod formula;
 mod fraction;
 mod log;
 mod sheet;
 
+pub use example::simple_beam;
+pub use formula::{evaluate, Answer, AnswerKind};
 pub use fraction::Fraction;
 pub use log::{Document, Entry, Kind, Op, StoreError};
 pub use sheet::{
